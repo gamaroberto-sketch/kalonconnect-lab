@@ -13,19 +13,31 @@ header {
 }
 
 /* 🔧 CORREÇÃO: Garantir que overlays não bloqueiem a página de login */
-.absolute.inset-0.overflow-hidden {
+/* ⚠️ IMPORTANTE: Não afetar elementos de vídeo legítimos */
+.absolute.inset-0.overflow-hidden:not([id*="video"]):not([class*="video"]):not([class*="VideoSurface"]):not([class*="livekit"]):not([class*="LiveKit"]) {
   pointer-events: none !important;
 }
 
-/* Remover pointer-events de elementos decorativos da página welcome */
-.absolute.top-20.left-20,
-.absolute.bottom-20.right-20,
-.absolute.top-1\\/2.left-1\\/2 {
+/* Remover pointer-events de elementos decorativos da página welcome (apenas backgrounds animados) */
+.absolute.top-20.left-20.bg-pink-200,
+.absolute.top-20.left-20.bg-purple-200,
+.absolute.top-20.left-20.bg-indigo-200,
+.absolute.bottom-20.right-20.bg-pink-200,
+.absolute.bottom-20.right-20.bg-purple-200,
+.absolute.bottom-20.right-20.bg-indigo-200,
+.absolute.top-1\\/2.left-1\\/2.bg-pink-200,
+.absolute.top-1\\/2.left-1\\/2.bg-purple-200,
+.absolute.top-1\\/2.left-1\\/2.bg-indigo-200 {
   pointer-events: none !important;
 }
 
-/* Exceção: apenas quando explicitamente necessário para vídeo */
-.absolute.inset-0.overflow-hidden[data-video-active="true"] {
+/* Exceção: elementos de vídeo devem funcionar normalmente */
+.absolute.inset-0.overflow-hidden[data-video-active="true"],
+.absolute.inset-0.overflow-hidden[id*="video"],
+.absolute.inset-0.overflow-hidden[class*="video"],
+.absolute.inset-0.overflow-hidden[class*="VideoSurface"],
+.absolute.inset-0.overflow-hidden[class*="livekit"],
+.absolute.inset-0.overflow-hidden[class*="LiveKit"] {
   pointer-events: auto !important;
 }
 
