@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import '../styles/autofill-fix.css';
 import '../styles/video-optimization.css';
 import React from 'react';
+import Script from 'next/script';
 
 // 🌍 LOG IMEDIATO - TESTE MÍNIMO
 console.log('🌍 [DEBUG] _app.js MÓDULO CARREGADO!', new Date().toISOString());
@@ -317,5 +318,15 @@ export default function App({ Component, pageProps }) {
   }
   
   // Renderizar MÍNIMO sem providers para testar
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Script id="app-init-script" strategy="beforeInteractive">
+        {`
+          console.log('🔴 [APP] Script beforeInteractive executado!');
+          window.__APP_SCRIPT_EXECUTED__ = true;
+        `}
+      </Script>
+      <Component {...pageProps} />
+    </>
+  );
 }
