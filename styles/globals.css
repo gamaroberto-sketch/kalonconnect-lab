@@ -14,8 +14,21 @@ header {
 
 /* 🔧 CORREÇÃO: Garantir que overlays não bloqueiem a página de login */
 /* ⚠️ IMPORTANTE: Não afetar elementos de vídeo legítimos */
-.absolute.inset-0.overflow-hidden:not([id*="video"]):not([class*="video"]):not([class*="VideoSurface"]):not([class*="livekit"]):not([class*="LiveKit"]) {
+/* Apenas aplicar em elementos que são claramente overlays decorativos (backgrounds animados) */
+.absolute.inset-0.overflow-hidden:not([id*="video"]):not([class*="video"]):not([class*="VideoSurface"]):not([class*="livekit"]):not([class*="LiveKit"]):not([id="videoArea"]):not([id="video-container"]) {
   pointer-events: none !important;
+}
+
+/* Garantir que a área de vídeo seja sempre visível */
+#videoArea,
+[id="videoArea"],
+[class*="VideoSurface"],
+[class*="video-surface"],
+[class*="OptimizedVideoElement"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* Remover pointer-events de elementos decorativos da página welcome (apenas backgrounds animados) */
