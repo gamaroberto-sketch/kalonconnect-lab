@@ -1,0 +1,46 @@
+"use client";
+
+import React, { useEffect } from "react";
+import { VideoOff } from "lucide-react";
+import { useVideoPanel } from "./VideoPanelContext";
+
+// Componente isolado para vídeo - SEM recriação
+const VideoElement = () => {
+  const { localVideoRef, isCameraPreviewOn, lowPowerMode, isConnected } = useVideoPanel();
+  
+  const showLocalPreview = isCameraPreviewOn && (!lowPowerMode || isConnected);
+
+  // Diagnóstico de mount/unmount
+  useEffect(() => {
+    return () => {};
+  }, []);
+
+  return (
+    <div className="relative w-full h-full">
+      <video
+        ref={localVideoRef}
+        autoPlay
+        muted
+        playsInline
+        className="h-full w-full object-cover"
+        style={{ 
+          opacity: showLocalPreview ? 1 : 0,
+          transition: 'opacity 0.2s'
+        }}
+        onLoadedMetadata={() => {}}
+        onPlaying={() => {}}
+        onError={() => {}}
+      />
+      {!showLocalPreview && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <VideoOff className="w-12 h-12 text-gray-400" />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default VideoElement;
+
+
+

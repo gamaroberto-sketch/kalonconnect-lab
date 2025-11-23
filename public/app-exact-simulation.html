@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação Exata App - KalonConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .video-surface {
+            background: #1f2937;
+            border-radius: 24px;
+            padding: 16px;
+            height: 400px;
+            display: flex;
+            gap: 16px;
+        }
+        .video-container {
+            flex: 1;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .video-main {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-label {
+            padding: 8px 12px;
+            font-size: 12px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            text-align: center;
+        }
+        .controls-bar {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+            min-width: 48px;
+            min-height: 48px;
+        }
+        .control-btn:hover {
+            opacity: 0.8;
+        }
+        .control-btn.active {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        .control-btn.inactive {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .debug-panel {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            height: 500px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-entry.error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+        }
+        .log-entry.success {
+            color: #155724;
+            background: #d4edda;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+        }
+        .log-entry.warning {
+            color: #856404;
+            background: #fff3cd;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+        }
+        .log-entry.info {
+            color: #0c5460;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .status-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+        .status-label {
+            font-size: 10px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+        .status-value {
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .status-value.success { color: #28a745; }
+        .status-value.error { color: #dc3545; }
+        .status-value.warning { color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Simulação EXATA - Aplicação Principal</h1>
+            <p>Reproduz exatamente o ambiente da página de consultations</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="video-section">
+                <!-- Simulação do VideoSurface -->
+                <div class="video-surface">
+                    <!-- Container do vídeo local (StaticVideoContainer) -->
+                    <div class="video-container">
+                        <div class="video-main">
+                            <video id="localVideo" autoplay muted playsinline></video>
+                        </div>
+                        <div class="video-label" id="localLabel">Câmera desligada</div>
+                    </div>
+                    
+                    <!-- Container do vídeo remoto -->
+                    <div class="video-container">
+                        <div class="video-main">
+                            <div style="color: #6b7280; text-align: center;">Cliente</div>
+                        </div>
+                        <div class="video-label">Cliente</div>
+                    </div>
+                </div>
+                
+                <!-- Simulação do VideoControls -->
+                <div class="controls-bar">
+                    <button id="audioBtn" class="control-btn inactive" title="Microfone">🎤</button>
+                    <button id="cameraBtn" class="control-btn inactive" title="Câmera">📹</button>
+                    <button id="videoBtn" class="control-btn inactive" title="Compartilhar Vídeo" disabled>📺</button>
+                    <button id="screenBtn" class="control-btn inactive" title="Compartilhar Tela">🖥️</button>
+                    <button id="stopAllBtn" class="control-btn" style="background: #dc3545; color: white;" title="Parar Tudo">🛑</button>
+                </div>
+            </div>
+            
+            <div class="debug-panel">
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label">Stream</div>
+                        <div id="streamStatus" class="status-value error">❌ Inativo</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Câmera</div>
+                        <div id="cameraStatus" class="status-value error">📴 OFF</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Dimensões</div>
+                        <div id="dimensionsStatus" class="status-value">0x0</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Tracks</div>
+                        <div id="tracksStatus" class="status-value">0V/0A</div>
+                    </div>
+                </div>
+                
+                <div id="logContainer">
+                    <div class="log-entry info">[Início] Simulação exata carregada</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const localVideo = document.getElementById('localVideo');
+        const localLabel = document.getElementById('localLabel');
+        const audioBtn = document.getElementById('audioBtn');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const videoBtn = document.getElementById('videoBtn');
+        const screenBtn = document.getElementById('screenBtn');
+        const stopAllBtn = document.getElementById('stopAllBtn');
+        const logContainer = document.getElementById('logContainer');
+        
+        // Status elements
+        const streamStatus = document.getElementById('streamStatus');
+        const cameraStatus = document.getElementById('cameraStatus');
+        const dimensionsStatus = document.getElementById('dimensionsStatus');
+        const tracksStatus = document.getElementById('tracksStatus');
+        
+        // Estado simulando VideoPanelContext
+        let currentStream = null;
+        let isCameraPreviewOn = false;
+        let isAudioOn = false;
+        let isVideoOn = false;
+        let isScreenSharing = false;
+        let isConnected = false;
+        
+        // Flags de proteção (simulando as correções implementadas)
+        let ensureStreamInProgress = false;
+        let toggleCameraInProgress = false;
+        let createStreamInProgress = false;
+        
+        // Interceptar console para logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLogEntry(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLogEntry(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLogEntry(args.join(' '), 'warning');
+        };
+        
+        function addLogEntry(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Limitar entradas
+            const entries = logContainer.children;
+            if (entries.length > 200) {
+                logContainer.removeChild(entries[0]);
+            }
+        }
+        
+        function updateUI() {
+            // Botões
+            audioBtn.className = `control-btn ${isAudioOn ? 'active' : 'inactive'}`;
+            cameraBtn.className = `control-btn ${isCameraPreviewOn ? 'active' : 'inactive'}`;
+            videoBtn.className = `control-btn ${isVideoOn ? 'active' : 'inactive'}`;
+            videoBtn.disabled = !currentStream || !isConnected;
+            screenBtn.className = `control-btn ${isScreenSharing ? 'active' : 'inactive'}`;
+            
+            // Labels
+            localLabel.textContent = isCameraPreviewOn ? 
+                'Pré-visualização do Profissional' : 
+                'Câmera desligada';
+            
+            // Status
+            streamStatus.textContent = currentStream && currentStream.active ? '✅ Ativo' : '❌ Inativo';
+            streamStatus.className = `status-value ${currentStream && currentStream.active ? 'success' : 'error'}`;
+            
+            cameraStatus.textContent = isCameraPreviewOn ? '📹 ON' : '📴 OFF';
+            cameraStatus.className = `status-value ${isCameraPreviewOn ? 'success' : 'error'}`;
+            
+            dimensionsStatus.textContent = `${localVideo.videoWidth}x${localVideo.videoHeight}`;
+            dimensionsStatus.className = `status-value ${localVideo.videoWidth > 0 ? 'success' : 'error'}`;
+            
+            if (currentStream) {
+                const vTracks = currentStream.getVideoTracks().length;
+                const aTracks = currentStream.getAudioTracks().length;
+                tracksStatus.textContent = `${vTracks}V/${aTracks}A`;
+                tracksStatus.className = `status-value ${vTracks > 0 ? 'success' : 'error'}`;
+            } else {
+                tracksStatus.textContent = '0V/0A';
+                tracksStatus.className = 'status-value error';
+            }
+        }
+        
+        // Simulação EXATA do createMediaStream com todas as proteções
+        async function createMediaStream(constraints = { video: true, audio: true }) {
+            console.log('🎯 === INICIANDO createMediaStream ROBUSTO ===');
+            
+            // PROTEÇÃO 1: Múltiplas chamadas simultâneas
+            if (createStreamInProgress) {
+                console.warn('⚠️ createMediaStream já em progresso, aguardando...');
+                let attempts = 0;
+                while (createStreamInProgress && attempts < 100) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                console.log(`✅ Chamada anterior concluída após ${attempts * 100}ms`);
+                return currentStream;
+            }
+            
+            createStreamInProgress = true;
+            
+            try {
+                // Reutilizar stream existente
+                if (currentStream && currentStream.active) {
+                    console.log('✅ Stream já existe e está ativo, reutilizando');
+                    return currentStream;
+                }
+                
+                console.log('🔍 Diagnosticando dispositivos disponíveis...');
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                
+                console.log(`📱 Dispositivos encontrados: ${videoDevices.length} câmeras`);
+                
+                if (videoDevices.length === 0) {
+                    throw new Error('Nenhuma câmera encontrada');
+                }
+                
+                // Constraints de teste (versão completa como na aplicação)
+                const testConstraints = [
+                    { name: 'HD 720p', constraints: { video: { width: 1280, height: 720 }, audio: true } },
+                    { name: 'VGA 480p', constraints: { video: { width: 640, height: 480 }, audio: true } },
+                    { name: 'Básico Width True', constraints: { video: { width: true }, audio: true } },
+                    { name: 'User Facing', constraints: { video: { facingMode: "user" }, audio: true } },
+                    { name: 'Full HD 1080p', constraints: { video: { width: 1920, height: 1080 }, audio: true } },
+                    { name: 'Só Vídeo HD', constraints: { video: { width: 1280, height: 720 }, audio: false } },
+                    { name: 'Só Vídeo VGA', constraints: { video: { width: 640, height: 480 }, audio: false } },
+                    { name: 'Só Vídeo Básico', constraints: { video: true, audio: false } },
+                    { name: 'Mínimo', constraints: { video: { width: 320, height: 240 }, audio: false } },
+                    { name: 'Último Recurso', constraints: { video: {} } }
+                ];
+                
+                let successfulStream = null;
+                
+                console.log('🧪 === INICIANDO TESTES DE CONSTRAINTS VARIADAS ===');
+                
+                for (const test of testConstraints) {
+                    try {
+                        console.log(`🔄 TESTANDO: ${test.name}`);
+                        console.log(`📋 Constraints: ${JSON.stringify(test.constraints)}`);
+                        
+                        const timeoutPromise = new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('Timeout após 15 segundos')), 15000)
+                        );
+                        
+                        const streamPromise = navigator.mediaDevices.getUserMedia(test.constraints);
+                        const stream = await Promise.race([streamPromise, timeoutPromise]);
+                        
+                        console.log(`✅ SUCESSO: ${test.name}`);
+                        
+                        // Usar primeiro stream bem-sucedido (PROTEÇÃO CRÍTICA)
+                        if (!successfulStream) {
+                            successfulStream = stream;
+                            console.log(`🎯 USANDO STREAM: ${test.name} como stream principal`);
+                            console.log('🛡️ PROTEÇÃO: Mantendo stream ativo - NÃO será parado');
+                            
+                            // Proteger tracks
+                            stream.getVideoTracks().forEach(track => {
+                                track.enabled = true;
+                                console.log('📹 Track de vídeo FORÇADO como ativo');
+                                
+                                track.addEventListener('ended', () => {
+                                    console.error('❌ CRÍTICO: Track de vídeo foi TERMINADO inesperadamente!');
+                                });
+                                
+                                track.addEventListener('mute', () => {
+                                    console.warn('⚠️ Track de vídeo foi MUTADO');
+                                });
+                            });
+                            
+                            // Desabilitar áudio por padrão
+                            stream.getAudioTracks().forEach(track => {
+                                track.enabled = false;
+                                console.log('🔇 Track de áudio desabilitado (mas mantido vivo)');
+                            });
+                            
+                        } else {
+                            // Parar streams de teste adicionais
+                            stream.getTracks().forEach(track => track.stop());
+                            console.log(`🛑 Stream de teste ${test.name} parado (não é o principal)`);
+                        }
+                        
+                        break; // Usar primeiro sucesso
+                        
+                    } catch (error) {
+                        console.error(`❌ FALHOU: ${test.name} - ${error.message}`);
+                        
+                        if (error.name === 'NotAllowedError') {
+                            console.error('🚫 ERRO FATAL: Permissão negada - Parando todos os testes');
+                            throw error;
+                        }
+                    }
+                }
+                
+                if (successfulStream) {
+                    console.log('✅ === createMediaStream CONCLUÍDO COM SUCESSO ===');
+                    
+                    // PROTEÇÃO FINAL: Verificar se stream ainda está ativo
+                    if (!successfulStream.active) {
+                        console.error('❌ CRÍTICO: Stream foi desativado durante os testes!');
+                        throw new Error('Stream foi perdido durante os testes');
+                    }
+                    
+                    return successfulStream;
+                } else {
+                    console.error('❌ NENHUM TESTE FOI BEM-SUCEDIDO');
+                    throw new Error('Todos os testes de constraints falharam');
+                }
+                
+            } finally {
+                createStreamInProgress = false;
+                console.log('🧹 createMediaStream finalizado, flag limpa');
+            }
+        }
+        
+        // Simulação EXATA do assignStreamToVideo
+        async function assignStreamToVideo(stream) {
+            console.log('🔗 === EXECUTANDO ATRIBUIÇÃO CRÍTICA ===');
+            
+            // VERIFICAÇÃO FINAL ANTES DA ATRIBUIÇÃO
+            if (!stream.active) {
+                console.error('❌ CRÍTICO: Stream não está ativo no momento da atribuição!');
+                return false;
+            }
+            
+            const videoTracks = stream.getVideoTracks();
+            if (videoTracks.length === 0) {
+                console.error('❌ CRÍTICO: Stream não possui tracks de vídeo!');
+                return false;
+            }
+            
+            const activeVideoTracks = videoTracks.filter(track => track.readyState === 'live');
+            if (activeVideoTracks.length === 0) {
+                console.error('❌ CRÍTICO: Nenhum track de vídeo está "live"!');
+                return false;
+            }
+            
+            console.log(`✅ Stream validado: ${activeVideoTracks.length} tracks de vídeo ativos`);
+            
+            // ATRIBUIÇÃO REAL
+            console.log('🎯 EXECUTANDO: videoElement.srcObject = stream');
+            localVideo.srcObject = stream;
+            console.log('✅ Linha de atribuição executada! Validando IMEDIATAMENTE...');
+            
+            // PROTEÇÃO: Verificar se atribuição "colou"
+            setTimeout(() => {
+                if (localVideo.srcObject !== stream) {
+                    console.error('❌ CRÍTICO: srcObject foi perdido após atribuição!');
+                    console.log('🔄 Tentando reatribuir...');
+                    localVideo.srcObject = stream;
+                } else {
+                    console.log('✅ srcObject mantido com sucesso após 1 segundo');
+                }
+            }, 1000);
+            
+            // Eventos do vídeo
+            localVideo.onloadedmetadata = () => {
+                console.log(`📊 Metadados carregados: ${localVideo.videoWidth}x${localVideo.videoHeight}`);
+                updateUI();
+            };
+            
+            localVideo.onplaying = () => {
+                console.log(`🎬 Vídeo reproduzindo: ${localVideo.videoWidth}x${localVideo.videoHeight}`);
+                updateUI();
+            };
+            
+            localVideo.onerror = (event) => {
+                console.error('❌ ERRO no vídeo:', event);
+            };
+            
+            localVideo.onwaiting = () => {
+                console.warn('⏳ Vídeo aguardando dados...');
+            };
+            
+            localVideo.onstalled = () => {
+                console.warn('🚫 Vídeo travado...');
+            };
+            
+            return true;
+        }
+        
+        // Simulação EXATA do ensureLocalStream
+        async function ensureLocalStream() {
+            console.log('🎯 === INICIANDO ensureLocalStream ===');
+            
+            // PROTEÇÃO: Múltiplas chamadas simultâneas
+            if (ensureStreamInProgress) {
+                console.warn('⚠️ ensureLocalStream já está em progresso, aguardando...');
+                let attempts = 0;
+                while (ensureStreamInProgress && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                console.log(`✅ Chamada anterior concluída após ${attempts * 100}ms`);
+                return currentStream;
+            }
+            
+            ensureStreamInProgress = true;
+            
+            try {
+                // Verificar stream existente
+                if (currentStream && currentStream.active) {
+                    console.log('✅ Stream já existe e está ativo');
+                    return currentStream;
+                }
+                
+                console.log('🎯 Criando novo MediaStream...');
+                const stream = await createMediaStream({ video: true, audio: true });
+                
+                if (!stream) {
+                    console.error('❌ Falha ao criar MediaStream');
+                    return null;
+                }
+                
+                console.log('✅ MediaStream criado, preparando atribuição...');
+                
+                // ATRIBUIÇÃO CENTRALIZADA
+                console.log('🔗 === INICIANDO ATRIBUIÇÃO IMEDIATA DO STREAM ===');
+                
+                const success = await assignStreamToVideo(stream);
+                
+                if (success) {
+                    currentStream = stream;
+                    isConnected = true;
+                    console.log('✅ ensureLocalStream CONCLUÍDO COM SUCESSO');
+                    
+                    // Iniciar monitoramento contínuo
+                    startStreamMonitoring();
+                    
+                    return stream;
+                } else {
+                    console.error('❌ FALHA CRÍTICA: assignStreamToVideo retornou false');
+                    
+                    // PROTEÇÃO: Se atribuição falhou, parar o stream
+                    if (stream) {
+                        console.log('🛑 Parando stream devido à falha na atribuição...');
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    return null;
+                }
+                
+            } catch (error) {
+                console.error('❌ ERRO INESPERADO em ensureLocalStream:', error);
+                return null;
+            } finally {
+                ensureStreamInProgress = false;
+                console.log('🧹 ensureLocalStream finalizado, flag limpa');
+            }
+        }
+        
+        // Simulação EXATA do toggleCameraPreview
+        async function toggleCameraPreview() {
+            console.log('🎯 toggleCameraPreview chamado');
+            
+            // PROTEÇÃO: Múltiplas chamadas simultâneas
+            if (toggleCameraInProgress) {
+                console.warn('⚠️ toggleCameraPreview já está em progresso, ignorando...');
+                return;
+            }
+            
+            toggleCameraInProgress = true;
+            
+            try {
+                if (isCameraPreviewOn) {
+                    // DESLIGAR CÂMERA
+                    console.log('📴 Desligando câmera...');
+                    
+                    if (currentStream) {
+                        currentStream.getTracks().forEach(track => track.stop());
+                        currentStream = null;
+                    }
+                    
+                    localVideo.srcObject = null;
+                    isCameraPreviewOn = false;
+                    isConnected = false;
+                    
+                    if (monitorInterval) {
+                        clearInterval(monitorInterval);
+                        monitorInterval = null;
+                    }
+                    
+                    console.log('✅ Câmera desligada');
+                    
+                } else {
+                    // LIGAR CÂMERA
+                    console.log('📹 Ligando câmera...');
+                    
+                    const stream = await ensureLocalStream();
+                    
+                    if (stream) {
+                        // Habilitar tracks
+                        stream.getVideoTracks().forEach(track => {
+                            track.enabled = true;
+                            console.log('✅ Video track habilitado:', track.label);
+                        });
+                        
+                        isCameraPreviewOn = true;
+                        console.log('✅ Câmera ligada com sucesso');
+                    } else {
+                        console.error('❌ Falha ao ligar câmera');
+                    }
+                }
+                
+                updateUI();
+                
+            } catch (error) {
+                console.error('❌ ERRO INESPERADO em toggleCameraPreview:', error);
+            } finally {
+                toggleCameraInProgress = false;
+                console.log('🧹 toggleCameraPreview finalizado, flag limpa');
+            }
+        }
+        
+        let monitorInterval = null;
+        
+        function startStreamMonitoring() {
+            if (monitorInterval) return;
+            
+            console.log('🔍 Iniciando monitoramento contínuo do stream...');
+            
+            monitorInterval = setInterval(() => {
+                if (currentStream && currentStream.active) {
+                    const videoTracks = currentStream.getVideoTracks();
+                    const activeTracks = videoTracks.filter(t => t.readyState === 'live');
+                    
+                    console.log(`✅ Monitor: Stream ativo (${activeTracks.length}/${videoTracks.length} tracks live)`);
+                    
+                    if (localVideo.paused) {
+                        console.warn('⚠️ Monitor: Vídeo pausou, tentando reativar...');
+                        localVideo.play().catch(error => {
+                            console.error('❌ Monitor: Erro ao reativar:', error.message);
+                        });
+                    }
+                    
+                    updateUI();
+                    
+                } else {
+                    console.error('❌ Monitor: Stream foi desativado!');
+                    clearInterval(monitorInterval);
+                    monitorInterval = null;
+                    updateUI();
+                }
+            }, 5000); // Verificar a cada 5 segundos
+        }
+        
+        function stopEverything() {
+            console.log('🛑 Parando tudo...');
+            
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            
+            localVideo.srcObject = null;
+            isCameraPreviewOn = false;
+            isAudioOn = false;
+            isVideoOn = false;
+            isScreenSharing = false;
+            isConnected = false;
+            
+            if (monitorInterval) {
+                clearInterval(monitorInterval);
+                monitorInterval = null;
+            }
+            
+            // Limpar flags
+            ensureStreamInProgress = false;
+            toggleCameraInProgress = false;
+            createStreamInProgress = false;
+            
+            updateUI();
+            console.log('✅ Tudo parado');
+        }
+        
+        // Event listeners
+        cameraBtn.addEventListener('click', toggleCameraPreview);
+        stopAllBtn.addEventListener('click', stopEverything);
+        
+        // Inicialização
+        updateUI();
+        console.log('🎯 Simulação EXATA da aplicação principal carregada');
+        console.log('💡 Esta página reproduz EXATAMENTE o ambiente da página de consultations');
+        console.log('🔧 Todas as proteções e correções estão implementadas');
+        console.log('📹 Clique no botão da câmera para testar');
+    </script>
+</body>
+</html>
+
+

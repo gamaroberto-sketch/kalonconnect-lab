@@ -1,0 +1,45 @@
+{
+    "name": "kalonconnect",
+    "version": "0.1.0",
+    "private": true,
+    "description": "KalonConnect Terapist - Sistema de gestão para terapeutas",
+    "author": "KalonConnect",
+    "homepage": "https://kalonconnect.com",
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint",
+        "dev-lab": "next dev -p 3001 --webpack",
+        "dev-lab:ngrok": "node scripts/dev-with-ngrok.js",
+        "dev-lab:ngrok-simples": "node scripts/dev-with-ngrok-simples.js",
+        "dev-safe": "FAST_REFRESH=false next dev -p 3001 --webpack",
+        "dev-legacy": "cross-env NEXT_WEBPACK_HMR=false next dev -p 3001 --webpack"
+    },
+    "dependencies": {
+        "@livekit/components-react": "^2.9.16",
+        "framer-motion": "^12.23.24",
+        "google-auth-library": "^10.4.2",
+        "googleapis": "^164.1.0",
+        "livekit-client": "^2.16.0",
+        "livekit-server-sdk": "^2.14.2",
+        "lucide-react": "^0.546.0",
+        "next": "16.0.0",
+        "pdfkit": "^0.15.0",
+        "react": "19.2.0",
+        "react-dom": "19.2.0",
+        "react-draggable": "^4.4.6",
+        "react-hotkeys-hook": "^5.2.1",
+        "react-player": "^3.3.3",
+        "react-resizable-panels": "^3.0.6",
+        "react-rnd": "^10.5.2",
+        "recharts": "^2.12.7",
+        "simple-peer": "^9.11.1"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4",
+        "eslint": "^9",
+        "eslint-config-next": "16.0.0",
+        "tailwindcss": "^4"
+    }
+}

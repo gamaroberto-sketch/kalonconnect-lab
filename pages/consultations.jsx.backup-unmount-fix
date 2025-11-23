@@ -1,0 +1,42 @@
+"use client";
+
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Heart,
+  MessageCircle,
+  User,
+  FileText,
+  Upload,
+  Circle,
+  Share2,
+  Link
+} from 'lucide-react';
+
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
+import ProtectedRoute from '../components/ProtectedRoute';
+import { VideoPanelProvider } from '../components/VideoPanelContext';
+import VideoSurface from '../components/VideoSurface';
+import VideoControls from '../components/VideoControls';
+import LiveKitRoomWrapped from '../components/video/LiveKitRoomWrapped';
+import ChatPanel from '../components/ChatPanel';
+import NotesPanel from '../components/NotesPanel';
+import FilesPanel from '../components/FilesPanel';
+import RecordingPanel from '../components/RecordingPanel';
+import RelaxationPlayer from '../components/RelaxationPlayer';
+import SessionSettings from '../components/SessionSettings';
+import GoogleDriveModal from '../components/GoogleDriveModal';
+import FeedbackSystem from '../components/FeedbackSystem';
+import ClientRecordPanel from '../components/ClientRecordPanel';
+import ShareConsultationLink from '../components/ShareConsultationLink';
+import { useTheme } from '../components/ThemeProvider';
+import { getProfile } from '../lib/profile';
+import { useAuth } from '../components/AuthContext';
+import { UsageTrackerProvider } from '../components/UsageTrackerContext';
+import { useUsageTracker } from '../hooks/useUsageTracker';
+import { useAccessControl } from '../hooks/useAccessControl';
+import { useVideoPanel } from '../components/VideoPanelContext';
+
+
+

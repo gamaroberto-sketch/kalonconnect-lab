@@ -1,0 +1,346 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap&subset=latin,latin-ext');
+@import "tailwindcss";
+
+/* Kalon OS - Estilos Globais */
+.header-container,
+header {
+  position: relative;
+  z-index: 1000;
+}
+
+.consult-panel {
+  pointer-events: auto;
+}
+
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-background, #f9fafb);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-background, #f9fafb);
+  color: var(--color-text-primary, #111827);
+  font-feature-settings: 'rlig' 1, 'calt' 1;
+}
+
+h1, h2, h3, h4, h5, h6, .main-menu {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+/* Quick local apenas para a marca Kalon (prioridade sobre Quicksand do Google) */
+
+
+.dark body {
+  background-color: var(--color-background-dark, #111827);
+  color: var(--color-text-light, #f9fafb);
+}
+
+/* Animações personalizadas */
+@keyframes kalonFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kalonSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kalonFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.kalon-fade-in {
+  animation: kalonFadeIn 0.6s ease-out;
+}
+
+.kalon-slide-up {
+  animation: kalonSlideUp 0.8s ease-out;
+}
+
+.kalon-float {
+  animation: kalonFloat 3s ease-in-out infinite;
+}
+
+/* Gradientes personalizados */
+.kalon-gradient {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6, #6366f1);
+}
+
+.kalon-gradient-text {
+  background: linear-gradient(90deg, #ec4899, #8b5cf6, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Botões com bordas arredondadas */
+.kalon-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.kalon-button:hover {
+  transform: scale(1.05);
+}
+
+.kalon-button:active {
+  transform: scale(0.95);
+}
+
+
+.kalon-button-primary {
+  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.kalon-button-primary:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.kalon-button-secondary {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.dark .kalon-button-secondary {
+  background-color: rgba(31, 41, 55, 0.8);
+  color: #d1d5db;
+  border-color: #374151;
+}
+
+.kalon-button-secondary:hover {
+  background-color: #f9fafb;
+}
+
+.dark .kalon-button-secondary:hover {
+  background-color: #374151;
+}
+
+/* Cards com sombra suave */
+.kalon-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.dark .kalon-card {
+  background-color: rgba(31, 41, 55, 0.8);
+  border-color: rgba(55, 65, 81, 0.5);
+}
+
+/* Inputs estilizados */
+.kalon-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s;
+}
+
+.dark .kalon-input {
+  border-color: #374151;
+  background-color: rgba(31, 41, 55, 0.8);
+}
+
+.kalon-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #ec4899;
+  border-color: transparent;
+}
+
+/* Scrollbar personalizada */
+.kalon-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.kalon-scrollbar::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+  border-radius: 9999px;
+}
+
+.dark .kalon-scrollbar::-webkit-scrollbar-track {
+  background-color: #1f2937;
+}
+
+.kalon-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 9999px;
+}
+
+.kalon-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+.dark .kalon-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+.dark .kalon-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+/* Modo escuro automático baseado na preferência do sistema */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* Estilos para handles de redimensionamento */
+.resize-handle-bottom,
+.resize-handle-bottom-right,
+.resize-handle-bottom-left,
+.resize-handle-left,
+.resize-handle-right,
+.resize-handle-top,
+.resize-handle-top-left,
+.resize-handle-top-right {
+  position: absolute;
+  background: transparent;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.resize-handle-bottom {
+  bottom: -4px;
+  left: 4px;
+  right: 4px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.resize-handle-bottom-right {
+  bottom: -4px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  cursor: nw-resize;
+  border-radius: 0 0 0 4px;
+}
+
+.resize-handle-bottom-left {
+  bottom: -4px;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  cursor: ne-resize;
+  border-radius: 0 0 4px 0;
+}
+
+.resize-handle-left {
+  left: -4px;
+  top: 4px;
+  bottom: 4px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.resize-handle-right {
+  right: -4px;
+  top: 4px;
+  bottom: 4px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.resize-handle-top {
+  top: -4px;
+  left: 4px;
+  right: 4px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.resize-handle-top-left {
+  top: -4px;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  cursor: nw-resize;
+  border-radius: 4px 0 0 0;
+}
+
+.resize-handle-top-right {
+  top: -4px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  cursor: ne-resize;
+  border-radius: 0 4px 0 0;
+}
+
+.resize-handle-bottom:hover,
+.resize-handle-bottom-right:hover,
+.resize-handle-bottom-left:hover,
+.resize-handle-left:hover,
+.resize-handle-right:hover,
+.resize-handle-top:hover,
+.resize-handle-top-left:hover,
+.resize-handle-top-right:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* Estilos para widget header */
+.widget-header {
+  cursor: move;
+  user-select: none;
+}
+
+.widget-header:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.dark .widget-header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.consult-button,
+.consult-button-active {
+  background: transparent !important;
+}
+
+.consult-button:hover,
+.consult-button:focus,
+.consult-button:active {
+  background: transparent !important;
+}
+
+:root {
+  --alturaHeader: 80px;
+  --corFundoEscuro: #0f172a;
+  --corMarcaMedia: rgba(148, 163, 184, 0.35);
+}

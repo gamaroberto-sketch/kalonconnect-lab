@@ -1,0 +1,26 @@
+{
+  "sessionId": "consultation-uolcombr-f1fe7d3af0ea4f9f902fefc5399c14dc",
+  "userEmail": "bobgama@uol.com.br",
+  "userName": "Roberto Gama",
+  "version": "PRO",
+  "startedAt": "2025-11-12T21:29:58.269Z",
+  "endedAt": null,
+  "durationMinutes": null,
+  "detailLevel": "advanced",
+  "actions": [
+    {
+      "time": "00:00:00",
+      "type": "closePanel",
+      "panel": "notes",
+      "featureKey": null,
+      "metadata": {}
+    },
+    {
+      "time": "00:00:00",
+      "type": "closePanel",
+      "panel": "notes",
+      "featureKey": null,
+      "metadata": {}
+    }
+  ]
+}

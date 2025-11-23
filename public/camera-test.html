@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Câmera - KalonConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        video {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background: #000;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .success {
+            color: #28a745;
+        }
+        .info {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Teste de Câmera - KalonConnect</h1>
+        <p>Esta página testa o acesso à câmera com diferentes constraints.</p>
+        
+        <div>
+            <button id="testBtn">🧪 Executar Testes de Constraints</button>
+            <button id="clearBtn">🧹 Limpar Logs</button>
+            <button id="stopBtn" disabled>🛑 Parar Stream</button>
+        </div>
+        
+        <video id="testVideo" autoplay muted playsinline></video>
+        
+        <div id="logContainer" class="log">
+            <div class="info">📋 Logs aparecerão aqui...</div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('testVideo');
+        const testBtn = document.getElementById('testBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const logContainer = document.getElementById('logContainer');
+        
+        let currentStream = null;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            logContainer.innerHTML = '<div class="info">📋 Logs limpos...</div>';
+        }
+        
+        async function runConstraintTests() {
+            log('🎯 === INICIANDO TESTE COMPLETO DE CONSTRAINTS ===', 'info');
+            
+            // Verificar suporte
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                log('❌ ERRO: getUserMedia não suportado', 'error');
+                return;
+            }
+            
+            log('✅ getUserMedia suportado', 'success');
+            log(`🌐 Protocolo: ${window.location.protocol}`, 'info');
+            log(`🔒 Contexto seguro: ${window.isSecureContext}`, 'info');
+            
+            // Verificar dispositivos
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                log(`📱 Dispositivos de vídeo encontrados: ${videoDevices.length}`, 'info');
+                
+                videoDevices.forEach((device, index) => {
+                    log(`   ${index + 1}. ${device.label || 'Dispositivo sem nome'} (${device.deviceId.substring(0, 8)}...)`, 'info');
+                });
+                
+                if (videoDevices.length === 0) {
+                    log('❌ ERRO: Nenhuma câmera encontrada', 'error');
+                    return;
+                }
+            } catch (error) {
+                log(`⚠️ Erro ao enumerar dispositivos: ${error.message}`, 'error');
+            }
+            
+            // Constraints de teste
+            const testConstraints = [
+                { name: 'HD 720p', constraints: { video: { width: 1280, height: 720 }, audio: true } },
+                { name: 'VGA 480p', constraints: { video: { width: 640, height: 480 }, audio: true } },
+                { name: 'Básico Width True', constraints: { video: { width: true }, audio: true } },
+                { name: 'User Facing', constraints: { video: { facingMode: "user" }, audio: true } },
+                { name: 'Full HD 1080p', constraints: { video: { width: 1920, height: 1080 }, audio: true } },
+                { name: 'Só Vídeo HD', constraints: { video: { width: 1280, height: 720 }, audio: false } },
+                { name: 'Só Vídeo VGA', constraints: { video: { width: 640, height: 480 }, audio: false } },
+                { name: 'Só Vídeo Básico', constraints: { video: true, audio: false } },
+                { name: 'Mínimo', constraints: { video: { width: 320, height: 240 }, audio: false } },
+                { name: 'Último Recurso', constraints: { video: {} } }
+            ];
+            
+            testBtn.disabled = true;
+            let successfulStream = null;
+            const results = [];
+            
+            log('🧪 === INICIANDO TESTES ===', 'info');
+            
+            for (const test of testConstraints) {
+                try {
+                    log(`🔄 TESTANDO: ${test.name}`, 'info');
+                    log(`📋 Constraints: ${JSON.stringify(test.constraints)}`, 'info');
+                    
+                    const startTime = Date.now();
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Timeout após 15 segundos')), 15000)
+                    );
+                    
+                    const streamPromise = navigator.mediaDevices.getUserMedia(test.constraints);
+                    const stream = await Promise.race([streamPromise, timeoutPromise]);
+                    const duration = Date.now() - startTime;
+                    
+                    log(`✅ SUCESSO: ${test.name} em ${duration}ms`, 'success');
+                    
+                    // Analisar stream
+                    const videoTracks = stream.getVideoTracks();
+                    const audioTracks = stream.getAudioTracks();
+                    
+                    log(`📊 Stream: ${stream.id?.substring(0, 8)} (${videoTracks.length} vídeo, ${audioTracks.length} áudio)`, 'info');
+                    
+                    if (videoTracks.length > 0) {
+                        const track = videoTracks[0];
+                        const settings = track.getSettings ? track.getSettings() : {};
+                        log(`📐 Dimensões: ${settings.width || 'N/A'}x${settings.height || 'N/A'}`, 'info');
+                        log(`🎥 Frame Rate: ${settings.frameRate || 'N/A'} fps`, 'info');
+                        log(`🔴 Track: ${track.readyState} (${track.enabled ? 'enabled' : 'disabled'})`, 'info');
+                        
+                        // Verificar se trouxe vídeo real
+                        if (settings.width > 2 && settings.height > 2) {
+                            log(`🎯 VÍDEO REAL OBTIDO: ${settings.width}x${settings.height}`, 'success');
+                        }
+                    }
+                    
+                    results.push({ name: test.name, success: true, duration, stream });
+                    
+                    // Usar primeiro stream bem-sucedido
+                    if (!successfulStream) {
+                        successfulStream = stream;
+                        log(`🎯 USANDO: ${test.name} como stream principal`, 'success');
+                        
+                        // Conectar ao vídeo
+                        video.srcObject = stream;
+                        currentStream = stream;
+                        stopBtn.disabled = false;
+                        
+                        // Aguardar vídeo carregar
+                        video.onloadedmetadata = () => {
+                            log(`📺 Vídeo carregado: ${video.videoWidth}x${video.videoHeight}`, 'success');
+                        };
+                        
+                        video.onplaying = () => {
+                            log(`🎬 Vídeo reproduzindo: ${video.videoWidth}x${video.videoHeight}`, 'success');
+                        };
+                        
+                    } else {
+                        // Parar streams adicionais
+                        stream.getTracks().forEach(track => track.stop());
+                        log(`🛑 Stream ${test.name} parado (não é o principal)`, 'info');
+                    }
+                    
+                } catch (error) {
+                    log(`❌ FALHOU: ${test.name} - ${error.name}: ${error.message}`, 'error');
+                    results.push({ name: test.name, success: false, error });
+                    
+                    if (error.name === 'NotAllowedError') {
+                        log('🚫 ERRO FATAL: Permissão negada', 'error');
+                        break;
+                    }
+                }
+            }
+            
+            // Relatório final
+            log('📋 === RELATÓRIO FINAL ===', 'info');
+            let hasRealVideo = false;
+            
+            results.forEach((result, index) => {
+                if (result.success) {
+                    log(`✅ ${index + 1}. ${result.name}: SUCESSO (${result.duration}ms)`, 'success');
+                    const videoTracks = result.stream.getVideoTracks();
+                    if (videoTracks.length > 0) {
+                        const settings = videoTracks[0].getSettings ? videoTracks[0].getSettings() : {};
+                        if (settings.width > 2 && settings.height > 2) {
+                            hasRealVideo = true;
+                        }
+                    }
+                } else {
+                    log(`❌ ${index + 1}. ${result.name}: FALHOU - ${result.error.message}`, 'error');
+                }
+            });
+            
+            if (hasRealVideo) {
+                log('🎉 SUCESSO GERAL: Vídeo real obtido!', 'success');
+            } else {
+                log('❌ FALHA GERAL: Nenhum vídeo real obtido', 'error');
+                log('🔧 RECOMENDAÇÕES:', 'info');
+                log('   1. Verificar se câmera está conectada', 'info');
+                log('   2. Atualizar drivers da câmera', 'info');
+                log('   3. Fechar outros aplicativos que usam câmera', 'info');
+                log('   4. Reiniciar o navegador', 'info');
+                log('   5. Testar em outro navegador', 'info');
+            }
+            
+            testBtn.disabled = false;
+        }
+        
+        function stopStream() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                    log(`🛑 Track ${track.kind} parado`, 'info');
+                });
+                video.srcObject = null;
+                currentStream = null;
+                stopBtn.disabled = true;
+                log('🛑 Stream parado e vídeo limpo', 'info');
+            }
+        }
+        
+        testBtn.addEventListener('click', runConstraintTests);
+        clearBtn.addEventListener('click', clearLogs);
+        stopBtn.addEventListener('click', stopStream);
+        
+        // Log inicial
+        log('🎯 Página de teste carregada. Clique em "Executar Testes" para começar.', 'info');
+    </script>
+</body>
+</html>
+
+

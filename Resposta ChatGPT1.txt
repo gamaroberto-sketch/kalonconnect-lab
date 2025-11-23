@@ -1,0 +1,506 @@
+Perfeito — obrigado por enviar o VideoChat.jsx. Agora posso gerar uma correção prática e segura qprompt cuidadoso para o Cursor aplicar a alteração apenas no LAB.
+
+Resumo do que vou entregar agora:
+
+Um arquivo VideoChat.jsx obrigatório que:
+
+Usa o LiveKit quando existe um room(ou seja, quando VideoChatfor renderizado dentro de um LiveKitRoom/ LiveKitRoomWrapped).
+
+Controle a câmera (ligar/desligar) , o microfone (ligar/desligar) , o compartilhamento de tela , a tela cheia e o encerramento da chamada com as APIs do LiveKit: localParticipant.setCameraEnabled, setMicrophoneEnabled, publishTrack/unpublishTrackpara compartilhamento de tela e room.disconnect()para encerrar.
+
+Se não houver LiveKit (modo fallback), mantém a lógica atual com getUserMedia— assim não quebra enquanto o Cursor aplica mudanças.
+
+Mantém layout visual bem parecido com o original (botões, placeholders, fullscreen).
+
+Um prompt cuidado para o Cursor com instruções passo-a-passo para:
+
+Substitua o arquivo somente no LAB ( C:\kalonos\kalonconnect-lab\components\VideoChat.jsx),
+
+Garantir que VideoChatseja renderizado dentro do LiveKitRoomWrapped(ou VideoSystemManagerque você usar),
+
+Testar em http://localhost:3001,
+
+Fazer backup/commit antes.
+
+1) Novo VideoChat.jsx(cole e substitui
+
+Observação: este componente detecta se há um roomLiveKit (via useRoomContext) e, se houver, usa diretamente as APIs do Li
+
+// C:\kalonos\kalonconnect-lab\components\VideoChat.jsx
+'use client';
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Video,
+  VideoOff,
+  Mic,
+  MicOff,
+  Share,
+  Share2,
+  Users,
+  Settings,
+  Maximize,
+  Minimize,
+  PhoneOff
+} from 'lucide-react';
+
+import { useRoomContext, useLocalParticipant } from '@livekit/components-react';
+import { createLocalVideoTrack, createLocalAudioTrack } from 'livekit-client';
+
+/**
+ * VideoChat — versão LiveKit-aware
+ *
+ * - Se for renderizado dentro de um LiveKitRoom (useRoomContext != null), usa LiveKit APIs.
+ * - Caso contrário, usa getUserMedia como fallback (comportamento antigo).
+ *
+ * IMPORTANTE: este componente não inicia a conexão com LiveKit.
+ * Deve ser renderizado dentro do LiveKitRoomWrapped ou de um provider equivalento.
+ */
+
+const VideoChat = ({ isConnected: propIsConnected }) => {
+  // Fallback local state (quando não há LiveKit)
+  const [isVideoOn, setIsVideoOn] = useState(true);
+  const [isAudioOn, setIsAudioOn] = useState(true);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isCallActive, setIsCallActive] = useState(false);
+
+  // Refs para elementos DOM (foco apenas para fallback)
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+  const localStreamRef = useRef(null);
+  const screenTrackRef = useRef(null);
+
+  // LiveKit context
+  let room = null;
+  let localParticipant = null;
+  try {
+    room = useRoomContext();
+  } catch (e) {
+    room = null;
+  }
+
+  try {
+    const lpHook = useLocalParticipant();
+    if (lpHook) localParticipant = lpHook.localParticipant;
+  } catch (e) {
+    localParticipant = null;
+  }
+
+  // Determine connected state: prefer prop, then room state
+  const isConnected = propIsConnected || (room && room.state === 'connected');
+
+  // ---------- EFFECT: initialize when not using LiveKit (fallback) ----------
+  useEffect(() => {
+    if (room) {
+      // when LiveKit is used, we don't perform getUserMedia here
+      setIsCallActive(true);
+      return;
+    }
+
+    // fallback: only initialize local stream when prop says connected
+    let mounted = true;
+    const init = async () => {
+      if (!isConnected) return;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+        if (!mounted) return;
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+          localStreamRef.current = stream;
+        }
+        setIsCallActive(true);
+      } catch (err) {
+        console.error('Erro ao acessar câmera (fallback):', err);
+      }
+    };
+    init();
+    return () => {
+      mounted = false;
+      // stop fallback tracks
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach((t) => t.stop());
+        localStreamRef.current = null;
+      }
+    };
+  }, [isConnected, room]);
+
+  // ---------- LiveKit toggles ----------
+  const toggleVideo = useCallback(async () => {
+    if (localParticipant) {
+      try {
+        // LiveKit: toggle camera (this will publish/unpublish automatically)
+        const current = !!localParticipant.getTrackPublications?.().find(p => p.source === 'camera' && !p.isMuted);
+        // use setCameraEnabled if available (preferred)
+        if (typeof localParticipant.setCameraEnabled === 'function') {
+          await localParticipant.setCameraEnabled(!current);
+          setIsVideoOn(!current);
+        } else {
+          // fallback: try to create a track and publish/unpublish manually
+          const pub = localParticipant.getTrackPublications?.().find(p => p.source === 'camera');
+          if (pub && pub.track) {
+            pub.track.enabled = !pub.track.enabled;
+            setIsVideoOn(pub.track.enabled);
+          } else {
+            // create a video track and publish
+            const track = await createLocalVideoTrack();
+            await localParticipant.publishTrack(track);
+            setIsVideoOn(true);
+          }
+        }
+      } catch (err) {
+        console.error('Erro toggling LiveKit camera:', err);
+      }
+      return;
+    }
+
+    // fallback behavior (existing local stream)
+    if (localStreamRef.current) {
+      const videoTrack = localStreamRef.current.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = !isVideoOn;
+        setIsVideoOn(!isVideoOn);
+      }
+    }
+  }, [localParticipant, isVideoOn]);
+
+  const toggleAudio = useCallback(async () => {
+    if (localParticipant) {
+      try {
+        if (typeof localParticipant.setMicrophoneEnabled === 'function') {
+          const current = !!localParticipant.getTrackPublications?.().find(p => p.kind === 'audio' && !p.isMuted);
+          await localParticipant.setMicrophoneEnabled(!current);
+          setIsAudioOn(!current);
+        } else {
+          const pub = localParticipant.getTrackPublications?.().find(p => p.kind === 'audio');
+          if (pub && pub.track) {
+            pub.track.enabled = !pub.track.enabled;
+            setIsAudioOn(pub.track.enabled);
+          } else {
+            const track = await createLocalAudioTrack();
+            await localParticipant.publishTrack(track);
+            setIsAudioOn(true);
+          }
+        }
+      } catch (err) {
+        console.error('Erro toggling LiveKit mic:', err);
+      }
+      return;
+    }
+
+    // fallback local audio toggle
+    if (localStreamRef.current) {
+      const audioTrack = localStreamRef.current.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !isAudioOn;
+        setIsAudioOn(!isAudioOn);
+      }
+    }
+  }, [localParticipant, isAudioOn]);
+
+  const toggleScreenShare = useCallback(async () => {
+    if (localParticipant && room) {
+      try {
+        // If already sharing, unpublish the tracked screen
+        if (screenTrackRef.current) {
+          const t = screenTrackRef.current;
+          // unpublish
+          const pubs = localParticipant.getTrackPublications?.();
+          const pub = pubs?.find((p) => p.track === t);
+          if (pub) {
+            await localParticipant.unpublishTrack(t);
+          } else {
+            // best effort: stop
+            t.stop?.();
+          }
+          screenTrackRef.current = null;
+          setIsScreenSharing(false);
+          return;
+        }
+
+        // start screen share
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        const track = stream.getVideoTracks()[0];
+        if (!track) throw new Error('No display track');
+        // publish using LiveKit low-level API
+        await localParticipant.publishTrack(track);
+        screenTrackRef.current = track;
+        setIsScreenSharing(true);
+        // when stream ends, cleanup
+        track.onended = () => {
+          (async () => {
+            try {
+              if (screenTrackRef.current) {
+                const t = screenTrackRef.current;
+                const pubs = localParticipant.getTrackPublications?.();
+                const pub = pubs?.find((p) => p.track === t);
+                if (pub) {
+                  await localParticipant.unpublishTrack(t);
+                }
+                t.stop?.();
+                screenTrackRef.current = null;
+              }
+            } catch (err) {
+              console.warn('Erro ao encerrar screen share cleanup', err);
+            }
+            setIsScreenSharing(false);
+          })();
+        };
+      } catch (err) {
+        console.error('Erro ao compartilhar tela via LiveKit:', err);
+      }
+      return;
+    }
+
+    // fallback screen share (local demo)
+    try {
+      if (!isScreenSharing) {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = screenStream;
+        }
+        setIsScreenSharing(true);
+      } else {
+        if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+        setIsScreenSharing(false);
+      }
+    } catch (err) {
+      console.error('Erro ao compartilhar tela (fallback):', err);
+    }
+  }, [localParticipant, room, isScreenSharing]);
+
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((v) => !v);
+  }, []);
+
+  const endCall = useCallback(async () => {
+    // LiveKit disconnect if available
+    try {
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach((t) => t.stop());
+        localStreamRef.current = null;
+      }
+      if (screenTrackRef.current) {
+        try {
+          const t = screenTrackRef.current;
+          const pubs = localParticipant?.getTrackPublications?.();
+          const pub = pubs?.find((p) => p.track === t);
+          if (pub && localParticipant) {
+            await localParticipant.unpublishTrack(t);
+          }
+          t.stop?.();
+          screenTrackRef.current = null;
+        } catch (err) {
+          console.warn('Erro ao limpar screenTrackRef', err);
+        }
+      }
+      if (room && typeof room.disconnect === 'function') {
+        await room.disconnect();
+      }
+    } catch (err) {
+      console.error('Erro ao encerrar chamada LiveKit:', err);
+    } finally {
+      setIsCallActive(false);
+      setIsVideoOn(true);
+      setIsAudioOn(true);
+      setIsScreenSharing(false);
+    }
+  }, [room, localParticipant]);
+
+  // Sync local UI state with LiveKit current publications (when room/localParticipant changes)
+  useEffect(() => {
+    if (!localParticipant) return;
+    // check publications
+    const pubs = localParticipant.getTrackPublications?.() || [];
+    const hasVideoPub = pubs.some((p) => p.source === 'camera' || p.kind === 'video');
+    const hasAudioPub = pubs.some((p) => p.kind === 'audio');
+    setIsVideoOn(hasVideoPub);
+    setIsAudioOn(hasAudioPub);
+    setIsCallActive(room && room.state === 'connected');
+  }, [localParticipant, room && room.state]);
+
+  return (
+    <div className="space-y-4">
+      {/* Video Container */}
+      <div className={`relative bg-gray-900 rounded-xl overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : 'h-96'}`}>
+        {/* If using LiveKitRoomWrapped for rendering video grid, this component only shows a placeholder area */}
+        <div className="absolute inset-0 flex items-center justify-center text-white">
+          {room ? (
+            // LiveKit rendering is handled by LiveKitRoomWrapped; show minimal status
+            <div className="text-center">
+              <div className="text-lg font-semibold">LiveKit conectado</div>
+              <div className="text-sm text-gray-300">{room?.name || ''}</div>
+            </div>
+          ) : (
+            // Fallback: show remote video or placeholder
+            <>
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  display: isConnected ? 'block' : 'none'
+                }}
+              />
+              {!isConnected && (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center text-white">
+                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Users className="w-8 h-8" />
+                    </div>
+                    <p className="text-lg font-medium">Aguardando conexão...</p>
+                    <p className="text-sm opacity-75">O terapeuta será conectado em breve</p>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Local Preview */}
+        <div className="absolute bottom-4 right-4 w-32 h-24 bg-gray-800 rounded-lg overflow-hidden border-2 border-white shadow-lg">
+          {room ? (
+            <div className="w-full h-full flex items-center justify-center text-xs text-white/80">
+              Pré-visualização (LiveKit)
+            </div>
+          ) : (
+            <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+          )}
+
+          {!isVideoOn && (
+            <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
+              <VideoOff className="w-6 h-6 text-white" />
+            </div>
+          )}
+        </div>
+
+        {/* Connection Status */}
+        <div className="absolute top-4 left-4">
+          <div className={`px-3 py-1 rounded-full text-xs font-medium ${isConnected ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white'}`}>
+            {isConnected ? 'Conectado' : 'Conectando...'}
+          </div>
+        </div>
+
+        {/* Fullscreen Button */}
+        <button onClick={toggleFullscreen} className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-lg transition-colors">
+          {isFullscreen ? <Minimize className="w-4 h-4 text-white" /> : <Maximize className="w-4 h-4 text-white" />}
+        </button>
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-center space-x-4">
+        <motion.button onClick={toggleVideo} className={`p-3 rounded-full transition-all duration-200 ${isVideoOn ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-red-500 hover:bg-red-600 text-white'}`} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          {isVideoOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+        </motion.button>
+
+        <motion.button onClick={toggleAudio} className={`p-3 rounded-full transition-all duration-200 ${isAudioOn ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-red-500 hover:bg-red-600 text-white'}`} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+        </motion.button>
+
+        <motion.button onClick={toggleScreenShare} className={`p-3 rounded-full transition-all duration-200 ${isScreenSharing ? 'bg-purple-500 hover:bg-purple-600 text-white' : 'bg-gray-500 hover:bg-gray-600 text-white'}`} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          {isScreenSharing ? <Share2 className="w-5 h-5" /> : <Share className="w-5 h-5" />}
+        </motion.button>
+
+        <motion.button className="p-3 bg-gray-500 hover:bg-gray-600 text-white rounded-full transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <Settings className="w-5 h-5" />
+        </motion.button>
+
+        <motion.button onClick={endCall} className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <PhoneOff className="w-5 h-5" />
+        </motion.button>
+      </div>
+
+      {/* Call Status */}
+      {isCallActive && (
+        <div className="text-center">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-sm font-medium">Sessão ativa</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default VideoChat;
+
+Notas técnicas sobre esse arquivo
+
+Usei useRoomContexte useLocalParticipantfaço @livekit/components-react. Se o VideoChatfor renderizado fora de um LiveKitRoom, esses ganchos podem lançar; por isso há try/catchem torno das invocações para detectar ausência de LiveKit e usar fallback.
+
+Para screen share com LiveKit eu uso navigator.mediaDevices.getDisplayMedia()e localParticipant.publishTrack(track). Dependendo da versão, você pode precisar usar createLocalVideoTrack({ deviceId: ... })APIs auxiliares. O código tenta publicar diretamente o MediaStreamTrack.
+
+O componente não tenta criar a conexão coLiveKitRoomWrappedou VideoSystemManagerque envolva o provedor). VideoSystemManagerdo patch anterior já passa LiveKitRoomWrappedquando livekitPropsé fornecido.
+
+Se o LiveKitRoomWrappedimplementar no seu laboratório para diferentes, ajuste importações/nomes.
+
+2) Prompt CUIDADOSO para o Cursor (copiar e colar)
+
+Instruções que o Cursor deve seguir exatamente . Trabalharem `C:\kalonos\kalC:\kalonos\kalonconnect-lab. Testar em `http:/http://localhost:3001. Fazer bac
+
+PROMPT PARA O CURSOR — SUBSTITUIR VideoChat.jsx E INTEGRAR COM LIVEKIT (LAB)
+
+Trabalhar apenas em:
+C:\kalonos\kalonconnect-lab
+Nunca tocar em C:\kalonos\kalonconnect (produção).
+
+1) Faça backup rápido:
+   cd C:\kalonos\kalonconnect-lab
+   git checkout -b fix/livekit-videochat-lab
+
+2) Substitua o arquivo:
+   components\VideoChat.jsx
+   -> substitua TODO o conteúdo do arquivo pelo código fornecido (cole o novo VideoChat.jsx exato).
+
+3) Verifique imports:
+   - Confirme que @livekit/components-react está instalado no lab (package.json).
+     Se não estiver: npm install @livekit/components-react livekit-client
+   - Confirme que components\video\LiveKitRoomWrapped.jsx existe e funciona (não ajustar aqui).
+   - Se LiveKitRoomWrapped estiver em outro caminho, ajuste import no VideoSystemManager (não no VideoChat).
+
+4) Garanta que a página de consulta esteja usando VideoSystemManager que renderiza LiveKitRoomWrapped.
+   - Em pages/consultations/[id].jsx, certifique-se de que passe livekitProps para VideoSystemManager:
+     <VideoSystemManager livekitProps={{ token: tokenInfo.token, wsUrl: tokenInfo.wsUrl, roomName: tokenInfo.roomName }} />
+
+5) Rodar teste:
+   - No LAB execute:
+       set PORT=3001 && npm run dev
+     ou no PowerShell:
+       $env:PORT=3001; npm run dev
+   - Abra http://localhost:3001/consultations/<id-de-teste> em 2 dispositivos / abas.
+
+6) Testes a executar:
+   - Iniciar conexão (via a página que já gera token). Verificar console: room connected.
+   - Pressionar botão de câmera (toggleVideo). Verificar publicação/unpublication no console de LiveKit. Verificar visual: preview/desativado.
+   - Pressionar botão de microfone (toggleAudio). Testar mute/unmute.
+   - Pressionar Screen Share: inicie e pare; certifique-se de que o track é publicado/unpublished.
+   - Pressionar End Call: deve desconectar do room e parar tracks locais.
+   - Conferir logs do servidor LiveKit (pubs, tracks).
+
+7) Se ocorrer erro de hook "useRoomContext must be used within a LiveKitRoom", verifique se VideoChat está sendo renderizado DENTRO do componente LiveKitRoomWrapped; ajuste a ordem de renderização.
+
+8) Após testes OK:
+   git add components/VideoChat.jsx
+   git commit -m "fix(lab): integrate VideoChat controls with LiveKit"
+   git push origin fix/livekit-videochat-lab
+
+Se algo der errado, cole aqui os logs do console do navegador (erro completo) e o output do terminal do servidor dev. Faça rollback se necessário e me traga o erro para eu orientar a correção.
+
+3) Testes e verificações de que você (ou o Cursor) deve me trazer se algo falhar
+
+Console do navegador (captura do erro completo).
+
+Logs do backend (se houver erro no token).
+
+Estado do room(sem console):console.log('room', room?.state, room?.localParticipant?.getTrackPublications?.())
+
+Mensagens LiveKit de publicar/despublicar.
+
+Se houver erro de hooks (eg, "Invalid hook call" or "useRoomContext must be used within LiveKitRoom"), me avisar.

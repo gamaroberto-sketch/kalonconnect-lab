@@ -1,0 +1,19 @@
+{
+  "sessionId": "consultation-uolcombr-1c666aaf0a79410cb80e606f6dcd7cb0",
+  "userEmail": "bobgama@uol.com.br",
+  "userName": "Roberto Gama",
+  "version": "PRO",
+  "startedAt": "2025-11-15T00:21:34.402Z",
+  "endedAt": null,
+  "durationMinutes": null,
+  "detailLevel": "advanced",
+  "actions": [
+    {
+      "time": "00:00:01",
+      "type": "unmuteAudio",
+      "panel": null,
+      "featureKey": "audio",
+      "metadata": {}
+    }
+  ]
+}

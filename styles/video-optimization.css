@@ -1,0 +1,227 @@
+/* 🎯 CSS OTIMIZADO PARA VÍDEO - Garantir exibição completa */
+
+/* Reset e base para elementos de vídeo */
+video {
+  display: block !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+  background-color: #000 !important;
+  border: none !important;
+  outline: none !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+/* Container de vídeo otimizado */
+.video-container-optimized {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  background-color: #000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Vídeo em fullscreen */
+.video-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  object-fit: cover !important;
+  background-color: #000 !important;
+}
+
+/* Vídeo sempre visível */
+.video-always-visible {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+/* Vídeo oculto mas presente no DOM */
+.video-hidden-but-present {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  pointer-events: none !important;
+}
+
+/* Container principal de vídeo */
+.main-video-surface {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #000 !important;
+  overflow: hidden !important;
+}
+
+/* Garantir que o vídeo não seja cortado */
+.video-no-crop {
+  object-fit: contain !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Vídeo com crop (padrão) */
+.video-crop {
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Forçar hardware acceleration */
+.video-accelerated {
+  transform: translateZ(0) !important;
+  will-change: transform !important;
+  backface-visibility: hidden !important;
+  -webkit-transform: translateZ(0) !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+/* Remover qualquer interferência de CSS externo */
+.video-reset {
+  all: unset !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  background: #000 !important;
+}
+
+/* Diagnóstico - overlay para debug */
+.video-debug-overlay {
+  position: absolute !important;
+  top: 10px !important;
+  left: 10px !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  color: #00ff00 !important;
+  padding: 8px !important;
+  font-family: monospace !important;
+  font-size: 11px !important;
+  border-radius: 4px !important;
+  z-index: 1000 !important;
+  pointer-events: none !important;
+  white-space: pre-line !important;
+}
+
+/* Garantir que containers pais não interfiram */
+.video-parent-container {
+  position: relative !important;
+  overflow: visible !important;
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Media queries para diferentes tamanhos */
+@media (max-width: 768px) {
+  .video-responsive {
+    width: 100vw !important;
+    height: auto !important;
+    max-height: 50vh !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .video-responsive {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+/* Animações suaves para transições */
+.video-smooth-transition {
+  transition: opacity 0.3s ease-in-out !important;
+}
+
+/* Remover flicker durante mudanças */
+.video-no-flicker {
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+}
+
+/* Estilos específicos para diferentes estados */
+.video-state-loading {
+  background: #1a1a1a !important;
+  position: relative !important;
+}
+
+.video-state-loading::before {
+  content: "Carregando vídeo..." !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  z-index: 1 !important;
+}
+
+.video-state-error {
+  background: #2a1a1a !important;
+  border: 2px solid #ff4444 !important;
+}
+
+.video-state-error::before {
+  content: "Erro no vídeo" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  color: #ff4444 !important;
+  font-size: 14px !important;
+  z-index: 1 !important;
+}
+
+.video-state-success {
+  border: 2px solid #44ff44 !important;
+}
+
+/* Garantir que o vídeo seja sempre renderizado */
+.video-force-render {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Otimizações para performance */
+.video-performance-optimized {
+  contain: layout style paint !important;
+  content-visibility: auto !important;
+  will-change: auto !important;
+}
+
+/* Correção para Safari */
+@supports (-webkit-appearance: none) {
+  video {
+    -webkit-transform: translateZ(0) !important;
+    -webkit-backface-visibility: hidden !important;
+  }
+}
+
+/* Correção para Firefox */
+@-moz-document url-prefix() {
+  video {
+    transform: translateZ(0) !important;
+  }
+}
+
+
+

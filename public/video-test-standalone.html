@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Vídeo Standalone - HTML Puro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .video-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        video {
+            width: 320px;
+            height: 240px;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        .log {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .success { background: #155724; border: 1px solid #28a745; }
+        .error { background: #721c24; border: 1px solid #dc3545; }
+        .warning { background: #856404; border: 1px solid #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste de Vídeo HTML Puro</h1>
+        <p>Este teste valida o funcionamento básico da câmera sem React ou frameworks.</p>
+        
+        <div class="controls">
+            <button onclick="startCamera()">📹 Iniciar Câmera</button>
+            <button onclick="stopCamera()">⏹️ Parar Câmera</button>
+            <button onclick="runDiagnostics()">🔍 Executar Diagnóstico</button>
+            <button onclick="clearLog()">🧹 Limpar Log</button>
+        </div>
+        
+        <div class="video-container">
+            <div>
+                <h3>Vídeo Principal</h3>
+                <video id="mainVideo" autoplay muted playsinline></video>
+                <div id="mainStatus" class="status">Aguardando...</div>
+            </div>
+            
+            <div>
+                <h3>Vídeo de Teste</h3>
+                <video id="testVideo" autoplay muted playsinline></video>
+                <div id="testStatus" class="status">Aguardando...</div>
+            </div>
+        </div>
+        
+        <div>
+            <h3>📊 Log de Diagnóstico</h3>
+            <div id="logOutput" class="log">Pronto para iniciar testes...\n</div>
+        </div>
+    </div>
+
+    <script>
+        let currentStream = null;
+        let testStream = null;
+        
+        function log(message) {
+            const logOutput = document.getElementById('logOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            logOutput.textContent += `[${timestamp}] ${message}\n`;
+            logOutput.scrollTop = logOutput.scrollHeight;
+            console.log(message);
+        }
+        
+        function updateStatus(elementId, message, type = 'warning') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+        
+        async function startCamera() {
+            try {
+                log('🎯 Iniciando câmera...');
+                
+                // Verificar suporte
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('getUserMedia não suportado neste navegador');
+                }
+                
+                log('✅ getUserMedia suportado');
+                log('🔍 Protocolo: ' + window.location.protocol);
+                log('🔍 Contexto seguro: ' + window.isSecureContext);
+                
+                // Solicitar permissões
+                currentStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480 },
+                    audio: true
+                });
+                
+                log('✅ Stream criado: ' + currentStream.id);
+                log('📊 Tracks de vídeo: ' + currentStream.getVideoTracks().length);
+                log('📊 Tracks de áudio: ' + currentStream.getAudioTracks().length);
+                
+                // Atribuir ao vídeo principal
+                const mainVideo = document.getElementById('mainVideo');
+                mainVideo.srcObject = currentStream;
+                
+                log('✅ srcObject atribuído ao vídeo principal');
+                
+                // Aguardar eventos
+                mainVideo.addEventListener('loadedmetadata', () => {
+                    log('📺 loadedmetadata disparado');
+                    log(`📐 Dimensões: ${mainVideo.videoWidth}x${mainVideo.videoHeight}`);
+                });
+                
+                mainVideo.addEventListener('playing', () => {
+                    log('▶️ playing disparado');
+                    updateStatus('mainStatus', `Reproduzindo ${mainVideo.videoWidth}x${mainVideo.videoHeight}`, 'success');
+                });
+                
+                mainVideo.addEventListener('error', (e) => {
+                    log('❌ Erro no vídeo: ' + e.message);
+                    updateStatus('mainStatus', 'Erro: ' + e.message, 'error');
+                });
+                
+                // Criar segundo stream para teste
+                testStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+                
+                const testVideo = document.getElementById('testVideo');
+                testVideo.srcObject = testStream;
+                
+                testVideo.addEventListener('playing', () => {
+                    log('▶️ Vídeo de teste reproduzindo');
+                    updateStatus('testStatus', `Teste OK ${testVideo.videoWidth}x${testVideo.videoHeight}`, 'success');
+                });
+                
+                log('✅ Câmera iniciada com sucesso');
+                
+            } catch (error) {
+                log('❌ Erro ao iniciar câmera: ' + error.message);
+                updateStatus('mainStatus', 'Erro: ' + error.message, 'error');
+                updateStatus('testStatus', 'Erro: ' + error.message, 'error');
+            }
+        }
+        
+        function stopCamera() {
+            log('🛑 Parando câmera...');
+            
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                    log('🛑 Track parado: ' + track.kind);
+                });
+                currentStream = null;
+            }
+            
+            if (testStream) {
+                testStream.getTracks().forEach(track => track.stop());
+                testStream = null;
+            }
+            
+            document.getElementById('mainVideo').srcObject = null;
+            document.getElementById('testVideo').srcObject = null;
+            
+            updateStatus('mainStatus', 'Parado', 'warning');
+            updateStatus('testStatus', 'Parado', 'warning');
+            
+            log('✅ Câmera parada');
+        }
+        
+        async function runDiagnostics() {
+            log('🔍 === EXECUTANDO DIAGNÓSTICO COMPLETO ===');
+            
+            try {
+                // 1. Verificar permissões
+                log('1️⃣ Verificando permissões...');
+                const cameraPermission = await navigator.permissions.query({name: 'camera'});
+                const micPermission = await navigator.permissions.query({name: 'microphone'});
+                
+                log(`📹 Permissão câmera: ${cameraPermission.state}`);
+                log(`🎤 Permissão microfone: ${micPermission.state}`);
+                
+                // 2. Listar dispositivos
+                log('2️⃣ Listando dispositivos...');
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                const audioDevices = devices.filter(d => d.kind === 'audioinput');
+                
+                log(`📹 Câmeras encontradas: ${videoDevices.length}`);
+                videoDevices.forEach((device, i) => {
+                    log(`  ${i + 1}. ${device.label || 'Câmera ' + (i + 1)}`);
+                });
+                
+                log(`🎤 Microfones encontrados: ${audioDevices.length}`);
+                audioDevices.forEach((device, i) => {
+                    log(`  ${i + 1}. ${device.label || 'Microfone ' + (i + 1)}`);
+                });
+                
+                // 3. Testar stream atual
+                if (currentStream) {
+                    log('3️⃣ Analisando stream atual...');
+                    log(`🆔 Stream ID: ${currentStream.id}`);
+                    log(`✅ Stream ativo: ${currentStream.active}`);
+                    
+                    currentStream.getVideoTracks().forEach((track, i) => {
+                        log(`📹 Video Track ${i + 1}:`);
+                        log(`  - Label: ${track.label}`);
+                        log(`  - Enabled: ${track.enabled}`);
+                        log(`  - ReadyState: ${track.readyState}`);
+                        log(`  - Muted: ${track.muted}`);
+                        
+                        const settings = track.getSettings();
+                        log(`  - Resolução: ${settings.width}x${settings.height}`);
+                        log(`  - FPS: ${settings.frameRate}`);
+                    });
+                    
+                    currentStream.getAudioTracks().forEach((track, i) => {
+                        log(`🎤 Audio Track ${i + 1}:`);
+                        log(`  - Label: ${track.label}`);
+                        log(`  - Enabled: ${track.enabled}`);
+                        log(`  - ReadyState: ${track.readyState}`);
+                    });
+                }
+                
+                // 4. Verificar elementos de vídeo
+                log('4️⃣ Verificando elementos de vídeo...');
+                const mainVideo = document.getElementById('mainVideo');
+                const testVideo = document.getElementById('testVideo');
+                
+                [
+                    { name: 'Principal', video: mainVideo },
+                    { name: 'Teste', video: testVideo }
+                ].forEach(({ name, video }) => {
+                    log(`📺 Vídeo ${name}:`);
+                    log(`  - srcObject: ${video.srcObject ? 'Definido' : 'Null'}`);
+                    log(`  - Dimensões: ${video.videoWidth}x${video.videoHeight}`);
+                    log(`  - ReadyState: ${video.readyState}`);
+                    log(`  - CurrentTime: ${video.currentTime.toFixed(2)}s`);
+                    log(`  - Paused: ${video.paused}`);
+                    log(`  - Muted: ${video.muted}`);
+                });
+                
+                log('✅ Diagnóstico concluído');
+                
+            } catch (error) {
+                log('❌ Erro no diagnóstico: ' + error.message);
+            }
+        }
+        
+        function clearLog() {
+            document.getElementById('logOutput').textContent = 'Log limpo...\n';
+        }
+        
+        // Auto-iniciar câmera e diagnóstico
+        window.addEventListener('load', () => {
+            log('🚀 Página carregada - Iniciando testes automáticos');
+            setTimeout(() => {
+                startCamera().then(() => {
+                    setTimeout(runDiagnostics, 3000);
+                });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

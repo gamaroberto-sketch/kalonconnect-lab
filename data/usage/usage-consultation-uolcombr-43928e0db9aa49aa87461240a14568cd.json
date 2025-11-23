@@ -1,0 +1,14 @@
+{
+  "sessionId": "consultation-uolcombr-43928e0db9aa49aa87461240a14568cd",
+  "userEmail": "bobgama@uol.com.br",
+  "userName": "Roberto Gama",
+  "version": "PRO",
+  "startedAt": "2025-11-20T13:37:56.440Z",
+  "endedAt": "2025-11-20T13:37:56.519Z",
+  "durationMinutes": 0,
+  "detailLevel": "advanced",
+  "actions": [],
+  "sessionSummary": {
+    "reason": "component-unmount"
+  }
+}

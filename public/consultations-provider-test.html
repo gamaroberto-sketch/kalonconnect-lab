@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Providers - Consultations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .provider-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .provider-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .provider-control.active {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .provider-control.inactive {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .provider-toggle {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        
+        .provider-toggle.active {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .provider-toggle.inactive {
+            background: #28a745;
+            color: white;
+        }
+        
+        .video-test-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .video-container {
+            background: #000;
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .video-main {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-label {
+            padding: 8px 12px;
+            font-size: 12px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            text-align: center;
+            margin-top: 8px;
+            border-radius: 4px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        
+        .btn:hover { opacity: 0.8; }
+        
+        .log-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-error { color: #dc3545; font-weight: bold; }
+        .log-success { color: #28a745; }
+        .log-warning { color: #ffc107; }
+        .log-info { color: #17a2b8; }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-active { background: #28a745; }
+        .status-inactive { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Teste de Providers - Página Consultations</h1>
+        <p>Remova providers um por um para identificar qual está causando o problema da câmera</p>
+        
+        <!-- CONTROLES DE PROVIDERS -->
+        <div class="provider-controls">
+            <div class="provider-control active" id="authProvider">
+                <h4>🔐 AuthContext</h4>
+                <div class="status-indicator status-active"></div>
+                <span>Autenticação e usuário</span>
+                <button class="provider-toggle active" onclick="toggleProvider('auth')">Desativar</button>
+            </div>
+            
+            <div class="provider-control active" id="themeProvider">
+                <h4>🎨 ThemeProvider</h4>
+                <div class="status-indicator status-active"></div>
+                <span>Cores e temas</span>
+                <button class="provider-toggle active" onclick="toggleProvider('theme')">Desativar</button>
+            </div>
+            
+            <div class="provider-control active" id="usageProvider">
+                <h4>📊 UsageTrackerProvider</h4>
+                <div class="status-indicator status-active"></div>
+                <span>Tracking de uso</span>
+                <button class="provider-toggle active" onclick="toggleProvider('usage')">Desativar</button>
+            </div>
+            
+            <div class="provider-control active" id="videoPanelProvider">
+                <h4>📹 VideoPanelProvider</h4>
+                <div class="status-indicator status-active"></div>
+                <span>Contexto de vídeo</span>
+                <button class="provider-toggle active" onclick="toggleProvider('videoPanel')">Desativar</button>
+            </div>
+            
+            <div class="provider-control active" id="reactEffects">
+                <h4>⚛️ React Effects</h4>
+                <div class="status-indicator status-active"></div>
+                <span>useEffect/useState</span>
+                <button class="provider-toggle active" onclick="toggleProvider('effects')">Desativar</button>
+            </div>
+            
+            <div class="provider-control active" id="complexCSS">
+                <h4>🎨 CSS Complexo</h4>
+                <div class="status-indicator status-active"></div>
+                <span>Tailwind/Transforms</span>
+                <button class="provider-toggle active" onclick="toggleProvider('css')">Desativar</button>
+            </div>
+        </div>
+        
+        <!-- ÁREA DE TESTE DE VÍDEO -->
+        <div class="video-test-area">
+            <!-- VÍDEO COM PROVIDERS ATIVOS -->
+            <div class="video-container">
+                <div class="video-main">
+                    <video id="videoWithProviders" autoplay muted playsinline></video>
+                </div>
+                <div class="video-label" id="labelWithProviders">Vídeo COM Providers</div>
+            </div>
+            
+            <!-- VÍDEO SEM PROVIDERS (CONTROLE) -->
+            <div class="video-container">
+                <div class="video-main">
+                    <video id="videoWithoutProviders" autoplay muted playsinline></video>
+                </div>
+                <div class="video-label" id="labelWithoutProviders">Vídeo SEM Providers (Controle)</div>
+            </div>
+        </div>
+        
+        <!-- CONTROLES -->
+        <div class="controls">
+            <button class="btn btn-success" onclick="testWithProviders()">📹 Testar COM Providers</button>
+            <button class="btn btn-primary" onclick="testWithoutProviders()">🧪 Testar SEM Providers</button>
+            <button class="btn btn-warning" onclick="compareResults()">⚖️ Comparar Resultados</button>
+            <button class="btn btn-danger" onclick="stopAllTests()">🛑 Parar Tudo</button>
+        </div>
+        
+        <!-- LOGS -->
+        <div class="log-area" id="logArea">
+            <div class="log-entry log-info">[Início] Teste de providers carregado</div>
+        </div>
+    </div>
+
+    <script>
+        // Estado dos providers
+        const providerState = {
+            auth: true,
+            theme: true,
+            usage: true,
+            videoPanel: true,
+            effects: true,
+            css: true
+        };
+        
+        // Streams ativos
+        let streamWithProviders = null;
+        let streamWithoutProviders = null;
+        
+        // Elementos
+        const videoWithProviders = document.getElementById('videoWithProviders');
+        const videoWithoutProviders = document.getElementById('videoWithoutProviders');
+        const logArea = document.getElementById('logArea');
+        
+        // Função de log
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+            
+            console.log(`[PROVIDER-TEST] [${type.toUpperCase()}] ${message}`);
+            
+            // Limitar entradas
+            if (logArea.children.length > 100) {
+                logArea.removeChild(logArea.children[0]);
+            }
+        }
+        
+        // Toggle de provider
+        function toggleProvider(providerName) {
+            const isActive = providerState[providerName];
+            providerState[providerName] = !isActive;
+            
+            const providerElement = document.getElementById(`${providerName}Provider`);
+            const button = providerElement.querySelector('.provider-toggle');
+            const indicator = providerElement.querySelector('.status-indicator');
+            
+            if (providerState[providerName]) {
+                // Ativar
+                providerElement.className = 'provider-control active';
+                button.className = 'provider-toggle active';
+                button.textContent = 'Desativar';
+                indicator.className = 'status-indicator status-active';
+                addLog(`✅ ${providerName} ATIVADO`, 'success');
+            } else {
+                // Desativar
+                providerElement.className = 'provider-control inactive';
+                button.className = 'provider-toggle inactive';
+                button.textContent = 'Ativar';
+                indicator.className = 'status-indicator status-inactive';
+                addLog(`❌ ${providerName} DESATIVADO`, 'warning');
+            }
+            
+            // Aplicar mudanças visuais baseadas no estado
+            applyProviderEffects();
+        }
+        
+        // Aplicar efeitos dos providers
+        function applyProviderEffects() {
+            // CSS Complexo
+            if (providerState.css) {
+                videoWithProviders.style.transform = 'translateZ(0)';
+                videoWithProviders.style.willChange = 'transform';
+                videoWithProviders.style.backfaceVisibility = 'hidden';
+                addLog('🎨 CSS complexo aplicado', 'info');
+            } else {
+                videoWithProviders.style.transform = 'none';
+                videoWithProviders.style.willChange = 'auto';
+                videoWithProviders.style.backfaceVisibility = 'visible';
+                addLog('🎨 CSS simplificado', 'info');
+            }
+            
+            // Simular efeitos de providers
+            if (!providerState.effects) {
+                addLog('⚛️ React Effects desabilitados - comportamento simplificado', 'warning');
+            }
+        }
+        
+        // Teste COM providers (simulando aplicação complexa)
+        async function testWithProviders() {
+            addLog('=== TESTE COM PROVIDERS (SIMULANDO APLICAÇÃO COMPLEXA) ===', 'info');
+            
+            try {
+                // Simular complexidade baseada nos providers ativos
+                if (providerState.auth) {
+                    addLog('🔐 Simulando AuthContext...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                if (providerState.theme) {
+                    addLog('🎨 Simulando ThemeProvider...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+                
+                if (providerState.usage) {
+                    addLog('📊 Simulando UsageTrackerProvider...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 75));
+                }
+                
+                if (providerState.videoPanel) {
+                    addLog('📹 Simulando VideoPanelProvider...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 150));
+                }
+                
+                if (providerState.effects) {
+                    addLog('⚛️ Simulando múltiplos useEffect...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+                
+                // Criar stream
+                addLog('📋 Obtendo stream com contexto complexo...', 'info');
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false 
+                });
+                
+                addLog('✅ Stream obtido COM providers', 'success');
+                
+                // Simular atribuição complexa
+                if (providerState.videoPanel) {
+                    addLog('🔄 Simulando atribuição via VideoPanelContext...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                // Atribuir stream
+                videoWithProviders.srcObject = stream;
+                streamWithProviders = stream;
+                
+                addLog('✅ srcObject atribuído COM providers', 'success');
+                
+                // Eventos
+                videoWithProviders.onloadedmetadata = () => {
+                    addLog(`📊 COM PROVIDERS: Metadados ${videoWithProviders.videoWidth}x${videoWithProviders.videoHeight}`, 'success');
+                    document.getElementById('labelWithProviders').textContent = 
+                        `COM Providers (${videoWithProviders.videoWidth}x${videoWithProviders.videoHeight})`;
+                };
+                
+                videoWithProviders.onplaying = () => {
+                    addLog('🎉 COM PROVIDERS: VÍDEO FUNCIONANDO!', 'success');
+                };
+                
+                videoWithProviders.onerror = (e) => {
+                    addLog(`❌ COM PROVIDERS: Erro - ${e.message}`, 'error');
+                };
+                
+                await videoWithProviders.play();
+                addLog('▶️ COM PROVIDERS: Play executado', 'success');
+                
+            } catch (error) {
+                addLog(`❌ COM PROVIDERS: ERRO - ${error.message}`, 'error');
+            }
+        }
+        
+        // Teste SEM providers (controle simples)
+        async function testWithoutProviders() {
+            addLog('=== TESTE SEM PROVIDERS (CONTROLE SIMPLES) ===', 'info');
+            
+            try {
+                // Implementação direta sem simulação de complexidade
+                addLog('📋 Obtendo stream DIRETO (sem providers)...', 'info');
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false 
+                });
+                
+                addLog('✅ Stream obtido SEM providers', 'success');
+                
+                // Atribuição direta
+                videoWithoutProviders.srcObject = stream;
+                streamWithoutProviders = stream;
+                
+                addLog('✅ srcObject atribuído SEM providers (DIRETO)', 'success');
+                
+                // Eventos
+                videoWithoutProviders.onloadedmetadata = () => {
+                    addLog(`📊 SEM PROVIDERS: Metadados ${videoWithoutProviders.videoWidth}x${videoWithoutProviders.videoHeight}`, 'success');
+                    document.getElementById('labelWithoutProviders').textContent = 
+                        `SEM Providers (${videoWithoutProviders.videoWidth}x${videoWithoutProviders.videoHeight})`;
+                };
+                
+                videoWithoutProviders.onplaying = () => {
+                    addLog('🎉 SEM PROVIDERS: VÍDEO FUNCIONANDO!', 'success');
+                };
+                
+                await videoWithoutProviders.play();
+                addLog('▶️ SEM PROVIDERS: Play executado', 'success');
+                
+            } catch (error) {
+                addLog(`❌ SEM PROVIDERS: ERRO - ${error.message}`, 'error');
+            }
+        }
+        
+        // Comparar resultados
+        function compareResults() {
+            addLog('=== COMPARAÇÃO DE RESULTADOS ===', 'info');
+            
+            const withProviders = {
+                hasStream: !!videoWithProviders.srcObject,
+                hasVideo: videoWithProviders.videoWidth > 0,
+                dimensions: `${videoWithProviders.videoWidth}x${videoWithProviders.videoHeight}`,
+                readyState: videoWithProviders.readyState,
+                paused: videoWithProviders.paused
+            };
+            
+            const withoutProviders = {
+                hasStream: !!videoWithoutProviders.srcObject,
+                hasVideo: videoWithoutProviders.videoWidth > 0,
+                dimensions: `${videoWithoutProviders.videoWidth}x${videoWithoutProviders.videoHeight}`,
+                readyState: videoWithoutProviders.readyState,
+                paused: videoWithoutProviders.paused
+            };
+            
+            addLog('📊 COM PROVIDERS:', 'info');
+            Object.entries(withProviders).forEach(([key, value]) => {
+                const type = (key === 'hasStream' || key === 'hasVideo') && !value ? 'error' : 'info';
+                addLog(`  ${key}: ${value}`, type);
+            });
+            
+            addLog('📊 SEM PROVIDERS:', 'info');
+            Object.entries(withoutProviders).forEach(([key, value]) => {
+                const type = (key === 'hasStream' || key === 'hasVideo') && !value ? 'error' : 'info';
+                addLog(`  ${key}: ${value}`, type);
+            });
+            
+            // Análise
+            if (withoutProviders.hasVideo && !withProviders.hasVideo) {
+                addLog('🚨 PROBLEMA IDENTIFICADO: Vídeo funciona SEM providers mas não COM providers!', 'error');
+                
+                const inactiveProviders = Object.entries(providerState)
+                    .filter(([name, active]) => !active)
+                    .map(([name]) => name);
+                
+                if (inactiveProviders.length > 0) {
+                    addLog(`🎯 Providers desativados: ${inactiveProviders.join(', ')}`, 'warning');
+                    addLog('💡 O problema pode estar em um dos providers ATIVOS restantes', 'warning');
+                } else {
+                    addLog('💡 Todos os providers estão ativos - problema pode ser na combinação deles', 'warning');
+                }
+            } else if (withProviders.hasVideo && withoutProviders.hasVideo) {
+                addLog('✅ AMBOS FUNCIONAM: O problema não está nos providers testados', 'success');
+            } else if (!withProviders.hasVideo && !withoutProviders.hasVideo) {
+                addLog('❌ NENHUM FUNCIONA: Problema pode ser de permissões ou hardware', 'error');
+            }
+        }
+        
+        // Parar todos os testes
+        function stopAllTests() {
+            addLog('🛑 Parando todos os testes...', 'info');
+            
+            if (streamWithProviders) {
+                streamWithProviders.getTracks().forEach(track => track.stop());
+                streamWithProviders = null;
+                videoWithProviders.srcObject = null;
+            }
+            
+            if (streamWithoutProviders) {
+                streamWithoutProviders.getTracks().forEach(track => track.stop());
+                streamWithoutProviders = null;
+                videoWithoutProviders.srcObject = null;
+            }
+            
+            document.getElementById('labelWithProviders').textContent = 'Vídeo COM Providers';
+            document.getElementById('labelWithoutProviders').textContent = 'Vídeo SEM Providers (Controle)';
+            
+            addLog('✅ Todos os testes parados', 'success');
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('🎯 Teste de providers carregado', 'info');
+            addLog('💡 Desative providers um por um e teste para identificar o problema', 'info');
+            addLog('🔧 Use "Testar COM Providers" para simular a aplicação complexa', 'info');
+            addLog('🧪 Use "Testar SEM Providers" como controle simples', 'info');
+            
+            applyProviderEffects();
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação App Principal - KalonConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        button.active {
+            background: #28a745;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
+        .info { color: #17a2b8; }
+        .warning { color: #ffc107; }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Simulação: App Principal - Teste Câmera</h1>
+        <p>Esta página simula exatamente o comportamento da aplicação principal com múltiplos componentes.</p>
+        
+        <div id="status" class="status inactive">
+            📴 Câmera: DESLIGADA
+        </div>
+        
+        <div class="controls">
+            <button id="cameraBtn">📹 Ligar/Desligar Câmera</button>
+            <button id="videoBtn" disabled>🎥 Ligar/Desligar Vídeo</button>
+            <button id="audioBtn" disabled>🎤 Ligar/Desligar Áudio</button>
+            <button id="multipleBtn">⚡ Múltiplas Chamadas (Teste Stress)</button>
+            <button id="clearBtn">🧹 Limpar Logs</button>
+            <button id="stopBtn" disabled>🛑 Parar Tudo</button>
+        </div>
+        
+        <div class="video-container">
+            <video id="mainVideo" autoplay muted playsinline></video>
+        </div>
+        
+        <div id="logContainer" class="log">
+            <div class="info">📋 Logs da simulação aparecerão aqui...</div>
+        </div>
+    </div>
+
+    <script>
+        // Simulação das variáveis globais da aplicação
+        let currentStream = null;
+        let isCameraPreviewOn = false;
+        let isVideoOn = false;
+        let isAudioOn = false;
+        let streamMonitorInterval = null;
+        
+        // Elementos DOM
+        const video = document.getElementById('mainVideo');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const videoBtn = document.getElementById('videoBtn');
+        const audioBtn = document.getElementById('audioBtn');
+        const multipleBtn = document.getElementById('multipleBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const logContainer = document.getElementById('logContainer');
+        const statusDiv = document.getElementById('status');
+        
+        // Flags de proteção (simulando window.kalon*)
+        window.kalonEnsureStreamInProgress = false;
+        window.kalonToggleCameraInProgress = false;
+        
+        function updateStatus(active, message) {
+            if (active) {
+                statusDiv.className = 'status active';
+                statusDiv.textContent = `📹 Câmera: ATIVA - ${message}`;
+            } else {
+                statusDiv.className = 'status inactive';
+                statusDiv.textContent = `📴 Câmera: DESLIGADA - ${message}`;
+            }
+        }
+        
+        function updateButtons() {
+            cameraBtn.textContent = isCameraPreviewOn ? '📹 Desligar Câmera' : '📹 Ligar Câmera';
+            cameraBtn.className = isCameraPreviewOn ? 'active' : '';
+            
+            videoBtn.textContent = isVideoOn ? '🎥 Desligar Vídeo' : '🎥 Ligar Vídeo';
+            videoBtn.className = isVideoOn ? 'active' : '';
+            videoBtn.disabled = !currentStream;
+            
+            audioBtn.textContent = isAudioOn ? '🎤 Desligar Áudio' : '🎤 Ligar Áudio';
+            audioBtn.className = isAudioOn ? 'active' : '';
+            audioBtn.disabled = !currentStream;
+            
+            stopBtn.disabled = !currentStream;
+        }
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            logContainer.innerHTML = '<div class="info">📋 Logs limpos...</div>';
+        }
+        
+        // Simulação do createMediaStream com todas as proteções
+        async function createMediaStream(constraints = { video: true, audio: true }) {
+            log('🎯 === INICIANDO TESTE COMPLETO DE CONSTRAINTS ===', 'info');
+            
+            // Proteção contra múltiplas chamadas
+            if (window.kalonCreateStreamInProgress) {
+                log('⚠️ createMediaStream já em progresso, aguardando...', 'warning');
+                let attempts = 0;
+                while (window.kalonCreateStreamInProgress && attempts < 100) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                log(`✅ Chamada anterior concluída após ${attempts * 100}ms`, 'success');
+                return currentStream;
+            }
+            
+            window.kalonCreateStreamInProgress = true;
+            
+            try {
+                // Constraints de teste (versão simplificada)
+                const testConstraints = [
+                    { name: 'Básico', constraints: { video: true, audio: true } },
+                    { name: 'Só Vídeo', constraints: { video: true, audio: false } },
+                    { name: 'HD', constraints: { video: { width: 1280, height: 720 }, audio: false } },
+                    { name: 'VGA', constraints: { video: { width: 640, height: 480 }, audio: false } }
+                ];
+                
+                let successfulStream = null;
+                
+                for (const test of testConstraints) {
+                    try {
+                        log(`🔄 TESTANDO: ${test.name}`, 'info');
+                        
+                        const timeoutPromise = new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('Timeout após 10 segundos')), 10000)
+                        );
+                        
+                        const streamPromise = navigator.mediaDevices.getUserMedia(test.constraints);
+                        const stream = await Promise.race([streamPromise, timeoutPromise]);
+                        
+                        log(`✅ SUCESSO: ${test.name}`, 'success');
+                        
+                        // Proteger o stream principal
+                        if (!successfulStream) {
+                            successfulStream = stream;
+                            log(`🎯 USANDO: ${test.name} como stream principal`, 'success');
+                            
+                            // Proteger tracks
+                            stream.getVideoTracks().forEach(track => {
+                                track.enabled = true;
+                                log(`🛡️ Track protegido: ${track.label}`, 'info');
+                                
+                                track.addEventListener('ended', () => {
+                                    log('❌ CRÍTICO: Track terminado inesperadamente!', 'error');
+                                });
+                            });
+                            
+                        } else {
+                            // Parar streams de teste
+                            stream.getTracks().forEach(track => track.stop());
+                            log(`🛑 Stream de teste ${test.name} parado`, 'info');
+                        }
+                        
+                        break; // Usar primeiro sucesso
+                        
+                    } catch (error) {
+                        log(`❌ FALHOU: ${test.name} - ${error.message}`, 'error');
+                        
+                        if (error.name === 'NotAllowedError') {
+                            log('🚫 ERRO FATAL: Permissão negada', 'error');
+                            break;
+                        }
+                    }
+                }
+                
+                if (successfulStream) {
+                    log('✅ Stream criado com sucesso!', 'success');
+                    return successfulStream;
+                } else {
+                    log('❌ Todos os testes falharam', 'error');
+                    return null;
+                }
+                
+            } finally {
+                window.kalonCreateStreamInProgress = false;
+            }
+        }
+        
+        // Simulação do assignStreamToVideo
+        async function assignStreamToVideo(stream) {
+            log('🔗 === ATRIBUINDO STREAM AO VÍDEO ===', 'info');
+            
+            if (!stream || !stream.active) {
+                log('❌ Stream inválido ou inativo', 'error');
+                return false;
+            }
+            
+            // Verificar tracks
+            const videoTracks = stream.getVideoTracks();
+            const activeTracks = videoTracks.filter(t => t.readyState === 'live');
+            
+            if (activeTracks.length === 0) {
+                log('❌ Nenhum track de vídeo ativo', 'error');
+                return false;
+            }
+            
+            log(`✅ ${activeTracks.length} tracks ativos encontrados`, 'success');
+            
+            // Atribuir ao vídeo
+            video.srcObject = stream;
+            log('🎯 srcObject atribuído', 'info');
+            
+            // Verificar se "colou"
+            setTimeout(() => {
+                if (video.srcObject === stream) {
+                    log('✅ srcObject mantido com sucesso', 'success');
+                } else {
+                    log('❌ srcObject foi perdido, reatribuindo...', 'error');
+                    video.srcObject = stream;
+                }
+            }, 1000);
+            
+            // Eventos do vídeo
+            video.onloadedmetadata = () => {
+                log(`📊 Metadados: ${video.videoWidth}x${video.videoHeight}`, 'success');
+                updateStatus(true, `${video.videoWidth}x${video.videoHeight}`);
+            };
+            
+            video.onplaying = () => {
+                log(`🎬 Reproduzindo: ${video.videoWidth}x${video.videoHeight}`, 'success');
+            };
+            
+            return true;
+        }
+        
+        // Simulação do ensureLocalStream
+        async function ensureLocalStream() {
+            log('🎯 === INICIANDO ensureLocalStream ===', 'info');
+            
+            // Proteção contra múltiplas chamadas
+            if (window.kalonEnsureStreamInProgress) {
+                log('⚠️ ensureLocalStream já em progresso, aguardando...', 'warning');
+                let attempts = 0;
+                while (window.kalonEnsureStreamInProgress && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                log(`✅ Chamada anterior concluída após ${attempts * 100}ms`, 'success');
+                return currentStream;
+            }
+            
+            window.kalonEnsureStreamInProgress = true;
+            
+            try {
+                // Verificar stream existente
+                if (currentStream && currentStream.active) {
+                    log('✅ Stream já existe e está ativo', 'success');
+                    return currentStream;
+                }
+                
+                // Criar novo stream
+                const stream = await createMediaStream({ video: true, audio: true });
+                
+                if (!stream) {
+                    log('❌ Falha ao criar stream', 'error');
+                    return null;
+                }
+                
+                // Atribuir ao vídeo
+                const success = await assignStreamToVideo(stream);
+                
+                if (success) {
+                    currentStream = stream;
+                    log('✅ ensureLocalStream CONCLUÍDO COM SUCESSO', 'success');
+                    
+                    // Iniciar monitoramento
+                    startStreamMonitoring();
+                    
+                    return stream;
+                } else {
+                    log('❌ Falha na atribuição, parando stream', 'error');
+                    stream.getTracks().forEach(track => track.stop());
+                    return null;
+                }
+                
+            } catch (error) {
+                log(`❌ ERRO em ensureLocalStream: ${error.message}`, 'error');
+                return null;
+            } finally {
+                window.kalonEnsureStreamInProgress = false;
+                log('🧹 ensureLocalStream finalizado', 'info');
+            }
+        }
+        
+        // Simulação do toggleCameraPreview
+        async function toggleCameraPreview() {
+            log('🎯 toggleCameraPreview chamado', 'info');
+            
+            // Proteção contra múltiplas chamadas
+            if (window.kalonToggleCameraInProgress) {
+                log('⚠️ toggleCameraPreview já em progresso, ignorando...', 'warning');
+                return;
+            }
+            
+            window.kalonToggleCameraInProgress = true;
+            
+            try {
+                if (isCameraPreviewOn) {
+                    // Desligar câmera
+                    log('📴 Desligando câmera...', 'info');
+                    
+                    if (currentStream) {
+                        currentStream.getTracks().forEach(track => track.stop());
+                        currentStream = null;
+                    }
+                    
+                    video.srcObject = null;
+                    isCameraPreviewOn = false;
+                    isVideoOn = false;
+                    
+                    if (streamMonitorInterval) {
+                        clearInterval(streamMonitorInterval);
+                        streamMonitorInterval = null;
+                    }
+                    
+                    updateStatus(false, 'Desligada pelo usuário');
+                    log('✅ Câmera desligada', 'success');
+                    
+                } else {
+                    // Ligar câmera
+                    log('📹 Ligando câmera...', 'info');
+                    
+                    const stream = await ensureLocalStream();
+                    
+                    if (stream) {
+                        // Habilitar tracks
+                        stream.getVideoTracks().forEach(track => {
+                            track.enabled = true;
+                            log(`✅ Track habilitado: ${track.label}`, 'success');
+                        });
+                        
+                        isCameraPreviewOn = true;
+                        isVideoOn = true;
+                        log('✅ Câmera ligada com sucesso', 'success');
+                    } else {
+                        log('❌ Falha ao ligar câmera', 'error');
+                    }
+                }
+                
+                updateButtons();
+                
+            } catch (error) {
+                log(`❌ ERRO em toggleCameraPreview: ${error.message}`, 'error');
+            } finally {
+                window.kalonToggleCameraInProgress = false;
+                log('🧹 toggleCameraPreview finalizado', 'info');
+            }
+        }
+        
+        function startStreamMonitoring() {
+            if (streamMonitorInterval) return;
+            
+            log('🔍 Iniciando monitoramento do stream...', 'info');
+            
+            streamMonitorInterval = setInterval(() => {
+                if (currentStream && currentStream.active) {
+                    const videoTracks = currentStream.getVideoTracks();
+                    const activeTracks = videoTracks.filter(t => t.readyState === 'live');
+                    
+                    log(`✅ Monitor: ${activeTracks.length}/${videoTracks.length} tracks ativos`, 'success');
+                    
+                    if (video.paused) {
+                        log('⚠️ Vídeo pausou, reativando...', 'warning');
+                        video.play();
+                    }
+                    
+                } else {
+                    log('❌ Monitor: Stream perdido!', 'error');
+                    updateStatus(false, 'Stream perdido');
+                    clearInterval(streamMonitorInterval);
+                    streamMonitorInterval = null;
+                }
+            }, 3000);
+        }
+        
+        // Teste de múltiplas chamadas simultâneas
+        async function testMultipleCalls() {
+            log('⚡ === TESTE DE STRESS: MÚLTIPLAS CHAMADAS ===', 'warning');
+            
+            // Simular múltiplos cliques rápidos
+            const promises = [];
+            for (let i = 0; i < 5; i++) {
+                promises.push(toggleCameraPreview());
+                log(`🔄 Chamada ${i + 1} disparada`, 'info');
+            }
+            
+            try {
+                await Promise.all(promises);
+                log('✅ Teste de stress concluído', 'success');
+            } catch (error) {
+                log(`❌ Erro no teste de stress: ${error.message}`, 'error');
+            }
+        }
+        
+        function stopEverything() {
+            log('🛑 Parando tudo...', 'info');
+            
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            
+            video.srcObject = null;
+            isCameraPreviewOn = false;
+            isVideoOn = false;
+            isAudioOn = false;
+            
+            if (streamMonitorInterval) {
+                clearInterval(streamMonitorInterval);
+                streamMonitorInterval = null;
+            }
+            
+            // Limpar flags
+            window.kalonEnsureStreamInProgress = false;
+            window.kalonToggleCameraInProgress = false;
+            window.kalonCreateStreamInProgress = false;
+            
+            updateStatus(false, 'Parado');
+            updateButtons();
+            log('✅ Tudo parado', 'success');
+        }
+        
+        // Event listeners
+        cameraBtn.addEventListener('click', toggleCameraPreview);
+        multipleBtn.addEventListener('click', testMultipleCalls);
+        clearBtn.addEventListener('click', clearLogs);
+        stopBtn.addEventListener('click', stopEverything);
+        
+        // Inicialização
+        updateButtons();
+        updateStatus(false, 'Aguardando');
+        log('🎯 Simulação da aplicação principal carregada', 'info');
+        log('💡 Clique em "Ligar Câmera" para testar o comportamento real', 'info');
+    </script>
+</body>
+</html>
+
+

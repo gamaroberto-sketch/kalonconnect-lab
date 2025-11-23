@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Completo - Página Principal vs Teste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .panel h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .test-area {
+            background: #000;
+            border-radius: 8px;
+            height: 300px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .log-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-error { color: #dc3545; font-weight: bold; }
+        .log-success { color: #28a745; }
+        .log-warning { color: #ffc107; }
+        .log-info { color: #17a2b8; }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+        }
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .status-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+        .status-label {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .status-value {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .status-success { color: #28a745; }
+        .status-error { color: #dc3545; }
+        .status-warning { color: #ffc107; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: #333; margin-bottom: 30px;">
+        🔍 DIAGNÓSTICO COMPLETO - Comparação Página Principal vs Teste
+    </h1>
+    
+    <div class="container">
+        <!-- PAINEL ESQUERDO: TESTE SIMPLES (QUE FUNCIONA) -->
+        <div class="panel">
+            <h2>✅ TESTE SIMPLES (Funciona)</h2>
+            
+            <div class="test-area">
+                <video id="simpleVideo" autoplay muted playsinline></video>
+            </div>
+            
+            <div class="controls">
+                <button class="btn-success" onclick="startSimpleCamera()">📹 Ligar Câmera</button>
+                <button class="btn-danger" onclick="stopSimpleCamera()">⏹️ Parar</button>
+                <button class="btn-warning" onclick="clearSimpleLogs()">🧹 Limpar Logs</button>
+            </div>
+            
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">Stream</div>
+                    <div id="simpleStreamStatus" class="status-value status-error">❌ Inativo</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Dimensões</div>
+                    <div id="simpleDimensionsStatus" class="status-value">0x0</div>
+                </div>
+            </div>
+            
+            <div class="log-area" id="simpleLogArea">
+                <div class="log-entry log-info">[Início] Teste simples carregado</div>
+            </div>
+        </div>
+        
+        <!-- PAINEL DIREITO: SIMULAÇÃO APLICAÇÃO PRINCIPAL -->
+        <div class="panel">
+            <h2>❌ SIMULAÇÃO APLICAÇÃO PRINCIPAL</h2>
+            
+            <div class="test-area">
+                <video id="complexVideo" autoplay muted playsinline></video>
+            </div>
+            
+            <div class="controls">
+                <button class="btn-primary" onclick="startComplexCamera()">📹 Simular App Principal</button>
+                <button class="btn-danger" onclick="stopComplexCamera()">⏹️ Parar</button>
+                <button class="btn-warning" onclick="clearComplexLogs()">🧹 Limpar Logs</button>
+            </div>
+            
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">Stream</div>
+                    <div id="complexStreamStatus" class="status-value status-error">❌ Inativo</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Dimensões</div>
+                    <div id="complexDimensionsStatus" class="status-value">0x0</div>
+                </div>
+            </div>
+            
+            <div class="log-area" id="complexLogArea">
+                <div class="log-entry log-info">[Início] Simulação complexa carregada</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PAINEL DE COMPARAÇÃO -->
+    <div class="panel" style="margin-top: 20px;">
+        <h2>📊 COMPARAÇÃO DETALHADA</h2>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Aspecto</th>
+                    <th>Teste Simples (✅ Funciona)</th>
+                    <th>App Principal (❌ Não Funciona)</th>
+                    <th>Diferença Identificada</th>
+                </tr>
+            </thead>
+            <tbody id="comparisonTableBody">
+                <tr>
+                    <td><strong>Ambiente</strong></td>
+                    <td>HTML puro + JavaScript</td>
+                    <td>React + Next.js + Contextos</td>
+                    <td>Complexidade do framework</td>
+                </tr>
+                <tr>
+                    <td><strong>Elemento Video</strong></td>
+                    <td>Direto no DOM</td>
+                    <td>Gerenciado por React refs</td>
+                    <td>Lifecycle do React</td>
+                </tr>
+                <tr>
+                    <td><strong>CSS</strong></td>
+                    <td>Estilos mínimos</td>
+                    <td>Tailwind + CSS complexo</td>
+                    <td>Possível ocultação por CSS</td>
+                </tr>
+                <tr>
+                    <td><strong>Estados</strong></td>
+                    <td>Variáveis JavaScript</td>
+                    <td>useState + contextos múltiplos</td>
+                    <td>Race conditions em estados</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn-primary" onclick="runFullDiagnosis()">🔍 EXECUTAR DIAGNÓSTICO COMPLETO</button>
+            <button class="btn-warning" onclick="compareEnvironments()">⚖️ COMPARAR AMBIENTES</button>
+        </div>
+    </div>
+
+    <script>
+        // VARIÁVEIS GLOBAIS
+        let simpleStream = null;
+        let complexStream = null;
+        let diagnosticInterval = null;
+        
+        // ELEMENTOS DOM
+        const simpleVideo = document.getElementById('simpleVideo');
+        const complexVideo = document.getElementById('complexVideo');
+        const simpleLogArea = document.getElementById('simpleLogArea');
+        const complexLogArea = document.getElementById('complexLogArea');
+        
+        // FUNÇÕES DE LOG
+        function addLog(area, message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            area.appendChild(entry);
+            area.scrollTop = area.scrollHeight;
+            
+            // Limitar entradas
+            if (area.children.length > 100) {
+                area.removeChild(area.children[0]);
+            }
+        }
+        
+        function updateStatus(streamStatusId, dimensionsStatusId, video, stream) {
+            const streamStatus = document.getElementById(streamStatusId);
+            const dimensionsStatus = document.getElementById(dimensionsStatusId);
+            
+            if (stream && stream.active) {
+                streamStatus.textContent = '✅ Ativo';
+                streamStatus.className = 'status-value status-success';
+            } else {
+                streamStatus.textContent = '❌ Inativo';
+                streamStatus.className = 'status-value status-error';
+            }
+            
+            dimensionsStatus.textContent = `${video.videoWidth}x${video.videoHeight}`;
+            dimensionsStatus.className = `status-value ${video.videoWidth > 0 ? 'status-success' : 'status-error'}`;
+        }
+        
+        // TESTE SIMPLES (IGUAL ÀS PÁGINAS QUE FUNCIONAM)
+        async function startSimpleCamera() {
+            addLog(simpleLogArea, '🎯 INICIANDO TESTE SIMPLES...', 'info');
+            
+            try {
+                addLog(simpleLogArea, '📋 Constraints: { video: true, audio: false }', 'info');
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false 
+                });
+                
+                addLog(simpleLogArea, '✅ Stream criado com sucesso', 'success');
+                addLog(simpleLogArea, `🆔 Stream ID: ${stream.id.substring(0, 8)}...`, 'info');
+                addLog(simpleLogArea, `📹 Video tracks: ${stream.getVideoTracks().length}`, 'info');
+                
+                // ATRIBUIÇÃO DIRETA (como nas páginas que funcionam)
+                simpleVideo.srcObject = stream;
+                simpleStream = stream;
+                
+                addLog(simpleLogArea, '✅ srcObject atribuído diretamente', 'success');
+                
+                // Eventos
+                simpleVideo.onloadedmetadata = () => {
+                    addLog(simpleLogArea, `📊 Metadados: ${simpleVideo.videoWidth}x${simpleVideo.videoHeight}`, 'success');
+                    updateStatus('simpleStreamStatus', 'simpleDimensionsStatus', simpleVideo, simpleStream);
+                };
+                
+                simpleVideo.onplaying = () => {
+                    addLog(simpleLogArea, '🎬 Vídeo reproduzindo!', 'success');
+                    updateStatus('simpleStreamStatus', 'simpleDimensionsStatus', simpleVideo, simpleStream);
+                };
+                
+                simpleVideo.onerror = (e) => {
+                    addLog(simpleLogArea, `❌ Erro no vídeo: ${e.message}`, 'error');
+                };
+                
+                // Forçar play
+                await simpleVideo.play();
+                addLog(simpleLogArea, '▶️ Play executado', 'success');
+                
+            } catch (error) {
+                addLog(simpleLogArea, `❌ ERRO: ${error.message}`, 'error');
+            }
+        }
+        
+        function stopSimpleCamera() {
+            addLog(simpleLogArea, '🛑 Parando teste simples...', 'info');
+            
+            if (simpleStream) {
+                simpleStream.getTracks().forEach(track => track.stop());
+                simpleStream = null;
+            }
+            
+            simpleVideo.srcObject = null;
+            updateStatus('simpleStreamStatus', 'simpleDimensionsStatus', simpleVideo, null);
+            
+            addLog(simpleLogArea, '✅ Teste simples parado', 'success');
+        }
+        
+        function clearSimpleLogs() {
+            simpleLogArea.innerHTML = '<div class="log-entry log-info">[Limpo] Logs do teste simples limpos</div>';
+        }
+        
+        // SIMULAÇÃO COMPLEXA (REPRODUZINDO PROBLEMAS DA APLICAÇÃO)
+        async function startComplexCamera() {
+            addLog(complexLogArea, '🎯 INICIANDO SIMULAÇÃO APLICAÇÃO PRINCIPAL...', 'info');
+            
+            try {
+                // SIMULAR COMPLEXIDADE DA APLICAÇÃO PRINCIPAL
+                addLog(complexLogArea, '🔄 Simulando múltiplos contextos React...', 'warning');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                addLog(complexLogArea, '🔄 Simulando useEffect e useState...', 'warning');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                addLog(complexLogArea, '🔄 Simulando verificações de contexto...', 'warning');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // CRIAR STREAM (igual ao simples)
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false 
+                });
+                
+                addLog(complexLogArea, '✅ Stream criado (igual ao teste simples)', 'success');
+                
+                // SIMULAR PROBLEMAS POTENCIAIS DA APLICAÇÃO
+                addLog(complexLogArea, '🔄 Simulando atribuição via React ref...', 'warning');
+                
+                // Simular delay de React
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
+                // ATRIBUIÇÃO (simulando React)
+                complexVideo.srcObject = stream;
+                complexStream = stream;
+                
+                addLog(complexLogArea, '✅ srcObject atribuído (via simulação React)', 'success');
+                
+                // SIMULAR PROBLEMAS DE CSS/LAYOUT
+                addLog(complexLogArea, '🔄 Aplicando CSS complexo...', 'warning');
+                
+                // Aplicar estilos que podem causar problemas
+                complexVideo.style.transform = 'translateZ(0)'; // Force GPU
+                complexVideo.style.willChange = 'transform';
+                complexVideo.style.backfaceVisibility = 'hidden';
+                
+                // SIMULAR RE-RENDERS
+                addLog(complexLogArea, '🔄 Simulando re-renders do React...', 'warning');
+                
+                setTimeout(() => {
+                    // Simular re-render que pode afetar o vídeo
+                    const currentSrcObject = complexVideo.srcObject;
+                    if (currentSrcObject) {
+                        addLog(complexLogArea, '⚠️ Re-render detectado - verificando srcObject...', 'warning');
+                        
+                        if (complexVideo.srcObject !== currentSrcObject) {
+                            addLog(complexLogArea, '❌ PROBLEMA: srcObject foi perdido no re-render!', 'error');
+                        } else {
+                            addLog(complexLogArea, '✅ srcObject mantido após re-render', 'success');
+                        }
+                    }
+                }, 1000);
+                
+                // SIMULAR CONFLITOS DE ESTADO
+                setTimeout(() => {
+                    addLog(complexLogArea, '🔄 Simulando mudanças de estado...', 'warning');
+                    
+                    // Verificar se o vídeo ainda está ativo
+                    if (complexVideo.videoWidth === 0 || complexVideo.videoHeight === 0) {
+                        addLog(complexLogArea, '❌ PROBLEMA: Dimensões perdidas (0x0)!', 'error');
+                    }
+                    
+                    if (complexVideo.paused) {
+                        addLog(complexLogArea, '❌ PROBLEMA: Vídeo foi pausado inesperadamente!', 'error');
+                    }
+                    
+                }, 2000);
+                
+                // Eventos
+                complexVideo.onloadedmetadata = () => {
+                    addLog(complexLogArea, `📊 Metadados: ${complexVideo.videoWidth}x${complexVideo.videoHeight}`, 'success');
+                    updateStatus('complexStreamStatus', 'complexDimensionsStatus', complexVideo, complexStream);
+                };
+                
+                complexVideo.onplaying = () => {
+                    addLog(complexLogArea, '🎬 Vídeo reproduzindo!', 'success');
+                    updateStatus('complexStreamStatus', 'complexDimensionsStatus', complexVideo, complexStream);
+                };
+                
+                complexVideo.onerror = (e) => {
+                    addLog(complexLogArea, `❌ Erro no vídeo: ${e.message}`, 'error');
+                };
+                
+                // Forçar play
+                await complexVideo.play();
+                addLog(complexLogArea, '▶️ Play executado', 'success');
+                
+            } catch (error) {
+                addLog(complexLogArea, `❌ ERRO: ${error.message}`, 'error');
+            }
+        }
+        
+        function stopComplexCamera() {
+            addLog(complexLogArea, '🛑 Parando simulação complexa...', 'info');
+            
+            if (complexStream) {
+                complexStream.getTracks().forEach(track => track.stop());
+                complexStream = null;
+            }
+            
+            complexVideo.srcObject = null;
+            updateStatus('complexStreamStatus', 'complexDimensionsStatus', complexVideo, null);
+            
+            addLog(complexLogArea, '✅ Simulação complexa parada', 'success');
+        }
+        
+        function clearComplexLogs() {
+            complexLogArea.innerHTML = '<div class="log-entry log-info">[Limpo] Logs da simulação complexa limpos</div>';
+        }
+        
+        // DIAGNÓSTICO COMPLETO
+        function runFullDiagnosis() {
+            console.log('🔍 === EXECUTANDO DIAGNÓSTICO COMPLETO ===');
+            
+            // Verificar diferenças de ambiente
+            const diagnosis = {
+                userAgent: navigator.userAgent,
+                mediaDevicesSupport: !!navigator.mediaDevices,
+                getUserMediaSupport: !!navigator.mediaDevices?.getUserMedia,
+                secureContext: window.isSecureContext,
+                protocol: window.location.protocol,
+                
+                // Elementos de vídeo
+                simpleVideoElement: {
+                    exists: !!simpleVideo,
+                    srcObject: !!simpleVideo.srcObject,
+                    dimensions: `${simpleVideo.videoWidth}x${simpleVideo.videoHeight}`,
+                    readyState: simpleVideo.readyState,
+                    paused: simpleVideo.paused
+                },
+                
+                complexVideoElement: {
+                    exists: !!complexVideo,
+                    srcObject: !!complexVideo.srcObject,
+                    dimensions: `${complexVideo.videoWidth}x${complexVideo.videoHeight}`,
+                    readyState: complexVideo.readyState,
+                    paused: complexVideo.paused
+                }
+            };
+            
+            console.log('📊 Diagnóstico completo:', diagnosis);
+            
+            // Adicionar aos logs
+            addLog(simpleLogArea, '🔍 Diagnóstico executado - ver console', 'info');
+            addLog(complexLogArea, '🔍 Diagnóstico executado - ver console', 'info');
+        }
+        
+        function compareEnvironments() {
+            console.log('⚖️ === COMPARANDO AMBIENTES ===');
+            
+            const comparison = {
+                'Teste Simples': {
+                    framework: 'HTML puro',
+                    videoElement: 'DOM direto',
+                    cssComplexity: 'Mínimo',
+                    stateManagement: 'Variáveis JS',
+                    srcObjectAssignment: 'Direto',
+                    working: simpleVideo.videoWidth > 0
+                },
+                
+                'Simulação Complexa': {
+                    framework: 'Simulação React',
+                    videoElement: 'Ref simulado',
+                    cssComplexity: 'Complexo',
+                    stateManagement: 'Simulado useState',
+                    srcObjectAssignment: 'Via ref',
+                    working: complexVideo.videoWidth > 0
+                }
+            };
+            
+            console.log('📊 Comparação de ambientes:', comparison);
+            
+            // Identificar diferenças críticas
+            const criticalDifferences = [];
+            
+            if (comparison['Teste Simples'].working && !comparison['Simulação Complexa'].working) {
+                criticalDifferences.push('❌ Simulação complexa não funciona enquanto teste simples funciona');
+            }
+            
+            if (criticalDifferences.length > 0) {
+                console.log('🚨 DIFERENÇAS CRÍTICAS IDENTIFICADAS:', criticalDifferences);
+            }
+            
+            addLog(simpleLogArea, '⚖️ Comparação executada - ver console', 'info');
+            addLog(complexLogArea, '⚖️ Comparação executada - ver console', 'info');
+        }
+        
+        // INICIALIZAÇÃO
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎯 Página de diagnóstico carregada');
+            console.log('💡 Use os botões para testar e comparar os ambientes');
+            console.log('🔍 Execute o diagnóstico completo para análise detalhada');
+        });
+    </script>
+</body>
+</html>
+
+

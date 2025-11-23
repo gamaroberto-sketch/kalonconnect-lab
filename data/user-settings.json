@@ -1,0 +1,26 @@
+{
+  "waitingRoom": {
+    "mediaType": "video",
+    "mediaSrc": "",
+    "music": "",
+    "message": "",
+    "allowClientPreview": true,
+    "alertOnClientJoin": true,
+    "multiSpecialty": false,
+    "animatedMessage": false,
+    "specialtyOverrides": {}
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

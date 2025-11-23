@@ -1,0 +1,21 @@
+"use client";
+
+import React from "react";
+import VideoElement from './VideoElement';
+
+/**
+ * 🔴 CONTAINER FIXO - NUNCA DESMONTA VideoElement
+ * Removido dynamic import para garantir que VideoElement nunca seja desmontado
+ */
+const StaticVideoContainer = () => {
+  return (
+    <div className="flex-1 bg-black flex items-center justify-center">
+      <VideoElement />
+    </div>
+  );
+};
+
+export default StaticVideoContainer;
+
+
+

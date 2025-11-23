@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Página Consultations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        
+        /* SIMULANDO CSS COMPLEXO DA APLICAÇÃO PRINCIPAL */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .content-area {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* SIMULANDO ESTRUTURA COMPLEXA DO VIDEOSURFACE */
+        .video-surface {
+            background: #1f2937;
+            border-radius: 24px;
+            padding: 16px;
+            height: 400px;
+            display: flex;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-container {
+            flex: 1;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .video-main {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* SIMULANDO CSS COMPLEXO QUE PODE INTERFERIR */
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Possíveis interferências CSS */
+            transform: translateZ(0); /* Force GPU */
+            will-change: transform;
+            backface-visibility: hidden;
+            /* Tailwind-like classes */
+            border-radius: 0.75rem;
+        }
+        
+        .video-label {
+            padding: 8px 12px;
+            font-size: 12px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            text-align: center;
+        }
+        
+        /* SIMULANDO CONTROLES COMPLEXOS */
+        .controls-bar {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            padding: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+            min-width: 48px;
+            min-height: 48px;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .control-btn.active {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        
+        .control-btn:hover {
+            opacity: 0.8;
+        }
+        
+        /* OVERLAY DE DIAGNÓSTICO */
+        .diagnostic-overlay {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 400px;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: monospace;
+            overflow-y: auto;
+            z-index: 10000;
+            border: 2px solid #007bff;
+        }
+        
+        .diagnostic-header {
+            position: sticky;
+            top: 0;
+            background: #007bff;
+            padding: 5px 10px;
+            margin: -15px -15px 10px -15px;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 2px;
+        }
+        
+        .log-info { color: #17a2b8; }
+        .log-success { color: #28a745; }
+        .log-warning { color: #ffc107; }
+        .log-error { color: #dc3545; font-weight: bold; }
+        
+        /* TESTE ISOLADO */
+        .isolated-test {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 9999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        .isolated-test.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- HEADER SIMULADO -->
+        <div class="header">
+            <h1>🔍 Diagnóstico - Página Consultations (Simulada)</h1>
+        </div>
+        
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="content-area">
+            <!-- SIDEBAR SIMULADA -->
+            <div class="sidebar">
+                <h3>Menu</h3>
+                <p>Simulando sidebar complexa da aplicação principal</p>
+            </div>
+            
+            <!-- ÁREA PRINCIPAL -->
+            <div class="main-content">
+                <!-- SIMULANDO VIDEOSURFACE COMPLEXO -->
+                <div class="video-surface">
+                    <!-- Container do vídeo local (como StaticVideoContainer) -->
+                    <div class="video-container">
+                        <div class="video-main">
+                            <video id="mainVideo" autoplay muted playsinline></video>
+                        </div>
+                        <div class="video-label" id="videoLabel">Câmera desligada</div>
+                    </div>
+                    
+                    <!-- Container do vídeo remoto -->
+                    <div class="video-container">
+                        <div class="video-main">
+                            <div style="color: #6b7280; text-align: center;">Cliente</div>
+                        </div>
+                        <div class="video-label">Cliente</div>
+                    </div>
+                </div>
+                
+                <!-- SIMULANDO VIDEOCONTROLS COMPLEXOS -->
+                <div class="controls-bar">
+                    <button id="audioBtn" class="control-btn" title="Microfone">🎤</button>
+                    <button id="cameraBtn" class="control-btn" title="Câmera">📹</button>
+                    <button id="videoBtn" class="control-btn" title="Compartilhar Vídeo">📺</button>
+                    <button id="screenBtn" class="control-btn" title="Compartilhar Tela">🖥️</button>
+                    <button id="isolatedTestBtn" class="control-btn" title="Teste Isolado">🧪</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- OVERLAY DE DIAGNÓSTICO -->
+    <div class="diagnostic-overlay">
+        <div class="diagnostic-header">
+            🔍 DIAGNÓSTICO COMPLETO - PÁGINA PRINCIPAL
+        </div>
+        <div id="diagnosticLogs">
+            <div class="log-entry log-info">[Início] Diagnóstico da página principal iniciado</div>
+        </div>
+    </div>
+    
+    <!-- TESTE ISOLADO -->
+    <div class="isolated-test" id="isolatedTest">
+        <h3 style="margin-top: 0; color: #28a745; text-align: center;">🧪 TESTE ISOLADO</h3>
+        <div style="width: 100%; height: 200px; background: #000; border-radius: 8px; margin-bottom: 15px; overflow: hidden;">
+            <video id="isolatedVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="startIsolatedCamera()" style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">▶️ Ligar</button>
+            <button onclick="stopIsolatedCamera()" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">⏹️ Parar</button>
+            <button onclick="closeIsolatedTest()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">❌ Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        // VARIÁVEIS GLOBAIS
+        let mainStream = null;
+        let isolatedStream = null;
+        let isCameraOn = false;
+        let diagnosticInterval = null;
+        
+        // ELEMENTOS DOM
+        const mainVideo = document.getElementById('mainVideo');
+        const isolatedVideo = document.getElementById('isolatedVideo');
+        const videoLabel = document.getElementById('videoLabel');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const isolatedTestBtn = document.getElementById('isolatedTestBtn');
+        const diagnosticLogs = document.getElementById('diagnosticLogs');
+        const isolatedTest = document.getElementById('isolatedTest');
+        
+        // Simular ref global (como na aplicação React)
+        window.kalonVideoRef = { current: mainVideo };
+        
+        // FUNÇÃO DE LOG
+        function addDiagnosticLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            diagnosticLogs.appendChild(entry);
+            diagnosticLogs.scrollTop = diagnosticLogs.scrollHeight;
+            
+            console.log(`🔍 [${type.toUpperCase()}] ${message}`);
+            
+            // Limitar entradas
+            if (diagnosticLogs.children.length > 200) {
+                diagnosticLogs.removeChild(diagnosticLogs.children[1]); // Manter header
+            }
+        }
+        
+        // DIAGNÓSTICO 1: CSS/LAYOUT
+        function diagnoseCSSLayout() {
+            addDiagnosticLog('=== DIAGNÓSTICO CSS/LAYOUT ===', 'info');
+            
+            const computedStyle = window.getComputedStyle(mainVideo);
+            const boundingRect = mainVideo.getBoundingClientRect();
+            
+            // Verificar estilos críticos
+            const criticalStyles = {
+                display: computedStyle.display,
+                opacity: computedStyle.opacity,
+                visibility: computedStyle.visibility,
+                zIndex: computedStyle.zIndex,
+                overflow: computedStyle.overflow,
+                position: computedStyle.position,
+                objectFit: computedStyle.objectFit,
+                height: computedStyle.height,
+                width: computedStyle.width,
+                transform: computedStyle.transform,
+                willChange: computedStyle.willChange
+            };
+            
+            addDiagnosticLog(`📐 Dimensões: ${boundingRect.width}x${boundingRect.height}`, 'info');
+            addDiagnosticLog(`📍 Posição: top=${boundingRect.top}, left=${boundingRect.left}`, 'info');
+            
+            Object.entries(criticalStyles).forEach(([prop, value]) => {
+                const isProblematic = 
+                    (prop === 'display' && value === 'none') ||
+                    (prop === 'opacity' && parseFloat(value) === 0) ||
+                    (prop === 'visibility' && value === 'hidden') ||
+                    (prop === 'height' && value === '0px') ||
+                    (prop === 'width' && value === '0px');
+                
+                const type = isProblematic ? 'error' : 'info';
+                addDiagnosticLog(`${prop}: ${value}`, type);
+            });
+            
+            // Verificar se elemento está visível
+            const isVisible = boundingRect.width > 0 && boundingRect.height > 0 && 
+                             computedStyle.display !== 'none' && 
+                             computedStyle.visibility !== 'hidden' && 
+                             parseFloat(computedStyle.opacity) > 0;
+            
+            addDiagnosticLog(`👁️ Elemento visível: ${isVisible ? '✅ SIM' : '❌ NÃO'}`, isVisible ? 'success' : 'error');
+            
+            return isVisible;
+        }
+        
+        // DIAGNÓSTICO 2: ELEMENTO DE VÍDEO
+        function diagnoseVideoElement() {
+            addDiagnosticLog('=== DIAGNÓSTICO ELEMENTO DE VÍDEO ===', 'info');
+            
+            const videoData = {
+                exists: !!mainVideo,
+                srcObject: !!mainVideo.srcObject,
+                srcObjectActive: mainVideo.srcObject?.active || false,
+                videoWidth: mainVideo.videoWidth,
+                videoHeight: mainVideo.videoHeight,
+                readyState: mainVideo.readyState,
+                paused: mainVideo.paused,
+                muted: mainVideo.muted,
+                autoplay: mainVideo.autoplay,
+                isConnected: mainVideo.isConnected,
+                parentElement: !!mainVideo.parentElement
+            };
+            
+            Object.entries(videoData).forEach(([prop, value]) => {
+                const isProblematic = 
+                    (prop === 'srcObject' && !value) ||
+                    (prop === 'srcObjectActive' && !value) ||
+                    (prop === 'videoWidth' && value === 0) ||
+                    (prop === 'videoHeight' && value === 0) ||
+                    (prop === 'readyState' && value === 0);
+                
+                const type = isProblematic ? 'error' : 'success';
+                addDiagnosticLog(`${prop}: ${value}`, type);
+            });
+            
+            if (mainVideo.srcObject) {
+                const videoTracks = mainVideo.srcObject.getVideoTracks();
+                const audioTracks = mainVideo.srcObject.getAudioTracks();
+                const liveVideoTracks = videoTracks.filter(t => t.readyState === 'live');
+                
+                addDiagnosticLog(`📹 Video tracks: ${videoTracks.length} (${liveVideoTracks.length} live)`, 
+                               liveVideoTracks.length > 0 ? 'success' : 'error');
+                addDiagnosticLog(`🔊 Audio tracks: ${audioTracks.length}`, 'info');
+            }
+        }
+        
+        // DIAGNÓSTICO 3: COMPARAÇÃO COM AMBIENTE SIMPLES
+        function diagnoseEnvironmentDifferences() {
+            addDiagnosticLog('=== DIAGNÓSTICO DIFERENÇAS DE AMBIENTE ===', 'info');
+            
+            const differences = [
+                'Estrutura HTML complexa vs simples',
+                'CSS com Tailwind/transforms vs CSS mínimo', 
+                'Múltiplos containers vs container único',
+                'Flexbox complexo vs posicionamento simples',
+                'Simulação React lifecycle vs JavaScript puro'
+            ];
+            
+            differences.forEach(diff => {
+                addDiagnosticLog(`🔍 ${diff}`, 'warning');
+            });
+        }
+        
+        // FUNÇÃO PRINCIPAL DA CÂMERA (SIMULANDO APLICAÇÃO COMPLEXA)
+        async function startMainCamera() {
+            addDiagnosticLog('🎯 === INICIANDO CÂMERA PRINCIPAL ===', 'info');
+            
+            try {
+                // SIMULAR COMPLEXIDADE DA APLICAÇÃO REACT
+                addDiagnosticLog('🔄 Simulando contextos React...', 'warning');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                addDiagnosticLog('🔄 Simulando useEffect e useState...', 'warning');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // CRIAR STREAM (igual ao ambiente simples)
+                addDiagnosticLog('📋 Constraints: { video: true, audio: false }', 'info');
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false 
+                });
+                
+                addDiagnosticLog('✅ Stream criado com sucesso', 'success');
+                addDiagnosticLog(`🆔 Stream ID: ${stream.id.substring(0, 8)}...`, 'info');
+                
+                // SIMULAR ATRIBUIÇÃO VIA REACT REF
+                addDiagnosticLog('🔄 Simulando atribuição via React ref...', 'warning');
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
+                // ATRIBUIÇÃO (como na aplicação React)
+                mainVideo.srcObject = stream;
+                mainStream = stream;
+                
+                addDiagnosticLog('✅ srcObject atribuído (via simulação React)', 'success');
+                
+                // EXECUTAR DIAGNÓSTICOS APÓS ATRIBUIÇÃO
+                setTimeout(() => {
+                    const isVisible = diagnoseCSSLayout();
+                    diagnoseVideoElement();
+                    diagnoseEnvironmentDifferences();
+                    
+                    // ANÁLISE FINAL
+                    if (mainVideo.videoWidth > 0 && mainVideo.videoHeight > 0) {
+                        addDiagnosticLog('🎉 SUCESSO: Vídeo funcionando na simulação complexa!', 'success');
+                        videoLabel.textContent = `Câmera ativa (${mainVideo.videoWidth}x${mainVideo.videoHeight})`;
+                        cameraBtn.classList.add('active');
+                        isCameraOn = true;
+                    } else {
+                        addDiagnosticLog('❌ PROBLEMA: Vídeo não está funcionando na simulação complexa', 'error');
+                        addDiagnosticLog('🔍 Possíveis causas identificadas nos logs acima', 'warning');
+                    }
+                }, 2000);
+                
+                // Eventos do vídeo
+                mainVideo.onloadedmetadata = () => {
+                    addDiagnosticLog(`📊 Metadados carregados: ${mainVideo.videoWidth}x${mainVideo.videoHeight}`, 'success');
+                };
+                
+                mainVideo.onplaying = () => {
+                    addDiagnosticLog('🎬 Vídeo reproduzindo!', 'success');
+                };
+                
+                mainVideo.onerror = (e) => {
+                    addDiagnosticLog(`❌ Erro no vídeo: ${e.message}`, 'error');
+                };
+                
+                // Forçar play
+                await mainVideo.play();
+                addDiagnosticLog('▶️ Play executado', 'success');
+                
+            } catch (error) {
+                addDiagnosticLog(`❌ ERRO: ${error.message}`, 'error');
+            }
+        }
+        
+        function stopMainCamera() {
+            addDiagnosticLog('🛑 Parando câmera principal...', 'info');
+            
+            if (mainStream) {
+                mainStream.getTracks().forEach(track => track.stop());
+                mainStream = null;
+            }
+            
+            mainVideo.srcObject = null;
+            videoLabel.textContent = 'Câmera desligada';
+            cameraBtn.classList.remove('active');
+            isCameraOn = false;
+            
+            addDiagnosticLog('✅ Câmera principal parada', 'success');
+        }
+        
+        // TESTE ISOLADO (AMBIENTE SIMPLES)
+        async function startIsolatedCamera() {
+            addDiagnosticLog('🧪 === INICIANDO TESTE ISOLADO ===', 'info');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false 
+                });
+                
+                addDiagnosticLog('✅ Stream isolado criado', 'success');
+                
+                // ATRIBUIÇÃO DIRETA (como páginas simples)
+                isolatedVideo.srcObject = stream;
+                isolatedStream = stream;
+                
+                addDiagnosticLog('✅ srcObject atribuído diretamente (teste isolado)', 'success');
+                
+                isolatedVideo.onplaying = () => {
+                    addDiagnosticLog('🎉 TESTE ISOLADO: Vídeo funcionando!', 'success');
+                };
+                
+                await isolatedVideo.play();
+                
+            } catch (error) {
+                addDiagnosticLog(`❌ ERRO no teste isolado: ${error.message}`, 'error');
+            }
+        }
+        
+        function stopIsolatedCamera() {
+            if (isolatedStream) {
+                isolatedStream.getTracks().forEach(track => track.stop());
+                isolatedStream = null;
+            }
+            isolatedVideo.srcObject = null;
+            addDiagnosticLog('✅ Teste isolado parado', 'success');
+        }
+        
+        function showIsolatedTest() {
+            isolatedTest.classList.add('show');
+        }
+        
+        function closeIsolatedTest() {
+            isolatedTest.classList.remove('show');
+            stopIsolatedCamera();
+        }
+        
+        // EVENT LISTENERS
+        cameraBtn.addEventListener('click', () => {
+            if (isCameraOn) {
+                stopMainCamera();
+            } else {
+                startMainCamera();
+            }
+        });
+        
+        isolatedTestBtn.addEventListener('click', showIsolatedTest);
+        
+        // INICIALIZAÇÃO
+        document.addEventListener('DOMContentLoaded', () => {
+            addDiagnosticLog('🎯 Página de diagnóstico da aplicação principal carregada', 'info');
+            addDiagnosticLog('💡 Clique no botão da câmera para executar diagnóstico completo', 'info');
+            addDiagnosticLog('🧪 Use o botão de teste isolado para comparar ambientes', 'info');
+            
+            // Executar diagnóstico inicial
+            setTimeout(() => {
+                diagnoseCSSLayout();
+                diagnoseVideoElement();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
+
+

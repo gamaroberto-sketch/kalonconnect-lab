@@ -1,0 +1,60 @@
+"use client";
+
+import React, { useEffect, useRef } from "react";
+import { VideoOff } from "lucide-react";
+import { useVideoPanel } from "./VideoPanelContext";
+
+/**
+ * Componente de vídeo isolado e otimizado
+ * Não gerencia srcObject diretamente - isso é feito pelo hook centralizado
+ */
+const VideoElement = () => {
+  const { localVideoRef, isCameraPreviewOn, lowPowerMode, isConnected } = useVideoPanel();
+  const mountedRef = useRef(false);
+  
+  const showLocalPreview = isCameraPreviewOn && (!lowPowerMode || isConnected);
+  
+  // 🔴 GARANTIR QUE COMPONENTE ESTÁ MONTADO
+  useEffect(() => {
+    mountedRef.current = true;
+    
+    // Log apenas para debugging (pode ser removido em produção)
+    if (localVideoRef.current) {
+      console.log('✅ VideoElement montado, ref pronta');
+    }
+    
+    return () => {
+      mountedRef.current = false;
+      console.log('🧹 VideoElement desmontado');
+    };
+  }, [localVideoRef]);
+  
+  return (
+    <div className="relative w-full h-full">
+      <video
+        ref={localVideoRef}  // 🔴 REF gerenciada pelo hook centralizado
+        autoPlay
+        muted
+        playsInline
+        className="h-full w-full object-cover"
+        style={{ 
+          opacity: showLocalPreview ? 1 : 0,
+          transition: 'opacity 0.2s'
+        }}
+        // 🔴 EVENTOS REMOVIDOS: Gerenciados pelo hook centralizado
+        // Isso elimina conflitos e duplicação de lógica
+      />
+      {!showLocalPreview && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <VideoOff className="w-12 h-12 text-gray-400" />
+        </div>
+      )}
+    </div>
+  );
+};
+
+// 🔴 MEMO: Evita re-renders desnecessários
+export default React.memo(VideoElement);
+
+
+

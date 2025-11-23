@@ -1,0 +1,517 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Sun, 
+  Moon, 
+  Heart, 
+  Sparkles, 
+  Activity, 
+  Send,
+  Brain,
+  Zap,
+  Shield,
+  Target,
+  Clock,
+  TrendingUp,
+  MessageCircle,
+  Plus,
+  FileText,
+  Radio,
+  Calendar,
+  Star,
+  ChevronRight,
+  Info,
+  Settings,
+  User,
+  LogOut
+} from 'lucide-react';
+import WelcomeModal from '../components/WelcomeModal';
+import ProtectedRoute from '../components/ProtectedRoute';
+import { useAuth } from '../components/AuthContext';
+
+export default function Dashboard() {
+  const { user, userType, logout } = useAuth();
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [vibrationalData, setVibrationalData] = useState({
+    energiaFisica: 75,
+    equilibrioEmocional: 68,
+    clarezaMental: 82,
+    conexaoEspiritual: 71
+  });
+  const [kaloniaMessages, setKaloniaMessages] = useState([]);
+  const [mounted, setMounted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showDevelopmentModal, setShowDevelopmentModal] = useState(false);
+  const [developmentMessage, setDevelopmentMessage] = useState('');
+
+  useEffect(() => {
+    setMounted(true);
+    
+    // Atualizar horário a cada minuto
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+
+    // Gerar mensagens da KalonIA
+    generateKalonIAMessages();
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const generateKalonIAMessages = () => {
+    const messages = [
+      "Permita que o corpo descanse e se renove naturalmente",
+      "Sua energia se harmoniza ao respirar conscientemente",
+      "A mente encontra clareza quando o coração está em paz",
+      "Cada respiração é uma oportunidade de reconexão",
+      "O equilíbrio surge da aceitação do momento presente",
+      "Sua jornada de autoconhecimento é única e valiosa",
+      "A sabedoria interior se revela na quietude",
+      "Cada célula do seu corpo vibra em sintonia com o universo"
+    ];
+    
+    const selectedMessages = messages
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 3);
+    
+    setKaloniaMessages(selectedMessages);
+  };
+
+  const handleNovaConsulta = () => {
+    window.location.href = '/consultas';
+  };
+
+  const handleEnviarFrequencia = () => {
+    setDevelopmentMessage('Enviar Frequência');
+    setShowDevelopmentModal(true);
+  };
+
+  const handleGerarRelatorio = () => {
+    setDevelopmentMessage('Gerar Relatório');
+    setShowDevelopmentModal(true);
+  };
+
+  const getGreeting = () => {
+    const hour = currentTime.getHours();
+    const userName = user?.name?.split(' ')[0] || 'Usuário';
+    
+    let greeting = '';
+    if (hour < 12) greeting = "🌞 Bom dia";
+    else if (hour < 18) greeting = "☀️ Boa tarde";
+    else greeting = "🌙 Boa noite";
+    
+    return `${greeting}, ${userName}`;
+  };
+
+  const getTimeBasedMessage = () => {
+    const hour = currentTime.getHours();
+    if (hour < 6) return "Permita que o corpo descanse profundamente";
+    if (hour < 12) return "Energize seu dia com intenção e gratidão";
+    if (hour < 18) return "Mantenha o equilíbrio durante suas atividades";
+    return "Reflita sobre o dia e prepare-se para o descanso";
+  };
+
+  const VibrationalChart = ({ data, label, color, icon }) => {
+    const percentage = data;
+    const circumference = 2 * Math.PI * 45;
+    const strokeDasharray = circumference;
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+    return (
+      <motion.div 
+        className="kalon-card p-6 text-center"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="relative w-32 h-32 mx-auto mb-4">
+          <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              stroke="currentColor"
+              strokeWidth="8"
+              fill="none"
+              className="text-gray-200 dark:text-gray-700"
+            />
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="45"
+              stroke="currentColor"
+              strokeWidth="8"
+              fill="none"
+              className={color}
+              strokeLinecap="round"
+              initial={{ strokeDasharray: 0, strokeDashoffset: circumference }}
+              animate={{ 
+                strokeDasharray: strokeDasharray,
+                strokeDashoffset: strokeDashoffset 
+              }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gray-800 dark:text-white">
+                {percentage}%
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {label}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-center space-x-2">
+          {icon}
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {label}
+          </span>
+        </div>
+      </motion.div>
+    );
+  };
+
+  const QuickActionButton = ({ icon, label, color, onClick, isDevelopment = false }) => (
+    <motion.button
+      onClick={onClick}
+      className={`kalon-button-secondary w-full p-4 rounded-2xl border-2 border-transparent hover:border-${color}-200 dark:hover:border-${color}-700 transition-all duration-300`}
+      whileHover={{ scale: 1.05, y: -2 }}
+      whileTap={{ scale: 0.95 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <div className="flex items-center space-x-3">
+        <div className={`p-2 rounded-xl bg-${color}-100 dark:bg-${color}-900/20`}>
+          {icon}
+        </div>
+        <div className="text-left">
+          <div className="font-semibold text-gray-800 dark:text-white">
+            {label}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {isDevelopment ? 'Em desenvolvimento' : 'Clique para acessar'}
+          </div>
+        </div>
+        <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+      </div>
+    </motion.button>
+  );
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        >
+          <Heart className="w-8 h-8 text-pink-500" />
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header com Saudação */}
+        <motion.div 
+          className="kalon-card p-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <motion.h1 
+                className="text-3xl font-bold text-gray-800 dark:text-white mb-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {getGreeting()}
+              </motion.h1>
+              <motion.p 
+                className="text-lg text-gray-600 dark:text-gray-400"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                {getTimeBasedMessage()}
+              </motion.p>
+            </div>
+            <motion.div 
+              className="text-right"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <div className="text-2xl font-bold text-gray-800 dark:text-white">
+                {currentTime.toLocaleTimeString('pt-BR', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {currentTime.toLocaleDateString('pt-BR', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Mapa Vibracional */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
+              <Target className="w-6 h-6 text-purple-500 mr-2" />
+              Mapa Vibracional
+            </h2>
+            <motion.button
+              onClick={() => setShowModal(true)}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Info className="w-5 h-5 text-gray-500 hover:text-purple-500 transition-colors" />
+            </motion.button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <VibrationalChart
+              data={vibrationalData.energiaFisica}
+              label="Energia Física"
+              color="text-green-500"
+              icon={<Activity className="w-4 h-4 text-green-500" />}
+            />
+            <VibrationalChart
+              data={vibrationalData.equilibrioEmocional}
+              label="Equilíbrio Emocional"
+              color="text-blue-500"
+              icon={<Heart className="w-4 h-4 text-blue-500" />}
+            />
+            <VibrationalChart
+              data={vibrationalData.clarezaMental}
+              label="Clareza Mental"
+              color="text-purple-500"
+              icon={<Brain className="w-4 h-4 text-purple-500" />}
+            />
+            <VibrationalChart
+              data={vibrationalData.conexaoEspiritual}
+              label="Conexão Espiritual"
+              color="text-pink-500"
+              icon={<Sparkles className="w-4 h-4 text-pink-500" />}
+            />
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Painel KalonIA */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.0, duration: 0.6 }}
+          >
+            <div className="kalon-card p-6">
+              <div className="flex items-center mb-6">
+                <div className="p-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 mr-3">
+                  <MessageCircle className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                  KalonIA
+                </h3>
+                <div className="ml-auto">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Zap className="w-5 h-5 text-yellow-500" />
+                  </motion.div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {kaloniaMessages.map((message, index) => (
+                  <motion.div
+                    key={index}
+                    className="p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl border border-pink-200 dark:border-pink-700/50"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2 + index * 0.2 }}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <Star className="w-4 h-4 text-yellow-500 mt-1 flex-shrink-0" />
+                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                        {message}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <motion.button
+                className="w-full mt-4 kalon-button-secondary"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span>Gerar Nova Orientação</span>
+                </div>
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Ações Rápidas */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.2, duration: 0.6 }}
+          >
+            <div className="kalon-card p-6">
+              <div className="flex items-center mb-6">
+                <div className="p-2 rounded-xl bg-gradient-to-r from-green-500 to-blue-600 mr-3">
+                  <Zap className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                  Ações Rápidas
+                </h3>
+              </div>
+              
+              <div className="space-y-4">
+                <QuickActionButton
+                  icon={<Plus className="w-5 h-5 text-green-500" />}
+                  label="Nova Consulta"
+                  color="green"
+                  onClick={handleNovaConsulta}
+                />
+                <QuickActionButton
+                  icon={<Radio className="w-5 h-5 text-blue-500" />}
+                  label="Enviar Frequência"
+                  color="blue"
+                  onClick={handleEnviarFrequencia}
+                  isDevelopment={true}
+                />
+                <QuickActionButton
+                  icon={<FileText className="w-5 h-5 text-purple-500" />}
+                  label="Gerar Relatório"
+                  color="purple"
+                  onClick={handleGerarRelatorio}
+                  isDevelopment={true}
+                />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Estatísticas Rápidas */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+        >
+          <div className="kalon-card p-6 text-center">
+            <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Calendar className="w-8 h-8 text-green-500" />
+            </div>
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              Consultas Hoje
+            </h4>
+            <p className="text-3xl font-bold text-green-500">3</p>
+          </div>
+          
+          <div className="kalon-card p-6 text-center">
+            <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <TrendingUp className="w-8 h-8 text-blue-500" />
+            </div>
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              Progresso Semanal
+            </h4>
+            <p className="text-3xl font-bold text-blue-500">87%</p>
+          </div>
+          
+          <div className="kalon-card p-6 text-center">
+            <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Shield className="w-8 h-8 text-purple-500" />
+            </div>
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              Bem-estar Geral
+            </h4>
+            <p className="text-3xl font-bold text-purple-500">92%</p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Welcome Modal */}
+      <WelcomeModal 
+        isOpen={showModal} 
+        onClose={() => setShowModal(false)} 
+      />
+
+      {/* Development Modal */}
+      <AnimatePresence>
+        {showDevelopmentModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowDevelopmentModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="kalon-card max-w-md w-full p-8 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center">
+                <motion.div
+                  className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full mb-4"
+                  animate={{ 
+                    scale: [1, 1.05, 1],
+                    rotate: [0, 5, -5, 0]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
+                >
+                  <Settings className="w-8 h-8 text-white" />
+                </motion.div>
+                
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                  Em Desenvolvimento
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  A funcionalidade <strong>{developmentMessage}</strong> está sendo desenvolvida e estará disponível em breve.
+                </p>
+                
+                <button
+                  onClick={() => setShowDevelopmentModal(false)}
+                  className="kalon-button-primary px-8 py-3"
+                >
+                  Entendi
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </ProtectedRoute>
+  );
+}

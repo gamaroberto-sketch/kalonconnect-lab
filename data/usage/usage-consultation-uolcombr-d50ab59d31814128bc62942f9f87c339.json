@@ -1,0 +1,19 @@
+{
+  "sessionId": "consultation-uolcombr-d50ab59d31814128bc62942f9f87c339",
+  "userEmail": "bobgama@uol.com.br",
+  "userName": "Roberto Gama",
+  "version": "PRO",
+  "startedAt": "2025-11-18T05:19:07.894Z",
+  "endedAt": null,
+  "durationMinutes": null,
+  "detailLevel": "advanced",
+  "actions": [
+    {
+      "time": "00:00:03",
+      "type": "startVideo",
+      "panel": null,
+      "featureKey": "videoCall",
+      "metadata": {}
+    }
+  ]
+}

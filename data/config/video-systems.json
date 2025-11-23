@@ -1,0 +1,13 @@
+{
+  "defaultSystem": "google-meet",
+  "options": ["google-meet", "highmesh"],
+  "videoQuality": "hd",
+  "recording": {
+    "autoStart": false,
+    "storagePath": "/public/user-media/recordings/"
+  },
+  "waitingRoom": {
+    "background": "/assets/waiting-room/default-background.jpg",
+    "ambienceAudio": "/assets/audio/default-ambience.mp3"
+  }
+}

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Visual Câmera - KalonConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        button.active {
+            background: #28a745;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        .status-panel {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .status-label {
+            font-weight: bold;
+            color: #495057;
+        }
+        .status-value {
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status-value.success {
+            color: #28a745;
+        }
+        .status-value.error {
+            color: #dc3545;
+        }
+        .status-value.warning {
+            color: #ffc107;
+        }
+        .log-panel {
+            height: 400px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-entry.error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+        }
+        .log-entry.success {
+            color: #155724;
+            background: #d4edda;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+        }
+        .log-entry.warning {
+            color: #856404;
+            background: #fff3cd;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+        }
+        .log-entry.info {
+            color: #0c5460;
+        }
+        .big-status {
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .big-status.active {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .big-status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .big-status.processing {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Debug Visual - Câmera KalonConnect</h1>
+            <p>Logs capturados em tempo real na própria página</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="video-section">
+                <div id="bigStatus" class="big-status inactive">
+                    📴 CÂMERA DESLIGADA
+                </div>
+                
+                <div class="video-container">
+                    <video id="debugVideo" autoplay muted playsinline></video>
+                </div>
+                
+                <div class="controls">
+                    <button id="cameraBtn">📹 Ligar Câmera</button>
+                    <button id="stopBtn" disabled class="danger">🛑 Parar</button>
+                    <button id="clearLogsBtn">🧹 Limpar Logs</button>
+                    <button id="pauseLogsBtn">⏸️ Pausar Logs</button>
+                </div>
+                
+                <div class="status-panel">
+                    <h3>📊 Status em Tempo Real</h3>
+                    <div class="status-item">
+                        <span class="status-label">Stream Ativo:</span>
+                        <span id="streamStatus" class="status-value error">❌ Não</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Vídeo Dimensões:</span>
+                        <span id="videoDimensions" class="status-value">0x0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Tracks Vídeo:</span>
+                        <span id="videoTracks" class="status-value">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Tracks Áudio:</span>
+                        <span id="audioTracks" class="status-value">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Vídeo Pausado:</span>
+                        <span id="videoPaused" class="status-value">-</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Ready State:</span>
+                        <span id="readyState" class="status-value">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="log-panel" id="logPanel">
+                <div class="log-entry info">[Início] Debug visual carregado</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const video = document.getElementById('debugVideo');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const clearLogsBtn = document.getElementById('clearLogsBtn');
+        const pauseLogsBtn = document.getElementById('pauseLogsBtn');
+        const logPanel = document.getElementById('logPanel');
+        const bigStatus = document.getElementById('bigStatus');
+        
+        // Status elements
+        const streamStatus = document.getElementById('streamStatus');
+        const videoDimensions = document.getElementById('videoDimensions');
+        const videoTracks = document.getElementById('videoTracks');
+        const audioTracks = document.getElementById('audioTracks');
+        const videoPaused = document.getElementById('videoPaused');
+        const readyState = document.getElementById('readyState');
+        
+        // Estado
+        let currentStream = null;
+        let logsPaused = false;
+        let statusUpdateInterval = null;
+        
+        // Interceptar console.log para capturar logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (!logsPaused) {
+                addLogEntry(args.join(' '), 'info');
+            }
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            if (!logsPaused) {
+                addLogEntry(args.join(' '), 'error');
+            }
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            if (!logsPaused) {
+                addLogEntry(args.join(' '), 'warning');
+            }
+        };
+        
+        function addLogEntry(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logPanel.appendChild(entry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+            
+            // Limitar a 500 entradas para performance
+            const entries = logPanel.children;
+            if (entries.length > 500) {
+                logPanel.removeChild(entries[0]);
+            }
+        }
+        
+        function updateBigStatus(status, message) {
+            bigStatus.className = `big-status ${status}`;
+            bigStatus.textContent = message;
+        }
+        
+        function updateStatusPanel() {
+            if (currentStream) {
+                streamStatus.textContent = currentStream.active ? '✅ Sim' : '❌ Não';
+                streamStatus.className = `status-value ${currentStream.active ? 'success' : 'error'}`;
+                
+                const vTracks = currentStream.getVideoTracks();
+                const aTracks = currentStream.getAudioTracks();
+                
+                videoTracks.textContent = vTracks.length;
+                audioTracks.textContent = aTracks.length;
+                
+                videoTracks.className = `status-value ${vTracks.length > 0 ? 'success' : 'error'}`;
+                audioTracks.className = `status-value ${aTracks.length > 0 ? 'success' : 'warning'}`;
+            } else {
+                streamStatus.textContent = '❌ Não';
+                streamStatus.className = 'status-value error';
+                videoTracks.textContent = '0';
+                audioTracks.textContent = '0';
+                videoTracks.className = 'status-value error';
+                audioTracks.className = 'status-value error';
+            }
+            
+            // Status do vídeo
+            videoDimensions.textContent = `${video.videoWidth}x${video.videoHeight}`;
+            videoPaused.textContent = video.paused ? '✅ Sim' : '❌ Não';
+            readyState.textContent = video.readyState;
+            
+            videoDimensions.className = `status-value ${video.videoWidth > 0 ? 'success' : 'error'}`;
+            videoPaused.className = `status-value ${video.paused ? 'warning' : 'success'}`;
+        }
+        
+        function startStatusUpdates() {
+            if (statusUpdateInterval) return;
+            
+            statusUpdateInterval = setInterval(updateStatusPanel, 1000);
+            addLogEntry('Status updates iniciados', 'info');
+        }
+        
+        function stopStatusUpdates() {
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+                statusUpdateInterval = null;
+                addLogEntry('Status updates parados', 'info');
+            }
+        }
+        
+        async function testCamera() {
+            addLogEntry('=== INICIANDO TESTE DE CÂMERA ===', 'info');
+            updateBigStatus('processing', '⏳ PROCESSANDO...');
+            
+            cameraBtn.disabled = true;
+            
+            try {
+                // Verificar suporte
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('getUserMedia não suportado');
+                }
+                
+                addLogEntry('✅ getUserMedia suportado', 'success');
+                
+                // Tentar diferentes constraints
+                const constraints = [
+                    { video: true, audio: false },
+                    { video: { width: 640, height: 480 }, audio: false },
+                    { video: { width: 320, height: 240 }, audio: false }
+                ];
+                
+                let stream = null;
+                
+                for (let i = 0; i < constraints.length; i++) {
+                    try {
+                        addLogEntry(`🔄 Tentativa ${i + 1}: ${JSON.stringify(constraints[i])}`, 'info');
+                        
+                        const timeoutPromise = new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('Timeout 8s')), 8000)
+                        );
+                        
+                        const streamPromise = navigator.mediaDevices.getUserMedia(constraints[i]);
+                        stream = await Promise.race([streamPromise, timeoutPromise]);
+                        
+                        addLogEntry(`✅ SUCESSO na tentativa ${i + 1}!`, 'success');
+                        break;
+                        
+                    } catch (error) {
+                        addLogEntry(`❌ Tentativa ${i + 1} falhou: ${error.message}`, 'error');
+                        
+                        if (error.name === 'NotAllowedError') {
+                            addLogEntry('🚫 ERRO FATAL: Permissão negada', 'error');
+                            throw error;
+                        }
+                    }
+                }
+                
+                if (!stream) {
+                    throw new Error('Todas as tentativas falharam');
+                }
+                
+                // Sucesso!
+                currentStream = stream;
+                addLogEntry(`📊 Stream criado: ID ${stream.id?.substring(0, 8)}`, 'success');
+                
+                // Analisar tracks
+                const vTracks = stream.getVideoTracks();
+                const aTracks = stream.getAudioTracks();
+                
+                addLogEntry(`📹 Tracks de vídeo: ${vTracks.length}`, 'info');
+                addLogEntry(`🎤 Tracks de áudio: ${aTracks.length}`, 'info');
+                
+                vTracks.forEach((track, i) => {
+                    addLogEntry(`  📹 Track ${i + 1}: ${track.label} (${track.readyState})`, 'info');
+                    
+                    // Listeners para detectar problemas
+                    track.addEventListener('ended', () => {
+                        addLogEntry(`❌ CRÍTICO: Track ${i + 1} TERMINADO!`, 'error');
+                        updateBigStatus('inactive', '❌ TRACK TERMINADO');
+                    });
+                    
+                    track.addEventListener('mute', () => {
+                        addLogEntry(`⚠️ Track ${i + 1} MUTADO`, 'warning');
+                    });
+                });
+                
+                // Atribuir ao vídeo
+                addLogEntry('🔗 Atribuindo stream ao vídeo...', 'info');
+                video.srcObject = stream;
+                
+                // Verificar se "colou"
+                setTimeout(() => {
+                    if (video.srcObject === stream) {
+                        addLogEntry('✅ srcObject mantido com sucesso', 'success');
+                    } else {
+                        addLogEntry('❌ srcObject foi perdido!', 'error');
+                        video.srcObject = stream; // Tentar novamente
+                    }
+                }, 1000);
+                
+                // Eventos do vídeo
+                video.onloadedmetadata = () => {
+                    addLogEntry(`📊 Metadados carregados: ${video.videoWidth}x${video.videoHeight}`, 'success');
+                    updateBigStatus('active', `📹 ATIVA ${video.videoWidth}x${video.videoHeight}`);
+                };
+                
+                video.onplaying = () => {
+                    addLogEntry(`🎬 Vídeo reproduzindo: ${video.videoWidth}x${video.videoHeight}`, 'success');
+                    updateBigStatus('active', `🎬 REPRODUZINDO ${video.videoWidth}x${video.videoHeight}`);
+                };
+                
+                video.onerror = (event) => {
+                    addLogEntry(`❌ ERRO no vídeo: ${event}`, 'error');
+                    updateBigStatus('inactive', '❌ ERRO NO VÍDEO');
+                };
+                
+                video.onwaiting = () => {
+                    addLogEntry('⏳ Vídeo aguardando dados...', 'warning');
+                };
+                
+                video.onstalled = () => {
+                    addLogEntry('🚫 Vídeo travado...', 'warning');
+                };
+                
+                // Iniciar monitoramento
+                startStatusUpdates();
+                
+                // Habilitar botão de parar
+                stopBtn.disabled = false;
+                cameraBtn.textContent = '📹 Câmera Ativa';
+                cameraBtn.className = 'active';
+                
+                addLogEntry('✅ === TESTE CONCLUÍDO COM SUCESSO ===', 'success');
+                
+                // Monitoramento contínuo
+                const monitorInterval = setInterval(() => {
+                    if (currentStream && currentStream.active) {
+                        const vTracks = currentStream.getVideoTracks();
+                        const activeTracks = vTracks.filter(t => t.readyState === 'live');
+                        addLogEntry(`🔍 Monitor: ${activeTracks.length}/${vTracks.length} tracks ativos`, 'success');
+                    } else {
+                        addLogEntry('❌ Monitor: Stream perdido!', 'error');
+                        updateBigStatus('inactive', '❌ STREAM PERDIDO');
+                        clearInterval(monitorInterval);
+                    }
+                }, 5000);
+                
+            } catch (error) {
+                addLogEntry(`❌ ERRO GERAL: ${error.name}: ${error.message}`, 'error');
+                updateBigStatus('inactive', `❌ ERRO: ${error.name}`);
+                
+                if (error.name === 'NotAllowedError') {
+                    addLogEntry('💡 SOLUÇÃO: Clique no ícone da câmera na barra de endereços e permita acesso', 'info');
+                } else if (error.name === 'NotFoundError') {
+                    addLogEntry('💡 SOLUÇÃO: Verifique se a câmera está conectada', 'info');
+                } else {
+                    addLogEntry('💡 SOLUÇÃO: Tente recarregar a página ou usar outro navegador', 'info');
+                }
+            } finally {
+                cameraBtn.disabled = false;
+            }
+        }
+        
+        function stopCamera() {
+            addLogEntry('🛑 Parando câmera...', 'info');
+            
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                    addLogEntry(`🛑 Track ${track.kind} parado`, 'info');
+                });
+                currentStream = null;
+            }
+            
+            video.srcObject = null;
+            stopStatusUpdates();
+            
+            stopBtn.disabled = true;
+            cameraBtn.textContent = '📹 Ligar Câmera';
+            cameraBtn.className = '';
+            
+            updateBigStatus('inactive', '📴 CÂMERA DESLIGADA');
+            addLogEntry('✅ Câmera parada com sucesso', 'success');
+        }
+        
+        function clearLogs() {
+            logPanel.innerHTML = '<div class="log-entry info">[Logs limpos] Debug visual ativo</div>';
+        }
+        
+        function toggleLogsPause() {
+            logsPaused = !logsPaused;
+            pauseLogsBtn.textContent = logsPaused ? '▶️ Retomar Logs' : '⏸️ Pausar Logs';
+            addLogEntry(logsPaused ? 'Logs pausados' : 'Logs retomados', 'info');
+        }
+        
+        // Event listeners
+        cameraBtn.addEventListener('click', testCamera);
+        stopBtn.addEventListener('click', stopCamera);
+        clearLogsBtn.addEventListener('click', clearLogs);
+        pauseLogsBtn.addEventListener('click', toggleLogsPause);
+        
+        // Inicialização
+        updateBigStatus('inactive', '📴 CÂMERA DESLIGADA');
+        updateStatusPanel();
+        addLogEntry('🎯 Debug visual carregado e pronto', 'success');
+        addLogEntry('💡 Clique em "Ligar Câmera" para iniciar o teste', 'info');
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,26 @@
+# Histórico de Alterações
+
+## 2025-11-10
+
+- Ajustei o modal de configurações para exibir o texto “Gerencie o tempo e a duração conforme sua preferência”, remover as durações rápidas acima de 90 minutos e harmonizar tipografia/cores (botão Editar, labels e valores) com o tema ativo (`SessionSettings.jsx`).
+- Na tela de Consulta Online, personalizei a faixa de controles com as cores do tema, redistribuí os botões centrais (microfone, câmera, iniciar sessão, compartilhamento, tela cheia) e garanti que a câmera permaneça desligada até o usuário acioná-la (`VideoControls.jsx`, `VideoPanelContext.jsx`).
+- Implementei a pré-visualização independente da câmera e o botão “Compartilhar câmera”, permitindo que o profissional se veja antes de enviar o vídeo ao cliente; o fluxo também mantém os dispositivos desligados por padrão e segue o esquema de cores do tema (`VideoPanelContext.jsx`, `VideoControls.jsx`, `VideoSurface.jsx`).
+- Atualizei o topo com logo e marca “KalonConnect” para usar o gradiente e as cores padrão escolhidas pelo profissional, mantendo o conjunto consistente com o restante da interface (`Header.jsx`).
+- Ajustei as janelas flutuantes da Consulta Online para abrirem com largura equivalente ao botão acionado (mínimo reduzido) e persisti posição/tamanho preferidos do profissional, incluindo gravação após arrastar/redimensionar (`pages/consultations.jsx`).
+- Revisitei a aba de Ficha para usar apenas um contêiner temático (evitando “janela dentro da janela”) e alinhei seus cartões/botões aos tons do tema (`ClientRecordPanel.jsx`).
+- Corrigi o botão de pré-visualização para desligar totalmente a câmera (inclusive quando estava compartilhada), mantendo estados sincronizados entre prévia e transmissão (`VideoPanelContext.jsx`, `VideoControls.jsx`).
+- Transformei o bloco “Acesso Rápido a Bancos e Carteiras” em uma gaveta com seleção de favoritos, adicionando a área fixa de bancos escolhidos e persistência das escolhas no `localStorage` (`FinancialPanel.jsx`).
+- Atualizei o fluxo para consumir o dataset `data/banks.json` carregado no cliente e sincronizar a seleção com o endpoint `/api/user/banks`, garantindo que apenas os códigos escolhidos fiquem em destaque no painel financeiro (`FinancialPanel.jsx`, `pages/api/user/banks.js`).
+- Exponibilizei o dataset oficial via `/api/banks`, evitando acesso direto ao arquivo e corrigindo problemas de carregamento no drawer (`pages/api/banks.js`, `FinancialPanel.jsx`).
+- Ajustei a gaveta “Configurar Bancos” para respeitar o header fixo e manter o overlay visível em todas as resoluções (`FinancialPanel.jsx`).
+- Implementei a tela “Perfil do Profissional” com captura/upload de foto, assinaturas digital/texto, serviços, redes sociais e persistência completa via `/api/user/profile` (`pages/profile.jsx`, `pages/api/user/profile.js`).
+- Incluí o atalho “Perfil do Profissional” no menu lateral e reposicionei a `Sidebar` abaixo do cabeçalho fixo para evitar sobreposição ao rolar (`components/Sidebar.jsx`).
+- Harmonizei a tela “Perfil do Profissional” com as cores padrão do tema (gradiente superior e área de assinatura) para respeitar a paleta ativa (`pages/profile.jsx`).
+- Integrei os dados do perfil na Sala de Consulta (nome, especialidade e avatar) e criei o helper `getProfile` para reutilização futura (`pages/consultations.jsx`, `lib/profile.js`).
+- Envolvi a tela “Perfil do Profissional” com o Header/Sidebar para permitir navegar pelo app sem ficar preso na página (`pages/profile.jsx`).
+- Adicionei persistência do cronômetro das sessões com arquivo `session-timers.json`, API dedicada, fallback em `localStorage` e restauração automática do contador (`components/VideoPanelContext.jsx`, `pages/api/session-timers.js`, `data/session-timers.json`).
+- Transformei a aba “Gravação” em um painel completo com controle de mídia, transcrição, resumo, exportação e persistência (gravações, transcrições, resumos e metadados) (`components/RecordingPanel.jsx`, `pages/api/recordings.js`, `pages/api/transcription.js`, `pages/api/summaries.js`, `pages/api/user/sessions.js`).
+- Ajustei o fundo dinâmico da Sala de Consulta com um wrapper fixo que aplica o gradiente do tema sem impactar os painéis flutuantes, garantindo continuidade ao longo de toda a rolagem e bloqueando a rolagem do `body` apenas quando os painéis absolutos estiverem abertos (corrigindo a ordem de inicialização para evitar `ReferenceError`) (`pages/consultations.jsx`).
+- Removi `overflow` internos dos painéis Player, Notas, Arquivos e Fichas para que a página principal controle a rolagem, evitando barras duplas quando os módulos flutuantes estão abertos (`components/RelaxationPlayer.jsx`, `NotesPanel.jsx`, `FilesPanel.jsx`, `ClientRecordPanel.jsx`).
+- Normalizei o armazenamento das dimensões dos painéis flutuantes para que a altura volte ao modo automático ao abrir novamente, impedindo travamentos de rolagem em telas com conteúdo extenso (`pages/consultations.jsx`).
+- Corrigi o gerenciamento do estado `hasOpenPanels` para evitar acessos antes da inicialização ao controlar o bloqueio de rolagem (`pages/consultations.jsx`).

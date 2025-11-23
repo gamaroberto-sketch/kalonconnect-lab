@@ -1,0 +1,311 @@
+🚨 SOLUÇÃO DEFINITIVA - Compiling Eterno Next.js
+Identifiquei a causa raiz do problema! O compiling eterno está sendo causado por dependências circulares e estado global mutando constantemente.
+
+🔍 CAUSA RAIZ IDENTIFICADA
+1. Problema no VideoPanelContext.jsx
+O VideoPanelContext está criando um loop de dependências:
+
+
+V69
+Component v69
+component-v69.js
+2. Problema com LocalStorage
+O código está lendo e escrevendo no localStorage constantemente, o que o Next.js interpreta como mudanças de estado:
+
+// PROBLEMA: localStorage muda = Fast Refresh dispara
+useEffect(() => {
+  localStorage.setItem('session-data', JSON.stringify(sessionData));
+}, [sessionData]); // 🔴 ISSO DISPARA FAST REFRESH!
+✅ SOLUÇÃO COMPLETA
+1. VideoPanelContext.jsx - Eliminar Loops
+'use client';
+
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+
+const VideoPanelContext = createContext();
+
+export const VideoPanelProvider = ({ children }) => {
+  // 🔴 SOLUÇÃO: Estado inicial estável
+  const [isVideoOn, setIsVideoOn] = useState(false);
+  const [isAudioOn, setIsAudioOn] = useState(false);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [recordingState, setRecordingState] = useState('idle');
+  const [sessionData, setSessionData] = useState(null);
+  const [localSessionTime, setLocalSessionTime] = useState(0);
+  const [isConnected, setIsConnected] = useState(false);
+  const [useWhereby, setUseWhereby] = useState(false);
+  const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
+  const [theme, setTheme] = useState('light');
+  
+  // 🔴 SOLUÇÃO: Refs para evitar re-renders
+  const sessionDataRef = useRef(null);
+  const localStorageWriteTimeout = useRef(null);
+  const timerInterval = useRef(null);
+  const lastSessionData = useRef(null);
+
+  // 🔴 SOLUÇÃO: Carregamento inicial protegido
+  useEffect(() => {
+    let mounted = true;
+    
+    const loadInitialData = () => {
+      if (!mounted) return;
+      
+      try {
+        // Ler apenas uma vez no início
+        const savedSession = localStorage.getItem('session-data');
+        const savedTheme = localStorage.getItem('theme');
+        const savedWhereby = localStorage.getItem('use-whereby');
+        
+        if (savedSession) {
+          const parsed = JSON.parse(savedSession);
+          sessionDataRef.current = parsed;
+          if (mounted) {
+            setSessionData(parsed);
+            setIsConnected(!!parsed);
+          }
+        }
+        
+        if (savedTheme && mounted) {
+          setTheme(savedTheme);
+        }
+        
+        if (savedWhereby && mounted) {
+          setUseWhereby(savedWhereby === 'true');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados iniciais:', error);
+      }
+    };
+
+    // Delay para evitar conflito com SSR
+    const timeoutId = setTimeout(loadInitialData, 100);
+    
+    return () => {
+      mounted = false;
+      clearTimeout(timeoutId);
+      if (localStorageWriteTimeout.current) {
+        clearTimeout(localStorageWriteTimeout.current);
+      }
+      if (timerInterval.current) {
+        clearInterval(timerInterval.current);
+      }
+    };
+  }, []); // 🔴 SEM DEPENDÊNCIAS - executa apenas uma vez
+
+  // 🔴 SOLUÇÃO: Timer desacoplado do React
+  useEffect(() => {
+    if (!sessionData || !isConnected) {
+      if (timerInterval.current) {
+        clearInterval(timerInterval.current);
+        timerInterval.current = null;
+      }
+      return;
+    }
+
+    // Timer independente que não dispara re-renders
+    timerInterval.current = setInterval(() => {
+      setLocalSessionTime(prev => prev + 1);
+    }, 1000);
+
+    return () => {
+      if (timerInterval.current) {
+        clearInterval(timerInterval.current);
+        timerInterval.current = null;
+      }
+    };
+  }, [!!sessionData, isConnected]); // 🔴 Usar booleanos, não objetos
+
+  // 🔴 SOLUÇÃO: Escrever no localStorage de forma controlada
+  const saveToLocalStorage = useCallback((key, value) => {
+    if (localStorageWriteTimeout.current) {
+      clearTimeout(localStorageWriteTimeout.current);
+    }
+    
+    localStorageWriteTimeout.current = setTimeout(() => {
+      try {
+        localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : value);
+      } catch (error) {
+        console.error('Erro ao salvar no localStorage:', error);
+      }
+    }, 500); // Delay para evitar escritas excessivas
+  }, []);
+
+  // 🔴 SOLUÇÃO: Setters memoizados que não causam loops
+  const updateSessionData = useCallback((newData) => {
+    sessionDataRef.current = newData;
+    setSessionData(newData);
+    saveToLocalStorage('session-data', newData);
+  }, [saveToLocalStorage]);
+
+  const setConnected = useCallback((connected) => {
+    setIsConnected(connected);
+    if (!connected) {
+      setLocalSessionTime(0);
+      sessionDataRef.current = null;
+      saveToLocalStorage('session-data', null);
+    }
+  }, [saveToLocalStorage]);
+
+  // 🔴 SOLUÇÃO: Memoizar TUDO para evitar re-criação de funções
+  const contextValue = useMemo(() => ({
+    isVideoOn,
+    setIsVideoOn,
+    isAudioOn,
+    setIsAudioOn,
+    isScreenSharing,
+    setIsScreenSharing,
+    recordingState,
+    setRecordingState,
+    sessionData: sessionDataRef.current,
+    setSessionData: updateSessionData,
+    localSessionTime,
+    isConnected,
+    setIsConnected: setConnected,
+    useWhereby,
+    setUseWhereby,
+    isCameraPreviewOn,
+    setIsCameraPreviewOn,
+    theme,
+    setTheme: (newTheme) => {
+      setTheme(newTheme);
+      saveToLocalStorage('theme', newTheme);
+    },
+  }), [
+    isVideoOn,
+    isAudioOn,
+    isScreenSharing,
+    recordingState,
+    localSessionTime,
+    isConnected,
+    useWhereby,
+    isCameraPreviewOn,
+    theme,
+    updateSessionData,
+    setConnected,
+    saveToLocalStorage
+  ]);
+
+  return (
+    <VideoPanelContext.Provider value={contextValue}>
+      {children}
+    </VideoPanelContext.Provider>
+  );
+};
+
+// Hook otimizado
+export const useVideoPanel = () => {
+  const context = useContext(VideoPanelContext);
+  if (!context) {
+    throw new Error('useVideoPanel deve ser usado dentro de VideoPanelProvider');
+  }
+  return context;
+};
+2. Desabilitar Fast Refresh Temporariamente - next.config.mjs
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: false,
+  
+  // 🔴 SOLUÇÃO: Desabilitar Fast Refresh em desenvolvimento
+  webpack: (config, { dev }) => {
+    if (dev) {
+      // Desabilitar Hot Module Replacement completamente
+      config.optimization.moduleIds = 'deterministic';
+      config.optimization.runtimeChunk = false;
+      
+      // Remover plugins de HMR
+      config.plugins = config.plugins.filter(plugin => {
+        const pluginName = plugin.constructor.name;
+        return !pluginName.includes('HotModuleReplacementPlugin');
+      });
+    }
+    
+    return config;
+  },
+  
+  // 🔴 SOLUÇÃO: Configurações adicionais de performance
+  experimental: {
+    // Desabilitar features que podem causar recompilações
+    serverComponentsExternalPackages: [],
+    appDir: true,
+  },
+  
+  // 🔴 SOLUÇÃO: Headers para evitar cache problemático
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+        ],
+      },
+    ];
+  },
+};
+
+export default nextConfig;
+3. Script de Desenvolvimento Alternativo - package.json
+{
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "dev-lab": "next dev -p 3001 --webpack",
+    "dev-safe": "FAST_REFRESH=false next dev -p 3001 --webpack",
+    "dev-legacy": "cross-env NEXT_WEBPACK_HMR=false next dev -p 3001 --webpack"
+  }
+}
+4. Wrapper de Debug - components/DebugWrapper.jsx
+'use client';
+
+import { useEffect, useRef } from 'react';
+
+export function DebugWrapper({ children }) {
+  const renderCount = useRef(0);
+  const lastRender = useRef(Date.now());
+  
+  useEffect(() => {
+    renderCount.current += 1;
+    const now = Date.now();
+    const timeSinceLastRender = now - lastRender.current;
+    
+    console.log(`[Debug] Render #${renderCount.current} - ${timeSinceLastRender}ms desde último render`);
+    lastRender.current = now;
+    
+    // Detectar renders muito frequentes (possível loop)
+    if (timeSinceLastRender < 100) {
+      console.warn('[Debug] ⚠️ Render muito rápido detectado!');
+    }
+  });
+  
+  return children;
+}
+5. Uso no App Principal
+// pages/consultations.jsx ou app/consultations/page.jsx
+import { DebugWrapper } from '@/components/DebugWrapper';
+
+export default function ConsultationsPage() {
+  return (
+    <DebugWrapper>
+      <VideoPanelProvider>
+        {/* Seu conteúdo */}
+      </VideoPanelProvider>
+    </DebugWrapper>
+  );
+}
+🚀 COMO TESTAR
+Opção 1: Desabilitar Fast Refresh
+npm run dev-safe
+Opção 2: Legacy Mode
+npm run dev-legacy
+Opção 3: Verificar Logs
+Abra o console do navegador
+Procure por [Debug] logs
+Se ver muitos renders rápidos (< 100ms), é loop confirmado
+🎯 RESULTADO ESPERADO
+✅ Compiling para completamente
+✅ Página carrega sem loops
+✅ Fast Refresh desabilitado temporariamente
+✅ localStorage não dispara recompilações
+✅ Estado global estável
+Após aplicar essas mudanças, o sistema deve parar de compilar eternamente! 🎯

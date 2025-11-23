@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Câmera Piscando - KalonConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        video {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background: #000;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .success {
+            color: #28a745;
+        }
+        .info {
+            color: #17a2b8;
+        }
+        .warning {
+            color: #ffc107;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Teste: Câmera Piscando - Correção</h1>
+        <p>Esta página testa especificamente o problema da câmera que "pisca e apaga".</p>
+        
+        <div id="status" class="status inactive">
+            📴 Câmera: DESLIGADA
+        </div>
+        
+        <div>
+            <button id="testBtn">🎥 Ativar Câmera (Teste Robusto)</button>
+            <button id="clearBtn">🧹 Limpar Logs</button>
+            <button id="stopBtn" disabled>🛑 Parar Stream</button>
+            <button id="keepAliveBtn" disabled>🛡️ Forçar Keep-Alive</button>
+        </div>
+        
+        <video id="testVideo" autoplay muted playsinline></video>
+        
+        <div id="logContainer" class="log">
+            <div class="info">📋 Logs aparecerão aqui...</div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('testVideo');
+        const testBtn = document.getElementById('testBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const keepAliveBtn = document.getElementById('keepAliveBtn');
+        const logContainer = document.getElementById('logContainer');
+        const statusDiv = document.getElementById('status');
+        
+        let currentStream = null;
+        let keepAliveInterval = null;
+        let streamMonitorInterval = null;
+        
+        function updateStatus(active, message) {
+            if (active) {
+                statusDiv.className = 'status active';
+                statusDiv.textContent = `📹 Câmera: ATIVA - ${message}`;
+            } else {
+                statusDiv.className = 'status inactive';
+                statusDiv.textContent = `📴 Câmera: DESLIGADA - ${message}`;
+            }
+        }
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            logContainer.innerHTML = '<div class="info">📋 Logs limpos...</div>';
+        }
+        
+        function startStreamMonitoring(stream) {
+            log('🔍 Iniciando monitoramento contínuo do stream...', 'info');
+            
+            streamMonitorInterval = setInterval(() => {
+                if (stream && stream.active) {
+                    const videoTracks = stream.getVideoTracks();
+                    const activeTracks = videoTracks.filter(t => t.readyState === 'live');
+                    
+                    log(`✅ Monitor: Stream ativo (${activeTracks.length}/${videoTracks.length} tracks live)`, 'success');
+                    log(`📐 Monitor: Vídeo ${video.videoWidth}x${video.videoHeight}, paused: ${video.paused}`, 'info');
+                    
+                    updateStatus(true, `${video.videoWidth}x${video.videoHeight}`);
+                    
+                    // Verificar se vídeo pausou
+                    if (video.paused) {
+                        log('⚠️ Monitor: Vídeo pausou, tentando reativar...', 'warning');
+                        video.play().catch(error => {
+                            log(`❌ Monitor: Erro ao reativar: ${error.message}`, 'error');
+                        });
+                    }
+                    
+                } else {
+                    log('❌ Monitor: Stream foi desativado!', 'error');
+                    updateStatus(false, 'Stream perdido');
+                    clearInterval(streamMonitorInterval);
+                    streamMonitorInterval = null;
+                }
+            }, 2000); // Verificar a cada 2 segundos
+        }
+        
+        function startKeepAlive(stream) {
+            log('🛡️ Iniciando sistema keep-alive...', 'info');
+            
+            keepAliveInterval = setInterval(() => {
+                if (stream && stream.active) {
+                    // Forçar play se pausou
+                    if (video.paused) {
+                        log('🔄 Keep-alive: Forçando play...', 'warning');
+                        video.play();
+                    }
+                    
+                    // Verificar srcObject
+                    if (video.srcObject !== stream) {
+                        log('🔄 Keep-alive: Reatribuindo srcObject...', 'warning');
+                        video.srcObject = stream;
+                    }
+                    
+                    // Verificar tracks
+                    const videoTracks = stream.getVideoTracks();
+                    videoTracks.forEach(track => {
+                        if (!track.enabled) {
+                            log('🔄 Keep-alive: Reativando track...', 'warning');
+                            track.enabled = true;
+                        }
+                    });
+                    
+                    log('✅ Keep-alive: Verificação completa', 'success');
+                } else {
+                    log('❌ Keep-alive: Stream perdido, parando...', 'error');
+                    clearInterval(keepAliveInterval);
+                    keepAliveInterval = null;
+                }
+            }, 1000); // Keep-alive a cada 1 segundo
+        }
+        
+        async function testRobustCamera() {
+            log('🎯 === TESTE ROBUSTO PARA CÂMERA PISCANDO ===', 'info');
+            
+            testBtn.disabled = true;
+            updateStatus(false, 'Iniciando...');
+            
+            try {
+                // Teste básico primeiro
+                log('🔍 Testando acesso básico...', 'info');
+                const basicStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                log('✅ Acesso básico OK, aplicando proteções...', 'success');
+                
+                // Não parar o stream básico, usar ele mesmo
+                currentStream = basicStream;
+                
+                // Proteger tracks imediatamente
+                const videoTracks = basicStream.getVideoTracks();
+                videoTracks.forEach((track, index) => {
+                    log(`🛡️ Protegendo track ${index + 1}: ${track.label}`, 'info');
+                    
+                    // Forçar como enabled
+                    track.enabled = true;
+                    
+                    // Listeners para detectar problemas
+                    track.addEventListener('ended', () => {
+                        log(`❌ CRÍTICO: Track ${index + 1} foi TERMINADO!`, 'error');
+                        updateStatus(false, 'Track terminado');
+                    });
+                    
+                    track.addEventListener('mute', () => {
+                        log(`⚠️ Track ${index + 1} foi MUTADO`, 'warning');
+                    });
+                    
+                    track.addEventListener('unmute', () => {
+                        log(`✅ Track ${index + 1} foi DESMUTADO`, 'success');
+                    });
+                });
+                
+                // Atribuir ao vídeo IMEDIATAMENTE
+                log('🔗 Atribuindo stream ao vídeo...', 'info');
+                video.srcObject = basicStream;
+                
+                // Verificar atribuição
+                setTimeout(() => {
+                    if (video.srcObject === basicStream) {
+                        log('✅ srcObject mantido com sucesso!', 'success');
+                    } else {
+                        log('❌ srcObject foi perdido, reatribuindo...', 'error');
+                        video.srcObject = basicStream;
+                    }
+                }, 500);
+                
+                // Eventos do vídeo
+                video.onloadedmetadata = () => {
+                    log(`📊 Metadados carregados: ${video.videoWidth}x${video.videoHeight}`, 'success');
+                    updateStatus(true, `${video.videoWidth}x${video.videoHeight}`);
+                };
+                
+                video.onplaying = () => {
+                    log(`🎬 Vídeo reproduzindo: ${video.videoWidth}x${video.videoHeight}`, 'success');
+                    updateStatus(true, `Reproduzindo ${video.videoWidth}x${video.videoHeight}`);
+                };
+                
+                video.onerror = (event) => {
+                    log(`❌ Erro no vídeo: ${event}`, 'error');
+                    updateStatus(false, 'Erro no vídeo');
+                };
+                
+                video.onwaiting = () => {
+                    log('⏳ Vídeo aguardando dados...', 'warning');
+                };
+                
+                video.onstalled = () => {
+                    log('🚫 Vídeo travado...', 'warning');
+                };
+                
+                // Iniciar monitoramento
+                startStreamMonitoring(basicStream);
+                
+                // Habilitar botões
+                stopBtn.disabled = false;
+                keepAliveBtn.disabled = false;
+                
+                log('✅ === TESTE ROBUSTO CONCLUÍDO ===', 'success');
+                log('💡 Monitore os logs para ver se a câmera se mantém ativa', 'info');
+                
+            } catch (error) {
+                log(`❌ ERRO: ${error.name}: ${error.message}`, 'error');
+                updateStatus(false, `Erro: ${error.name}`);
+                
+                if (error.name === 'NotAllowedError') {
+                    log('🚫 Permissão negada. Clique no ícone da câmera na barra de endereços.', 'error');
+                } else if (error.name === 'NotFoundError') {
+                    log('📷 Nenhuma câmera encontrada.', 'error');
+                } else {
+                    log('❓ Erro desconhecido. Tente reiniciar o navegador.', 'error');
+                }
+            } finally {
+                testBtn.disabled = false;
+            }
+        }
+        
+        function stopStream() {
+            if (currentStream) {
+                log('🛑 Parando stream...', 'info');
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                    log(`🛑 Track ${track.kind} parado`, 'info');
+                });
+                video.srcObject = null;
+                currentStream = null;
+                updateStatus(false, 'Parado pelo usuário');
+            }
+            
+            if (streamMonitorInterval) {
+                clearInterval(streamMonitorInterval);
+                streamMonitorInterval = null;
+                log('🛑 Monitoramento parado', 'info');
+            }
+            
+            if (keepAliveInterval) {
+                clearInterval(keepAliveInterval);
+                keepAliveInterval = null;
+                log('🛑 Keep-alive parado', 'info');
+            }
+            
+            stopBtn.disabled = true;
+            keepAliveBtn.disabled = true;
+        }
+        
+        function forceKeepAlive() {
+            if (currentStream) {
+                if (!keepAliveInterval) {
+                    startKeepAlive(currentStream);
+                    keepAliveBtn.textContent = '🛡️ Parar Keep-Alive';
+                } else {
+                    clearInterval(keepAliveInterval);
+                    keepAliveInterval = null;
+                    keepAliveBtn.textContent = '🛡️ Forçar Keep-Alive';
+                    log('🛑 Keep-alive manual parado', 'info');
+                }
+            }
+        }
+        
+        testBtn.addEventListener('click', testRobustCamera);
+        clearBtn.addEventListener('click', clearLogs);
+        stopBtn.addEventListener('click', stopStream);
+        keepAliveBtn.addEventListener('click', forceKeepAlive);
+        
+        // Log inicial
+        log('🔧 Página de correção carregada. Clique em "Ativar Câmera" para testar.', 'info');
+        updateStatus(false, 'Aguardando teste');
+    </script>
+</body>
+</html>
+
+
