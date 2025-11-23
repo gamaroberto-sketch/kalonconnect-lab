@@ -303,9 +303,17 @@ if (typeof window !== 'undefined') {
 }
 
 export default function App({ Component, pageProps }) {
-  console.log('🌍 [DEBUG] App component renderizado!', new Date().toISOString());
-  console.log('🌍 [DEBUG] Component:', Component?.name || 'Unknown');
-  console.log('🌍 [DEBUG] pageProps:', Object.keys(pageProps || {}));
+  // 🔧 GARANTIR QUE OS LOGS APAREÇAM
+  if (typeof window !== 'undefined') {
+    try {
+      console.log('🌍 [DEBUG] App component renderizado!', new Date().toISOString());
+      console.log('🌍 [DEBUG] Component:', Component?.name || 'Unknown');
+      console.log('🌍 [DEBUG] pageProps:', Object.keys(pageProps || {}));
+      window.__APP_LOADED__ = true;
+    } catch (e) {
+      console.error('❌ Erro ao logar no App:', e);
+    }
+  }
   
   // 🚨 SISTEMA DE VÍDEO GLOBAL DESABILITADO TEMPORARIAMENTE
   // useEffect(() => {
@@ -326,15 +334,21 @@ export default function App({ Component, pageProps }) {
     return <Component {...pageProps} />;
   }
 
-  return (
-    <ConfigProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <Component {...pageProps} />
-          {/* 🚨 TEMPORARIAMENTE DESABILITADO PARA DEBUG */}
-          {/* <AdminAccess /> */}
-        </AuthProvider>
-      </ThemeProvider>
-    </ConfigProvider>
-  );
+  try {
+    return (
+      <ConfigProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Component {...pageProps} />
+            {/* 🚨 TEMPORARIAMENTE DESABILITADO PARA DEBUG */}
+            {/* <AdminAccess /> */}
+          </AuthProvider>
+        </ThemeProvider>
+      </ConfigProvider>
+    );
+  } catch (error) {
+    console.error('❌ Erro ao renderizar App:', error);
+    // Fallback: renderizar sem providers
+    return <Component {...pageProps} />;
+  }
 }
