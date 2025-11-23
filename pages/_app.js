@@ -1,17 +1,14 @@
 import "@/styles/globals.css";
 import '../styles/autofill-fix.css';
 import '../styles/video-optimization.css';
-import { AuthProvider } from '../components/AuthContext';
-import { ThemeProvider } from '../components/ThemeProvider';
-import { ConfigProvider } from '../components/ConfigContext';
-import AdminAccess from '../components/AdminAccess';
-import ErrorBoundary from '../components/ErrorBoundary';
-import React, { useEffect } from 'react';
+import React from 'react';
 
-// 🌍 LOG IMEDIATO - DEVE APARECER SEMPRE (depois dos imports)
+// 🌍 LOG IMEDIATO - TESTE MÍNIMO
+console.log('🌍 [DEBUG] _app.js MÓDULO CARREGADO!', new Date().toISOString());
+
 if (typeof window !== 'undefined') {
-  console.log('🌍 [DEBUG] _app.js carregado!', new Date().toISOString());
-  window.__APP_LOADED__ = true;
+  window.__APP_MODULE_LOADED__ = true;
+  console.log('🌍 [DEBUG] window disponível, definindo __APP_MODULE_LOADED__');
 }
 
 // 🎯 STREAM GLOBAL PERSISTENTE - Sobrevive a re-renders e desmontagens
@@ -306,62 +303,17 @@ if (typeof window !== 'undefined') {
   window.kalonPersistentVideoControl = persistentVideoDOMControl; // Expor controle permanente
 }
 
+// 🧪 TESTE MÍNIMO: Renderizar sem providers para ver se o problema é nos imports
 export default function App({ Component, pageProps }) {
-  // 🔧 GARANTIR QUE OS LOGS APAREÇAM
+  console.log('🌍 [DEBUG] App component FUNÇÃO EXECUTADA!', new Date().toISOString());
+  console.log('🌍 [DEBUG] Component:', Component?.name || 'Unknown');
+  
   if (typeof window !== 'undefined') {
-    try {
-      console.log('🌍 [DEBUG] App component renderizado!', new Date().toISOString());
-      console.log('🌍 [DEBUG] Component:', Component?.name || 'Unknown');
-      console.log('🌍 [DEBUG] pageProps:', Object.keys(pageProps || {}));
-      window.__APP_LOADED__ = true;
-    } catch (e) {
-      console.error('❌ Erro ao logar no App:', e);
-    }
+    window.__APP_FUNCTION_EXECUTED__ = true;
+    window.__APP_LOADED__ = true;
+    console.log('🌍 [DEBUG] window.__APP_LOADED__ definido como true');
   }
   
-  // 🚨 SISTEMA DE VÍDEO GLOBAL DESABILITADO TEMPORARIAMENTE
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const path = window.location.pathname;
-  //     const needsVideo = path.includes('/consultations') || path.includes('/home');
-  //     if (needsVideo) {
-  //       initializeVideoBlindado();
-  //     }
-  //   }
-  // }, []);
-
-  // 🚨 MODO DEBUG: Bypass temporário dos providers para testar
-  const DEBUG_BYPASS_PROVIDERS = false; // Mude para true para testar sem providers
-  
-  if (DEBUG_BYPASS_PROVIDERS) {
-    console.log('⚠️ [DEBUG] Modo bypass ativado - renderizando sem providers');
-    return <Component {...pageProps} />;
-  }
-
-  try {
-    return (
-      <ErrorBoundary>
-        <ConfigProvider>
-          <ThemeProvider>
-            <AuthProvider>
-              <Component {...pageProps} />
-              {/* 🚨 TEMPORARIAMENTE DESABILITADO PARA DEBUG */}
-              {/* <AdminAccess /> */}
-            </AuthProvider>
-          </ThemeProvider>
-        </ConfigProvider>
-      </ErrorBoundary>
-    );
-  } catch (error) {
-    console.error('❌ Erro ao renderizar App:', error);
-    if (typeof window !== 'undefined') {
-      window.__APP_ERROR__ = { error: error.message, stack: error.stack };
-    }
-    // Fallback: renderizar sem providers
-    return (
-      <ErrorBoundary>
-        <Component {...pageProps} />
-      </ErrorBoundary>
-    );
-  }
+  // Renderizar MÍNIMO sem providers para testar
+  return <Component {...pageProps} />;
 }
