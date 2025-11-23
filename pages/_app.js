@@ -8,6 +8,7 @@ import { AuthProvider } from '../components/AuthContext';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { ConfigProvider } from '../components/ConfigContext';
 import AdminAccess from '../components/AdminAccess';
+import ErrorBoundary from '../components/ErrorBoundary';
 import React, { useEffect } from 'react';
 
 // 🎯 STREAM GLOBAL PERSISTENTE - Sobrevive a re-renders e desmontagens
@@ -336,19 +337,28 @@ export default function App({ Component, pageProps }) {
 
   try {
     return (
-      <ConfigProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <Component {...pageProps} />
-            {/* 🚨 TEMPORARIAMENTE DESABILITADO PARA DEBUG */}
-            {/* <AdminAccess /> */}
-          </AuthProvider>
-        </ThemeProvider>
-      </ConfigProvider>
+      <ErrorBoundary>
+        <ConfigProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <Component {...pageProps} />
+              {/* 🚨 TEMPORARIAMENTE DESABILITADO PARA DEBUG */}
+              {/* <AdminAccess /> */}
+            </AuthProvider>
+          </ThemeProvider>
+        </ConfigProvider>
+      </ErrorBoundary>
     );
   } catch (error) {
     console.error('❌ Erro ao renderizar App:', error);
+    if (typeof window !== 'undefined') {
+      window.__APP_ERROR__ = { error: error.message, stack: error.stack };
+    }
     // Fallback: renderizar sem providers
-    return <Component {...pageProps} />;
+    return (
+      <ErrorBoundary>
+        <Component {...pageProps} />
+      </ErrorBoundary>
+    );
   }
 }
