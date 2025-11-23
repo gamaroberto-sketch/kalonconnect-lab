@@ -12,6 +12,22 @@ header {
   pointer-events: auto;
 }
 
+/* 🔧 CORREÇÃO: Garantir que overlays não bloqueiem a página de login */
+.absolute.inset-0.overflow-hidden {
+  pointer-events: none !important;
+}
+
+/* Exceção: apenas quando explicitamente necessário para vídeo */
+.absolute.inset-0.overflow-hidden[data-video-active="true"] {
+  pointer-events: auto !important;
+}
+
+/* Garantir que elementos de vídeo não bloqueiem interações quando não estão ativos */
+#video-anchor:not([data-active="true"]) {
+  pointer-events: none !important;
+  display: none !important;
+}
+
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
