@@ -23,7 +23,24 @@ export default function LoginPage() {
 
   useEffect(() => {
     console.log('✅ [LoginPage] Componente montado completamente');
+    
+    // 🔧 CORREÇÃO: Remover overlays que bloqueiam a página de login
+    const fixOverlays = () => {
+      const overlays = document.querySelectorAll('.absolute.inset-0.overflow-hidden');
+      overlays.forEach(overlay => {
+        if (overlay.id !== 'video-anchor') {
+          overlay.style.pointerEvents = 'none';
+          overlay.style.zIndex = '-1';
+        }
+      });
+    };
+    
+    // Executar imediatamente e após um pequeno delay
+    fixOverlays();
+    const timer = setTimeout(fixOverlays, 100);
+    
     return () => {
+      clearTimeout(timer);
       console.log('🔄 [LoginPage] Componente desmontando');
     };
   }, []);
