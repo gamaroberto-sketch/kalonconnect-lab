@@ -1,6 +1,3 @@
-// 🌍 LOG IMEDIATO - DEVE APARECER SEMPRE
-console.log('🌍 [DEBUG] _app.js carregado!', new Date().toISOString());
-
 import "@/styles/globals.css";
 import '../styles/autofill-fix.css';
 import '../styles/video-optimization.css';
@@ -10,6 +7,12 @@ import { ConfigProvider } from '../components/ConfigContext';
 import AdminAccess from '../components/AdminAccess';
 import ErrorBoundary from '../components/ErrorBoundary';
 import React, { useEffect } from 'react';
+
+// 🌍 LOG IMEDIATO - DEVE APARECER SEMPRE (depois dos imports)
+if (typeof window !== 'undefined') {
+  console.log('🌍 [DEBUG] _app.js carregado!', new Date().toISOString());
+  window.__APP_LOADED__ = true;
+}
 
 // 🎯 STREAM GLOBAL PERSISTENTE - Sobrevive a re-renders e desmontagens
 let globalStream = null;
