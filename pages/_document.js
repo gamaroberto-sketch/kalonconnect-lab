@@ -20,39 +20,37 @@ export default function Document() {
             display: "none" // Inicialmente oculta, será controlada via CSS quando necessário
           }}
         />
-        {/* 🔧 CORREÇÃO SIMPLIFICADA: Apenas na página de login */}
+        {/* 🔧 TESTE: Script inline para garantir execução */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              (function() {
-                try {
-                  // Apenas executar na página de login
-                  if (window.location.pathname === '/' || window.location.pathname === '/login') {
-                    function fixOverlays() {
-                      try {
-                        // Apenas overlays decorativos da página welcome
-                        document.querySelectorAll('.absolute.inset-0.overflow-hidden').forEach(el => {
-                          if (el.id !== 'video-anchor' && 
-                              (el.className.includes('bg-pink') || el.className.includes('bg-purple') || el.className.includes('bg-indigo'))) {
-                            const style = window.getComputedStyle(el);
-                            if (parseInt(style.zIndex) >= 1000) {
-                              el.style.pointerEvents = 'none';
-                            }
-                          }
-                        });
-                      } catch(e) {}
-                    }
-                    
-                    if (document.readyState === 'loading') {
-                      document.addEventListener('DOMContentLoaded', fixOverlays);
-                    } else {
-                      fixOverlays();
-                    }
+              console.log('🔴 [TESTE] Script inline no _document.js executado!', new Date().toISOString());
+              window.__DOCUMENT_SCRIPT_EXECUTED__ = true;
+              
+              // Verificar se Next.js está carregando
+              if (window.__NEXT_DATA__) {
+                console.log('✅ Next.js data encontrado:', window.__NEXT_DATA__.page);
+                window.__NEXT_DATA_FOUND__ = true;
+              }
+              
+              // Aguardar carregamento dos scripts
+              window.addEventListener('load', function() {
+                console.log('🔴 [TESTE] Window load event disparado');
+                window.__WINDOW_LOADED__ = true;
+                
+                // Verificar se _app.js foi executado após 2 segundos
+                setTimeout(function() {
+                  if (!window.__APP_MODULE_LOADED__) {
+                    console.error('❌ [TESTE] _app.js NÃO foi executado após 2 segundos!');
+                    console.error('❌ Verificando scripts...');
+                    const scripts = Array.from(document.querySelectorAll('script[src]'));
+                    console.error('❌ Total de scripts:', scripts.length);
+                    scripts.forEach(s => {
+                      console.error('  - Script:', s.src, 'readyState:', s.readyState);
+                    });
                   }
-                } catch(e) {
-                  // Silenciar erros para não quebrar o app
-                }
-              })();
+                }, 2000);
+              });
             `,
           }}
         />
