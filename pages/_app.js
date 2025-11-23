@@ -1,5 +1,3 @@
-"use client";
-
 import "@/styles/globals.css";
 import '../styles/autofill-fix.css';
 import '../styles/video-optimization.css';
@@ -306,7 +304,12 @@ if (typeof window !== 'undefined') {
   window.kalonPersistentVideoControl = persistentVideoDOMControl; // Expor controle permanente
 }
 
-// 🧪 TESTE MÍNIMO: Renderizar sem providers para ver se o problema é nos imports
+// ✅ CORREÇÃO: Removido "use client" - não é necessário no Pages Router
+import { AuthProvider } from '../components/AuthContext';
+import { ThemeProvider } from '../components/ThemeProvider';
+import { ConfigProvider } from '../components/ConfigContext';
+import ErrorBoundary from '../components/ErrorBoundary';
+
 export default function App({ Component, pageProps }) {
   console.log('🌍 [DEBUG] App component FUNÇÃO EXECUTADA!', new Date().toISOString());
   console.log('🌍 [DEBUG] Component:', Component?.name || 'Unknown');
@@ -317,45 +320,16 @@ export default function App({ Component, pageProps }) {
     console.log('🌍 [DEBUG] window.__APP_LOADED__ definido como true');
   }
   
-  // Renderizar MÍNIMO sem providers para testar
+  // ✅ Restaurar providers agora que _app.js deve executar
   return (
-    <>
-      <Script 
-        id="app-init-script" 
-        strategy="beforeInteractive"
-      >
-        {`
-          console.log('🔴 [APP] Script beforeInteractive executado!', new Date().toISOString());
-          window.__APP_SCRIPT_EXECUTED__ = true;
-          window.__DOCUMENT_SCRIPT_EXECUTED__ = true;
-          
-          // Verificar se Next.js está carregando
-          if (window.__NEXT_DATA__) {
-            console.log('✅ Next.js data encontrado:', window.__NEXT_DATA__.page);
-            window.__NEXT_DATA_FOUND__ = true;
-          }
-          
-          // Aguardar carregamento dos scripts
-          window.addEventListener('load', function() {
-            console.log('🔴 [TESTE] Window load event disparado');
-            window.__WINDOW_LOADED__ = true;
-            
-            // Verificar se _app.js foi executado após 2 segundos
-            setTimeout(function() {
-              if (!window.__APP_MODULE_LOADED__) {
-                console.error('❌ [TESTE] _app.js NÃO foi executado após 2 segundos!');
-                console.error('❌ Verificando scripts...');
-                const scripts = Array.from(document.querySelectorAll('script[src]'));
-                console.error('❌ Total de scripts:', scripts.length);
-                scripts.forEach(s => {
-                  console.error('  - Script:', s.src, 'readyState:', s.readyState);
-                });
-              }
-            }, 2000);
-          });
-        `}
-      </Script>
-      <Component {...pageProps} />
-    </>
+    <ErrorBoundary>
+      <ConfigProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Component {...pageProps} />
+          </AuthProvider>
+        </ThemeProvider>
+      </ConfigProvider>
+    </ErrorBoundary>
   );
 }
