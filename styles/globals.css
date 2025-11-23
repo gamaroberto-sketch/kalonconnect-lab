@@ -17,6 +17,13 @@ header {
   pointer-events: none !important;
 }
 
+/* Remover pointer-events de elementos decorativos da página welcome */
+.absolute.top-20.left-20,
+.absolute.bottom-20.right-20,
+.absolute.top-1\\/2.left-1\\/2 {
+  pointer-events: none !important;
+}
+
 /* Exceção: apenas quando explicitamente necessário para vídeo */
 .absolute.inset-0.overflow-hidden[data-video-active="true"] {
   pointer-events: auto !important;

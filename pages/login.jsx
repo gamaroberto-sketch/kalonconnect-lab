@@ -26,21 +26,44 @@ export default function LoginPage() {
     
     // 🔧 CORREÇÃO: Remover overlays que bloqueiam a página de login
     const fixOverlays = () => {
-      const overlays = document.querySelectorAll('.absolute.inset-0.overflow-hidden');
-      overlays.forEach(overlay => {
-        if (overlay.id !== 'video-anchor') {
-          overlay.style.pointerEvents = 'none';
-          overlay.style.zIndex = '-1';
+      // Remover TODOS os overlays bloqueantes (incluindo elementos da página welcome)
+      const selectors = [
+        '.absolute.inset-0.overflow-hidden',
+        '.absolute.top-20.left-20',
+        '.absolute.bottom-20.right-20',
+        '.absolute.top-1\\/2.left-1\\/2'
+      ];
+      
+      selectors.forEach(selector => {
+        try {
+          const overlays = document.querySelectorAll(selector);
+          overlays.forEach(overlay => {
+            if (!overlay.id || overlay.id !== 'video-anchor') {
+              overlay.style.pointerEvents = 'none';
+              overlay.style.zIndex = '-1';
+            }
+          });
+        } catch (e) {
+          console.warn('Erro ao processar selector:', selector, e);
         }
       });
     };
     
-    // Executar imediatamente e após um pequeno delay
+    // Executar imediatamente e em intervalos para pegar elementos que aparecem depois
     fixOverlays();
-    const timer = setTimeout(fixOverlays, 100);
+    const timer1 = setTimeout(fixOverlays, 100);
+    const timer2 = setTimeout(fixOverlays, 500);
+    const timer3 = setTimeout(fixOverlays, 1000);
+    
+    // Observer para elementos que aparecem dinamicamente
+    const observer = new MutationObserver(fixOverlays);
+    observer.observe(document.body, { childList: true, subtree: true });
     
     return () => {
-      clearTimeout(timer);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      observer.disconnect();
       console.log('🔄 [LoginPage] Componente desmontando');
     };
   }, []);
