@@ -232,22 +232,39 @@ export const VideoPanelProvider = ({
 
       lastPersistRef.current = Date.now();
 
+      // CORREÇÃO: Usar localStorage diretamente se API não estiver disponível
+      // Evita loops de timeout que causam compilação eterna
       if (persistenceModeRef.current !== "localStorage") {
         try {
+          // Timeout de 2 segundos para evitar espera infinita
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2000);
+          
           const response = await fetch(SESSION_TIMERS_ENDPOINT, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            signal: controller.signal
           });
+          
+          clearTimeout(timeoutId);
+          
           if (!response.ok) {
             throw new Error("Failed to persist via API");
           }
           return;
         } catch (error) {
-          console.warn("Falling back to localStorage for session timers:", error);
-          persistenceModeRef.current = "localStorage";
+          // Se falhar (timeout, erro de rede, etc), usar localStorage imediatamente
+          // e não tentar API novamente para evitar loops
+          if (error.name === 'AbortError' || error.message.includes('timeout') || error.message.includes('Failed to fetch')) {
+            console.warn("API session-timers não disponível, usando localStorage:", error.message);
+            persistenceModeRef.current = "localStorage";
+          } else {
+            console.warn("Falling back to localStorage for session timers:", error);
+            persistenceModeRef.current = "localStorage";
+          }
         }
       }
 
@@ -376,13 +393,27 @@ export const VideoPanelProvider = ({
     const loadSessionData = async () => {
       let loaded = DEFAULT_SESSION_DATA;
       try {
-        const response = await fetch(SESSION_TIMERS_ENDPOINT);
+        // Timeout de 2 segundos para evitar espera infinita
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        
+        const response = await fetch(SESSION_TIMERS_ENDPOINT, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) throw new Error("Failed request");
         const payload = await response.json();
         loaded = mergeSessionData(payload);
         persistenceModeRef.current = "api";
       } catch (error) {
-        console.warn("Session timers API unavailable, using localStorage:", error);
+        // Se falhar (timeout, erro de rede, etc), usar localStorage imediatamente
+        if (error.name === 'AbortError' || error.message.includes('timeout') || error.message.includes('Failed to fetch')) {
+          console.warn("Session timers API não disponível, usando localStorage:", error.message);
+        } else {
+          console.warn("Session timers API unavailable, using localStorage:", error);
+        }
         loaded = mergeSessionData(readLocalFallback());
         persistenceModeRef.current = "localStorage";
       }
