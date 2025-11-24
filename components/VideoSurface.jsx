@@ -1,34 +1,106 @@
 "use client";
 
 import React from "react";
-import OptimizedVideoElement from "./OptimizedVideoElement";
+import { VideoOff } from "lucide-react";
+import { useVideoPanel } from "./VideoPanelContext";
 
 const VideoSurface = () => {
-  // 🎯 SEMPRE RENDERIZAR OptimizedVideoElement - Ele gerencia seu próprio estado
-  // Não usar contexto para evitar loops de re-render
-  
+  const {
+    useWhereby,
+    isProfessional,
+    isVideoOn,
+    isCameraPreviewOn,
+    isScreenSharing,
+    localVideoRef,
+    remoteVideoRef,
+    screenShareRef,
+    recordingState,
+    lowPowerMode,
+    isConnected
+  } = useVideoPanel();
+
+  const showLocalPreview =
+    isCameraPreviewOn && (!lowPowerMode || isConnected);
+
+  if (useWhereby) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-gray-900">
+        <div className="flex flex-col items-center gap-3 text-center p-6">
+          <p className="text-white text-sm">
+            Consulta por vídeo, sem instalação ou login – basta acessar este link!
+          </p>
+          <iframe
+            src="https://whereby.com/kalon-os-consulta"
+            allow="camera; microphone; fullscreen; speaker; display-capture"
+            style={{
+              width: "95%",
+              height: "75vh",
+              border: "2px solid #ccc",
+              borderRadius: "16px",
+              minWidth: "320px",
+              minHeight: "300px"
+            }}
+            title="Sala de Consulta Kalon OS"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full w-full flex flex-col relative">
+      {recordingState?.active && (
+        <div className="absolute top-4 left-4 z-30 flex items-center gap-3 px-3 py-1 rounded-full bg-red-600/90 text-white text-xs font-semibold shadow-lg">
+          <div className="flex items-center gap-1">
+            <span className="h-2.5 w-2.5 rounded-full bg-white animate-ping" />
+            <span>Gravação ativa</span>
+          </div>
+          {typeof recordingState?.elapsed === "string" && (
+            <span className="text-[11px] font-mono">{recordingState.elapsed}</span>
+          )}
+          {recordingState?.notifyClient && (
+            <span className="text-[10px] uppercase tracking-widest text-white/70">
+              aviso ao cliente
+            </span>
+          )}
+        </div>
+      )}
       <div className="flex flex-1 flex-col lg:flex-row gap-4 bg-gray-900 rounded-3xl overflow-hidden p-4">
         <div className="flex-1 flex flex-col">
-          {/* 🎯 OPTIMIZED VIDEO ELEMENT - SEMPRE RENDERIZADO */}
-          <div className="flex-1 bg-black flex items-center justify-center relative rounded-lg overflow-hidden">
-            <OptimizedVideoElement 
-              className="w-full h-full"
-              style={{ objectFit: 'cover' }}
+          <div className="flex-1 bg-black flex items-center justify-center">
+            <video
+              ref={localVideoRef}
+              autoPlay
+              muted
+              className={`${showLocalPreview ? "block" : "hidden"} h-full w-full object-cover`}
             />
+            {!showLocalPreview && <VideoOff className="w-12 h-12 text-gray-400" />}
           </div>
           <div className="px-3 py-2 text-xs text-white bg-black/70 text-center">
-            Câmera
+            {showLocalPreview
+              ? isProfessional
+                ? "Pré-visualização do Profissional"
+                : "Pré-visualização do Cliente"
+              : lowPowerMode && !isConnected
+              ? "Pré-visualização pausada (modo baixa energia)"
+              : "Câmera desligada"}
           </div>
         </div>
 
         <div className="flex-1 flex flex-col">
           <div className="flex-1 bg-black flex items-center justify-center">
-            <video autoPlay className="h-full w-full object-cover" />
+            {isScreenSharing ? (
+              <video ref={screenShareRef} autoPlay className="h-full w-full object-cover" />
+            ) : (
+              <video ref={remoteVideoRef} autoPlay className="h-full w-full object-cover" />
+            )}
           </div>
           <div className="px-3 py-2 text-xs text-white bg-black/70 text-center">
-            Cliente
+            {isScreenSharing
+              ? "Compartilhando Tela"
+              : isProfessional
+              ? "Cliente"
+              : "Profissional"}
           </div>
         </div>
       </div>
