@@ -58,6 +58,12 @@ export const VideoPanelProvider = ({
   const [isHighMeshEnabled, setIsHighMeshEnabled] = useState(false);
   const [lowPowerMode, setLowPowerMode] = useState(false);
   const [recordingState, setRecordingState] = useState({ active: false, notifyClient: false });
+  
+  // LiveKit integration
+  const [consultationId, setConsultationId] = useState(null);
+  const [liveKitToken, setLiveKitToken] = useState(null);
+  const [liveKitUrl, setLiveKitUrl] = useState(null);
+  const [roomName, setRoomName] = useState(null);
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -261,28 +267,92 @@ export const VideoPanelProvider = ({
   }, []);
 
   const ensureLocalStream = async () => {
+    console.log('🎯 ensureLocalStream iniciado');
     if (streamRef.current) {
+      console.log('✅ Stream já existe, retornando');
       return streamRef.current;
     }
     try {
+      console.log('🎯 Solicitando getUserMedia...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true
       });
+      console.log('✅ Stream criado com sucesso');
+      
       stream.getVideoTracks().forEach((track) => {
         track.enabled = false;
+        console.log('🎯 Video track desabilitado');
       });
       stream.getAudioTracks().forEach((track) => {
         track.enabled = false;
+        console.log('🎯 Audio track desabilitado');
       });
+      
       streamRef.current = stream;
+      console.log('✅ Stream salvo na ref');
+      
+      // Conectar stream ao elemento de vídeo
       if (localVideoRef.current) {
+        console.log('🔍 ANTES srcObject:', {
+          elementExists: !!localVideoRef.current,
+          streamActive: stream.active,
+          videoTracks: stream.getVideoTracks().length,
+          trackState: stream.getVideoTracks()[0]?.readyState
+        });
+        
         localVideoRef.current.srcObject = stream;
+        console.log('✅ Stream conectado ao elemento de vídeo');
+        
+        // Habilitar video track para preview local
+        stream.getVideoTracks().forEach((track) => {
+          track.enabled = true;
+          console.log('✅ Video track habilitado:', {
+            enabled: track.enabled,
+            readyState: track.readyState,
+            muted: track.muted
+          });
+        });
+        
+        console.log('🔍 APÓS srcObject:', {
+          srcObjectSet: !!localVideoRef.current.srcObject,
+          videoWidth: localVideoRef.current.videoWidth,
+          videoHeight: localVideoRef.current.videoHeight
+        });
+        
+        // Aguardar dimensões corretas (bug Chromium) com limite
+        let attempts = 0;
+        const maxAttempts = 60; // ~1 segundo
+        const waitForDimensions = () => {
+          attempts++;
+          if (localVideoRef.current && localVideoRef.current.videoWidth > 0) {
+            console.log('✅ Dimensões obtidas:', localVideoRef.current.videoWidth, 'x', localVideoRef.current.videoHeight);
+            localVideoRef.current.play().catch(e => console.log('❌ Erro no play:', e));
+          } else if (attempts < maxAttempts) {
+            requestAnimationFrame(waitForDimensions);
+          } else {
+            console.log('⚠️ Timeout nas dimensões, forçando play mesmo assim');
+            localVideoRef.current.play().catch(e => console.log('❌ Erro no play:', e));
+          }
+        };
+        
+        // Usar eventos alternativos conforme sugerido na resposta
+        localVideoRef.current.addEventListener('playing', () => {
+          console.log('📺 Evento "playing" disparado!');
+        }, { once: true });
+        
+        localVideoRef.current.addEventListener('resize', () => {
+          console.log('📺 Evento "resize" disparado!');
+        }, { once: true });
+        
+        requestAnimationFrame(waitForDimensions);
       }
+      
       setIsConnected(true);
+      console.log('✅ setIsConnected(true) executado');
       return stream;
     } catch (error) {
-      console.log("Erro ao acessar mídia:", error);
+      console.log("❌ Erro ao acessar mídia:", error);
       return null;
     }
   };
@@ -370,12 +440,23 @@ export const VideoPanelProvider = ({
   };
 
   const toggleCameraPreview = async () => {
+    console.log('🎯 toggleCameraPreview chamado!');
     const stream = await ensureLocalStream();
-    if (!stream) return;
+    if (!stream) {
+      console.log('❌ Stream não obtido');
+      return;
+    }
+    console.log('✅ Stream obtido');
+    
     const videoTrack = stream.getVideoTracks()[0];
-    if (!videoTrack) return;
+    if (!videoTrack) {
+      console.log('❌ Video track não encontrado');
+      return;
+    }
+    console.log('✅ Video track encontrado');
 
     if (isCameraPreviewOn) {
+      console.log('🎯 Desligando câmera...');
       stream.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
       setIsConnected(false);
@@ -387,20 +468,29 @@ export const VideoPanelProvider = ({
         localVideoRef.current.srcObject = null;
       }
     } else {
+      console.log('🎯 Ligando câmera...');
       if (!streamRef.current) {
+        console.log('🎯 Stream não existe, criando novo...');
         const freshStream = await ensureLocalStream();
         if (!freshStream) return;
-        freshStream.getVideoTracks().forEach((track) => (track.enabled = true));
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = freshStream;
-        }
+        freshStream.getVideoTracks().forEach((track) => {
+          track.enabled = true;
+          console.log('✅ Video track habilitado (fresh stream)');
+        });
+        console.log('✅ Fresh stream criado (VideoSurface fará a conexão)');
       } else {
+        console.log('🎯 Stream existe, habilitando track...');
         videoTrack.enabled = true;
+        console.log('✅ Video track habilitado');
+        
+        // Conectar stream ao elemento de vídeo
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = streamRef.current;
+          console.log('✅ Stream conectado ao elemento de vídeo');
         }
       }
       setIsCameraPreviewOn(true);
+      console.log('✅ setIsCameraPreviewOn(true) executado');
     }
   };
 
@@ -666,6 +756,46 @@ export const VideoPanelProvider = ({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // Função para obter token do LiveKit conforme documento
+  const fetchLiveKitToken = useCallback(async (id = null) => {
+    const targetId = id || consultationId;
+    if (!targetId) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(
+        `/api/livekit/token?roomName=consulta-${targetId}&participantName=professional-${targetId}&isHost=true`
+      );
+      const data = await response.json();
+      
+      setLiveKitToken(data.token);
+      setLiveKitUrl(data.wsUrl);
+      setRoomName(data.roomName);
+    } catch (error) {
+      console.error('Erro ao obter token LiveKit:', error);
+    }
+  }, [consultationId]);
+
+  // SOLUÇÃO: useEffect para monitorar quando consultationId e sessão estão disponíveis
+  useEffect(() => {
+    if (consultationId && isSessionActive && isProfessional && !liveKitToken) {
+      fetchLiveKitToken();
+    }
+  }, [consultationId, isSessionActive, isProfessional, liveKitToken, fetchLiveKitToken]);
+
+  // Função para definir consultationId a partir do link gerado
+  const setConsultationIdFromLink = useCallback((token) => {
+    setConsultationId(token);
+    // Se sessão já está ativa, obter token imediatamente
+    if (isSessionActive && isProfessional && token) {
+      // Aguardar um tick para consultationId ser atualizado
+      setTimeout(() => {
+        fetchLiveKitToken(token);
+      }, 100);
+    }
+  }, [isSessionActive, isProfessional, fetchLiveKitToken]);
+
   const value = {
     isProfessional,
     onSessionEnd,
@@ -691,6 +821,7 @@ export const VideoPanelProvider = ({
     localVideoRef,
     remoteVideoRef,
     screenShareRef,
+    streamRef,
     setIsFullscreen,
     setUseWhereby,
     setShowScreenSharePanel,
@@ -707,7 +838,15 @@ export const VideoPanelProvider = ({
     handleSessionReset,
     endSession,
     handleOpenSettings,
-    formatTime
+    formatTime,
+    // LiveKit integration
+    consultationId,
+    setConsultationId,
+    setConsultationIdFromLink,
+    liveKitToken,
+    liveKitUrl,
+    roomName,
+    fetchLiveKitToken
   };
 
   return (
@@ -722,4 +861,7 @@ export const useVideoPanel = () => {
   }
   return context;
 };
+
+
+
 
