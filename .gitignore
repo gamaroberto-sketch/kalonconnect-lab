@@ -38,3 +38,6 @@ yarn-error.log*
 
 # Logs
 *.log
+
+.vercel
+_BACKUP_ANTIGRAVITY/
