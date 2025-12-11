@@ -1,266 +1,179 @@
-// 🔴 SOLUÇÃO KIMI: Server-Side Rendering para garantir token válido
-import React, { useState, useEffect } from 'react';
+// 🟢 v4.0 STABLE CLIENT RESTORED
+// Combines stable V3.0 connection logic with V2.3 UI components
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
-// 🔴 Importar componentes que usam "use client" dinamicamente
-const VideoPanelProvider = dynamic(() => import('../../../components/VideoPanelContext').then(mod => ({ default: mod.VideoPanelProvider })), { ssr: false });
-const VideoSurface = dynamic(() => import('../../../components/VideoSurface'), { ssr: false });
+// Dynamic imports to avoid SSR issues
+import { VideoPanelProvider, useVideoPanel } from '../../../components/VideoPanelContext'; // 🟢 Now non-dynamic to allow context usage?
+// Wait, if we use dynamic import for provider, we can't easily access context in same file unless we pass props.
+// Let's keep Provider simple import if possible, Next.js handles it.
+// Actually, 'use client' is in VideoPanelContext. So normal import is fine.
+
 const LiveKitRoomWrapped = dynamic(() => import('../../../components/video/LiveKitRoomWrapped'), { ssr: false });
 const ThemeProvider = dynamic(() => import('../../../components/ThemeProvider').then(mod => ({ default: mod.ThemeProvider })), { ssr: false });
+const MobileControlsV6 = dynamic(() => import('../../../components/MobileControlsV6'), { ssr: false });
+const WaitingRoomDisplay = dynamic(() => import('../../../components/WaitingRoomDisplay'), { ssr: false }); // 🟢 Lobby UI
 
-// 🔴 SOLUÇÃO: Server-Side Rendering para garantir token válido
 export async function getServerSideProps(context) {
   const { token } = context.params;
-  
-  // 🔴 CORREÇÃO: Validar token no formato atual (timestamp + random, sem underscore)
-  const isValidToken = token && 
-    typeof token === 'string' && 
-    token.length > 10 && 
-    !token.includes('null') && 
-    !token.includes('undefined') &&
-    /^[0-9]+[A-Za-z0-9]+$/.test(token); // Formato: timestamp + random (ex: 1763665345413EH83zvE2)
-  
-  // 🔴 TODO: Verificar token no banco de dados
-  // const consultation = await getConsultationByToken(token);
-  // const isValidToken = consultation && consultation.status === 'active';
-  
   return {
     props: {
       token: token || null,
-      isValidToken: isValidToken || false,
-      // consultationData: consultation || null,
     },
   };
 }
 
-export default function ClientConsultationPage({ token: serverToken, isValidToken: serverIsValidToken }) {
+// ✅ Internal Component to consume Context (Must be child of VideoPanelProvider)
+const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, connectionStatus }) => {
+  // Use hook safely
+  const { branding } = useVideoPanel();
+  const [hasJoined, setHasJoined] = useState(false);
+
+  const [timeoutError, setTimeoutError] = useState(false);
+
+  useEffect(() => {
+    if (branding?.profile || hasJoined) return;
+    const timer = setTimeout(() => setTimeoutError(true), 10000);
+    return () => clearTimeout(timer);
+  }, [branding?.profile, hasJoined]);
+
+  // If no profile loaded yet, show loading
+  if (!branding?.profile && !hasJoined) {
+    if (timeoutError) {
+      return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-50 flex-col gap-4 p-4 text-center">
+          <div className="text-red-500 font-semibold text-lg">Não foi possível carregar as informações do profissional.</div>
+          <p className="text-gray-500 text-sm">Verifique sua conexão ou tente recarregar a página.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors"
+          >
+            Tentar Novamente
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 flex-col gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary-600"></div>
+        <p className="text-gray-500">Localizando profissional...</p>
+      </div>
+    );
+  }
+
+  // 1. Lobby / Waiting Room
+  if (!hasJoined) {
+    return (
+      <WaitingRoomDisplay
+        professional={branding.profile}
+        themeColors={branding.themeColors || {}}
+        onJoin={() => setHasJoined(true)}
+      />
+    );
+  }
+
+  // 2. Active Session (Video Room)
+  return (
+    <div className="fixed inset-0 flex flex-col bg-black text-white" style={{ zIndex: 1 }}>
+      <div className="flex-1 relative w-full h-full overflow-hidden bg-black">
+        {liveKitToken && liveKitUrl ? (
+          <LiveKitRoomWrapped
+            token={liveKitToken}
+            serverUrl={liveKitUrl}
+            roomName={roomName}
+            isProfessional={false}
+          >
+            <MobileControlsV6 />
+          </LiveKitRoomWrapped>
+        ) : (
+          <div className="flex items-center justify-center h-full flex-col gap-4 text-white">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-white"></div>
+            <p className="text-sm opacity-70">{connectionStatus}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default function ClientConsultationPage({ token: serverToken }) {
   const router = useRouter();
-  const { token: routerToken } = router.query;
-  
-  // 🔴 Usar tema padrão se ThemeProvider não estiver disponível no SSR
-  const themeColors = {
-    background: '#ffffff',
-    textPrimary: '#1f2937',
-    textSecondary: '#6b7280',
-    primary: '#0f172a',
-  };
-  const [isValidToken, setIsValidToken] = useState(serverIsValidToken);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { token: routerToken, p: querySlug } = router.query;
+  // Use routerToken or serverToken
+  const finalToken = serverToken || routerToken;
+
+  // 🟢 v5.32 FIX: Vanity URL Logic
+  // If ?p= is missing, it means the TOKEN itself is the Professional Slug (Vanity URL)
+  // e.g. /client/bobgama -> token="bobgama", p=undefined
+  const brandingSlug = querySlug || finalToken;
+
   const [liveKitToken, setLiveKitToken] = useState(null);
   const [liveKitUrl, setLiveKitUrl] = useState(null);
   const [roomName, setRoomName] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState("Conectando...");
+
+  // ✅ PRE-FETCH TOKEN (Background)
+  // We fetch the token immediately so it's ready when user clicks "Enter"
+  const hasFetchedToken = useRef(false);
 
   useEffect(() => {
-    // 🔴 SOLUÇÃO: Usar validação do servidor como base
-    if (!serverIsValidToken) {
-      setError('Link inválido ou expirado');
-      setIsLoading(false);
-      return;
-    }
+    if (!finalToken) return;
+    if (hasFetchedToken.current) return;
+    hasFetchedToken.current = true;
 
-    // 🔴 CORREÇÃO: Verificar token no cliente também (dupla validação)
-    const tokenValue = serverToken || routerToken;
-    
-    if (!tokenValue || 
-        tokenValue === 'null' || 
-        tokenValue === 'undefined' || 
-        String(tokenValue).trim() === '' ||
-        String(tokenValue).includes('null')) {
-      setError('Token inválido ou ausente');
-      setIsValidToken(false);
-      setIsLoading(false);
-      return;
-    }
-    
-    // 🔴 CORREÇÃO: Validar formato do token (timestamp + random)
-    const tokenPattern = /^[0-9]+[A-Za-z0-9]+$/;
-    if (!tokenPattern.test(String(tokenValue))) {
-      console.warn('⚠️ Formato de token inválido:', tokenValue);
-      // Não bloquear, apenas avisar - pode ser token legado
-    }
-
-    // 🔴 TODO: Validação adicional via API (opcional)
-    // const validateClientSide = async () => {
-    //   try {
-    //     const response = await fetch(`/api/validate-consultation-token?token=${tokenValue}`);
-    //     const data = await response.json();
-    //     if (!data.valid) {
-    //       setError('Consulta não encontrada ou expirada');
-    //       setIsValidToken(false);
-    //     }
-    //   } catch (error) {
-    //     console.error('Erro ao validar token:', error);
-    //   }
-    // };
-    // validateClientSide();
-
-    setIsValidToken(true);
-    
-    // 🔴 NOVO: Obter token do LiveKit para o cliente
-    const fetchLiveKitToken = async () => {
+    const connect = async () => {
       try {
-        const tokenValue = serverToken || routerToken;
-        const roomNameValue = `consulta-${tokenValue}`;
-        const participantName = `client-${tokenValue}`;
-        
-        console.log('🔴 Solicitando token LiveKit:', { roomNameValue, participantName });
-        
-        const response = await fetch(`/api/livekit/token?roomName=${encodeURIComponent(roomNameValue)}&participantName=${encodeURIComponent(participantName)}&isHost=false`);
-        
-        if (!response.ok) {
-          let errorData;
-          try {
-            const text = await response.text();
-            errorData = text ? JSON.parse(text) : {};
-          } catch (e) {
-            errorData = { error: `Erro ${response.status}: ${response.statusText}` };
-          }
-          console.error('❌ Erro ao obter token LiveKit:', {
-            status: response.status,
-            statusText: response.statusText,
-            error: errorData
-          });
-          
-          // Criar um erro com mais informações
-          const errorMessage = errorData.error || `Erro ${response.status} ao obter token do LiveKit`;
-          const error = new Error(errorMessage);
-          error.details = errorData.details || errorData.type || '';
-          error.status = response.status;
-          throw error;
-        }
-        
-        const data = await response.json();
-        console.log('✅ Token LiveKit obtido:', { 
-          hasToken: !!data.token, 
-          hasWsUrl: !!data.wsUrl,
-          roomName: data.roomName 
+        const roomNameValue = `consulta-${finalToken.toLowerCase()}`;
+        const participantName = `client-${finalToken}`;
+
+        console.log(`🔴 [CLIENT] Fetching LiveKit Token...`);
+        console.log(`   -> Target Room: ${roomNameValue}`);
+        console.log(`   -> Identity: ${participantName}`);
+
+        const response = await fetch('/api/livekit/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomName: roomNameValue, participantName }),
         });
-        
-        if (!data.token || !data.wsUrl) {
-          throw new Error('Token ou URL do LiveKit não retornados');
+
+        const data = await response.json();
+        if (data.token) {
+          console.log(`✅ [CLIENT] Token Received for Room: ${data.roomName || roomNameValue}`);
+          setLiveKitToken(data.token);
+          setLiveKitUrl(data.wsUrl);
+          setRoomName(data.roomName);
+        } else {
+          setConnectionStatus("Erro: Falha ao obter token de vídeo.");
         }
-        
-        setLiveKitToken(data.token);
-        setLiveKitUrl(data.wsUrl);
-        setRoomName(data.roomName);
-        setIsLoading(false);
-      } catch (err) {
-        console.error('❌ Erro ao obter token LiveKit:', err);
-        const errorMessage = err.message || 'Erro desconhecido';
-        const errorDetails = err.details ? `\n\nDetalhes: ${err.details}` : '';
-        setError(`Erro ao conectar à sala de vídeo: ${errorMessage}${errorDetails}`);
-        setIsLoading(false);
+      } catch (e) {
+        setConnectionStatus(`Erro de Conexão: ${e.message}`);
       }
     };
-    
-    fetchLiveKitToken();
-  }, [serverIsValidToken, serverToken, routerToken]);
-
-  if (isLoading) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: themeColors.background || '#ffffff' }}
-      >
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: themeColors.primary || '#0f172a' }}></div>
-          <p className="text-gray-600">Preparando sua consulta...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !isValidToken) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center p-4"
-        style={{ backgroundColor: themeColors.background || '#ffffff' }}
-      >
-        <div className="text-center max-w-md p-8 rounded-lg shadow-lg" style={{
-          backgroundColor: themeColors.secondary || '#f1f5f9'
-        }}>
-          <div className="text-6xl mb-4">😔</div>
-          <h1 className="text-2xl font-bold mb-2" style={{ color: themeColors.textPrimary || '#1f2937' }}>
-            Link Inválido
-          </h1>
-          <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>
-            {error || 'Este link de consulta não é válido ou já expirou.'}
-          </p>
-          <button
-            onClick={() => router.push('/')}
-            className="py-2 px-4 rounded-lg font-medium transition-colors text-white"
-            style={{ backgroundColor: themeColors.primary || '#0f172a' }}
-          >
-            Voltar para Home
-          </button>
-        </div>
-      </div>
-    );
-  }
+    connect();
+  }, [finalToken]);
 
   return (
     <>
       <Head>
+        <title>Consulta Online - KalonConnect</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <title>Consulta Online - KalonConnect</title>
       </Head>
-      <div 
-        className="min-h-screen flex flex-col"
-        style={{ backgroundColor: themeColors.background || '#ffffff' }}
-      >
-        <VideoPanelProvider isProfessional={false}>
-          <div className="flex-1 flex flex-col p-3 sm:p-4 md:p-6 lg:p-8">
-            <div className="mb-3 sm:mb-4 text-center">
-              <h1 className="text-xl sm:text-2xl font-bold" style={{ color: themeColors.textPrimary || '#1f2937' }}>
-                Consulta Online
-              </h1>
-              <p className="text-xs sm:text-sm mt-2 px-2" style={{ color: themeColors.textSecondary || '#6b7280' }}>
-                Aguardando o profissional iniciar a sessão...
-              </p>
-            </div>
 
-            <section
-              className="relative w-full flex-1"
-              style={{ 
-                height: '50vh', 
-                minHeight: '300px',
-                maxHeight: '70vh'
-              }}
-            >
-              <div className="h-full w-full rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl bg-slate-950/90 overflow-hidden">
-                {liveKitToken && liveKitUrl && roomName ? (
-                  <LiveKitRoomWrapped
-                    token={liveKitToken}
-                    serverUrl={liveKitUrl}
-                    roomName={roomName}
-                    isProfessional={false}
-                  />
-                ) : (
-                  <div className="h-full flex items-center justify-center text-white">
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-2"></div>
-                      <p className="text-sm">Conectando à sala...</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <div className="mt-4 sm:mt-6 text-center px-2">
-              <p className="text-xs sm:text-sm" style={{ color: themeColors.textSecondary || '#6b7280' }}>
-                Você verá o profissional quando ele compartilhar a câmera.
-              </p>
-            </div>
-          </div>
+      <ThemeProvider>
+        {/* 🟢 Inject Provider with Branding Slug */}
+        <VideoPanelProvider isProfessional={false} brandingSlug={brandingSlug}>
+          <ClientConsultationContent
+            token={finalToken}
+            liveKitToken={liveKitToken}
+            liveKitUrl={liveKitUrl}
+            roomName={roomName}
+            connectionStatus={connectionStatus}
+          />
         </VideoPanelProvider>
-      </div>
+      </ThemeProvider>
     </>
   );
 }
-
