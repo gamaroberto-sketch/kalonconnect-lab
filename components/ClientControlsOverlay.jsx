@@ -111,7 +111,7 @@ const ClientControlsOverlay = () => {
             {/* Version Marker & Room Name for debugging */}
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center pointer-events-none">
                 <div className="text-xs font-bold text-indigo-300 bg-black/80 px-4 py-2 rounded-full whitespace-nowrap mb-1 border border-indigo-500/50 shadow-lg">
-                    v5.81 - Fix {room?.name || ""}
+                    v6.0 - MOBILE PATCH FINAL {room?.name || ""}
                 </div>
             </div>
         </div>
