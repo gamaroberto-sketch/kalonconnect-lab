@@ -1,0 +1,1592 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "loading": "Chargement",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Information",
+    "yes": "Oui",
+    "no": "Non",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "upload": "Télécharger",
+    "download": "Télécharger",
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "back": "Retour",
+    "next": "Suivant",
+    "finish": "Terminer",
+    "name": "Nom",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "phone": "Téléphone",
+    "date": "Date",
+    "time": "Heure",
+    "status": "Statut",
+    "actions": "Actions",
+    "preferredLanguage": "Langue préférée",
+    "portugueseBR": "Portugais (BR)",
+    "spanish": "Espagnol",
+    "english": "Anglais",
+    "update": "Mettre à jour",
+    "register": "S'inscrire",
+    "professional": "Professionnel Kalon",
+    "specialtyNotSet": "Spécialité non définie",
+    "restrictedFeature": "Fonctionnalité restreinte",
+    "restrictedFeatureMessage": "Les consultations en ligne sont disponibles à partir de la version Démo de KalonConnect. Contactez le support si votre plan n'est pas activé.",
+    "closePanel": "Fermer le panneau",
+    "list": "Liste",
+    "calendar": "Calendrier",
+    "all": "Tous",
+    "saving": "Enregistrement..."
+  },
+  "calendar": {
+    "months": {
+      "january": "Janvier",
+      "february": "Février",
+      "march": "Mars",
+      "april": "Avril",
+      "may": "Mai",
+      "june": "Juin",
+      "july": "Juillet",
+      "august": "Août",
+      "september": "Septembre",
+      "october": "Octobre",
+      "november": "Novembre",
+      "december": "Décembre"
+    },
+    "weekDays": {
+      "sun": "Dim",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam"
+    }
+  },
+  "header": {
+    "title": "KalonConnect",
+    "subtitle": "Système de Conscience Intégrée"
+  },
+  "sidebar": {
+    "home": "Accueil",
+    "consultations": "Consultations",
+    "events": "Événements",
+    "clients": "Clients",
+    "appointments": "Rendez-vous",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "logout": "Déconnexion",
+    "documents": "Documents",
+    "financial": "Financier",
+    "help": "Aide",
+    "about": "À Propos",
+    "guide": "Guide d'Installation",
+    "contact": "Contact",
+    "adminUsers": "Admin : Utilisateurs",
+    "adminAuditLogs": "Admin : Logs d'Audit",
+    "adminActivity": "Admin : Activité",
+    "adminEmailTemplates": "Admin : Modèles E-mail",
+    "adminMessages": "Admin : Messages",
+    "adminReports": "Admin : Rapports",
+    "adminTestUsers": "Admin : Thérapeutes",
+    "subtitle": "Système de Conscience Intégrée"
+  },
+  "login": {
+    "title": "Bienvenue sur KalonConnect",
+    "subtitle": "Entrez vos identifiants",
+    "emailPlaceholder": "votre@email.com",
+    "passwordPlaceholder": "Votre mot de passe",
+    "loginButton": "Connexion",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas de compte ?",
+    "signUp": "S'inscrire",
+    "errors": {
+      "unauthorized": "Accès non autorisé",
+      "general": "Impossible de terminer la connexion. Veuillez réessayer.",
+      "network": "Impossible de se connecter. Vérifiez votre réseau et réessayez."
+    },
+    "tagline": {
+      "main": "Technologie avec Âme",
+      "sub": "Quand l'Âme parle, le Corps écoute et l'Esprit guide..."
+    },
+    "hidePassword": "Masquer le mot de passe",
+    "showPassword": "Afficher le mot de passe",
+    "developedBy": "Développé par :"
+  },
+  "home": {
+    "welcome": "Bienvenue, {name}",
+    "tagline": "L'Âme s'étend, le Corps se détend, l'Esprit guide.",
+    "quickActions": "Actions Rapides",
+    "recentActivity": "Activité Récente",
+    "upcomingAppointments": "Prochains Rendez-vous",
+    "statistics": "Statistiques",
+    "noAppointments": "Aucun rendez-vous à venir",
+    "guide": {
+      "title": "Guide Utilisateur",
+      "description": "Première fois sur <span className=\"font-bold normal-case\">KalonConnect</span> ? Accédez au guide complet pour tout configurer.",
+      "open": "Ouvrir le Guide"
+    },
+    "actions": {
+      "manageClients": "Gérer les clients",
+      "videoSessions": "Séances vidéo en ligne",
+      "calendar": "Calendrier et gestion",
+      "documents": "Ordonnances et conditions",
+      "financial": "Contrôle financier",
+      "settings": "Personnalisez le système",
+      "profile": "Gérez votre profil et vos paramètres",
+      "events": "Gérez vos événements et ateliers",
+      "reports": "Voir les rapports et statistiques",
+      "about": "En savoir plus sur la plateforme"
+    }
+  },
+  "consultations": {
+    "title": "Consultations",
+    "newConsultation": "Nouvelle Consultation",
+    "activeConsultations": "Consultations Actives",
+    "pastConsultations": "Consultations Passées",
+    "noConsultations": "Aucune consultation trouvée",
+    "startConsultation": "Démarrer la Consultation",
+    "endConsultation": "Terminer la Consultation",
+    "clientName": "Nom du Client",
+    "duration": "Durée",
+    "notes": "Notes",
+    "panels": {
+      "relaxation": {
+        "label": "Lecteur",
+        "title": "Lecteur de Relaxation"
+      },
+      "chat": {
+        "label": "Chat",
+        "title": "Chat de la Session"
+      },
+      "notes": {
+        "label": "Notes",
+        "title": "Notes de la Consultation"
+      },
+      "files": {
+        "label": "Fichiers",
+        "title": "Fichiers de la Session"
+      },
+      "recording": {
+        "label": "Enregistrement",
+        "title": "Enregistrement de la Session"
+      },
+      "clientRecord": {
+        "label": "Fiche",
+        "title": "Fiche Client"
+      }
+    }
+  },
+  "events": {
+    "title": "Événements",
+    "newEvent": "Nouvel Événement",
+    "upcomingEvents": "Prochains Événements",
+    "pastEvents": "Événements Passés",
+    "noEvents": "Aucun événement trouvé",
+    "eventName": "Nom de l'Événement",
+    "eventDate": "Date de l'Événement",
+    "participants": "participants",
+    "description": "Description",
+    "createFirstEvent": "Créer le Premier Événement",
+    "editEvent": "Modifier l'Événement",
+    "createNewEvent": "Créer un Nouvel Événement",
+    "type": "Type",
+    "format": "Format",
+    "startDate": "Date de Début",
+    "startTime": "Heure de Début",
+    "fillRequired": "Veuillez remplir tous les champs obligatoires (nom, date et heure).",
+    "videoLinkOptional": "Lien de la Salle Vidéo (optionnel)",
+    "videoLinkHelp": "Si laissé vide, le lien des Paramètres Généraux sera utilisé",
+    "bannerOptional": "Bannière/Icône (optionnel)",
+    "uploadBanner": "Télécharger la Bannière",
+    "saveChanges": "Enregistrer les Modifications",
+    "createEvent": "Créer l'Événement",
+    "enter": "Entrer",
+    "report": "Rapport",
+    "viewReport": "Voir le Rapport",
+    "marketing": "Marketing",
+    "deleteEvent": "Supprimer l'Événement",
+    "at": "à",
+    "status": {
+      "scheduled": "Programmé",
+      "active": "En Cours",
+      "past": "Terminé"
+    },
+    "types": {
+      "course": "Cours",
+      "lecture": "Conférence",
+      "webinar": "Webinaire",
+      "workshop": "Atelier"
+    }
+  },
+  "clients": {
+    "title": "Clients",
+    "newClient": "Nouveau Client",
+    "clientList": "Liste des Clients",
+    "noClients": "Aucun client enregistré",
+    "clientDetails": "Détails du Client",
+    "editClient": "Modifier le Client",
+    "deleteClient": "Supprimer le Client",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce client ?",
+    "description": "Gérez vos clients et accédez rapidement aux consultations",
+    "registeredOn": "Inscrit le",
+    "lastSession": "Dernière session",
+    "goToConsultation": "Aller à la Consultation"
+  },
+  "appointments": {
+    "title": "Rendez-vous",
+    "newAppointment": "Nouveau Rendez-vous",
+    "upcomingAppointments": "Prochains Rendez-vous",
+    "pastAppointments": "Rendez-vous Passés",
+    "noAppointments": "Aucun rendez-vous trouvé",
+    "scheduleAppointment": "Planifier",
+    "cancelAppointment": "Annuler le Rendez-vous",
+    "reschedule": "Reprogrammer",
+    "manageSessions": "Gérez vos sessions et clients",
+    "viewAppointments": "Consultez et gérez vos rendez-vous",
+    "searchPlaceholder": "Rechercher des rendez-vous...",
+    "listTitle": "Liste des Rendez-vous",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce rendez-vous ?",
+    "selectedProfessional": "Professionnel Sélectionné",
+    "status": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "cancelled": "Annulé"
+    }
+  },
+  "profile": {
+    "title": "Profil Professionnel",
+    "personalInfo": "Informations Personnelles",
+    "professionalInfo": "Informations Professionnelles",
+    "specialty": "Spécialité",
+    "bio": "Biographie",
+    "saveProfile": "Enregistrer le Profil",
+    "changePassword": "Changer le Mot de Passe",
+    "currentPassword": "Mot de Passe Actuel",
+    "newPassword": "Nouveau Mot de Passe",
+    "confirmPassword": "Confirmer le Mot de Passe",
+    "namePlaceholder": "Entrez le nom sous lequel vous êtes connu",
+    "nameHelp": "Ce nom sera affiché dans les messages de bienvenue et pendant la consultation.",
+    "photoTitle": "Photo Professionnelle",
+    "errors": {
+      "load": "Impossible de charger le profil.",
+      "imageLoad": "Impossible de charger l'image.",
+      "camera": "Impossible d'accéder à la caméra de l'appareil.",
+      "save": "Impossible d'enregistrer les données."
+    },
+    "success": {
+      "save": "Profil enregistré avec succès !"
+    },
+    "camera": {
+      "take": "Prendre une photo maintenant",
+      "upload": "Télécharger",
+      "remove": "Supprimer la photo actuelle",
+      "capture": "Capturer la photo",
+      "stop": "Arrêter la caméra",
+      "formats": "Formats acceptés : JPG, PNG. Taille recommandée : 800x800px."
+    },
+    "signature": {
+      "title": "Signature",
+      "digital": "Signature numérique",
+      "clear": "Effacer",
+      "text": "Signature texte",
+      "fullName": "Nom complet",
+      "registry": "Registre professionnel (optionnel)"
+    },
+    "services": {
+      "title": "Valeurs et Services",
+      "add": "Ajouter un service",
+      "empty": "Aucun service enregistré.",
+      "namePlaceholder": "Nom de la thérapie",
+      "pricePlaceholder": "Valeur ($)"
+    },
+    "social": {
+      "social": "Réseaux Sociaux",
+      "pix": {
+        "title_keys": "Mes Clés PIX",
+        "label": "Libellé (ex : Mon CPF)",
+        "key": "Clé PIX"
+      }
+    }
+  },
+  "settings": {
+    "title": "Paramètres Avancés",
+    "subtitle": "Personnalisez votre expérience KalonConnect",
+    "activeVersion": "Version active : {{version}}",
+    "restrictedAccess": "Fonction disponible uniquement dans la version Normal ou Pro.",
+    "tabs": {
+      "general": "Général",
+      "branding": "Identité",
+      "integrations": "Intégrations",
+      "invites": "Invitations",
+      "credentials": "Identifiants"
+    },
+    "language": {
+      "title": "Langue",
+      "label": "Sélectionner la langue"
+    },
+    "videoLink": {
+      "title": "Lien de la Salle Vidéo",
+      "placeholder": "https://votre-lien-personnalisé.com",
+      "help": "Si vous avez un lien fixe de réunion, collez-le ici. Sinon, le système générera une salle exclusive pour chaque session automatiquement."
+    },
+    "slogan": {
+      "title": "Phrase / Slogan Personnalisé",
+      "placeholder": "Entrez votre phrase ou slogan personnalisé ici...",
+      "help": "Cette phrase sera affichée dans les en-têtes et les écrans principaux",
+      "description": "Cette phrase sera affichée dans les en-têtes et les écrans principaux"
+    },
+    "lowPowerMode": {
+      "title": "Mode Basse Consommation",
+      "description": "Désactive les fonctionnalités multimédias lorsque la session est en arrière-plan.",
+      "enabled": "Activé",
+      "disabled": "Désactivé"
+    },
+    "theme": {
+      "title": "Choisissez votre Thème"
+    },
+    "images": {
+      "title": "Images",
+      "logo": "Logo Professionnel",
+      "photo": "Photo Professionnelle",
+      "avatar": "Avatar",
+      "uploadLogo": "Télécharger le Logo",
+      "uploadPhoto": "Télécharger la Photo",
+      "uploadAvatar": "Télécharger l'Avatar"
+    },
+    "googleDrive": {
+      "title": "Google Drive",
+      "status": "État de la Connexion",
+      "connected": "Connecté",
+      "disconnected": "Déconnecté",
+      "folderLabel": "Dossier par Défaut pour les Fichiers",
+      "folderPlaceholder": "Ex : Clients/KalonConnect"
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "status": "État de la Connexion",
+      "phoneLabel": "Numéro de Téléphone"
+    },
+    "messages": {
+      "saveSuccess": "Paramètres enregistrés avec succès !",
+      "saveError": "Erreur lors de l'enregistrement des paramètres. Veuillez réessayer."
+    },
+    "branding": {
+      "chooseTheme": "Choisissez Votre Thème",
+      "images": "Images",
+      "professionalLogo": "Logo Professionnel",
+      "professionalPhoto": "Photo Professionnelle",
+      "avatar": "Avatar",
+      "uploadLogo": "Télécharger le Logo",
+      "uploadPhoto": "Télécharger la Photo",
+      "uploadAvatar": "Télécharger l'Avatar"
+    },
+    "integrations": {
+      "googleDrive": {
+        "title": "Google Drive",
+        "status": "État de la Connexion",
+        "connected": "Connecté",
+        "disconnected": "Déconnecté",
+        "connect": "Connecter",
+        "disconnect": "Déconnecter",
+        "folderLabel": "Dossier par Défaut pour les Fichiers",
+        "folderPlaceholder": "Ex : Clients/KalonConnect",
+        "features": {
+          "clients": {
+            "title": "Inscription des Clients",
+            "desc": "Automatique"
+          },
+          "videos": {
+            "title": "Vidéos de Session",
+            "desc": "Sauvegarde Automatique"
+          },
+          "records": {
+            "title": "Dossiers de Consultation",
+            "desc": "Stockage Sécurisé"
+          }
+        }
+      },
+      "whatsapp": {
+        "title": "WhatsApp",
+        "status": "État de la Connexion",
+        "connected": "Connecté",
+        "disconnected": "Déconnecté",
+        "connect": "Connecter",
+        "disconnect": "Déconnecter",
+        "phoneLabel": "Numéro de Mobile",
+        "phonePlaceholder": "+33 6 12 34 56 78",
+        "autoMessage": "Message Automatique",
+        "autoMessageDesc": "Envoyer un message de bienvenue au début de la session"
+      }
+    },
+    "backgrounds": {
+      "screen": {
+        "gradientBlue": "Bleu Dégradé",
+        "gradientGreen": "Vert Dégradé",
+        "gradientPurple": "Violet Dégradé"
+      },
+      "video": {
+        "blurNature": "Nature Douce",
+        "blurOcean": "Océan Calme",
+        "blurSunset": "Coucher de Soleil"
+      }
+    },
+    "dateFormat": {
+      "title": "Format de Date",
+      "label": "Sélectionnez le format de date",
+      "formats": {
+        "ddmmyyyy": "JJ/MM/AAAA (Brésil/Europe)",
+        "mmddyyyy": "MM/JJ/AAAA (USA)",
+        "yyyymmdd": "AAAA-MM-JJ (ISO)"
+      }
+    }
+  },
+  "waitingRoom": {
+    "loading": "Chargement des paramètres...",
+    "title": "Salle d'Attente Premium",
+    "subtitle": "Configurez la vidéo, la musique d'ambiance et l'expérience client avant la consultation.",
+    "saving": "Enregistrement...",
+    "saveButton": "Enregistrer les modifications",
+    "saveButtonBottom": "Enregistrer les modifications",
+    "success": "Paramètres enregistrés avec succès!",
+    "fileDisclaimer": "Fichiers supportés: vidéo (MP4, WebM), image (JPG, PNG), audio (MP3, WAV). Taille maximale: 50MB.",
+    "video": {
+      "title": "Vidéo de bienvenue",
+      "description": "Cette vidéo sera lue automatiquement lorsque le client entrera dans la salle.",
+      "mediaType": "Type de média",
+      "types": {
+        "video": "Vidéo",
+        "slides": "Diapositives",
+        "image": "Image"
+      }
+    },
+    "music": {
+      "title": "Musique d'ambiance",
+      "description": "La musique sera lue en boucle pendant que le client attend."
+    },
+    "message": {
+      "title": "Message au client",
+      "placeholder": "Bonjour! Bienvenue dans notre salle d'attente. Respirez profondément et détendez-vous, nous commencerons bientôt notre session. Je prépare tout pour vous servir de la meilleure façon possible.",
+      "tip": "Astuce: utilisez des marqueurs simples comme {client} et {spécialité} pour personnaliser le message."
+    },
+    "preferences": {
+      "title": "Préférences visuelles",
+      "animatedMessage": {
+        "label": "Afficher le message animé",
+        "description": "Le message pulsera doucement pendant l'attente."
+      },
+      "allowClientPreview": {
+        "label": "Autoriser l'aperçu du client",
+        "description": "Le professionnel peut voir la caméra du client avant de commencer."
+      },
+      "alertOnClientJoin": {
+        "label": "Alerter lorsque le client rejoint",
+        "description": "Joue un son discret et affiche une alerte au professionnel."
+      }
+    },
+    "visualPreferences": {
+      "title": "Préférences Visuelles",
+      "animatedMessage": "Afficher le message animé",
+      "animatedMessageDesc": "Le message pulsera doucement pendant l'attente.",
+      "allowClientPreview": "Autoriser l'aperçu du client",
+      "allowClientPreviewDesc": "Le professionnel peut voir la caméra du client avant de commencer.",
+      "alertOnClientJoin": "Alerter lorsque le client rejoint",
+      "alertOnClientJoinDesc": "Joue un son discret et affiche une alerte au professionnel.",
+      "multiSpecialty": "Spécialités Multiples",
+      "multiSpecialtyDesc": "Configurez des messages différents pour chaque spécialité."
+    },
+    "errors": {
+      "load": "Erreur lors du chargement des paramètres",
+      "save": "Erreur lors de l'enregistrement des paramètres",
+      "uploadGeneric": "Erreur de téléchargement",
+      "saveGeneric": "Erreur d'enregistrement"
+    },
+    "examples": {
+      "title": "Utiliser l'Exemple Prêt",
+      "video": "Vidéo d'Exemple",
+      "music": "Musique d'Exemple",
+      "message": "Bonjour! Bienvenue dans notre salle d'attente. Respirez profondément et détendez-vous, nous commencerons bientôt notre session. Je prépare tout pour vous servir de la meilleure façon possible."
+    }
+  },
+  "videoControls": {
+    "startSession": "Démarrer la Session",
+    "endSession": "Terminer la Session",
+    "camera": "Caméra",
+    "microphone": "Microphone",
+    "video": "Vidéo",
+    "audio": "Audio",
+    "screenShare": "Partager l'écran",
+    "stopScreenShare": "Arrêter le partage",
+    "settings": "Paramètres",
+    "participants": "Participants",
+    "chat": "Chat",
+    "mute": "Couper le son",
+    "unmute": "Activer le son",
+    "activateExperience": "Activer l'Expérience",
+    "loadingEnvironment": "Chargement de l'environnement...",
+    "generateLink": "Générer le Lien",
+    "generateLinkTitle": "Générer le lien du client",
+    "generateLinkError": "ID du professionnel introuvable",
+    "openSettings": "Ouvrir les paramètres",
+    "fullscreenError": "La fonctionnalité plein écran n'est pas disponible dans votre plan actuel.",
+    "linkCopied": "Lien copié dans le presse-papiers !",
+    "linkGenerated": "Lien généré :",
+    "copyManually": "Cliquez sur OK pour copier manuellement.",
+    "linkCopiedSuccess": "Lien copié !",
+    "generateLinkFailed": "Échec de la génération du lien :",
+    "preview": {
+      "title": "Votre Aperçu",
+      "cameraActive": "Caméra Active",
+      "cameraOff": "Caméra Éteinte",
+      "checkAppearance": "Vérifiez votre apparence et votre audio avant d'entrer."
+    },
+    "labels": {
+      "professionalPreview": "Aperçu du Professionnel",
+      "clientPreview": "Aperçu du Client",
+      "previewPaused": "Aperçu en Pause",
+      "cameraOff": "Caméra Éteinte",
+      "sharingScreen": "Partage d'Écran",
+      "client": "Client",
+      "professional": "Professionnel"
+    }
+  },
+  "waitingRoomPage": {
+    "title": "Salle d'Attente",
+    "defaultMessage": "En attente que le professionnel démarre la session…",
+    "sessionStarted": "Session démarrée ! Vous allez être redirigé maintenant.",
+    "enteringRoom": "Entrée dans la salle...",
+    "activateExperience": "Activer l'Expérience",
+    "loadingEnvironment": "Chargement de l'environnement...",
+    "preview": {
+      "title": "Votre Aperçu",
+      "cameraActive": "Caméra Active",
+      "cameraOff": "Caméra Éteinte",
+      "checkAppearance": "Vérifiez votre apparence et votre audio avant d'entrer."
+    }
+  },
+  "forms": {
+    "required": "Champ obligatoire",
+    "invalidEmail": "E-mail invalide",
+    "invalidPhone": "Téléphone invalide",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "minLength": "Minimum de {count} caractères",
+    "maxLength": "Maximum de {count} caractères"
+  },
+  "notifications": {
+    "newMessage": "Nouveau message",
+    "newAppointment": "Nouveau rendez-vous",
+    "appointmentReminder": "Rappel de rendez-vous",
+    "sessionStarting": "Session en cours de démarrage",
+    "clientJoined": "Le client est entré dans la salle"
+  },
+  "reports": {
+    "title": "Rapports Thérapeutiques",
+    "subtitle": "Indicateurs automatiques des sessions avec transcription et observations.",
+    "restrictedAccess": "Fonction disponible uniquement dans la version Pro",
+    "restrictedMessage": "Les rapports automatiques sont exclusifs aux professionnels de la version Pro de KalonConnect.",
+    "resetFilters": "Réinitialiser les filtres",
+    "generateReport": "Générer le rapport complet",
+    "generateReportTooltip": "Disponible uniquement dans la version Pro",
+    "filters": {
+      "client": "Client",
+      "allClients": "Tous les clients",
+      "keyword": "Mot-clé",
+      "allKeywords": "Tous",
+      "period": "Période",
+      "last7days": "7 derniers jours",
+      "last15days": "15 derniers jours",
+      "last30days": "30 derniers jours",
+      "last90days": "90 derniers jours",
+      "last6months": "6 derniers mois",
+      "lastYear": "Dernière année",
+      "searchPlaceholder": "Rechercher par client, session, mot..."
+    },
+    "pdfStatus": {
+      "success": "Rapport généré le",
+      "now": "maintenant"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des rapports.",
+      "loadError": "Impossible de charger les données.",
+      "generateFailed": "Échec de la génération du rapport PDF.",
+      "generateError": "Impossible de générer le rapport complet."
+    },
+    "noData": {
+      "title": "Les rapports seront générés automatiquement",
+      "message": "Dès que vos sessions auront une transcription ou des observations, les indicateurs apparaîtront ici."
+    },
+    "stats": {
+      "totalHours": "Total d'heures",
+      "totalHoursDesc": "Temps cumulé des sessions enregistrées",
+      "clientsServed": "Clients servis",
+      "clientsServedDesc": "Clients avec des enregistrements dans la période",
+      "sessionsAnalyzed": "Sessions analysées",
+      "sessionsAnalyzedDesc": "Consultations avec transcription ou notes",
+      "averageMood": "Humeur moyenne",
+      "averageMoodDesc": "Moyenne générale des moodScores rapportés",
+      "trendingWords": "Mots tendance",
+      "noData": "Aucune donnée"
+    },
+    "charts": {
+      "moodEvolution": "Évolution de l'humeur par client",
+      "moodEvolutionDesc": "Chaque ligne représente la variation du moodScore au fil des sessions.",
+      "noMoodData": "Aucun moodScore enregistré dans la période sélectionnée.",
+      "topThemes": "Thèmes les plus récurrents",
+      "topThemesDesc": "Fréquence des principaux mots-clés identifiés.",
+      "noThemes": "Aucun thème n'a été identifié dans la période.",
+      "modeDistribution": "Distribution par mode",
+      "modeDistributionDesc": "Comprenez quels formats de soins vous utilisez le plus fréquemment.",
+      "noModeData": "Données insuffisantes pour le graphique.",
+      "highlightedWords": "Mots en évidence",
+      "highlightedWordsDesc": "Ensemble de termes les plus cités dans les transcriptions et les notes.",
+      "noHighlightedWords": "Aucun terme en évidence à afficher."
+    },
+    "recentSessions": {
+      "title": "Sessions les plus récentes",
+      "subtitle": "Dernières consultations enregistrées avec transcription ou notes.",
+      "session": "Session",
+      "noDate": "Date non renseignée",
+      "duration": "Durée"
+    }
+  },
+  "_documents_defunct": {
+    "help": {
+      "prescription": {
+        "title": "Comment utiliser les Ordonnances",
+        "text": "Remplissez le nom du patient, les médicaments et les instructions. Cliquez sur le bouton de signature, dessinez ou joignez votre signature, et générez le PDF pour imprimer ou envoyer.",
+        "video": "Tutoriel vidéo bientôt disponible"
+      },
+      "signature": {
+        "title": "Comment créer une Signature Électronique",
+        "text": "Vous pouvez signer avec la souris, le doigt (tactile) ou insérer une image. Utilisez gov.br ou dessinez votre propre signature.",
+        "video": "Tutoriel étape par étape disponible"
+      },
+      "receipt": {
+        "title": "Comment émettre des Reçus",
+        "text": "Entrez le montant, le service et sélectionnez la signature. Générez le reçu en PDF, imprimez ou envoyez au client.",
+        "video": "Directives complètes dans le bouton d'aide"
+      },
+      "consent": {
+        "title": "À propos du Formulaire de Consentement",
+        "text": "Lisez le terme complet, cliquez pour écouter en audio. Le client peut signer en utilisant la souris ou le doigt.",
+        "video": "Explication complète disponible"
+      },
+      "payment": {
+        "title": "Comment configurer le Paiement PIX",
+        "text": "Enregistrez votre clé PIX en cliquant sur le bouton. Pour générer un QR Code, entrez le montant et cliquez sur \"Générer QR\".",
+        "video": "Liens officiels et tutoriel disponible"
+      }
+    },
+    "title": "Documents et Légaux",
+    "subtitle": "Système complet de documents avec accessibilité totale",
+    "actions": {
+      "save": "Enregistrer",
+      "pdf": "PDF",
+      "print": "Imprimer",
+      "send": "Envoyer",
+      "generateQR": "Générer QR",
+      "copyPix": "Copier PIX",
+      "clear": "Effacer",
+      "sign": "Signer",
+      "upload": "Télécharger Image"
+    },
+    "prescription": {
+      "title": "Ordonnance",
+      "patientName": "Nom du Patient",
+      "patientPlaceholder": "Entrez le nom complet du patient",
+      "medications": "Médicaments / Prescription",
+      "medicationsPlaceholder": "Entrez les médicaments, dosages et instructions",
+      "instructions": "Instructions Supplémentaires",
+      "instructionsPlaceholder": "Directives supplémentaires pour le patient",
+      "registry": "Registre Professionnel",
+      "date": "Date",
+      "successSave": "Ordonnance enregistrée avec succès !",
+      "successPDF": "PDF de l'ordonnance généré avec succès !",
+      "successSend": "Ordonnance envoyée au patient !"
+    },
+    "signature": {
+      "title": "Signature Électronique",
+      "draw": "Dessiner",
+      "type": "Taper",
+      "upload": "Télécharger",
+      "clear": "Effacer la Signature",
+      "save": "Enregistrer la Signature",
+      "placeholder": "Signez ici...",
+      "success": "Signature enregistrée avec succès !",
+      "tutorial": {
+        "title": "💡 Comment créer une signature numérique ?",
+        "text": "Vous pouvez utiliser des applications de signature numérique gratuites ou créer la vôtre. Cliquez sur le bouton d'aide pour le tutoriel complet.",
+        "button": "Voir le Tutoriel"
+      }
+    },
+    "receipt": {
+      "title": "Reçu",
+      "amount": "Montant (€)",
+      "service": "Service Fourni",
+      "servicePlaceholder": "Ex : Consultation Psychologique",
+      "payer": "Payeur (Nom/ID)",
+      "payerPlaceholder": "Nom complet ou raison sociale",
+      "date": "Date de Paiement",
+      "success": "Reçu généré avec succès !"
+    },
+    "consent": {
+      "title": "Formulaire de Consentement",
+      "content": "Contenu du Terme",
+      "read": "J'ai lu et j'accepte les termes",
+      "sign": "Signer le Terme",
+      "success": "Terme signé avec succès !"
+    },
+    "payment": {
+      "title": "Paiement PIX",
+      "pixKey": "Clé PIX",
+      "pixKeyPlaceholder": "ID, Email, Téléphone ou Clé Aléatoire",
+      "amount": "Montant à Recevoir",
+      "qrCode": "QR Code de Paiement",
+      "copy": "Copier le Code",
+      "success": "Clé PIX enregistrée avec succès !"
+    }
+  },
+  "financial": {
+    "title": "Panneau Financier",
+    "income": "Revenus",
+    "expenses": "Dépenses",
+    "pending": "En Attente",
+    "overdue": "En Retard",
+    "shortcuts": "Raccourcis Rapides",
+    "configureBanks": "Configurer les Banques",
+    "configureBanksTitle": "Configurer les Banques",
+    "configureBanksDesc": "Choisissez les banques que vous souhaitez garder visibles toujours et enregistrez vos informations.",
+    "searchPlaceholder": "Rechercher par code ou nom",
+    "loadingBanks": "Chargement des banques...",
+    "noBanksFound": "Aucune banque trouvée pour",
+    "digitalBanks": "BANQUES NUMÉRIQUES",
+    "traditionalBanks": "BANQUES TRADITIONNELLES",
+    "export": "Exporter",
+    "register": "Enregistrer",
+    "qrPix": "QR PIX",
+    "summary": "Résumé",
+    "favoriteBanks": "Mes Banques",
+    "saving": "Enregistrement...",
+    "selectBanks": "Sélectionnez vos banques dans Configurer les Banques.",
+    "clickToEdit": "Cliquez pour voir les détails",
+    "selectFavoriteToEdit": "Sélectionnez une banque favorite pour voir les détails.",
+    "pixKeys": "Clés PIX",
+    "add": "Ajouter",
+    "noPixKeys": "Aucune clé enregistrée.",
+    "enterPixKey": "Entrez la clé PIX",
+    "bankAccounts": "Comptes Bancaires",
+    "noAccounts": "Aucun compte enregistré.",
+    "account": {
+      "agency": "Agence",
+      "number": "Compte",
+      "type": "Type",
+      "holder": "Titulaire",
+      "doc": "ID/TVA",
+      "types": {
+        "CC": "Compte Courant",
+        "CP": "Compte Épargne",
+        "CD": "Compte Numérique",
+        "PJ": "Compte Professionnel"
+      }
+    },
+    "errors": {
+      "loadBanks": "Erreur de chargement des banques",
+      "loadFavorites": "Erreur de chargement des favoris",
+      "saveFavorites": "Erreur d'enregistrement des favoris",
+      "loadBanksMessage": "Impossible de charger la liste officielle des banques.",
+      "loadFavoritesMessage": "Impossible de charger vos banques. Veuillez réessayer plus tard.",
+      "saveFavoritesMessage": "Impossible d'enregistrer les informations bancaires. Veuillez réessayer."
+    },
+    "access": {
+      "normalOrPro": "Disponible à partir de la version Normal",
+      "proOnly": "Disponible uniquement dans la version Pro",
+      "restricted": "Fonctionnalité disponible uniquement dans la version Normal ou Pro."
+    },
+    "movements": {
+      "title": "Mouvements",
+      "all": "Tous",
+      "date": "Date",
+      "description": "Description",
+      "category": "Catégorie",
+      "value": "Valeur",
+      "status": "Statut",
+      "actions": "Actions",
+      "markAsPaid": "Marquer comme Payé",
+      "empty": "Aucune transaction enregistrée.",
+      "statuses": {
+        "paid": "Payé",
+        "pending": "En Attente",
+        "overdue": "En Retard"
+      }
+    },
+    "help": {
+      "title": "Comment utiliser le Panneau Financier",
+      "summary": "Résumé Mensuel :",
+      "summaryText": "Visualisez vos revenus, dépenses, montants en attente et valeurs en retard dans des cartes colorées.",
+      "shortcuts": "Raccourcis :",
+      "shortcutsText": "Exportez des données, enregistrez des paiements, générez un code QR PIX et consultez des résumés rapides.",
+      "bankConfig": "Configuration Bancaire :",
+      "bankConfigText": "Utilisez \"Configurer les Banques\" pour choisir et enregistrer des clés PIX, des comptes et des informations sur le titulaire.",
+      "accessibility": "Accessibilité :",
+      "accessibilityText": "Ajustez la taille de la police, le contraste et utilisez la lecture à voix haute via les boutons supérieurs."
+    }
+  },
+  "adminUsers": {
+    "title": "Gestion des Utilisateurs",
+    "subtitle": "Accédez rapidement aux informations détaillées et gérez les permissions.",
+    "listTitle": "Base d'Utilisateurs",
+    "totalUsers": "Total Utilisateurs",
+    "activeUsers": "Utilisateurs Actifs",
+    "pendingUsers": "En Attente",
+    "searchPlaceholder": "Rechercher par nom ou e-mail...",
+    "table": {
+      "name": "Utilisateur / E-mail",
+      "role": "Rôle",
+      "status": "Statut",
+      "lastAccess": "Dernier Accès",
+      "actions": "Actions",
+      "loading": "Chargement des utilisateurs...",
+      "empty": "Aucun utilisateur trouvé.",
+      "results": "résultats",
+      "page": "Page"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "resetPassword": "Réinitialiser MDP",
+      "resendCredentials": "Renvoyer Identifiants",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action est irréversible.",
+      "confirmBulkDelete": "Êtes-vous sûr de vouloir supprimer {count} utilisateurs sélectionnés ? Cette action est irréversible.",
+      "deleteSuccess": "{count} utilisateurs supprimés avec succès.",
+      "deleteFail": "{count} échoués."
+    },
+    "modals": {
+      "editTitle": "Modifier Utilisateur",
+      "createTitle": "Nouvel Utilisateur",
+      "resetTitle": "Réinitialiser le Mot de Passe",
+      "resetConfirm": "Êtes-vous sûr de vouloir réinitialiser le mot de passe pour",
+      "sendNewPassword": "Envoyer le nouveau mot de passe par e-mail",
+      "confirmReset": "Confirmer la Réinitialisation",
+      "resendTitle": "Renvoyer Identifiants",
+      "attention": "Attention !",
+      "resendWarningPrefix": "Cette action va",
+      "resendWarningReset": "réinitialiser le mot de passe",
+      "resendWarningUser": "de l'utilisateur",
+      "resendWarningSend": "et envoyer les nouveaux identifiants à",
+      "oldPasswordWarning": "L'ancien mot de passe cessera de fonctionner immédiatement.",
+      "confirmResend": "Confirmer et Envoyer",
+      "createdSuccess": "Utilisateur Créé avec Succès !",
+      "copyCredentials": "Copiez les identifiants ci-dessous et envoyez-les à l'utilisateur",
+      "passwordOneTime": "Important : C'est la seule fois que le mot de passe sera affiché. Assurez-vous de le copier avant de fermer cette fenêtre.",
+      "close": "Compris, Fermer",
+      "resetSuccessTitle": "Mot de Passe Réinitialisé",
+      "resetSuccessMessage": "Nouveau mot de passe généré avec succès",
+      "emailSent": "E-mail envoyé"
+    },
+    "errors": {
+      "load": "Erreur lors du chargement des utilisateurs",
+      "save": "Erreur lors de l'enregistrement de l'utilisateur",
+      "delete": "Erreur lors de la suppression de l'utilisateur",
+      "reset": "Erreur lors de la réinitialisation du mot de passe",
+      "resend": "Erreur lors du renvoi des identifiants",
+      "required": "Nom et e-mail sont obligatoires",
+      "passwordRequired": "Le mot de passe est obligatoire",
+      "exportEmpty": "Il n'y a aucun utilisateur à exporter avec les filtres actuels."
+    }
+  },
+  "adminAuditLogs": {
+    "title": "Journaux d'Audit",
+    "subtitle": "Historique complet des actions administratives",
+    "validating": "Validation de l'accès...",
+    "accessDenied": "Accès refusé",
+    "searchPlaceholder": "Rechercher par e-mail ou ID...",
+    "actions": {
+      "all": "Toutes les Actions",
+      "create": "Créer Utilisateur",
+      "update": "Modifier Utilisateur",
+      "delete": "Supprimer Utilisateur",
+      "resetPassword": "Réinitialisation MDP"
+    },
+    "table": {
+      "date": "Date/Heure",
+      "action": "Action",
+      "admin": "Admin",
+      "entity": "Entité",
+      "details": "Détails",
+      "loading": "Chargement des journaux...",
+      "empty": "Aucun journal trouvé",
+      "view": "Voir",
+      "hide": "Masquer"
+    },
+    "details": {
+      "changes": "Changements :",
+      "metadata": "Métadonnées :",
+      "ip": "IP :"
+    },
+    "badges": {
+      "create": "Créer",
+      "update": "Modifier",
+      "delete": "Supprimer",
+      "passwordReset": "Réinit MDP"
+    }
+  },
+  "adminActivity": {
+    "title": "Activité des Utilisateurs",
+    "subtitle": "Suivi de l'engagement et de l'utilisation de la plateforme",
+    "stats": {
+      "total": "Activités Totales",
+      "logins": "Connexions",
+      "uniqueUsers": "Utilisateurs Uniques",
+      "activeSessions": "Sessions Actives"
+    },
+    "filters": {
+      "time": {
+        "24h": "Dernières 24h",
+        "7d": "7 derniers jours",
+        "30d": "30 derniers jours"
+      },
+      "type": {
+        "all": "Toutes Activités",
+        "login": "Connexion",
+        "logout": "Déconnexion",
+        "pageView": "Vues de Page"
+      }
+    },
+    "table": {
+      "date": "Date/Heure",
+      "user": "Utilisateur",
+      "activity": "Activité",
+      "page": "Page",
+      "loading": "Chargement...",
+      "empty": "Aucune activité trouvée"
+    }
+  },
+  "adminEmailTemplates": {
+    "title": "Modèles d'E-mail",
+    "subtitle": "Personnalisez les e-mails envoyés par le système",
+    "listTitle": "Modèles",
+    "selectPrompt": "Sélectionnez un modèle à modifier",
+    "form": {
+      "subject": "Sujet",
+      "body": "Corps (HTML)",
+      "variablesInfo": "Utilisez les variables ci-dessus au format {{variable}} pour insérer des données dynamiques."
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "preview": "Aperçu"
+    },
+    "alerts": {
+      "success": "Modèle enregistré avec succès !",
+      "error": "Erreur lors de l'enregistrement du modèle",
+      "errorLoad": "Erreur lors du chargement des modèles",
+      "errorPreview": "Erreur lors de la génération de l'aperçu"
+    },
+    "preview": {
+      "title": "Aperçu (avec données exemples)"
+    }
+  },
+  "adminReports": {
+    "title": "Rapports d'Utilisation",
+    "subtitle": "Suivez les sessions, ressources utilisées et panneaux accédés par les professionnels.",
+    "monitoringBadge": "Surveillance interne",
+    "export": {
+      "json": "Exporter JSON",
+      "csv": "Exporter CSV"
+    },
+    "summary": {
+      "sessions": "Sessions Monitorées",
+      "demo": "Sessions Démo",
+      "duration": "Durée Moy.",
+      "mostUsed": "Panneau le + Utilisé",
+      "notAvailable": "Pas encore disponible"
+    },
+    "filters": {
+      "title": "Filtres Intelligents",
+      "clear": "Effacer filtres",
+      "version": "Version",
+      "search": "Rechercher par e-mail ou session",
+      "from": "Période début",
+      "to": "Période fin",
+      "options": {
+        "all": "Tous",
+        "demo": "Démo",
+        "normal": "Normal",
+        "pro": "Pro"
+      }
+    },
+    "table": {
+      "title": "Sessions Monitorées",
+      "showing": "Affichage de {count} sur {total} sessions récentes.",
+      "empty": "Aucune session trouvée avec les filtres sélectionnés.",
+      "headers": {
+        "user": "Utilisateur",
+        "version": "Version",
+        "start": "Début",
+        "duration": "Durée",
+        "panels": "Panneaux",
+        "actions": "Actions",
+        "details": "Détails"
+      },
+      "row": {
+        "panels": "panneau(x)",
+        "events": "événements",
+        "noName": "Utilisateur Sans Nom",
+        "viewDetails": "Voir Détails"
+      }
+    },
+    "details": {
+      "timeline": "Chronologie de la Session",
+      "session": "Session {id}",
+      "close": "Fermer",
+      "generalPanel": "Panneau Général"
+    },
+    "access": {
+      "validating": "Validation de l'accès administratif...",
+      "restricted": "Accès Restreint",
+      "message": "Seuls les évaluateurs autorisés peuvent accéder aux rapports d'utilisation automatiques."
+    },
+    "errors": {
+      "load": "Impossible de charger les rapports d'utilisation.",
+      "generic": "Échec du chargement des rapports."
+    }
+  },
+  "adminTestUsers": {
+    "title": "Gestion des Thérapeutes Invités",
+    "subtitle": "Ajoutez, modifiez ou supprimez des thérapeutes avec accès test complet à KalonConnect.",
+    "access": {
+      "validating": "Validation de l'accès administratif...",
+      "restricted": "Accès Restreint",
+      "message": "Seuls les administrateurs peuvent gérer les thérapeutes invités de test."
+    },
+    "actions": {
+      "add": "Ajouter Thérapeute",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce thérapeute ?"
+    },
+    "table": {
+      "name": "Nom",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "actions": "Actions",
+      "loading": "Chargement des thérapeutes...",
+      "empty": "Aucun thérapeute enregistré pour le moment."
+    },
+    "form": {
+      "name": "Nom Complet",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "addTitle": "Ajouter Thérapeute",
+      "editTitle": "Modifier Thérapeute"
+    },
+    "errors": {
+      "load": "Impossible de charger les thérapeutes invités.",
+      "loadGeneric": "Échec du chargement des utilisateurs de test.",
+      "save": "Échec de l'enregistrement du thérapeute invité.",
+      "update": "Impossible de mettre à jour le thérapeute.",
+      "create": "Impossible d'ajouter le thérapeute.",
+      "delete": "Impossible de supprimer le thérapeute.",
+      "deleteGeneric": "Erreur lors de la suppression du thérapeute.",
+      "required": "Remplissez le nom, l'email et le mot de passe."
+    }
+  },
+  "adminAccess": {
+    "button": "Admin",
+    "title": "Panneau Admin",
+    "restrictedTitle": "Accès Restreint",
+    "restrictedMessage": "Entrez les identifiants administratifs pour continuer.",
+    "menu": {
+      "users": "Gérer Utilisateurs",
+      "testUsers": "Thérapeutes Invités",
+      "reports": "Rapports Utilis.",
+      "logout": "Déconnexion"
+    },
+    "session": {
+      "expires": "La session expire dans {minutes} minutes d'inactivité."
+    },
+    "form": {
+      "email": "E-mail",
+      "emailPlaceholder": "Entrez l'email autorisé",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Entrez le mot de passe",
+      "cancel": "Annuler",
+      "login": "Connexion",
+      "validating": "Validation..."
+    },
+    "errors": {
+      "unauthorized": "Accès non autorisé",
+      "network": "Impossible de valider les identifiants. Vérifiez votre connexion."
+    }
+  },
+  "documents": {
+    "help": {
+      "prescription": {
+        "title": "Comment utiliser les Ordonnances",
+        "text": "Remplissez le nom du patient, les médicaments et les instructions. Cliquez sur le bouton de signature, dessinez ou joignez votre signature, et générez le PDF pour imprimer ou envoyer.",
+        "video": "Tutoriel vidéo bientôt disponible"
+      },
+      "signature": {
+        "title": "Comment créer une Signature Électronique",
+        "text": "Vous pouvez signer avec la souris, le doigt (tactile) ou insérer une image. Utilisez gov.br ou dessinez votre propre signature.",
+        "video": "Tutoriel étape par étape disponible"
+      },
+      "receipt": {
+        "title": "Comment émettre des Reçus",
+        "text": "Entrez le montant, le service et sélectionnez la signature. Générez le reçu en PDF, imprimez ou envoyez au client.",
+        "video": "Directives complètes dans le bouton d'aide"
+      },
+      "consent": {
+        "title": "À propos du Formulaire de Consentement",
+        "text": "Lisez le terme complet, cliquez pour écouter en audio. Le client peut signer en utilisant la souris ou le doigt.",
+        "video": "Explication complète disponible"
+      },
+      "payment": {
+        "title": "Comment configurer le Paiement PIX",
+        "text": "Enregistrez votre clé PIX en cliquant sur le bouton. Pour générer un QR Code, entrez le montant et cliquez sur \"Générer QR\".",
+        "video": "Liens officiels et tutoriel disponible"
+      }
+    },
+    "title": "Documents et Légaux",
+    "subtitle": "Système complet de documents avec accessibilité totale",
+    "actions": {
+      "save": "Enregistrer",
+      "pdf": "PDF",
+      "print": "Imprimer",
+      "send": "Envoyer",
+      "generateQR": "Générer QR",
+      "copyPix": "Copier PIX",
+      "clear": "Effacer",
+      "sign": "Signer",
+      "upload": "Télécharger Image"
+    },
+    "prescription": {
+      "title": "Ordonnance",
+      "patientName": "Nom du Patient",
+      "patientPlaceholder": "Entrez le nom complet du patient",
+      "medications": "Médicaments / Prescription",
+      "medicationsPlaceholder": "Entrez les médicaments, dosages et instructions",
+      "instructions": "Instructions Supplémentaires",
+      "instructionsPlaceholder": "Directives supplémentaires pour le patient",
+      "registry": "Registre Professionnel",
+      "date": "Date",
+      "successSave": "Ordonnance enregistrée avec succès !",
+      "successPDF": "PDF de l'ordonnance généré avec succès !",
+      "successSend": "Ordonnance envoyée au patient !"
+    },
+    "signature": {
+      "title": "Signature Électronique",
+      "draw": "Dessiner",
+      "type": "Taper",
+      "upload": "Télécharger",
+      "clear": "Effacer la Signature",
+      "save": "Enregistrer la Signature",
+      "placeholder": "Signez ici...",
+      "success": "Signature enregistrée avec succès !",
+      "tutorial": {
+        "title": "💡 Comment créer une signature numérique ?",
+        "text": "Vous pouvez utiliser des applications de signature numérique gratuites ou créer la vôtre. Cliquez sur le bouton d'aide pour le tutoriel complet.",
+        "button": "Voir le Tutoriel"
+      }
+    },
+    "receipt": {
+      "title": "Reçu",
+      "amount": "Montant (€)",
+      "service": "Service Fourni",
+      "servicePlaceholder": "Ex : Consultation Psychologique",
+      "payer": "Payeur (Nom/ID)",
+      "payerPlaceholder": "Nom complet ou raison sociale",
+      "date": "Date de Paiement",
+      "success": "Reçu généré avec succès !"
+    },
+    "consent": {
+      "title": "Formulaire de Consentement",
+      "content": "Contenu du Terme",
+      "read": "J'ai lu et j'accepte les termes",
+      "sign": "Signer le Terme",
+      "success": "Terme signé avec succès !"
+    },
+    "payment": {
+      "title": "Paiement PIX",
+      "pixKey": "Clé PIX",
+      "pixKeyPlaceholder": "ID, Email, Téléphone ou Clé Aléatoire",
+      "amount": "Montant à Recevoir",
+      "qrCode": "QR Code de Paiement",
+      "copy": "Copier le Code",
+      "success": "Clé PIX enregistrée avec succès !"
+    }
+  },
+  "demoInvites": {
+    "title": "Invitations de Démonstration",
+    "subtitle": "Générez des liens temporaires pour que les thérapeutes testent la plateforme.",
+    "form": {
+      "guestName": "Nom de l'invité",
+      "guestNamePlaceholder": "Nom complet",
+      "guestEmail": "Email de l'invité",
+      "guestEmailPlaceholder": "email@exemple.com",
+      "duration": "Durée (heures)",
+      "generating": "Génération...",
+      "generateButton": "Générer l'invitation"
+    },
+    "table": {
+      "guest": "Invité",
+      "email": "Email",
+      "createdAt": "Créé le",
+      "expiresAt": "Expire le",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "✅ Actif",
+      "used": "📌 Utilisé",
+      "expired": "⌛ Expiré"
+    },
+    "actions": {
+      "copyLink": "Copier le lien",
+      "expire": "Terminer"
+    },
+    "messages": {
+      "success": "Invitation créée avec succès ! Lien copié dans le presse-papiers.",
+      "linkCopied": "Lien copié !",
+      "inviteExpired": "Invitation terminée.",
+      "noInvites": "Aucune invitation de démonstration générée pour le moment.",
+      "errorLoad": "Impossible de charger les invitations de démonstration.",
+      "errorCreate": "Impossible de créer l'invitation demo.",
+      "errorExpire": "Impossible de terminer l'invitation.",
+      "errorCopy": "Impossible de copier le lien automatiquement.",
+      "errorGeneric": "Échec du chargement des invitations."
+    }
+  },
+  "about": {
+    "title": "À Propos de KalonConnect",
+    "subtitle": "Nous transformons la gestion de la santé mentale avec technologie, empathie et excellence.",
+    "mission": {
+      "title": "Notre Mission",
+      "description": "Faciliter la gestion professionnelle des thérapies et événements, en connectant professionnels et patients de manière sécurisée et efficace."
+    },
+    "vision": {
+      "title": "Notre Vision",
+      "description": "Être la plateforme leader en gestion de santé mentale, reconnue pour l'innovation et l'impact positif sur la société."
+    },
+    "values": {
+      "title": "Nos Valeurs",
+      "description": "Empathie, sécurité, innovation, qualité et engagement envers le bien-être mental de tous."
+    },
+    "team": {
+      "title": "Notre Équipe",
+      "developers": {
+        "title": "Développeurs",
+        "description": "Équipe spécialisée dans la création de solutions technologiques innovantes."
+      },
+      "designers": {
+        "title": "Designers",
+        "description": "Professionnels axés sur l'expérience utilisateur et l'accessibilité."
+      },
+      "security": {
+        "title": "Sécurité",
+        "description": "Experts en protection des données et confidentialité."
+      }
+    },
+    "cta": {
+      "title": "Prêt à commencer?",
+      "subtitle": "Essayez Kalon OS et transformez votre gestion de consultations.",
+      "startNow": "Commencer Maintenant",
+      "learnMore": "En Savoir Plus"
+    }
+  },
+  "guide": {
+    "title": "Guide d'Utilisation",
+    "subtitle": "Manuel complet de",
+    "downloadPdf": "Télécharger PDF",
+    "loading": "Chargement du guide...",
+    "loadingFallback": "Si le guide ne charge pas, veuillez télécharger le PDF en utilisant le bouton \"Télécharger PDF\".",
+    "error": {
+      "title": "Erreur lors du chargement du guide",
+      "fallback": "Veuillez réessayer ou télécharger le PDF en utilisant le bouton \"Télécharger PDF\"."
+    },
+    "modal": {
+      "title": "Créer Structure de Dossiers",
+      "nameLabel": "Votre Nom Complet",
+      "namePlaceholder": "Ex: Marie Dupont",
+      "nameHelp": "Ce nom sera utilisé dans le dossier principal: \"KalonConnect - [Votre Nom]\"",
+      "osLabel": "Système d'Exploitation",
+      "downloadScript": "Télécharger Script de Création",
+      "alertName": "Veuillez d'abord entrer votre nom !",
+      "success": {
+        "title": "Script téléchargé avec succès !",
+        "nextSteps": "Prochaines étapes :",
+        "step1": "Localisez le fichier téléchargé sur votre ordinateur",
+        "step2Windows": "Double-cliquez sur le fichier \"criar_pastas_kalon.bat\" pour l'exécuter",
+        "step2Unix": "Ouvrez le Terminal, naviguez vers le dossier de téléchargement et exécutez : chmod +x criar_pastas_kalon.sh && ./criar_pastas_kalon.sh",
+        "step3": "Les dossiers seront créés automatiquement dans votre dossier Documents",
+        "step4": "Copiez le dossier \"KalonConnect - {name}\" sur votre Google Drive",
+        "step5": "Terminé ! Votre structure est organisée dans le cloud"
+      }
+    }
+  },
+  "themes": {
+    "title": "Choisissez votre Thème",
+    "names": {
+      "verde": "Vert Santé",
+      "azul": "Bleu Confiance",
+      "caramelo": "Caramel Accueillant"
+    },
+    "howItWorks": "Comment ça marche :",
+    "features": {
+      "instant": "Le changement est instantané dans tout le système",
+      "saved": "Votre préférence est enregistrée automatiquement",
+      "logo": "Le logo conserve toujours sa couleur blanche d'origine"
+    },
+    "colors": {
+      "primary": "Primaire",
+      "secondary": "Secondaire",
+      "primaryDark": "Primaire Foncé"
+    }
+  },
+  "invites": {
+    "title": "Envoi Automatique d'Invitation à la Consultation",
+    "subtitle": "Configurez quand et comment envoyer des invitations à vos clients",
+    "channels": {
+      "title": "Canaux d'Envoi",
+      "whatsapp": "WhatsApp",
+      "email": "E-mail"
+    },
+    "whereby": {
+      "title": "Lien de la Salle Whereby",
+      "placeholder": "https://whereby.com/votre-salle",
+      "help": "Ce lien sera envoyé automatiquement aux clients"
+    },
+    "timing": {
+      "title": "Quand Envoyer",
+      "dayBefore": "Envoyer la veille, à",
+      "dayOf": "Envoyer le jour de la consultation, à",
+      "tenMinBefore": "Envoyer 10 minutes avant le début"
+    },
+    "message": {
+      "title": "Message d'Invitation (Modifiable)",
+      "placeholder": "Entrez votre message personnalisé...",
+      "help": "Utilisez [data/hora], [LINK_WHERBY_DO_PROFISSIONAL] et [CLIENTE] comme espaces réservés"
+    },
+    "buttons": {
+      "save": "Enregistrer les Paramètres",
+      "test": "Envoyer Test Maintenant"
+    },
+    "history": {
+      "title": "Historique des Envois"
+    },
+    "alerts": {
+      "saved": "Paramètres d'invitation enregistrés avec succès !",
+      "testGenerated": "Message généré :\n\n{message}\n\nVérifiez l'historique ci-dessous."
+    }
+  },
+  "credentials": {
+    "title": "Identifiants d'Accès",
+    "username": {
+      "title": "Nom d'Utilisateur",
+      "current": "Nom Actuel",
+      "currentPlaceholder": "Nom d'utilisateur actuel",
+      "new": "Nouveau Nom",
+      "newPlaceholder": "Nouveau nom d'utilisateur",
+      "change": "Changer de Nom",
+      "cancel": "Annuler",
+      "emptyError": "Le nom d'utilisateur ne peut pas être vide",
+      "success": "Nom d'utilisateur changé avec succès !"
+    },
+    "password": {
+      "title": "Mot de Passe d'Accès",
+      "current": "Mot de Passe Actuel",
+      "currentPlaceholder": "Entrez le mot de passe actuel",
+      "new": "Nouveau Mot de Passe",
+      "newPlaceholder": "Entrez le nouveau mot de passe",
+      "confirm": "Confirmer le Nouveau Mot de Passe",
+      "confirmPlaceholder": "Confirmez le nouveau mot de passe",
+      "change": "Changer le Mot de Passe",
+      "errorMissing": "Tous les champs de mot de passe sont obligatoires",
+      "errorMismatch": "Les mots de passe ne correspondent pas",
+      "success": "Mot de passe changé avec succès !"
+    },
+    "buttons": {
+      "save": "Enregistrer les Modifications",
+      "cancel": "Annuler"
+    }
+  },
+  "eventRoom": {
+    "loading": "Chargement de l'événement...",
+    "recording": {
+      "status": "ENREGISTREMENT",
+      "start": "Enregistrer",
+      "stop": "Arrêter",
+      "started": "🔴 Enregistrement commencé !",
+      "stopped": "✅ Enregistrement terminé et sauvegardé !",
+      "warning": "Êtes-vous sûr de vouloir quitter la salle ?"
+    },
+    "online": "en ligne",
+    "buttons": {
+      "attendance": "Présence",
+      "poll": "Sondage",
+      "certificates": "Certificats",
+      "drive": "Drive",
+      "replay": "Replay",
+      "leave": "Quitter la Salle",
+      "send": "Envoyer",
+      "cancel": "Annuler",
+      "create": "Créer",
+      "exportCsv": "Exporter CSV",
+      "tryAgain": "Réessayer",
+      "startStream": "Démarrer la Diffusion"
+    },
+    "chat": {
+      "public": "Chat Public",
+      "private": "Chat Privé",
+      "placeholder": "Tapez votre message...",
+      "privatePlaceholder": "Message pour {name}...",
+      "selectUser": "Sélectionnez un participant pour démarrer un chat privé",
+      "you": "Vous",
+      "moderator": "Modérateur",
+      "guest": "Invité"
+    },
+    "participants": {
+      "title": "Participants",
+      "waiting": "En attente de participants...",
+      "waitingStream": "En attente du début de la diffusion...",
+      "youModerator": "Vous (Modérateur)",
+      "youPreview": "Vous (Aperçu)",
+      "cameraOff": "Allumez la caméra pour commencer",
+      "connecting": "Connexion à la salle..."
+    },
+    "modals": {
+      "poll": {
+        "title": "Créer un Sondage",
+        "questionPlaceholder": "Tapez la question...",
+        "optionPlaceholder": "Option {index}"
+      },
+      "attendance": {
+        "title": "Liste de Présence",
+        "info": "ℹ️ Votre présence est enregistrée automatiquement à l'entrée et à la sortie de la salle.",
+        "headers": {
+          "name": "Nom",
+          "email": "E-mail",
+          "entry": "Entrée",
+          "duration": "Durée",
+          "status": "Statut"
+        },
+        "status": {
+          "full": "Présence Complète",
+          "partial": "Présence Partielle",
+          "absent": "Absent"
+        }
+      },
+      "drive": {
+        "title": "Google Drive",
+        "connect": "Connecter Google Drive",
+        "upload": "Téléchargement Manuel",
+        "sharePublic": "Partager dans le Chat Public",
+        "sharePrivate": "Partager dans le Chat Privé",
+        "permissionWarning": "⚠️ Le fichier a besoin d'une permission ! Configurez le fichier dans Google Drive pour 'Toute personne disposant du lien peut voir'.",
+        "sharedPublic": "✅ Fichier partagé dans le chat public !",
+        "sharedPrivate": "✅ Fichier partagé avec {name} dans le chat privé !",
+        "selectUserWarning": "⚠️ Sélectionnez un participant pour partager le fichier en privé"
+      },
+      "certificates": {
+        "title": "Certificats",
+        "generateAll": "Générer Tout",
+        "sendEmail": "Envoyer par E-mail",
+        "preview": "Aperçu",
+        "download": "Télécharger"
+      },
+      "replay": {
+        "title": "Replay de la Session",
+        "watch": "Regarder",
+        "download": "Télécharger",
+        "upload": "Téléverser"
+      }
+    },
+    "errors": {
+      "connection": "Erreur de Connexion",
+      "token": "Erreur lors de la génération du jeton",
+      "server": "Erreur de connexion au serveur vidéo"
+    }
+  },
+  "subscription": {
+    "title": "Abonnement",
+    "activePlan": "Plan Pro Actif",
+    "recommended": "Recommandé",
+    "currentPlan": "Plan Actuel",
+    "subscribe": "S'abonner Maintenant",
+    "tip": {
+      "text": "💡 Astuce : Vous pouvez gérer votre abonnement, mettre à jour le mode de paiement ou annuler à tout moment via le Portail Client.",
+      "label": "Astuce :"
+    },
+    "plans": {
+      "normal": {
+        "name": "Normal",
+        "period": "/mois",
+        "features": [
+          "Accès de base au système",
+          "Consultations illimitées",
+          "Support par e-mail"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "period": "/mois",
+        "features": [
+          "Accès complet au système",
+          "Consultations illimitées",
+          "Support prioritaire",
+          "Fonctionnalités avancées"
+        ]
+      }
+    }
+  },
+  "invites": {
+    "title": "Paramètres d'invitation",
+    "subtitle": "Personnalisez la façon dont vos clients reçoivent les notifications de session.",
+    "channels": {
+      "title": "Canaux d'envoi",
+      "whatsapp": "WhatsApp",
+      "email": "E-mail"
+    },
+    "whereby": {
+      "title": "Lien de la session vidéo",
+      "placeholder": "Lien Whereby/Zoom/Meet",
+      "help": "Ce lien sera automatiquement inséré dans l'invitation."
+    },
+    "timing": {
+      "title": "Quand envoyer?",
+      "dayBefore": "Jour précédent",
+      "dayOf": "Le jour de la consultation",
+      "tenMinBefore": "10 minutes avant"
+    },
+    "message": {
+      "title": "Message personnalisé",
+      "placeholder": "Écrivez votre message...",
+      "help": "Utilisez [date/heure] et [CLIENT] pour personnaliser. Le lien de la plateforme sera inséré automatiquement.",
+      "template": "Bonjour! Confirmation de votre consultation en ligne [data/hora].\nPour participer, accédez à la plateforme KalonConnect:\nhttps://kalonconnect.com\nSi vous avez des questions, répondez simplement à ce message."
+    },
+    "buttons": {
+      "save": "Enregistrer les paramètres",
+      "test": "Envoyer le test"
+    },
+    "history": {
+      "title": "Historique des envois"
+    },
+    "alerts": {
+      "saved": "Paramètres enregistrés!",
+      "testGenerated": "Test généré: {message}"
+    }
+  }
+}
