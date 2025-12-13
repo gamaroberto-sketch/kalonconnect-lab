@@ -82,4 +82,5 @@ adicionar-*.ps1
 
 
 # Data bundles (Too large for Vercel)
-data/
+data/*
+!data/test-users.json
