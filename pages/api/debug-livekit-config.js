@@ -1,50 +1,27 @@
-import { RoomServiceClient } from 'livekit-server-sdk';
-
-export default async function handler(req, res) {
-    const apiKey = process.env.LIVEKIT_API_KEY;
-    const apiSecret = process.env.LIVEKIT_API_SECRET;
-    const wsUrl = process.env.LIVEKIT_URL;
+export default function handler(req, res) {
+    // Versão simplificada para garantir que a rota carrega
+    // Sem imports externos por enquanto
 
     const debugInfo = {
         url: {
-            configured: wsUrl,
-            valid_format: wsUrl?.startsWith('wss://'),
+            configured: process.env.LIVEKIT_URL,
+            is_defined: !!process.env.LIVEKIT_URL,
         },
         key: {
-            configured: apiKey,
-            length: apiKey?.length,
-            prefix: apiKey?.substring(0, 3)
+            configured: process.env.LIVEKIT_API_KEY ? '***HIDDEN***' : 'MISSING',
+            prefix: process.env.LIVEKIT_API_KEY?.substring(0, 5),
+            length: process.env.LIVEKIT_API_KEY?.length
         },
-        secret: {
-            length: apiSecret?.length,
-            start: apiSecret?.substring(0, 5) + '...',
-            end: '...' + apiSecret?.substring(apiSecret?.length - 5)
-        }
+        secret_check: {
+            is_defined: !!process.env.LIVEKIT_API_SECRET,
+            length: process.env.LIVEKIT_API_SECRET?.length
+        },
+        timestamp: new Date().toISOString()
     };
 
-    try {
-        if (!wsUrl || !apiKey || !apiSecret) {
-            throw new Error('Missing Environment Variables');
-        }
-
-        // Tenta conectar no LiveKit Cloud para listar salas (prova real de autenticação)
-        const svc = new RoomServiceClient(wsUrl, apiKey, apiSecret);
-        const rooms = await svc.listRooms();
-
-        res.status(200).json({
-            status: 'SUCCESS',
-            message: 'Conexão com LiveKit estabelecida com sucesso!',
-            rooms_count: rooms.length,
-            config_check: debugInfo
-        });
-
-    } catch (error) {
-        console.error("LiveKit Connection Test Failed:", error);
-        res.status(500).json({
-            status: 'ERROR',
-            message: error.message,
-            details: error.response?.data || 'Verifique os logs',
-            config_check: debugInfo
-        });
-    }
+    res.status(200).json({
+        status: 'DIAGNOSTIC_MODE_SIMPLE',
+        message: 'Rota de diagnostico carregada com sucesso.',
+        server_env: debugInfo
+    });
 }
