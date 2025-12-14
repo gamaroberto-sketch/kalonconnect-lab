@@ -1,16 +1,12 @@
 import React from "react";
-import { createPortal } from "react-dom"; // 🟢 Standard Import
 import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
 import { useLocalParticipant, useRoomContext } from "@livekit/components-react";
-import { useVideoPanel } from "./VideoPanelContext"; // 🟢 Added import
 import ClientExitScreen from "./ClientExitScreen"; // 🟢 v5.75 New Exit Screen
-
 
 const MobileControlsV6 = () => {
     // 🔴 REFACTOR: Use LiveKit Hooks directly for reliable control
     const { localParticipant } = useLocalParticipant();
     const room = useRoomContext();
-    const { endSession } = useVideoPanel(); // 🟢 Connect to Central Logic
 
     // Track states directly from LiveKit
     const isMicrophoneEnabled = localParticipant?.isMicrophoneEnabled ?? false;
@@ -108,8 +104,6 @@ const MobileControlsV6 = () => {
             >
                 <PhoneOff className="w-6 h-6" />
             </button>
-
-
         </div>
     );
 };

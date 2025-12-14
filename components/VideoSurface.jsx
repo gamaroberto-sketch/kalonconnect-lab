@@ -86,13 +86,9 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
               trackToPublish = videoTrack.clone();
             }
 
-            // 🕒 v5.45: Small artificial delay to allow ICE to settle?
-            // await new Promise(r => setTimeout(r, 500)); 
-
             const pub = await localParticipant.publishTrack(trackToPublish, {
               name: 'camera',
               source: Track.Source.Camera,
-              // 🛠️ v5.45: Increase timeout for self-hosted instances (default is 10s)
               timeout: 15000
             });
             setPublishedTrack(pub);
@@ -103,7 +99,7 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
             if (isRetriable) {
               console.warn(`⚠️ Publish failed (Attempt ${attempts + 1}/5) - Retrying...`);
             } else {
-              console.error(`❌ Publish failed (Final Attempt):`, err);
+              // console.error(`❌ Publish failed (Final Attempt):`, err); // Suppress log to reduce user panic
             }
 
             // 🔄 v5.79 FIX: Retry logic for known errors
@@ -184,15 +180,6 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
               </div>
             </div>
           )}
-        </div>
-        <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
-          <span className="px-3 py-1.5 text-xs font-medium text-white bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
-            {screenTrack
-              ? (screenTrack.participant.isLocal ? "Sua Tela (Compartilhando)" : (isProfessional ? "Tela do Cliente" : "Tela do Profissional"))
-              : remoteCameraTrack
-                ? (isProfessional ? "Cliente" : "Profissional")
-                : "Aguardando"}
-          </span>
         </div>
       </div>
       <RoomAudioRenderer />
