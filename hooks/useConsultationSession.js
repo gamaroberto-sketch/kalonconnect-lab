@@ -19,16 +19,22 @@ export const useConsultationSession = (isProfessional = false) => {
         // 🟢 CRITICAL FIX: Normalize Identifier to Lowercase
         // This ensures 'Roberto-Gama' and 'roberto-gama' always map to 'consulta-roberto-gama'.
         // LiveKit room names ARE case-sensitive, so we must standardize.
-        const normalizedId = identifier.toLowerCase().trim();
+        // Normalização do Nome da Sala (CRÍTICO: Force Lowercase para evitar Split-Brain)
+        // ex: 'Roberto-Gama' -> 'consulta-roberto-gama'
+        let roomToConnect = identifier ? identifier.toLowerCase().trim() : "";
+
+        if (!roomToConnect.startsWith('consulta-') && !roomToConnect.startsWith('event-')) {
+            roomToConnect = `consulta-${roomToConnect}`;
+        }
 
         if (isConnecting.current) return;
         isConnecting.current = true;
 
         try {
-            console.log(`🔌 [useConsultationSession] Connecting to: ${normalizedId}`);
+            console.log(`🔗 useConsultationSession: Buscando token para [${roomToConnect}]...`);
 
             const payload = {
-                roomName: `consulta-${normalizedId}`, // 🟢 Standardized Prefix + Lowercase ID
+                roomName: roomToConnect, // 🟢 Standardized Prefix + Lowercase ID
                 participantName: isProfessional ? "Profissional" : `Client-${Math.random().toString(36).substr(2, 5)}`
             };
 
