@@ -23,8 +23,8 @@ export async function getServerSideProps(context) {
 
 // ✅ Internal Component to consume Context (Must be child of VideoPanelProvider)
 const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, connectionStatus }) => {
-  // 🟢 DEBUG BANNER (Will remove in v11)
-  const DEBUG_VERSION = "v10.1 - CASE SENSITIVE FIX (ROOM)";
+  // 🟢 DEBUG BANNER (v10.3)
+  const DEBUG_VERSION = "v10.3 - DIAGNOSTICO FINAL (PAINEL)";
 
   const { branding } = useVideoPanel();
   const [hasJoined, setHasJoined] = useState(false);
@@ -55,7 +55,7 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 flex-col gap-4">
         {/* 🟢 DEBUG BANNER */}
-        <div className="fixed top-0 left-0 w-full bg-orange-600 text-white text-xs text-center font-bold py-1 z-[99999]">
+        <div className="fixed top-0 left-0 w-full bg-purple-600 text-white text-xs text-center font-bold py-1 z-[99999]">
           {DEBUG_VERSION}
         </div>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary-600"></div>
@@ -68,7 +68,7 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   if (!hasJoined) {
     return (
       <>
-        <div className="fixed top-0 left-0 w-full bg-orange-600 text-white text-xs text-center font-bold py-1 z-[99999]">
+        <div className="fixed top-0 left-0 w-full bg-purple-600 text-white text-xs text-center font-bold py-1 z-[99999]">
           {DEBUG_VERSION}
         </div>
         <WaitingRoomDisplay
@@ -83,7 +83,7 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   // 2. Active Session (Video Room)
   return (
     <div className="fixed inset-0 flex flex-col bg-black text-white" style={{ zIndex: 1 }}>
-      <div className="fixed top-0 left-0 w-full bg-orange-600 text-white text-xs text-center font-bold py-1 z-[99999]">
+      <div className="fixed top-0 left-0 w-full bg-purple-600 text-white text-xs text-center font-bold py-1 z-[99999]">
         {DEBUG_VERSION} - ({roomName})
       </div>
       <div className="flex-1 relative w-full h-full overflow-hidden bg-black">
