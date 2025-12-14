@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
 
+import os from "os";
+
 const DEFAULT_DATA = {
   lastSession: {
     start: null,
@@ -10,7 +12,8 @@ const DEFAULT_DATA = {
   history: []
 };
 
-const getDataFilePath = () => path.join(process.cwd(), "data", "session-timers.json");
+// Use temporary directory for serverless environments (Vercel)
+const getDataFilePath = () => path.join(os.tmpdir(), "session-timers.json");
 
 const normalizeData = (data) => {
   const lastSession = {
