@@ -23,8 +23,8 @@ export async function getServerSideProps(context) {
 
 // ✅ Internal Component to consume Context (Must be child of VideoPanelProvider)
 const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, connectionStatus }) => {
-  // 🟢 DEBUG BANNER (v10.4)
-  const DEBUG_VERSION = "v10.4 - DIAGNOSTICO (FIX CRASH)";
+  // 🟢 DEBUG BANNER (v10.5)
+  const DEBUG_VERSION = "v10.5 - ROOM MATCH FIX";
 
   const { branding } = useVideoPanel();
   const [hasJoined, setHasJoined] = useState(false);
