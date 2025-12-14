@@ -373,9 +373,9 @@ export const VideoPanelProvider = ({
       return streamRef.current;
     }
     try {
-      console.log('🎯 Solicitando getUserMedia (HD)...');
+      console.log('🎯 Solicitando getUserMedia (Safe Res)...');
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
+        video: true,
         audio: true
       });
       console.log('✅ Stream criado com sucesso');

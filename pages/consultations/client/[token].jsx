@@ -51,6 +51,10 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
     }
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 flex-col gap-4">
+        {/* 🟢 DEBUG BANNER */}
+        <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[99999]">
+          v11.1 - HD REMOVED (Compatibility Mode)
+        </div>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary-600"></div>
         <p className="text-gray-500">Localizando profissional...</p>
       </div>
@@ -61,6 +65,9 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   if (!hasJoined) {
     return (
       <>
+        <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[99999]">
+          v11.1 - HD REMOVED (Compatibility Mode)
+        </div>
         <WaitingRoomDisplay
           professional={branding.profile}
           themeColors={branding.themeColors || {}}
@@ -73,6 +80,9 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   // 2. Active Session (Video Room)
   return (
     <div className="fixed inset-0 flex flex-col bg-black text-white" style={{ zIndex: 1 }}>
+      <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[99999]">
+        v11.1 - HD REMOVED (Compatibility Mode)
+      </div>
       <div className="flex-1 relative w-full h-full overflow-hidden bg-black">
         {liveKitToken && liveKitUrl ? (
           <LiveKitRoomWrapped
