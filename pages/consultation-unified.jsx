@@ -18,6 +18,7 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../components/AuthContext';
+import { formatDate, formatDateObject } from '../utils/formatDate';
 
 const ConsultationUnified = () => {
   const router = useRouter();
@@ -47,7 +48,7 @@ const ConsultationUnified = () => {
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(savedDarkMode);
     document.documentElement.classList.toggle('dark', savedDarkMode);
-    
+
     // Marcar como carregamento inicial concluído após um pequeno delay
     const timer = setTimeout(() => {
       setIsInitialLoad(false);
@@ -97,7 +98,7 @@ const ConsultationUnified = () => {
       name: file.name,
       size: file.size,
       type: file.type,
-      uploadDate: new Date().toLocaleDateString('pt-BR')
+      uploadDate: formatDateObject(new Date())
     }));
     setFiles([...files, ...newFiles]);
   };
@@ -105,20 +106,19 @@ const ConsultationUnified = () => {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-900 dark:bg-gray-900">
-        <Header 
+        <Header
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
         />
-        <Sidebar 
+        <Sidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-        
-        <div className={`relative z-10 transition-all duration-300 pt-28 ${
-          sidebarOpen ? 'lg:ml-64' : ''
-        }`}>
+
+        <div className={`relative z-10 transition-all duration-300 pt-28 ${sidebarOpen ? 'lg:ml-64' : ''
+          }`}>
           <div className="min-h-screen bg-gray-900 flex flex-col">
             {/* Header da Consulta */}
             <div className="bg-gray-800 border-b border-gray-700 p-4 flex items-center justify-between">
@@ -154,55 +154,50 @@ const ConsultationUnified = () => {
             <div className="bg-gray-800 border-b border-gray-700 flex items-center space-x-1 px-4">
               <button
                 onClick={() => setActiveTab('video')}
-                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${
-                  activeTab === 'video'
+                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${activeTab === 'video'
                     ? 'bg-gray-900 text-green-400 border-b-2 border-green-400'
                     : 'text-gray-400 hover:text-gray-300'
-                }`}
+                  }`}
               >
                 <Video className="w-5 h-5" />
                 <span>Vídeo</span>
               </button>
               <button
                 onClick={() => setActiveTab('chat')}
-                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${
-                  activeTab === 'chat'
+                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${activeTab === 'chat'
                     ? 'bg-gray-900 text-blue-400 border-b-2 border-blue-400'
                     : 'text-gray-400 hover:text-gray-300'
-                }`}
+                  }`}
               >
                 <MessageSquare className="w-5 h-5" />
                 <span>Chat</span>
               </button>
               <button
                 onClick={() => setActiveTab('files')}
-                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${
-                  activeTab === 'files'
+                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${activeTab === 'files'
                     ? 'bg-gray-900 text-purple-400 border-b-2 border-purple-400'
                     : 'text-gray-400 hover:text-gray-300'
-                }`}
+                  }`}
               >
                 <Upload className="w-5 h-5" />
                 <span>Arquivos</span>
               </button>
               <button
                 onClick={() => setActiveTab('notes')}
-                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${
-                  activeTab === 'notes'
+                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${activeTab === 'notes'
                     ? 'bg-gray-900 text-yellow-400 border-b-2 border-yellow-400'
                     : 'text-gray-400 hover:text-gray-300'
-                }`}
+                  }`}
               >
                 <FileText className="w-5 h-5" />
                 <span>Anotações</span>
               </button>
               <button
                 onClick={() => setActiveTab('patient')}
-                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${
-                  activeTab === 'patient'
+                className={`px-6 py-3 flex items-center space-x-2 rounded-t-lg transition-colors ${activeTab === 'patient'
                     ? 'bg-gray-900 text-indigo-400 border-b-2 border-indigo-400'
                     : 'text-gray-400 hover:text-gray-300'
-                }`}
+                  }`}
               >
                 <UserCircle className="w-5 h-5" />
                 <span>Paciente</span>
@@ -275,7 +270,7 @@ const ConsultationUnified = () => {
                   <div className="flex-1 p-6 overflow-y-auto bg-gray-800">
                     <div className="max-w-4xl mx-auto">
                       <h2 className="text-2xl font-bold text-white mb-4">Arquivos Compartilhados</h2>
-                      
+
                       <div className="mb-6 p-6 border-2 border-dashed border-gray-600 rounded-lg text-center bg-gray-700">
                         <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                         <p className="text-gray-300 mb-3">Envie arquivos para compartilhar com o paciente</p>
@@ -338,7 +333,7 @@ const ConsultationUnified = () => {
                   <div className="flex-1 p-6 overflow-y-auto bg-gray-800">
                     <div className="max-w-4xl mx-auto">
                       <h2 className="text-2xl font-bold text-white mb-6">Ficha do Paciente</h2>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-gray-700 p-6 rounded-lg">
                           <h3 className="text-lg font-semibold text-white mb-4">Informações Básicas</h3>
@@ -361,7 +356,7 @@ const ConsultationUnified = () => {
                             </div>
                             <div>
                               <label className="text-sm text-gray-400">Última Visita</label>
-                              <p className="text-white">{patientData.lastVisit}</p>
+                              <p className="text-white">{formatDate(patientData.lastVisit)}</p>
                             </div>
                           </div>
                         </div>

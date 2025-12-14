@@ -69,23 +69,22 @@ const CleanVideoSurface = () => {
           <div className="w-full h-full min-h-[300px]">
             <MinimalVideoElement />
           </div>
-          
+
           {/* Label do vídeo */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
             <div className="text-white text-sm font-medium">
               {cameraActive ? 'Pré-visualização do Profissional' : 'Câmera desligada'}
             </div>
           </div>
-          
+
           {/* Botão de teste direto */}
           <div className="absolute top-4 right-4">
             <button
               onClick={handleToggleCamera}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                cameraActive 
-                  ? 'bg-red-500 hover:bg-red-600 text-white' 
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${cameraActive
+                  ? 'bg-red-500 hover:bg-red-600 text-white'
                   : 'bg-green-500 hover:bg-green-600 text-white'
-              }`}
+                }`}
             >
               {cameraActive ? '🔴 Desligar' : '📹 Ligar'}
             </button>
@@ -104,7 +103,7 @@ const CleanVideoSurface = () => {
               <LiveKitRoomWrapped />
             )}
           </div>
-          
+
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
             <div className="text-white text-sm font-medium">Cliente</div>
           </div>
@@ -120,8 +119,8 @@ const ConsultationContent = () => {
   const { currentTheme, getThemeColors } = useTheme();
   const { trackAction } = useUsageTracker();
   const { canAccess } = useAccessControl();
-  const { 
-    consultationId, 
+  const {
+    consultationId,
     setConsultationIdFromLink,
     sessionDuration,
     elapsedTime,
@@ -198,14 +197,14 @@ const ConsultationContent = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar 
-        isOpen={sidebarOpen} 
-        onToggle={() => setSidebarOpen(!sidebarOpen)} 
+      <Sidebar
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
         userType={userType}
       />
-      
+
       <div className="flex-1 flex flex-col">
-        <Header 
+        <Header
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
           showSessionTimer={true}
           sessionDuration={sessionDuration}
@@ -218,21 +217,21 @@ const ConsultationContent = () => {
           onEndSession={endSession}
           formatTime={formatTime}
         />
-        
+
         <main className="flex-1 p-6 overflow-hidden">
           <div className="h-full max-w-7xl mx-auto">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full">
-              
+
               {/* ÁREA PRINCIPAL DE VÍDEO */}
               <div className="xl:col-span-2 flex flex-col gap-6">
                 {/* VideoSurface com fluxo mínimo */}
                 <div className="flex-1 min-h-[400px]">
                   <CleanVideoSurface />
                 </div>
-                
+
                 {/* Controles de vídeo */}
                 <VideoControls />
-                
+
                 {/* Outros componentes */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <RelaxationPlayer />
@@ -249,11 +248,10 @@ const ConsultationContent = () => {
                       <button
                         key={panel.id}
                         onClick={() => setActivePanel(panel.id)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          activePanel === panel.id
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activePanel === panel.id
                             ? 'bg-blue-100 text-blue-700 border border-blue-200'
                             : 'text-gray-600 hover:bg-gray-100'
-                        }`}
+                          }`}
                       >
                         <panel.icon className="w-4 h-4" />
                         {panel.label}
@@ -277,7 +275,7 @@ const ConsultationContent = () => {
                       <Share2 className="w-4 h-4" />
                       Compartilhar Link
                     </button>
-                    
+
                     <button
                       onClick={() => setShowGoogleDriveModal(true)}
                       className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -297,11 +295,12 @@ const ConsultationContent = () => {
       {showGoogleDriveModal && (
         <GoogleDriveModal onClose={() => setShowGoogleDriveModal(false)} />
       )}
-      
+
       {showShareModal && (
-        <ShareConsultationLink 
+        <ShareConsultationLink
           onClose={() => setShowShareModal(false)}
           consultationId={consultationId}
+          professionalId={profile?.slug || user?.uid} // 🟢 Pass Slug/ID
         />
       )}
 

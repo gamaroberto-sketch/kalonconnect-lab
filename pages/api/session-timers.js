@@ -56,7 +56,12 @@ export default async function handler(req, res) {
       }
 
       const normalized = normalizeData(req.body);
-      await fs.writeFile(filePath, JSON.stringify(normalized, null, 2), "utf-8");
+      try {
+        await fs.writeFile(filePath, JSON.stringify(normalized, null, 2), "utf-8");
+      } catch (writeErr) {
+        console.warn("⚠️ Cannot write to filesystem (Vercel/ReadOnly):", writeErr.message);
+        // Não retornar 500, pois isso é esperado em serverless. Apenas ignore.
+      }
       return res.status(200).json({ success: true });
     }
 

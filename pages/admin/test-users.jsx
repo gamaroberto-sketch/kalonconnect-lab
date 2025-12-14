@@ -6,12 +6,14 @@ import { Loader2, Plus, Edit3, Trash2 } from "lucide-react";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import { useAuth } from "../../components/AuthContext";
 import { loadAdminSession, clearAdminSession } from "../../utils/adminSession";
+import useTranslation from '../../hooks/useTranslation';
 
 const initialForm = { name: "", email: "", password: "" };
 
 const TestUsersAdminPage = () => {
   const router = useRouter();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [adminAuthorized, setAdminAuthorized] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [users, setUsers] = useState([]);
@@ -66,17 +68,17 @@ const TestUsersAdminPage = () => {
         headers: authHeaders
       });
       if (!response.ok) {
-        throw new Error("Não foi possível carregar as terapeutas convidadas.");
+        throw new Error(t('adminTestUsers.errors.load'));
       }
       const data = await response.json();
       setUsers(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-      setError(err.message || "Falha ao carregar usuárias de teste.");
+      setError(err.message || t('adminTestUsers.errors.loadGeneric'));
     } finally {
       setLoading(false);
     }
-  }, [authHeaders, isAdmin]);
+  }, [authHeaders, isAdmin, t]);
 
   useEffect(() => {
     if (adminAuthorized) {
@@ -103,7 +105,7 @@ const TestUsersAdminPage = () => {
   const handleSave = async (event) => {
     event.preventDefault();
     if (!formData.name || !formData.email || !formData.password) {
-      setError("Preencha nome, e-mail e senha.");
+      setError(t('adminTestUsers.errors.required'));
       return;
     }
     setSaving(true);
@@ -124,7 +126,7 @@ const TestUsersAdminPage = () => {
         });
         if (!response.ok) {
           const payload = await response.json().catch(() => ({}));
-          throw new Error(payload?.error || "Não foi possível atualizar a terapeuta.");
+          throw new Error(payload?.error || t('adminTestUsers.errors.update'));
         }
       } else {
         const response = await fetch("/api/test-users", {
@@ -134,7 +136,7 @@ const TestUsersAdminPage = () => {
         });
         if (!response.ok) {
           const payload = await response.json().catch(() => ({}));
-          throw new Error(payload?.error || "Não foi possível adicionar a terapeuta.");
+          throw new Error(payload?.error || t('adminTestUsers.errors.create'));
         }
       }
       setModalOpen(false);
@@ -143,14 +145,14 @@ const TestUsersAdminPage = () => {
       await loadUsers();
     } catch (err) {
       console.error(err);
-      setError(err.message || "Falha ao salvar terapeuta convidada.");
+      setError(err.message || t('adminTestUsers.errors.save'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (email) => {
-    const confirm = window.confirm("Tem certeza que deseja remover esta terapeuta?");
+    const confirm = window.confirm(t('adminTestUsers.actions.confirmDelete'));
     if (!confirm) return;
     try {
       const response = await fetch("/api/test-users", {
@@ -160,12 +162,12 @@ const TestUsersAdminPage = () => {
       });
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        throw new Error(payload?.error || "Não foi possível remover a terapeuta.");
+        throw new Error(payload?.error || t('adminTestUsers.errors.delete'));
       }
       await loadUsers();
     } catch (err) {
       console.error(err);
-      alert(err.message || "Erro ao remover terapeuta.");
+      alert(err.message || t('adminTestUsers.errors.deleteGeneric'));
     }
   };
 
@@ -174,7 +176,7 @@ const TestUsersAdminPage = () => {
       <ProtectedRoute>
         <div className="flex min-h-screen items-center justify-center bg-slate-100 dark:bg-slate-900 px-6 text-center text-slate-700 dark:text-slate-200">
           <div className="max-w-md space-y-3 rounded-3xl bg-white dark:bg-slate-800 p-8 shadow-2xl">
-            <p className="text-sm">Validando acesso administrativo...</p>
+            <p className="text-sm">{t('adminTestUsers.access.validating')}</p>
           </div>
         </div>
       </ProtectedRoute>
@@ -186,9 +188,9 @@ const TestUsersAdminPage = () => {
       <ProtectedRoute>
         <div className="flex min-h-screen items-center justify-center bg-slate-100 dark:bg-slate-900 px-6 text-center text-slate-700 dark:text-slate-200">
           <div className="max-w-md space-y-3 rounded-3xl bg-white dark:bg-slate-800 p-8 shadow-2xl">
-            <h2 className="text-2xl font-semibold">Acesso restrito</h2>
+            <h2 className="text-2xl font-semibold">{t('adminTestUsers.access.restricted')}</h2>
             <p className="text-sm">
-              Apenas administradores podem gerenciar terapeutas convidadas para testes.
+              {t('adminTestUsers.access.message')}
             </p>
           </div>
         </div>
@@ -202,10 +204,10 @@ const TestUsersAdminPage = () => {
         <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6">
           <header className="space-y-2">
             <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">
-              Gerenciamento de Terapeutas Convidadas
+              {t('adminTestUsers.title')}
             </h1>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              Adicione, edite ou remova terapeutas com acesso total de teste ao KalonConnect.
+              {t('adminTestUsers.subtitle')}
             </p>
           </header>
 
@@ -216,7 +218,7 @@ const TestUsersAdminPage = () => {
               className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition"
             >
               <Plus className="h-4 w-4" />
-              Adicionar Terapeuta
+              {t('adminTestUsers.actions.add')}
             </button>
             {error && (
               <span className="text-sm text-red-500">{error}</span>
@@ -227,10 +229,10 @@ const TestUsersAdminPage = () => {
             <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-sm">
               <thead className="bg-slate-100/80 dark:bg-slate-800/70">
                 <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  <th className="px-6 py-3">Nome</th>
-                  <th className="px-6 py-3">Email</th>
-                  <th className="px-6 py-3">Senha</th>
-                  <th className="px-6 py-3 text-right">Ações</th>
+                  <th className="px-6 py-3">{t('adminTestUsers.table.name')}</th>
+                  <th className="px-6 py-3">{t('adminTestUsers.table.email')}</th>
+                  <th className="px-6 py-3">{t('adminTestUsers.table.password')}</th>
+                  <th className="px-6 py-3 text-right">{t('adminTestUsers.table.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -239,14 +241,14 @@ const TestUsersAdminPage = () => {
                     <td colSpan={4} className="px-6 py-10 text-center">
                       <div className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Carregando terapeutas...
+                        {t('adminTestUsers.table.loading')}
                       </div>
                     </td>
                   </tr>
                 ) : users.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-6 py-10 text-center text-slate-500 dark:text-slate-400">
-                      Nenhuma terapeuta cadastrada ainda.
+                      {t('adminTestUsers.table.empty')}
                     </td>
                   </tr>
                 ) : (
@@ -263,7 +265,7 @@ const TestUsersAdminPage = () => {
                             className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 px-3 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                           >
                             <Edit3 className="h-3.5 w-3.5" />
-                            Editar
+                            {t('adminTestUsers.actions.edit')}
                           </button>
                           <button
                             type="button"
@@ -271,7 +273,7 @@ const TestUsersAdminPage = () => {
                             className="inline-flex items-center gap-1 rounded-full border border-red-200 dark:border-red-700 px-3 py-1 text-xs font-semibold text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 transition"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                            Excluir
+                            {t('adminTestUsers.actions.delete')}
                           </button>
                         </div>
                       </td>
@@ -288,12 +290,12 @@ const TestUsersAdminPage = () => {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 px-4">
           <div className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-200 dark:border-slate-800">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              {editingEmail ? "Editar Terapeuta" : "Adicionar Terapeuta"}
+              {editingEmail ? t('adminTestUsers.form.editTitle') : t('adminTestUsers.form.addTitle')}
             </h2>
             <form className="space-y-4" onSubmit={handleSave}>
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  Nome completo
+                  {t('adminTestUsers.form.name')}
                 </label>
                 <input
                   type="text"
@@ -308,7 +310,7 @@ const TestUsersAdminPage = () => {
 
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  Email
+                  {t('adminTestUsers.form.email')}
                 </label>
                 <input
                   type="email"
@@ -323,7 +325,7 @@ const TestUsersAdminPage = () => {
 
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  Senha
+                  {t('adminTestUsers.form.password')}
                 </label>
                 <input
                   type="text"
@@ -346,7 +348,7 @@ const TestUsersAdminPage = () => {
                   }}
                   className="rounded-full border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                 >
-                  Cancelar
+                  {t('adminTestUsers.actions.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -354,7 +356,7 @@ const TestUsersAdminPage = () => {
                   className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition disabled:opacity-60"
                 >
                   {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Salvar
+                  {t('adminTestUsers.actions.save')}
                 </button>
               </div>
             </form>

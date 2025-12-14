@@ -10,6 +10,7 @@ import EventCard from '../components/EventCard';
 import MarketingAutomation from '../components/MarketingAutomation';
 import ModernButton from '../components/ModernButton';
 import { useTheme } from '../components/ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Events = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,6 +21,7 @@ const Events = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { t } = useTranslation();
   const [events, setEvents] = useState([
     {
       id: '1',
@@ -52,18 +54,18 @@ const Events = () => {
   React.useEffect(() => {
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(savedDarkMode);
-    
+
     // Carregar eventos salvos
     const savedEvents = localStorage.getItem('events');
     if (savedEvents) {
       setEvents(JSON.parse(savedEvents));
     }
-    
+
     // Marcar como carregamento inicial concluído após um pequeno delay
     const timer = setTimeout(() => {
       setIsInitialLoad(false);
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -78,7 +80,7 @@ const Events = () => {
   React.useEffect(() => {
     // Evitar salvar durante carregamento inicial
     if (isInitialLoad) return;
-    
+
     // Salvar eventos sempre que mudarem
     localStorage.setItem('events', JSON.stringify(events));
   }, [events, isInitialLoad]);
@@ -95,7 +97,7 @@ const Events = () => {
   };
 
   const handleDeleteEvent = (eventId) => {
-    if (confirm('Tem certeza que deseja deletar este evento?')) {
+    if (confirm(t('clients.confirmDelete'))) {
       setEvents(events.filter(e => e.id !== eventId));
     }
   };
@@ -169,7 +171,7 @@ const Events = () => {
   const handleSaveEvent = () => {
     // Basic validation
     if (!formData.name || !formData.startDate || !formData.startTime) {
-      alert('Por favor, preencha todos os campos obrigatórios (nome, data e hora).');
+      alert(t('events.fillRequired'));
       return;
     }
 
@@ -209,34 +211,33 @@ const Events = () => {
 
   return (
     <ProtectedRoute>
-      <div 
+      <div
         className="min-h-screen transition-colors duration-300"
         style={{
           background: `linear-gradient(135deg, ${themeColors.backgroundSecondary}, ${themeColors.secondaryLight})`
         }}
       >
-        <Header 
+        <Header
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
         />
 
-        <Sidebar 
+        <Sidebar
           activeSection="events"
-          setActiveSection={() => {}}
+          setActiveSection={() => { }}
           sidebarOpen={sidebarOpen}
           darkMode={darkMode}
         />
 
-        <div className={`relative z-10 transition-all duration-300 pt-28 ${
-          sidebarOpen ? 'lg:ml-64' : ''
-        }`}>
+        <div className={`relative z-10 transition-all duration-300 pt-28 ${sidebarOpen ? 'lg:ml-64' : ''
+          }`}>
           <div className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                Eventos | Cursos | Palestras
+                {t('events.title')}
               </h1>
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -249,7 +250,7 @@ const Events = () => {
                   size="lg"
                   className="shadow-lg"
                 >
-                  Novo Evento
+                  {t('events.newEvent')}
                 </ModernButton>
               </motion.div>
             </div>
@@ -272,7 +273,7 @@ const Events = () => {
             {events.length === 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Nenhum evento cadastrado. Clique em "Novo Evento" para começar.
+                  {t('events.noEvents')}
                 </p>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
@@ -285,7 +286,7 @@ const Events = () => {
                     size="lg"
                     className="shadow-lg"
                   >
-                    Criar Primeiro Evento
+                    {t('events.createFirstEvent')}
                   </ModernButton>
                 </motion.div>
               </div>
@@ -299,11 +300,11 @@ const Events = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-y-auto"
             >
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between z-10">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {editingEvent ? 'Editar Evento' : 'Criar Novo Evento'}
+                  {editingEvent ? t('events.editEvent') : t('events.createNewEvent')}
                 </h2>
                 <ModernButton
                   icon={<X className="w-6 h-6" />}
@@ -317,7 +318,7 @@ const Events = () => {
                 {/* Nome do Evento */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Nome do Evento *
+                    {t('events.eventName')} *
                   </label>
                   <input
                     type="text"
@@ -331,7 +332,7 @@ const Events = () => {
                 {/* Descrição */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Descrição
+                    {t('events.description')}
                   </label>
                   <textarea
                     value={formData.description}
@@ -346,7 +347,7 @@ const Events = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Tipo *
+                      {t('events.type')} *
                     </label>
                     <select
                       value={formData.type}
@@ -362,7 +363,7 @@ const Events = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Formato
+                      {t('events.format')}
                     </label>
                     <select
                       value={formData.format}
@@ -380,7 +381,7 @@ const Events = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       <Calendar className="w-4 h-4 inline mr-1" />
-                      Data de Início *
+                      {t('events.startDate')} *
                     </label>
                     <input
                       type="date"
@@ -393,7 +394,7 @@ const Events = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       <Clock className="w-4 h-4 inline mr-1" />
-                      Hora de Início *
+                      {t('events.startTime')} *
                     </label>
                     <input
                       type="time"
@@ -407,24 +408,24 @@ const Events = () => {
                 {/* Link de Vídeo */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Link da Sala de Vídeo (opcional)
+                    {t('events.videoLinkOptional')}
                   </label>
                   <input
                     type="url"
                     value={formData.videoLink}
                     onChange={(e) => setFormData({ ...formData, videoLink: e.target.value })}
-                    placeholder="https://whereby.com/..."
+                    placeholder="https://..."
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent"
                   />
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    Se deixar vazio, será usado o link das Configurações Gerais
+                    {t('events.videoLinkHelp')}
                   </p>
                 </div>
 
                 {/* Banner */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Banner/Ícone (opcional)
+                    {t('events.bannerOptional')}
                   </label>
                   <div className="flex items-center space-x-4">
                     <input
@@ -439,7 +440,7 @@ const Events = () => {
                       className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer flex items-center space-x-2"
                     >
                       <Upload className="w-4 h-4" />
-                      <span>Upload Banner</span>
+                      <span>{t('events.uploadBanner')}</span>
                     </label>
                     {formData.banner && (
                       <img src={formData.banner} alt="Preview" className="w-20 h-20 object-cover rounded" />
@@ -455,7 +456,7 @@ const Events = () => {
                     size="md"
                     className="flex-1"
                   >
-                    Cancelar
+                    {t('common.cancel')}
                   </ModernButton>
                   <ModernButton
                     onClick={handleSaveEvent}
@@ -463,7 +464,7 @@ const Events = () => {
                     size="md"
                     className="flex-1"
                   >
-                    {editingEvent ? 'Salvar Alterações' : 'Criar Evento'}
+                    {editingEvent ? t('events.saveChanges') : t('events.createEvent')}
                   </ModernButton>
                 </div>
               </div>

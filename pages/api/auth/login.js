@@ -49,14 +49,30 @@ export default function handler(req, res) {
     `✅ Login realizado: ${user.name || "Usuário"} (${user.email}) - ${timestamp}`
   );
 
+  // Check Trial Expiration
+  let activeVersion = (user.version || "PRO").toUpperCase();
+
+  if (user.trialEndsAt) {
+    const trialEnd = new Date(user.trialEndsAt);
+    const now = new Date();
+
+    if (now > trialEnd && activeVersion !== 'NORMAL') {
+      console.log(`⚠️ Trial expirado para ${user.email}. Revertendo para NORMAL.`);
+      // We don't update the file here to avoid IO on login, but we return the degraded version
+      // Ideally we should update the DB/File, but for this MVP returning the correct status is enough
+      activeVersion = 'NORMAL';
+    }
+  }
+
   return res.status(200).json({
     ok: true,
     user: {
       id: user.id || user.email,
       name: user.name,
       email: user.email,
-      version: (user.version || "PRO").toUpperCase(),
-      type: user.type || "professional"
+      version: activeVersion,
+      type: user.type || "professional",
+      trialEndsAt: user.trialEndsAt
     }
   });
 }

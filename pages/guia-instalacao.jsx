@@ -7,8 +7,10 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useTheme } from '../components/ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function GuiaInstalacao() {
+  const { t } = useTranslation();
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -49,7 +51,7 @@ export default function GuiaInstalacao() {
         .replace(/\n\n+/g, '</p><p class="mb-4">')
         // Quebras simples
         .replace(/\n/g, '<br>');
-      
+
       return '<p class="mb-4">' + html + '</p>';
     };
 
@@ -60,7 +62,7 @@ export default function GuiaInstalacao() {
         let response = await fetch('/GUIA_INSTALACAO_USO.md', {
           cache: 'no-cache'
         });
-        
+
         // Se falhar, tenta a API
         if (!response.ok) {
           console.log('Tentando via API...');
@@ -68,7 +70,7 @@ export default function GuiaInstalacao() {
             cache: 'no-cache'
           });
         }
-        
+
         if (!response.ok) {
           let errorMessage = `Erro ${response.status}: Erro ao carregar o guia`;
           try {
@@ -82,13 +84,13 @@ export default function GuiaInstalacao() {
           }
           throw new Error(errorMessage);
         }
-        
+
         const text = await response.text();
-        
+
         if (!text || text.trim().length === 0) {
           throw new Error('O guia está vazio');
         }
-        
+
         let html = convertMarkdownToHTML(text);
         // Se ainda não foi processado, tentar adicionar após a conversão (fallback)
         if (!html.includes('window.openModalPastas')) {
@@ -102,9 +104,9 @@ export default function GuiaInstalacao() {
         console.error('Erro ao carregar guia:', error);
         setGuiaContent(`
           <div class="text-red-600 p-4 bg-red-50 rounded-lg">
-            <p class="font-bold mb-2">Erro ao carregar o guia</p>
+            <p class="font-bold mb-2">${t('guide.error.title')}</p>
             <p class="text-sm mb-4">${error.message}</p>
-            <p class="text-sm">Por favor, tente novamente ou baixe o PDF usando o botão "Baixar PDF".</p>
+            <p class="text-sm">${t('guide.error.fallback')}</p>
           </div>
         `);
       }
@@ -294,7 +296,7 @@ echo ""
 
   const handleDownloadScript = () => {
     if (!nomeProfissional.trim()) {
-      alert('Por favor, digite seu nome primeiro!');
+      alert(t('guide.modal.alertName'));
       return;
     }
 
@@ -327,18 +329,18 @@ echo ""
     try {
       // Primeiro tenta buscar diretamente do public
       let response = await fetch('/GUIA_INSTALACAO_USO.md');
-      
+
       // Se falhar, tenta a API
       if (!response.ok) {
         response = await fetch('/api/guia');
       }
-      
+
       if (!response.ok) {
         throw new Error('Erro ao baixar o guia');
       }
-      
+
       const text = await response.text();
-      
+
       // Criar um documento HTML para impressão/PDF
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
@@ -346,7 +348,7 @@ echo ""
         alert('Por favor, permita pop-ups para gerar o PDF');
         return;
       }
-      
+
       // Converter Markdown para HTML (mesma função usada para exibir)
       const convertMarkdownToHTML = (text) => {
         let html = text
@@ -365,10 +367,10 @@ echo ""
           .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" style="color: ' + themeColors.primary + '; text-decoration: underline;">$1</a>')
           .replace(/\n\n+/g, '</p><p style="margin-bottom: 1rem;">')
           .replace(/\n/g, '<br>');
-        
+
         return '<p style="margin-bottom: 1rem;">' + html + '</p>';
       };
-      
+
       const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -406,10 +408,10 @@ echo ""
         </body>
         </html>
       `;
-      
+
       printWindow.document.write(htmlContent);
       printWindow.document.close();
-      
+
       // Aguardar o conteúdo carregar e então abrir diálogo de impressão
       printWindow.onload = () => {
         setTimeout(() => {
@@ -426,29 +428,28 @@ echo ""
 
   return (
     <ProtectedRoute>
-      <div 
+      <div
         className="min-h-screen transition-colors duration-300"
         style={{
           backgroundColor: themeColors.secondary || themeColors.secondaryLight || '#f0f9f9'
         }}
       >
-        <Header 
-          sidebarOpen={sidebarOpen} 
+        <Header
+          sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
         />
 
-        <Sidebar 
+        <Sidebar
           activeSection="ajuda"
-          setActiveSection={() => {}}
+          setActiveSection={() => { }}
           sidebarOpen={sidebarOpen}
           darkMode={darkMode}
         />
 
-        <div className={`relative z-10 min-h-screen transition-all duration-300 pt-28 ${
-          sidebarOpen ? 'lg:ml-64' : ''
-        }`}>
+        <div className={`relative z-10 min-h-screen transition-all duration-300 pt-28 ${sidebarOpen ? 'lg:ml-64' : ''
+          }`}>
           <div className="max-w-5xl mx-auto p-6">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -457,7 +458,7 @@ echo ""
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div 
+                  <div
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: themeColors.primaryDark }}
                   >
@@ -465,10 +466,10 @@ echo ""
                   </div>
                   <div>
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                      Guia de Utilização
+                      {t('guide.title')}
                     </h1>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Manual completo do <span className="font-bold normal-case">KalonConnect</span>
+                      {t('guide.subtitle')} <span className="font-bold normal-case">KalonConnect</span>
                     </p>
                   </div>
                 </div>
@@ -487,7 +488,7 @@ echo ""
                   }}
                 >
                   <Download className="w-5 h-5" />
-                  <span>Baixar PDF</span>
+                  <span>{t('guide.downloadPdf')}</span>
                 </button>
               </div>
             </motion.div>
@@ -502,7 +503,7 @@ echo ""
                 backgroundColor: themeColors.background
               }}
             >
-              <div 
+              <div
                 dangerouslySetInnerHTML={{ __html: guiaContent }}
                 className="markdown-content"
                 style={{
@@ -510,14 +511,14 @@ echo ""
                   fontSize: '16px'
                 }}
               />
-              
+
               {!guiaContent && (
                 <div className="text-center py-12">
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Carregando guia...
+                    {t('guide.loading')}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-500">
-                    Se o guia não carregar, por favor, baixe o PDF usando o botão "Baixar PDF".
+                    {t('guide.loadingFallback')}
                   </p>
                 </div>
               )}
@@ -542,14 +543,14 @@ echo ""
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-3">
-                    <div 
+                    <div
                       className="p-3 rounded-xl"
                       style={{ backgroundColor: themeColors.primaryDark }}
                     >
                       <Folder className="w-6 h-6" style={{ color: 'white' }} />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                      Criar Estrutura de Pastas
+                      {t('guide.modal.title')}
                     </h2>
                   </div>
                   <button
@@ -567,13 +568,13 @@ echo ""
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Seu Nome Completo
+                      {t('guide.modal.nameLabel')}
                     </label>
                     <input
                       type="text"
                       value={nomeProfissional}
                       onChange={(e) => setNomeProfissional(e.target.value)}
-                      placeholder="Ex: Maria Silva"
+                      placeholder={t('guide.modal.namePlaceholder')}
                       className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2"
                       style={{
                         borderColor: themeColors.primary + '60',
@@ -581,22 +582,21 @@ echo ""
                       }}
                     />
                     <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Este nome será usado na pasta principal: "<span className="font-bold normal-case">KalonConnect</span> - [Seu Nome]"
+                      {t('guide.modal.nameHelp')}
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Sistema Operacional
+                      {t('guide.modal.osLabel')}
                     </label>
                     <div className="grid grid-cols-3 gap-4">
                       <button
                         onClick={() => setSistemaOperacional('windows')}
-                        className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
-                          sistemaOperacional === 'windows'
+                        className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${sistemaOperacional === 'windows'
                             ? 'text-white'
                             : 'text-gray-700 dark:text-gray-300'
-                        }`}
+                          }`}
                         style={{
                           backgroundColor: sistemaOperacional === 'windows' ? themeColors.primary : 'transparent',
                           borderColor: themeColors.primary + '60'
@@ -606,11 +606,10 @@ echo ""
                       </button>
                       <button
                         onClick={() => setSistemaOperacional('mac')}
-                        className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
-                          sistemaOperacional === 'mac'
+                        className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${sistemaOperacional === 'mac'
                             ? 'text-white'
                             : 'text-gray-700 dark:text-gray-300'
-                        }`}
+                          }`}
                         style={{
                           backgroundColor: sistemaOperacional === 'mac' ? themeColors.primary : 'transparent',
                           borderColor: themeColors.primary + '60'
@@ -620,11 +619,10 @@ echo ""
                       </button>
                       <button
                         onClick={() => setSistemaOperacional('linux')}
-                        className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
-                          sistemaOperacional === 'linux'
+                        className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${sistemaOperacional === 'linux'
                             ? 'text-white'
                             : 'text-gray-700 dark:text-gray-300'
-                        }`}
+                          }`}
                         style={{
                           backgroundColor: sistemaOperacional === 'linux' ? themeColors.primary : 'transparent',
                           borderColor: themeColors.primary + '60'
@@ -651,7 +649,7 @@ echo ""
                       }}
                     >
                       <Download className="w-5 h-5" />
-                      <span>Baixar Script de Criação de Pastas</span>
+                      <span>{t('guide.modal.downloadScript')}</span>
                     </button>
                   </div>
 
@@ -665,21 +663,21 @@ echo ""
                       <CheckCircle className="w-6 h-6 flex-shrink-0" style={{ color: themeColors.primary }} />
                       <div>
                         <p className="font-semibold text-gray-800 dark:text-white mb-1">
-                          Script baixado com sucesso!
+                          {t('guide.modal.success.title')}
                         </p>
                         <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-                          <p><strong>Próximos passos:</strong></p>
+                          <p><strong>{t('guide.modal.success.nextSteps')}</strong></p>
                           <ol className="list-decimal list-inside space-y-1 ml-2">
-                            <li>Localize o arquivo baixado no seu computador</li>
+                            <li>{t('guide.modal.success.step1')}</li>
                             <li>
-                              {sistemaOperacional === 'windows' 
-                                ? 'Clique duas vezes no arquivo "criar_pastas_kalon.bat" para executá-lo'
-                                : 'Abra o Terminal, navegue até a pasta onde baixou o arquivo e execute: chmod +x criar_pastas_kalon.sh && ./criar_pastas_kalon.sh'
+                              {sistemaOperacional === 'windows'
+                                ? t('guide.modal.success.step2Windows')
+                                : t('guide.modal.success.step2Unix')
                               }
                             </li>
-                            <li>As pastas serão criadas automaticamente na pasta Documentos</li>
-                            <li>Copie a pasta "<span className="font-bold normal-case">KalonConnect</span> - {nomeProfissional}" para o seu Google Drive</li>
-                            <li>Pronto! Sua estrutura está organizada na nuvem</li>
+                            <li>{t('guide.modal.success.step3')}</li>
+                            <li>{t('guide.modal.success.step4').replace('{name}', nomeProfissional)}</li>
+                            <li>{t('guide.modal.success.step5')}</li>
                           </ol>
                         </div>
                       </div>

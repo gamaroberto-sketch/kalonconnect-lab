@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  User, 
-  Video, 
-  Phone, 
-  MapPin, 
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  User,
+  Video,
+  Phone,
+  MapPin,
   Plus,
   Edit,
   Trash2,
@@ -28,14 +28,17 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../components/AuthContext';
 import ModernButton from '../components/ModernButton';
 import { useTheme } from '../components/ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
+import { useAppointments } from '../hooks/useAppointments';
 
 const Agendamentos = () => {
   const { user, userType } = useAuth();
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { t, language } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [appointments, setAppointments] = useState([]);
+  const { appointments, loading, addAppointment, updateAppointment, deleteAppointment } = useAppointments();
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -115,12 +118,6 @@ const Agendamentos = () => {
   ];
 
   useEffect(() => {
-    // Carregar agendamentos (mock)
-    setAppointments(mockAppointments);
-    setFilteredAppointments(mockAppointments);
-  }, []);
-
-  useEffect(() => {
     // Aplicar filtros
     let filtered = appointments;
 
@@ -129,10 +126,10 @@ const Agendamentos = () => {
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(appointment => 
-        appointment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        appointment.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        appointment.description.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(appointment =>
+        appointment.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        appointment.client?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        appointment.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -160,62 +157,44 @@ const Agendamentos = () => {
   const handleSaveAppointment = async (formData) => {
     if (selectedAppointment) {
       // Editar agendamento existente
-      setAppointments(prev => 
-        prev.map(appointment => 
-          appointment.id === selectedAppointment.id 
-            ? { ...appointment, ...formData }
-            : appointment
-        )
-      );
+      await updateAppointment(selectedAppointment.id, formData);
     } else {
       // Novo agendamento
-      const newAppointment = {
-        ...formData,
-        id: Date.now().toString(),
-        professionalName: userType === 'professional' ? user.name : 'Profissional Selecionado',
-        clientName: userType === 'client' ? user.name : formData.clientName
-      };
-      setAppointments(prev => [...prev, newAppointment]);
+      await addAppointment(formData);
     }
-    
+
     setShowAppointmentForm(false);
     setSelectedAppointment(null);
   };
 
-  const handleDeleteAppointment = (appointmentId) => {
-    if (confirm('Tem certeza que deseja excluir este agendamento?')) {
-      setAppointments(prev => prev.filter(appointment => appointment.id !== appointmentId));
+  const handleDeleteAppointment = async (appointmentId) => {
+    if (confirm(t('appointments.confirmDelete'))) {
+      await deleteAppointment(appointmentId);
     }
   };
 
-  const handleStatusChange = (appointmentId, newStatus) => {
-    setAppointments(prev => 
-      prev.map(appointment => 
-        appointment.id === appointmentId 
-          ? { ...appointment, status: newStatus }
-          : appointment
-      )
-    );
+  const handleStatusChange = async (appointmentId, newStatus) => {
+    await updateAppointment(appointmentId, { status: newStatus });
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirmed': 
+      case 'confirmed':
         return {
           backgroundColor: themeColors.success + '20',
           color: themeColors.success
         };
-      case 'pending': 
+      case 'pending':
         return {
           backgroundColor: themeColors.warning + '20',
           color: themeColors.warning
         };
-      case 'cancelled': 
+      case 'cancelled':
         return {
           backgroundColor: themeColors.error + '20',
           color: themeColors.error
         };
-      default: 
+      default:
         return {
           backgroundColor: themeColors.textSecondary + '20',
           color: themeColors.textSecondary
@@ -243,7 +222,16 @@ const Agendamentos = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
+    // Map internal language codes to standard locale strings if necessary
+    const localeMap = {
+      'pt-BR': 'pt-BR',
+      'en-US': 'en-US',
+      'es-ES': 'es-ES',
+      'fr-FR': 'fr-FR'
+    };
+    const locale = localeMap[language] || 'pt-BR';
+
+    return date.toLocaleDateString(locale, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -257,36 +245,35 @@ const Agendamentos = () => {
 
   return (
     <ProtectedRoute>
-      <div 
+      <div
         className="min-h-screen transition-colors duration-300"
         style={{
           backgroundColor: themeColors.secondary || themeColors.secondaryLight || '#f0f9f9'
         }}
       >
         {/* Header */}
-        <Header 
-          sidebarOpen={sidebarOpen} 
+        <Header
+          sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
         />
 
         {/* Sidebar */}
-        <Sidebar 
+        <Sidebar
           activeSection="agendamentos"
-          setActiveSection={() => {}}
+          setActiveSection={() => { }}
           sidebarOpen={sidebarOpen}
           darkMode={darkMode}
         />
 
         {/* Main Content */}
-        <div className={`relative z-10 min-h-screen transition-all duration-300 pt-28 ${
-          sidebarOpen ? 'lg:ml-64' : ''
-        }`}>
+        <div className={`relative z-10 min-h-screen transition-all duration-300 pt-28 ${sidebarOpen ? 'lg:ml-64' : ''
+          }`}>
           <div className="p-6">
             <div className="max-w-7xl mx-auto space-y-6">
               {/* Header */}
-              <motion.div 
+              <motion.div
                 className="kalon-card p-6"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -294,7 +281,7 @@ const Agendamentos = () => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div 
+                    <div
                       className="p-3 rounded-xl"
                       style={{ backgroundColor: themeColors.primary }}
                     >
@@ -302,12 +289,12 @@ const Agendamentos = () => {
                     </div>
                     <div>
                       <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                        Agendamentos
+                        {t('appointments.title')}
                       </h1>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {userType === 'professional' 
-                          ? 'Gerencie suas sessões e clientes' 
-                          : 'Visualize e gerencie seus agendamentos'
+                        {userType === 'professional'
+                          ? t('appointments.manageSessions')
+                          : t('appointments.viewAppointments')
                         }
                       </p>
                     </div>
@@ -320,23 +307,23 @@ const Agendamentos = () => {
                       variant="secondary"
                       size="md"
                     >
-                      {viewMode === 'calendar' ? 'Lista' : 'Calendário'}
+                      {viewMode === 'calendar' ? t('common.list') : t('common.calendar')}
                     </ModernButton>
-                    
+
                     <ModernButton
                       icon={<Plus className="w-5 h-5" />}
                       onClick={handleAddAppointment}
                       variant="primary"
                       size="md"
                     >
-                      Novo Agendamento
+                      {t('appointments.newAppointment')}
                     </ModernButton>
                   </div>
                 </div>
               </motion.div>
 
               {/* Filtros e Busca */}
-              <motion.div 
+              <motion.div
                 className="kalon-card p-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -349,7 +336,7 @@ const Agendamentos = () => {
                       <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <input
                         type="text"
-                        placeholder="Buscar agendamentos..."
+                        placeholder={t('appointments.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="kalon-input pl-10"
@@ -360,10 +347,10 @@ const Agendamentos = () => {
                   {/* Filtro de Status */}
                   <div className="flex space-x-2">
                     {[
-                      { value: 'all', label: 'Todos' },
-                      { value: 'pending', label: 'Pendentes' },
-                      { value: 'confirmed', label: 'Confirmados' },
-                      { value: 'cancelled', label: 'Cancelados' }
+                      { value: 'all', label: t('common.all') },
+                      { value: 'pending', label: t('appointments.status.pending') },
+                      { value: 'confirmed', label: t('appointments.status.confirmed') },
+                      { value: 'cancelled', label: t('appointments.status.cancelled') }
                     ].map((filter) => (
                       <ModernButton
                         key={filter.value}
@@ -389,16 +376,16 @@ const Agendamentos = () => {
                   selectedDate={selectedDate}
                 />
               ) : (
-                <motion.div 
+                <motion.div
                   className="kalon-card p-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Lista de Agendamentos
+                    {t('appointments.listTitle')}
                   </h2>
-                  
+
                   <div className="space-y-4">
                     {filteredAppointments.map((appointment) => (
                       <motion.div
@@ -408,7 +395,7 @@ const Agendamentos = () => {
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            <div 
+                            <div
                               className="p-2 rounded-lg"
                               style={{ backgroundColor: themeColors.primary }}
                             >
@@ -416,7 +403,7 @@ const Agendamentos = () => {
                                 {getTypeIcon(appointment.type)}
                               </div>
                             </div>
-                            
+
                             <div>
                               <h3 className="font-semibold text-gray-800 dark:text-white">
                                 {appointment.title}
@@ -431,12 +418,12 @@ const Agendamentos = () => {
                           </div>
 
                           <div className="flex items-center space-x-3">
-                            <div 
+                            <div
                               className="px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1"
                               style={getStatusColor(appointment.status)}
                             >
                               {getStatusIcon(appointment.status)}
-                              <span className="capitalize">{appointment.status}</span>
+                              <span className="capitalize">{t(`appointments.status.${appointment.status}`)}</span>
                             </div>
 
                             <div className="flex space-x-2">
@@ -447,14 +434,14 @@ const Agendamentos = () => {
                                 size="sm"
                                 title="Ir para Consulta"
                               />
-                              
+
                               <ModernButton
                                 icon={<Edit className="w-4 h-4" />}
                                 onClick={() => handleEditAppointment(appointment)}
                                 variant="secondary"
                                 size="sm"
                               />
-                              
+
                               <ModernButton
                                 icon={<Trash2 className="w-4 h-4" />}
                                 onClick={() => handleDeleteAppointment(appointment.id)}
@@ -471,7 +458,7 @@ const Agendamentos = () => {
                       <div className="text-center py-8">
                         <CalendarIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                         <p className="text-gray-500 dark:text-gray-400">
-                          Nenhum agendamento encontrado
+                          {t('appointments.noAppointments')}
                         </p>
                       </div>
                     )}

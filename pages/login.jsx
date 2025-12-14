@@ -5,14 +5,16 @@ import { useRouter } from "next/router";
 import { Eye, EyeOff, User, ChevronRight } from "lucide-react";
 import { useAuth } from "../components/AuthContext";
 import { useTheme } from "../components/ThemeProvider";
+import { useTranslation } from "../hooks/useTranslation";
 
 export default function LoginPage() {
   console.log('🔵 [LoginPage] Componente renderizando...');
-  
+
   const router = useRouter();
   const { loginUser } = useAuth();
   const { getThemeColors, isInitialized } = useTheme();
-  
+  const { t } = useTranslation();
+
   console.log('🔵 [LoginPage] Hooks inicializados, isInitialized:', isInitialized);
 
   const [email, setEmail] = useState("");
@@ -23,7 +25,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     console.log('✅ [LoginPage] Componente montado completamente');
-    
+
     // 🔧 CORREÇÃO: Remover overlays que bloqueiam a página de login
     const fixOverlays = () => {
       // Remover TODOS os overlays bloqueantes (incluindo elementos da página welcome)
@@ -33,7 +35,7 @@ export default function LoginPage() {
         '.absolute.bottom-20.right-20',
         '.absolute.top-1\\/2.left-1\\/2'
       ];
-      
+
       selectors.forEach(selector => {
         try {
           const overlays = document.querySelectorAll(selector);
@@ -48,17 +50,17 @@ export default function LoginPage() {
         }
       });
     };
-    
+
     // Executar imediatamente e em intervalos para pegar elementos que aparecem depois
     fixOverlays();
     const timer1 = setTimeout(fixOverlays, 100);
     const timer2 = setTimeout(fixOverlays, 500);
     const timer3 = setTimeout(fixOverlays, 1000);
-    
+
     // Observer para elementos que aparecem dinamicamente
     const observer = new MutationObserver(fixOverlays);
     observer.observe(document.body, { childList: true, subtree: true });
-    
+
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -108,31 +110,17 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+      const result = await loginUser(email, password);
 
-      const data = await response.json();
-
-      if (!response.ok || !data.ok) {
-        if (response.status === 401 || data?.error === "Credenciais inválidas") {
-          setErrorMessage("Acesso não autorizado");
-        } else {
-          setErrorMessage("Não foi possível concluir o login. Tente novamente.");
-        }
+      if (!result.success) {
+        setErrorMessage(result.error || t('login.errors.general'));
         return;
-      }
-
-      if (data.user) {
-        loginUser(data.user);
       }
 
       router.push("/home");
     } catch (error) {
       console.error("Erro ao autenticar:", error);
-      setErrorMessage("Não foi possível conectar. Verifique sua rede e tente novamente.");
+      setErrorMessage(t('login.errors.network'));
     } finally {
       setLoading(false);
     }
@@ -163,21 +151,19 @@ export default function LoginPage() {
           </p>
           <h1
             className="text-4xl md:text-5xl font-bold leading-tight mb-2"
-            style={{ color: palette.textPrimary }}
+            style={{ color: palette.textPrimary, fontWeight: 900 }}
           >
-            Bem-vindo(a) ao
-            <br />
-            KalonConnect
+            {t('login.title')}
           </h1>
 
           <p
             className="text-xl font-light mt-6"
             style={{ color: `${palette.textPrimary}cc` }}
           >
-            Tecnologia com Alma
+            {t('login.tagline.main')}
           </p>
           <p className="text-lg italic font-light" style={{ color: "#4b4b4b" }}>
-            Quando a Alma fala, o Corpo escuta e o Espírito conduz...
+            {t('login.tagline.sub')}
           </p>
         </div>
 
@@ -195,12 +181,12 @@ export default function LoginPage() {
               className="text-sm font-semibold uppercase tracking-[0.2em]"
               style={{ color: `${palette.textPrimary}cc` }}
             >
-              E-mail
+              {t('common.email')}
             </label>
             <input
               id="email"
               type="email"
-              placeholder="Digite seu e-mail profissional"
+              placeholder={t('login.emailPlaceholder')}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
@@ -226,13 +212,13 @@ export default function LoginPage() {
               className="text-sm font-semibold uppercase tracking-[0.2em]"
               style={{ color: `${palette.textPrimary}cc` }}
             >
-              Senha
+              {t('common.password')}
             </label>
             <div className="relative flex items-center">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Digite sua senha"
+                placeholder={t('login.passwordPlaceholder')}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
@@ -253,7 +239,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
                 className="absolute right-3 transition"
                 style={{ color: `${palette.primary}b3` }}
                 onMouseEnter={(event) => {
@@ -268,6 +254,24 @@ export default function LoginPage() {
                 ) : (
                   <Eye className="w-5 h-5" />
                 )}
+              </button>
+            </div>
+            <div className="flex justify-between mt-1 px-1">
+              <button
+                type="button"
+                onClick={() => router.push('/register')}
+                className="text-xs font-bold uppercase tracking-wider hover:underline transition-colors"
+                style={{ color: palette.primary }}
+              >
+                {t('login.signUp')}
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push('/forgot-password')}
+                className="text-xs font-semibold uppercase tracking-wider hover:underline transition-colors"
+                style={{ color: `${palette.primary}cc` }}
+              >
+                {t('login.forgotPassword')}
               </button>
             </div>
           </div>
@@ -291,7 +295,7 @@ export default function LoginPage() {
             }}
           >
             <User className="w-5 h-5" />
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? t('common.loading') + "..." : t('login.loginButton')}
             <ChevronRight className="w-5 h-5" />
           </button>
         </form>
@@ -303,7 +307,7 @@ export default function LoginPage() {
         style={{ color: palette.textPrimary }}
       >
         <p className="text-xs font-semibold uppercase tracking-[0.4em]">
-          Desenvolvido por:
+          {t('login.developedBy')}
         </p>
         <a
           href="https://www.robertogama.com"

@@ -9,12 +9,15 @@ import { useTheme } from '../components/ThemeProvider';
 import { useAuth } from '../components/AuthContext';
 import { useAccessControl } from '../hooks/useAccessControl';
 
+import { useTranslation } from '../hooks/useTranslation';
+
 const Financial = () => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { canAccessPage } = useAccessControl(user?.version);
-  const canViewFinancial = canAccessPage("/financial");
+  const canViewFinancial = canAccessPage("/financial") || user?.type === 'admin' || user?.email === 'bobgama@uol.com.br';
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -48,21 +51,20 @@ const Financial = () => {
 
         <Sidebar
           activeSection="financial"
-          setActiveSection={() => {}}
+          setActiveSection={() => { }}
           sidebarOpen={sidebarOpen}
           darkMode={darkMode}
         />
 
         <div
-          className={`relative z-10 transition-all duration-300 pt-28 ${
-            sidebarOpen ? 'lg:ml-64' : ''
-          }`}
+          className={`relative z-10 transition-all duration-300 pt-28 ${sidebarOpen ? 'lg:ml-64' : ''
+            }`}
         >
           {canViewFinancial ? (
             <FinancialPanel />
           ) : (
             <div className="mx-auto max-w-3xl rounded-3xl bg-white/90 px-8 py-16 text-center text-rose-600 shadow-2xl">
-              Função disponível apenas na versão Normal ou Pro.
+              {t('financial.access.restricted')}
             </div>
           )}
         </div>

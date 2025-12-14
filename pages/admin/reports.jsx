@@ -7,20 +7,18 @@ import ProtectedRoute from "../../components/ProtectedRoute";
 import { useAuth } from "../../components/AuthContext";
 import { useAccessControl } from "../../hooks/useAccessControl";
 import { loadAdminSession, clearAdminSession } from "../../utils/adminSession";
+import useTranslation from '../../hooks/useTranslation';
 
 const VERSION_BADGE = {
   DEMO: {
-    label: "🧪 Demo",
     className:
       "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200"
   },
   NORMAL: {
-    label: "⚪ Normal",
     className:
       "bg-slate-100 text-slate-700 dark:bg-slate-900/40 dark:text-slate-200"
   },
   PRO: {
-    label: "🔵 Pro",
     className:
       "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200"
   }
@@ -89,6 +87,7 @@ const AdminUsageReportsPage = () => {
   const router = useRouter();
   const { user } = useAuth();
   const { canAccessPage } = useAccessControl(user?.version);
+  const { t } = useTranslation();
 
   const [adminAuthorized, setAdminAuthorized] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
@@ -220,7 +219,7 @@ const AdminUsageReportsPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
         <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white/90 px-6 py-4 text-slate-600 dark:text-slate-200 shadow-lg">
-          Validando acesso administrativo...
+          {t('adminReports.access.validating')}
         </div>
       </div>
     );
@@ -234,22 +233,7 @@ const AdminUsageReportsPage = () => {
     return null;
   }
 
-  if (!canAccessPage("/admin/reports") || (user.type !== "admin" && user.type !== "professional")) {
-    return (
-      <ProtectedRoute>
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-6">
-          <div className="max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 p-10 text-center shadow-xl">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-              Acesso restrito
-            </h1>
-            <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
-              Somente avaliadores autorizados podem acessar os relatórios automáticos de uso.
-            </p>
-          </div>
-        </div>
-      </ProtectedRoute>
-    );
-  }
+
 
   return (
     <ProtectedRoute>
@@ -259,13 +243,13 @@ const AdminUsageReportsPage = () => {
             <div>
               <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                 <Filter className="h-4 w-4" />
-                <span>Monitoramento interno</span>
+                <span>{t('adminReports.monitoringBadge')}</span>
               </div>
               <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">
-                Relatórios de Uso
+                {t('adminReports.title')}
               </h1>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Acompanhe sessões, recursos utilizados e painéis acessados pelos profissionais.
+                {t('adminReports.subtitle')}
               </p>
             </div>
 
@@ -276,7 +260,7 @@ const AdminUsageReportsPage = () => {
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
               >
                 <Download className="h-4 w-4" />
-                Exportar JSON
+                {t('adminReports.export.json')}
               </button>
               <button
                 type="button"
@@ -284,30 +268,30 @@ const AdminUsageReportsPage = () => {
                 className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition"
               >
                 <Download className="h-4 w-4" />
-                Exportar CSV
+                {t('adminReports.export.csv')}
               </button>
             </div>
           </header>
 
           <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <SummaryCard
-              title="Sessões monitoradas"
+              title={t('adminReports.summary.sessions')}
               value={summary?.totalSessions ?? 0}
               accent="bg-indigo-500/10 text-indigo-600 dark:text-indigo-200 border-indigo-500/30"
             />
             <SummaryCard
-              title="Sessões Demo"
+              title={t('adminReports.summary.demo')}
               value={summary?.demoSessions ?? 0}
               accent="bg-amber-500/10 text-amber-600 dark:text-amber-200 border-amber-500/30"
             />
             <SummaryCard
-              title="Duração média"
+              title={t('adminReports.summary.duration')}
               value={formatDuration(summary?.averageDuration ?? 0)}
               accent="bg-emerald-500/10 text-emerald-600 dark:text-emerald-200 border-emerald-500/30"
             />
             <SummaryCard
-              title="Painel mais usado"
-              value={summary?.mostUsedPanel || "Ainda não disponível"}
+              title={t('adminReports.summary.mostUsed')}
+              value={summary?.mostUsedPanel || t('adminReports.summary.notAvailable')}
               accent="bg-slate-500/10 text-slate-600 dark:text-slate-200 border-slate-500/30"
             />
           </section>
@@ -316,7 +300,7 @@ const AdminUsageReportsPage = () => {
             <div className="flex flex-wrap items-center gap-3 justify-between">
               <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800/80 px-3 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
                 <Search className="h-3.5 w-3.5" />
-                Filtros inteligentes
+                {t('adminReports.filters.title')}
               </div>
               <button
                 type="button"
@@ -324,14 +308,14 @@ const AdminUsageReportsPage = () => {
                 className="inline-flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
-                Limpar filtros
+                {t('adminReports.filters.clear')}
               </button>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                  Versão
+                  {t('adminReports.filters.version')}
                 </label>
                 <select
                   value={filters.version}
@@ -340,16 +324,16 @@ const AdminUsageReportsPage = () => {
                   }
                   className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-400/60"
                 >
-                  <option value="ALL">Todas</option>
-                  <option value="DEMO">Demo</option>
-                  <option value="NORMAL">Normal</option>
-                  <option value="PRO">Pro</option>
+                  <option value="ALL">{t('adminReports.filters.options.all')}</option>
+                  <option value="DEMO">{t('adminReports.filters.options.demo')}</option>
+                  <option value="NORMAL">{t('adminReports.filters.options.normal')}</option>
+                  <option value="PRO">{t('adminReports.filters.options.pro')}</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                  Buscar por email ou sessão
+                  {t('adminReports.filters.search')}
                 </label>
                 <input
                   type="search"
@@ -364,7 +348,7 @@ const AdminUsageReportsPage = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                  Período inicial
+                  {t('adminReports.filters.from')}
                 </label>
                 <input
                   type="date"
@@ -378,7 +362,7 @@ const AdminUsageReportsPage = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                  Período final
+                  {t('adminReports.filters.to')}
                 </label>
                 <input
                   type="date"
@@ -396,10 +380,10 @@ const AdminUsageReportsPage = () => {
             <header className="flex items-center justify-between gap-3 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
               <div>
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                  Sessões monitoradas
+                  {t('adminReports.table.title')}
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Exibindo {filteredSessions.length} de {sessions.length} sessões recentes.
+                  {t('adminReports.table.showing', { count: filteredSessions.length, total: sessions.length })}
                 </p>
               </div>
               {selectedSession && (
@@ -409,7 +393,7 @@ const AdminUsageReportsPage = () => {
                   className="inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
                 >
                   <X className="h-3.5 w-3.5" />
-                  Fechar detalhes
+                  {t('adminReports.details.close')}
                 </button>
               )}
             </header>
@@ -424,20 +408,20 @@ const AdminUsageReportsPage = () => {
               </div>
             ) : filteredSessions.length === 0 ? (
               <div className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
-                Nenhuma sessão encontrada com os filtros selecionados.
+                {t('adminReports.table.empty')}
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-sm">
                   <thead className="bg-slate-100/60 dark:bg-slate-800/60">
                     <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                      <th className="px-6 py-3">Usuário</th>
-                      <th className="px-6 py-3">Versão</th>
-                      <th className="px-6 py-3">Início</th>
-                      <th className="px-6 py-3">Duração</th>
-                      <th className="px-6 py-3">Painéis</th>
-                      <th className="px-6 py-3">Ações</th>
-                      <th className="px-6 py-3 text-right">Detalhes</th>
+                      <th className="px-6 py-3">{t('adminReports.table.headers.user')}</th>
+                      <th className="px-6 py-3">{t('adminReports.table.headers.version')}</th>
+                      <th className="px-6 py-3">{t('adminReports.table.headers.start')}</th>
+                      <th className="px-6 py-3">{t('adminReports.table.headers.duration')}</th>
+                      <th className="px-6 py-3">{t('adminReports.table.headers.panels')}</th>
+                      <th className="px-6 py-3">{t('adminReports.table.headers.actions')}</th>
+                      <th className="px-6 py-3 text-right">{t('adminReports.table.headers.details')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -456,7 +440,7 @@ const AdminUsageReportsPage = () => {
                           <td className="px-6 py-4">
                             <div className="flex flex-col">
                               <span className="text-slate-900 dark:text-slate-100 font-medium">
-                                {session.userName || "Usuário sem nome"}
+                                {session.userName || t('adminReports.table.row.noName')}
                               </span>
                               <span className="text-xs text-slate-500 dark:text-slate-400">
                                 {session.userEmail}
@@ -467,7 +451,7 @@ const AdminUsageReportsPage = () => {
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${badge.className}`}
                             >
-                              {badge.label}
+                              {badge.label || t('adminReports.filters.options.' + (versionKey.toLowerCase() === 'all' ? 'all' : versionKey.toLowerCase() === '' ? 'normal' : versionKey.toLowerCase()))}
                             </span>
                           </td>
                           <td className="px-6 py-4">{formatDateTime(session.startedAt)}</td>
@@ -476,12 +460,12 @@ const AdminUsageReportsPage = () => {
                           </td>
                           <td className="px-6 py-4">
                             <span className="inline-flex rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
-                              {panelCount} painel(is)
+                              {panelCount} {t('adminReports.table.row.panels')}
                             </span>
                           </td>
                           <td className="px-6 py-4">
                             <span className="inline-flex rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
-                              {actionCount} eventos
+                              {actionCount} {t('adminReports.table.row.events')}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-right">
@@ -490,7 +474,7 @@ const AdminUsageReportsPage = () => {
                               onClick={() => setSelectedSession(session)}
                               className="inline-flex items-center gap-2 rounded-full border border-emerald-300/70 dark:border-emerald-700/60 px-4 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-200 hover:bg-emerald-500/10 transition"
                             >
-                              Ver detalhes
+                              {t('adminReports.table.row.viewDetails')}
                             </button>
                           </td>
                         </tr>
@@ -507,10 +491,10 @@ const AdminUsageReportsPage = () => {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    Linha do tempo da sessão
+                    {t('adminReports.details.timeline')}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Sessão {selectedSession.sessionId}
+                    {t('adminReports.details.session', { id: selectedSession.sessionId })}
                   </p>
                 </div>
                 <button
@@ -519,7 +503,7 @@ const AdminUsageReportsPage = () => {
                   className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition"
                 >
                   <X className="h-3.5 w-3.5" />
-                  Fechar
+                  {t('adminReports.details.close')}
                 </button>
               </div>
 
@@ -534,7 +518,7 @@ const AdminUsageReportsPage = () => {
                         {item.type}
                       </p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
-                        {item.panel || "Painel geral"}
+                        {item.panel || t('adminReports.details.generalPanel')}
                       </p>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">

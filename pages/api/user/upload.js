@@ -5,6 +5,8 @@ const MEDIA_DIR = path.join(process.cwd(), "public", "user-media");
 
 const ALLOWED_VIDEO_EXT = new Set([".mp4", ".mov", ".webm"]);
 const ALLOWED_AUDIO_EXT = new Set([".mp3", ".wav", ".ogg"]);
+// 🟢 v5.26: Support Images for Waiting Room / Exit Screen
+const ALLOWED_IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".gif", ".webp"]);
 
 const ensureMediaDir = async () => {
   await fs.mkdir(MEDIA_DIR, { recursive: true });
@@ -42,10 +44,11 @@ export default async function handler(req, res) {
     const ext = path.extname(safeName).toLowerCase();
     const isVideo = ALLOWED_VIDEO_EXT.has(ext);
     const isAudio = ALLOWED_AUDIO_EXT.has(ext);
+    const isImage = ALLOWED_IMAGE_EXT.has(ext);
 
-    if (!isVideo && !isAudio) {
+    if (!isVideo && !isAudio && !isImage) {
       return res.status(400).json({
-        message: "Extensão de arquivo não suportada."
+        message: `Extensão não suportada (${ext}) para o arquivo '${safeName}'. Tipos aceitos: .mp4, .mov, .webm, .jpg, .png, .mp3...`
       });
     }
 
@@ -72,9 +75,14 @@ export default async function handler(req, res) {
     await fs.writeFile(targetPath, buffer);
 
     const publicPath = `/user-media/${safeName}`;
+    let type = "other";
+    if (isVideo) type = "video";
+    else if (isAudio) type = "audio";
+    else if (isImage) type = "image";
+
     return res.status(200).json({
       path: publicPath,
-      type: isVideo ? "video" : "audio",
+      type,
       size: buffer.length
     });
   } catch (error) {
@@ -84,6 +92,14 @@ export default async function handler(req, res) {
       .json({ message: "Não foi possível salvar o arquivo de mídia." });
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '500mb',
+    },
+  },
+};
 
 
 

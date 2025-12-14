@@ -16,19 +16,19 @@ function getBaseUrl(req) {
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
   }
-  
+
   // 2. Tentar headers do request
   if (req.headers) {
     const protocol = req.headers['x-forwarded-proto'] || 'http';
     const host = req.headers.host || req.headers['x-forwarded-host'];
-    
+
     if (host) {
       // Remover www. se existir
       const cleanHost = host.replace(/^www\./, '');
       return `${protocol}://${cleanHost}`;
     }
   }
-  
+
   // 3. Fallback absoluto (produção)
   return 'https://kalonconnect.com'; // Sua URL de produção
 }
@@ -50,27 +50,41 @@ export default async function handler(req, res) {
 
     // 🔴 SOLUÇÃO MANUS: Validação robusta
     if (!professionalId || typeof professionalId !== 'string') {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'professionalId inválido' 
+      return res.status(400).json({
+        success: false,
+        error: 'professionalId inválido'
       });
     }
 
-    // 🔴 SOLUÇÃO MANUS: Gerar token seguro sem underscore
-    const token = generateToken();
-    
+    // 🟢 SOLUÇÃO MANUS: Gerar token seguro ou usar Professional Slug (Vanity URL)
+    // Se professionalId parecer um slug (não um UID longo), use-o como token.
+    // Caso contrário, gere um token aleatório e anexe o ID.
+
+    let token = generateToken();
+
     // 🔴 SOLUÇÃO MANUS: Obter base URL com garantia
     const baseUrl = getBaseUrl(req);
     console.log('Base URL detectado:', baseUrl); // Para debug
-    
-    // 🔴 SOLUÇÃO MANUS: Construir URL sem problemas
-    const consultationUrl = `${baseUrl}/consultations/client/${token}`;
-    
+
+    // Check if professionalId is a slug (simple check: contains letters, maybe dashes, not too long/short checks?)
+    // Actually, user wants vanity URL. Let's just USE the professionalId as the token if likely a slug.
+    const isSlug = professionalId && !professionalId.includes(' ') && professionalId.length < 50;
+
+    let consultationUrl = '';
+
+    if (isSlug) {
+      token = professionalId; // VANITY URL: /client/robert-gama
+      consultationUrl = `${baseUrl}/consultations/client/${token}`; // Clean URL
+    } else {
+      // Fallback for raw UIDs or missing slugs
+      consultationUrl = `${baseUrl}/consultations/client/${token}?p=${professionalId}`;
+    }
+
     // Validar URL final
     if (!consultationUrl || consultationUrl.includes('null') || consultationUrl.includes('undefined')) {
       throw new Error('URL gerada contém valores inválidos');
     }
-    
+
     console.log('✅ URL gerada com sucesso:', consultationUrl);
 
     // 🔴 SOLUÇÃO: Gerar QR Code (opcional - usando API externa)
@@ -85,7 +99,7 @@ export default async function handler(req, res) {
     // - createdAt
     // - expiresAt (ex: 24 horas)
     // - status: 'active'
-    
+
     // Por enquanto, retornamos os dados sem salvar no banco
     // Em produção, você deve salvar no banco de dados
 
@@ -112,9 +126,9 @@ Aguardo você! 💚
 
   } catch (error) {
     console.error('Erro ao gerar token de consulta:', error);
-    return res.status(500).json({ 
-      success: false, 
-      error: 'Erro interno do servidor ao gerar token' 
+    return res.status(500).json({
+      success: false,
+      error: 'Erro interno do servidor ao gerar token'
     });
   }
 }

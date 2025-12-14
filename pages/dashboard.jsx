@@ -2,20 +2,45 @@
 
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { SpatiumProvider, useSpatium } from '../contexts/SpatiumContext';
+import RoomView from '../components/Spatium/RoomView';
+import { ArrowRightCircle } from 'lucide-react';
 
-export default function Dashboard() {
+const SpatiumWrapper = () => {
   const router = useRouter();
-  
+  const { activeAction, clearAction } = useSpatium();
+
+  // Handle Actions triggered from Spatium
   useEffect(() => {
-    router.push('/dashboard-simple');
-  }, [router]);
+    if (activeAction === 'OPEN_CONSULTATION') {
+      console.log('Opening consultation...');
+      router.push('/consultations');
+      clearAction();
+    }
+  }, [activeAction, router, clearAction]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-gray-600">Redirecionando...</p>
+    <>
+      <RoomView />
+
+      {/* Optional: Floating Menu for fallback/standard navigation */}
+      <div className="absolute top-8 right-8 z-50">
+        <button
+          onClick={() => router.push('/dashboard-simple')}
+          className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm hover:bg-white/20 transition-all border border-white/20"
+        >
+          <span>Modo Clássico</span>
+          <ArrowRightCircle size={16} />
+        </button>
       </div>
-    </div>
+    </>
+  );
+};
+
+export default function Dashboard() {
+  return (
+    <SpatiumProvider>
+      <SpatiumWrapper />
+    </SpatiumProvider>
   );
 }

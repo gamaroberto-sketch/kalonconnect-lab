@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Heart, 
-  Sparkles, 
-  User, 
+import {
+  Heart,
+  Sparkles,
+  User,
   LogOut,
   Calendar,
   Video,
@@ -13,11 +13,15 @@ import {
   FileText,
   DollarSign,
   Settings,
-  BookOpen
+  BookOpen,
+  Briefcase,
+  BarChart3,
+  Info
 } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import { useRouter } from 'next/router';
 import { useTheme } from '../components/ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { getProfile } from '../lib/profile';
@@ -27,6 +31,7 @@ export default function Home() {
   const router = useRouter();
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -37,11 +42,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || !user?.id) return;
     let active = true;
     (async () => {
       try {
-        const data = await getProfile();
+        const data = await getProfile(user.id);
         if (active) {
           setPreferredName(data?.name?.trim() || null);
         }
@@ -52,12 +57,12 @@ export default function Home() {
     return () => {
       active = false;
     };
-  }, [mounted]);
+  }, [mounted, user]);
 
   // Proteção de rota: redirecionar para login se não estiver autenticado
   useEffect(() => {
     if (!mounted) return;
-    
+
     // Verificar tanto no contexto quanto no localStorage
     let hasValidUser = false;
     if (typeof window !== 'undefined') {
@@ -113,6 +118,22 @@ export default function Home() {
     router.push('/guia-instalacao');
   };
 
+  const handleProfile = () => {
+    router.push('/settings'); // 🟢 v5.61 Redirect to Settings (Profile Tab)
+  };
+
+  const handleEvents = () => {
+    router.push('/events');
+  };
+
+  const handleReports = () => {
+    router.push('/reports');
+  };
+
+  const handleAbout = () => {
+    router.push('/about');
+  };
+
   const greetingName = preferredName || user?.name || 'Profissional Kalon';
 
 
@@ -122,41 +143,40 @@ export default function Home() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando...</p>
+          <p className="text-gray-600">{t('common.loading')}...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen transition-colors duration-300"
       style={{
         background: `linear-gradient(135deg, ${themeColors.backgroundSecondary}, ${themeColors.secondaryLight})`
       }}
     >
       {/* Header */}
-      <Header 
-        sidebarOpen={sidebarOpen} 
+      <Header
+        sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
       />
 
       {/* Sidebar */}
-      <Sidebar 
-        sidebarOpen={sidebarOpen} 
+      <Sidebar
+        sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
       />
 
       {/* Main Content */}
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32 transition-all duration-300 ${
-        sidebarOpen ? 'lg:ml-64' : ''
-      }`}>
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32 transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : ''
+        }`}>
         <div className="text-center mb-12" style={{ marginTop: '1rem' }}>
-          <motion.div 
+          <motion.div
             className="flex items-center justify-center mb-4"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -164,7 +184,7 @@ export default function Home() {
             style={{ marginTop: '0.5rem' }}
           >
             <div className="relative w-12 h-12">
-              <div 
+              <div
                 className="w-full h-full flex items-center justify-center rounded-full"
                 style={{ backgroundColor: themeColors.primaryDark }}
               >
@@ -179,23 +199,23 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-          <motion.h2 
+          <motion.h2
             className="text-4xl font-bold mb-4"
             style={{ color: themeColors.primaryDark }}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Bem-vindo(a), {greetingName}!
+            {t('home.welcome', { name: greetingName })}
           </motion.h2>
-          <motion.p 
+          <motion.p
             className="text-xl max-w-2xl mx-auto text-center leading-relaxed"
             style={{ color: themeColors.textSecondary || '#6b7280' }}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            A Alma se expande, o Corpo relaxa, o Espírito conduz.
+            {t('home.tagline')}
           </motion.p>
         </div>
 
@@ -206,54 +226,53 @@ export default function Home() {
           transition={{ delay: 0.3 }}
           className="max-w-4xl mx-auto mb-8"
         >
-            <div 
-              className="p-6 rounded-2xl shadow-lg border-2"
-              style={{
-                backgroundColor: themeColors.primaryLight + '20',
-                borderColor: themeColors.primary
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div 
-                    className="p-4 rounded-xl"
-                    style={{ backgroundColor: themeColors.primaryDark }}
-                  >
-                    <BookOpen className="w-8 h-8" style={{ color: 'white' }} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1">
-                      Guia de Utilização
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      Primeira vez usando o <span className="font-bold normal-case">KalonConnect</span>? Acesse o guia completo para configurar tudo.
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleGuia}
-                  className="px-6 py-3 rounded-lg font-bold transition-colors text-white"
-                  style={{
-                    backgroundColor: themeColors.primary,
-                    color: 'white'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = themeColors.primaryDark;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = themeColors.primary;
-                  }}
+          <div
+            className="p-6 rounded-2xl shadow-lg border-2"
+            style={{
+              backgroundColor: themeColors.primaryLight + '20',
+              borderColor: themeColors.primary
+            }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div
+                  className="p-4 rounded-xl"
+                  style={{ backgroundColor: themeColors.primaryDark }}
                 >
-                  <span>Abrir Guia</span>
-                </button>
+                  <BookOpen className="w-8 h-8" style={{ color: 'white' }} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1">
+                    {t('home.guide.title')}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400" dangerouslySetInnerHTML={{ __html: t('home.guide.description') }} />
+                </div>
               </div>
+              <button
+                onClick={handleGuia}
+                className="px-6 py-3 rounded-lg font-bold transition-colors text-white"
+                style={{
+                  backgroundColor: themeColors.primary,
+                  color: 'white'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = themeColors.primaryDark;
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = themeColors.primary;
+                }}
+              >
+                <span>{t('home.guide.open')}</span>
+              </button>
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
 
         {/* Ações Principais */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          {/* 1. Perfil */}
           <motion.button
-            onClick={handleCadastro}
+            onClick={handleProfile}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
             style={{
               backgroundColor: themeColors.background || 'white',
@@ -267,18 +286,47 @@ export default function Home() {
             transition={{ delay: 0.4 }}
           >
             <div className="text-center">
-              <div 
+              <div
+                className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
+                style={{ backgroundColor: themeColors.primary }}
+              >
+                <Briefcase className="w-8 h-8" style={{ color: 'white' }} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.profile')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.profile')}</p>
+              <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
+            </div>
+          </motion.button>
+
+          {/* 2. Pacientes */}
+          <motion.button
+            onClick={handleCadastro}
+            className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
+            style={{
+              backgroundColor: themeColors.background || 'white',
+              borderColor: themeColors.border || themeColors.primary + '40',
+              borderWidth: '2px'
+            }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="text-center">
+              <div
                 className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: themeColors.primary }}
               >
                 <User className="w-8 h-8" style={{ color: 'white' }} />
               </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Cadastro</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Gerenciar clientes</p>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.clients')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.manageClients')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.primary }} />
             </div>
           </motion.button>
 
+          {/* 3. Consultas */}
           <motion.button
             onClick={handleConsultas}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
@@ -294,20 +342,49 @@ export default function Home() {
             transition={{ delay: 0.6 }}
           >
             <div className="text-center">
-              <div 
+              <div
                 className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: themeColors.primary }}
               >
                 <Video className="w-8 h-8" style={{ color: 'white' }} />
               </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Consultas</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Sessões de vídeo online</p>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.consultations')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.videoSessions')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
             </div>
           </motion.button>
 
+          {/* 4. Agendamentos */}
           <motion.button
             onClick={handleAgendamentos}
+            className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
+            style={{
+              backgroundColor: themeColors.background || 'white',
+              borderColor: themeColors.border || themeColors.primary + '40',
+              borderWidth: '2px'
+            }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <div className="text-center">
+              <div
+                className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
+                style={{ backgroundColor: themeColors.primary }}
+              >
+                <Calendar className="w-8 h-8" style={{ color: 'white' }} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.appointments')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.calendar')}</p>
+              <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.primary }} />
+            </div>
+          </motion.button>
+
+          {/* 5. Eventos */}
+          <motion.button
+            onClick={handleEvents}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
             style={{
               backgroundColor: themeColors.background || 'white',
@@ -321,18 +398,19 @@ export default function Home() {
             transition={{ delay: 0.8 }}
           >
             <div className="text-center">
-              <div 
+              <div
                 className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: themeColors.primary }}
               >
                 <Calendar className="w-8 h-8" style={{ color: 'white' }} />
               </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Agendamentos</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Calendário e gestão</p>
-              <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.primary }} />
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.events')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.events')}</p>
+              <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
             </div>
           </motion.button>
 
+          {/* 6. Documentos */}
           <motion.button
             onClick={handleDocuments}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
@@ -348,18 +426,19 @@ export default function Home() {
             transition={{ delay: 0.9 }}
           >
             <div className="text-center">
-              <div 
+              <div
                 className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: themeColors.primary }}
               >
                 <FileText className="w-8 h-8" style={{ color: 'white' }} />
               </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Documentos</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Receituário e termos</p>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.documents')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.documents')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
             </div>
           </motion.button>
 
+          {/* 7. Financeiro */}
           <motion.button
             onClick={handleFinancial}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
@@ -375,18 +454,19 @@ export default function Home() {
             transition={{ delay: 1.0 }}
           >
             <div className="text-center">
-              <div 
+              <div
                 className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: themeColors.primary }}
               >
                 <DollarSign className="w-8 h-8" style={{ color: 'white' }} />
               </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Financeiro</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Controle financeiro</p>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.financial')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.financial')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.primary }} />
             </div>
           </motion.button>
 
+          {/* 8. Configurações */}
           <motion.button
             onClick={handleSettings}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
@@ -402,14 +482,42 @@ export default function Home() {
             transition={{ delay: 1.1 }}
           >
             <div className="text-center">
-              <div 
+              <div
                 className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: themeColors.primary }}
               >
                 <Settings className="w-8 h-8" style={{ color: 'white' }} />
               </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Configurações</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Personalize o sistema</p>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.settings')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.settings')}</p>
+              <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
+            </div>
+          </motion.button>
+
+          {/* 9. Sobre */}
+          <motion.button
+            onClick={handleAbout}
+            className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
+            style={{
+              backgroundColor: themeColors.background || 'white',
+              borderColor: themeColors.border || themeColors.primary + '40',
+              borderWidth: '2px'
+            }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
+          >
+            <div className="text-center">
+              <div
+                className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
+                style={{ backgroundColor: themeColors.primary }}
+              >
+                <Info className="w-8 h-8" style={{ color: 'white' }} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.about')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.about')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
             </div>
           </motion.button>
