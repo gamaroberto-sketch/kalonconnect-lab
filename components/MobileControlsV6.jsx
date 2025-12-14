@@ -10,6 +10,7 @@ const MobileControlsV6 = () => {
     // 🔴 REFACTOR: Use LiveKit Hooks directly for reliable control
     const { localParticipant } = useLocalParticipant();
     const room = useRoomContext();
+    const { endSession } = useVideoPanel(); // 🟢 Connect to Central Logic
 
     // Track states directly from LiveKit
     const isMicrophoneEnabled = localParticipant?.isMicrophoneEnabled ?? false;
@@ -54,11 +55,11 @@ const MobileControlsV6 = () => {
     const [hasEnded, setHasEnded] = React.useState(false);
 
     const handleEndCall = () => {
-        alert("Botão Encerrar Clicado");
-        if (confirm("Deseja sair da sala?")) {
+        if (confirm("Deseja encerrar o atendimento?")) {
+            console.log("📴 Client requested disconnect via MobileControls");
             room?.disconnect();
-            // 🟢 v5.23: Stay on page, show "Session Ended" message. No redirect.
-            setHasEnded(true);
+            // 🟢 v9.0: Redirect via Central Context
+            endSession('/home');
         }
     };
 
@@ -111,7 +112,7 @@ const MobileControlsV6 = () => {
             {/* Version Marker & Room Name for debugging */}
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center pointer-events-none">
                 <div className="text-xs font-bold text-indigo-300 bg-black/80 px-4 py-2 rounded-full whitespace-nowrap mb-1 border border-indigo-500/50 shadow-lg">
-                    v7.0 - CLOUD (HD) | State: {room?.state || "N/A"} | Room: {!!room}
+                    v7.5 - CLOUD (HD) | State: {room?.state || "N/A"} | Room: {room?.name || "N/A"}
                 </div>
             </div>
         </div>
