@@ -59,7 +59,7 @@ const MobileControlsV6 = () => {
             console.log("📴 Client requested disconnect via MobileControls");
             room?.disconnect();
             // 🟢 v9.0: Redirect via Central Context
-            endSession('/home');
+            endSession('/');  // Redirect to Landing Page (Public) instead of /home (Protected)
         }
     };
 
