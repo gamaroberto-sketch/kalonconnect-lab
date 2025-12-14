@@ -54,63 +54,64 @@ const MobileControlsV6 = () => {
 
     const [hasEnded, setHasEnded] = React.useState(false);
 
-    if (confirm("Deseja encerrar o atendimento?")) {
-        console.log("📴 Client requested disconnect via MobileControls");
-        room?.disconnect();
-        // 🟢 v9.1: Show Exit Screen instead of redirecting immediately
-        setHasEnded(true);
+    const handleEndCall = () => {
+        if (confirm("Deseja encerrar o atendimento?")) {
+            console.log("📴 Client requested disconnect via MobileControls");
+            room?.disconnect();
+            // 🟢 v9.1: Show Exit Screen instead of redirecting immediately
+            setHasEnded(true);
+        }
+    };
+
+    const buttonClass = "p-4 rounded-full transition-all duration-200 flex items-center justify-center shadow-lg active:scale-95 text-white";
+
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    if (!mounted) return null;
+
+    if (hasEnded) {
+        // 🟢 v5.25: Dynamic Branding
+        return <ClientExitScreen />;
     }
-};
 
-const buttonClass = "p-4 rounded-full transition-all duration-200 flex items-center justify-center shadow-lg active:scale-95 text-white";
+    // 🟢 v5.5 INLINE RESCUE - No Portal, just standard fixed div
+    return (
+        <div style={{ zIndex: 99999999, position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)' }} className="flex items-center gap-6 bg-black/80 backdrop-blur-md px-6 py-4 rounded-full border border-white/20 shadow-2xl safe-area-bottom w-max max-w-[90vw]">
+            {/* Audio Toggle */}
+            <button
+                type="button"
+                onClick={toggleAudio}
+                className={`${buttonClass} ${isMicrophoneEnabled ? "bg-gray-700 hover:bg-gray-600" : "bg-red-500 hover:bg-red-600"}`}
+            >
+                {isMicrophoneEnabled ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
+            </button>
 
-const [mounted, setMounted] = React.useState(false);
+            {/* Video Toggle */}
+            <button
+                type="button"
+                onClick={toggleVideo}
+                className={`${buttonClass} ${isCameraEnabled ? "bg-gray-700 hover:bg-gray-600" : "bg-red-500 hover:bg-red-600"}`}
+            >
+                {isCameraEnabled ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
+            </button>
 
-React.useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-}, []);
-
-if (!mounted) return null;
-
-if (hasEnded) {
-    // 🟢 v5.25: Dynamic Branding
-    return <ClientExitScreen />;
-}
-
-// 🟢 v5.5 INLINE RESCUE - No Portal, just standard fixed div
-return (
-    <div style={{ zIndex: 99999999, position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)' }} className="flex items-center gap-6 bg-black/80 backdrop-blur-md px-6 py-4 rounded-full border border-white/20 shadow-2xl safe-area-bottom w-max max-w-[90vw]">
-        {/* Audio Toggle */}
-        <button
-            type="button"
-            onClick={toggleAudio}
-            className={`${buttonClass} ${isMicrophoneEnabled ? "bg-gray-700 hover:bg-gray-600" : "bg-red-500 hover:bg-red-600"}`}
-        >
-            {isMicrophoneEnabled ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
-        </button>
-
-        {/* Video Toggle */}
-        <button
-            type="button"
-            onClick={toggleVideo}
-            className={`${buttonClass} ${isCameraEnabled ? "bg-gray-700 hover:bg-gray-600" : "bg-red-500 hover:bg-red-600"}`}
-        >
-            {isCameraEnabled ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
-        </button>
-
-        {/* End Session */}
-        <button
-            type="button"
-            onClick={handleEndCall}
-            className={`${buttonClass} bg-red-600 hover:bg-red-700`}
-        >
-            <PhoneOff className="w-6 h-6" />
-        </button>
+            {/* End Session */}
+            <button
+                type="button"
+                onClick={handleEndCall}
+                className={`${buttonClass} bg-red-600 hover:bg-red-700`}
+            >
+                <PhoneOff className="w-6 h-6" />
+            </button>
 
 
-    </div>
-);
+        </div>
+    );
 };
 
 export default MobileControlsV6;
