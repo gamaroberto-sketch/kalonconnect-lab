@@ -803,24 +803,24 @@ export const VideoPanelProvider = ({
     };
   }, [isSessionActive, isSessionStarted, localSessionTime]);
 
-  const endSession = () => {
-    setIsSessionActive(false);
+  // 🟢 FIX v9.0: Centralized End Session Logic
+  const endSession = useCallback((postSaleUrl = '/home') => {
+    console.log("🛑 Ending Session...");
     setIsSessionStarted(false);
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
+    setIsSessionActive(false);
+    setLiveKitToken(null);
+    // setLiveKitConnect(false); // Removed: Not in scope (handled by token=null)
+
+    // Stop recording if active
+    if (recordingState.isRecording) {
+      setRecordingState(prev => ({ ...prev, isRecording: false }));
     }
-    setIsConnected(false);
-    setIsCameraPreviewOn(false);
-    setIsVideoOn(false);
-    setIsAudioOn(false);
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
+
+    // Redirect
+    if (typeof window !== 'undefined') {
+      window.location.href = postSaleUrl;
     }
-    if (onSessionEnd) {
-      onSessionEnd({ duration: localSessionTime, wasRecorded: false });
-    }
-  };
+  }, [recordingState.isRecording]);
 
   const handleOpenSettings = () => {
     if (typeof window !== "undefined") {
@@ -919,24 +919,7 @@ export const VideoPanelProvider = ({
     handleSessionPause,
     handleSessionResume,
     handleSessionReset,
-    // 🟢 FIX v9.0: Centralized End Session Logic
-    const endSession = useCallback((postSaleUrl = '/home') => {
-      console.log("🛑 Ending Session...");
-      setIsSessionStarted(false);
-      setIsSessionActive(false);
-      setLiveKitToken(null);
-      setLiveKitConnect(false);
-
-      // Stop recording if active
-      if (recordingState.isRecording) {
-        setRecordingState(prev => ({ ...prev, isRecording: false }));
-      }
-
-      // Redirect
-      if (typeof window !== 'undefined') {
-        window.location.href = postSaleUrl;
-      }
-    }, [recordingState.isRecording]);
+    endSession,
     handleOpenSettings,
     formatTime,
     // LiveKit integration
