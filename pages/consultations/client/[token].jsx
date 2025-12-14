@@ -84,6 +84,11 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
             serverUrl={liveKitUrl}
             roomName={roomName}
             isProfessional={false}
+            video={true} // 🟢 Client MUST publish immediately
+            audio={true}
+            connectOptions={{
+              autoSubscribe: true,
+            }}
           >
             <MobileControlsV6 />
           </LiveKitRoomWrapped>

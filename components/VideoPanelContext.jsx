@@ -425,8 +425,7 @@ export const VideoPanelProvider = ({
         requestAnimationFrame(waitForDimensions);
       }
 
-      setIsConnected(true);
-      console.log('✅ setIsConnected(true) executado');
+      console.log('✅ Local stream ready');
       return stream;
     } catch (error) {
       console.log("❌ Erro ao acessar mídia:", error);
@@ -536,7 +535,7 @@ export const VideoPanelProvider = ({
       console.log('🎯 Desligando câmera...');
       stream.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
-      setIsConnected(false);
+      // setIsConnected(false); // 🟢 Fix: Don't change connection state on local preview toggle
       setIsCameraPreviewOn(false);
       if (isVideoOn) {
         setIsVideoOn(false);
@@ -920,7 +919,24 @@ export const VideoPanelProvider = ({
     handleSessionPause,
     handleSessionResume,
     handleSessionReset,
-    endSession,
+    // 🟢 FIX v9.0: Centralized End Session Logic
+    const endSession = useCallback((postSaleUrl = '/home') => {
+      console.log("🛑 Ending Session...");
+      setIsSessionStarted(false);
+      setIsSessionActive(false);
+      setLiveKitToken(null);
+      setLiveKitConnect(false);
+
+      // Stop recording if active
+      if (recordingState.isRecording) {
+        setRecordingState(prev => ({ ...prev, isRecording: false }));
+      }
+
+      // Redirect
+      if (typeof window !== 'undefined') {
+        window.location.href = postSaleUrl;
+      }
+    }, [recordingState.isRecording]);
     handleOpenSettings,
     formatTime,
     // LiveKit integration

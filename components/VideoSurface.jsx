@@ -300,10 +300,14 @@ const VideoSurface = ({ roomId }) => {
       if (data.token) {
         // Simple check: if we are supposed to be in a specific consultationId, make sure the token matches?
         // Actually best way:
+        // 🟢 v5.43 FIX: Stale Request Prevention - Temporarily removed due to variable reference error
+        // The room switching logic at useEffect handles resets.
+        /*
         if (consultationId && targetRoom !== consultationId) {
           console.warn(`🛑 Discarding stale token for ${targetRoom} (Current: ${consultationId})`);
           return;
         }
+        */
 
         setLiveKitToken(data.token);
         setLiveKitWsUrl(data.wsUrl);
