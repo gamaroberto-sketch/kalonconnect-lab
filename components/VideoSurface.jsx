@@ -209,9 +209,8 @@ const VideoSurface = ({ roomId }) => {
     localVideoRef,
     consultationId,
     currentStream,
-    currentStream,
-    setIsConnected, // 🟢 FIX: Ensure Setter is destructured
-    isConnected,    // 🟢 FIX: Ensure State is destructured (for Status Badge)
+    setIsConnected,
+    isConnected,
     isSessionStarted,
     toggleScreenShare,
     setConsultationId,
