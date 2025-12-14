@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { VideoOff, Loader2 } from "lucide-react";
 import { useVideoPanel } from "./VideoPanelContext";
 import { useTranslation } from '../hooks/useTranslation';
+import { useConsultationSession } from '../hooks/useConsultationSession'; // 🟢 Added missing import
 import { LiveKitRoom, RoomAudioRenderer, useTracks, useLocalParticipant, VideoTrack, useRoomContext } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
