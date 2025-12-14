@@ -241,11 +241,14 @@ const VideoSurface = ({ roomId }) => {
       return;
     }
 
-    if ((isSessionStarted || isProfessional) && !liveKitConnect && !isConnecting && !liveKitToken) {
+    // 🟢 v8.0 OPTIMIZATION: Connect ONLY when Session Starts (Save Credits)
+    // We removed '|| isProfessional' so user can enter room, adjust settings,
+    // and see local preview WITHOUT connecting to LiveKit.
+    if (isSessionStarted && !liveKitConnect && !isConnecting && !liveKitToken) {
       console.log("🚀 LiveKit auto-connecting for consultation:", consultationId);
       connectLiveKit();
     }
-  }, [isSessionStarted, liveKitConnect, isConnecting, liveKitToken, isProfessional, consultationId, fatalError]);
+  }, [isSessionStarted, liveKitConnect, isConnecting, liveKitToken, consultationId, fatalError]);
 
   // Switch Room Logic
   useEffect(() => {
