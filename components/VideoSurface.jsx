@@ -269,14 +269,21 @@ const VideoSurface = ({ roomId }) => {
       setIsConnecting(true);
       connectionAttempts.current += 1;
 
-      const targetRoom = consultationId || roomId || "consultation-room";
-      console.log(`🎥 Connecting to: ${targetRoom}`);
+      // 🟢 FIX v9.0: Normalize Room Name to match Client
+      // Client Page uses: `consulta-${slug}`
+      // Professional Context usually provides just the slug (e.g. "roberto-gama")
+      let roomToConnect = consultationId || roomId || "consultation-room";
+      if (!roomToConnect.startsWith('consulta-') && !roomToConnect.startsWith('event-')) {
+        roomToConnect = `consulta-${roomToConnect}`;
+      }
+
+      console.log(`🎥 Connecting to: ${roomToConnect}`);
 
       const res = await fetch("/api/livekit/token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          roomName: targetRoom,
+          roomName: roomToConnect,
           participantName: isProfessional ? "Profissional" : "Cliente",
         }),
       });
