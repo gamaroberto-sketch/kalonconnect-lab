@@ -2,6 +2,9 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Calendar, Clipboard, Loader2, Mail, User, XCircle, Clock } from "lucide-react";
+import { useTranslation } from "../hooks/useTranslation";
+import ModernButton from "./ModernButton";
+import { useTheme } from "./ThemeProvider";
 
 const DEFAULT_HOURS = 48;
 
@@ -35,6 +38,9 @@ const buildLink = (invite) => {
 };
 
 const DemoInvitesPanel = () => {
+  const { t } = useTranslation();
+  const { getThemeColors } = useTheme();
+  const themeColors = getThemeColors();
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -63,7 +69,7 @@ const DemoInvitesPanel = () => {
       setInvites(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-      setError(err.message || "Falha ao carregar convites.");
+      setError(err.message || t('demoInvites.messages.errorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -97,10 +103,10 @@ const DemoInvitesPanel = () => {
       });
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        throw new Error(payload?.error || "Não foi possível criar o convite demo.");
+        throw new Error(payload?.error || t('demoInvites.messages.errorCreate'));
       }
       const invite = await response.json();
-      setSuccess("Convite criado com sucesso! Link copiado para a área de transferência.");
+      setSuccess(t('demoInvites.messages.success'));
       setFormValues({ name: "", email: "", hours: DEFAULT_HOURS });
       try {
         await navigator.clipboard.writeText(invite.link || buildLink(invite));
@@ -124,10 +130,10 @@ const DemoInvitesPanel = () => {
         method: "PUT"
       });
       if (!response.ok) {
-        throw new Error("Não foi possível encerrar o convite.");
+        throw new Error(t('demoInvites.messages.errorExpire'));
       }
       await fetchInvites();
-      setSuccess("Convite encerrado.");
+      setSuccess(t('demoInvites.messages.inviteExpired'));
     } catch (err) {
       console.error(err);
       setError(err.message || "Erro ao encerrar o convite.");
@@ -140,10 +146,10 @@ const DemoInvitesPanel = () => {
     resetMessages();
     try {
       await navigator.clipboard.writeText(buildLink(invite));
-      setSuccess("Link copiado!");
+      setSuccess(t('demoInvites.messages.linkCopied'));
     } catch (err) {
       console.error(err);
-      setError("Não foi possível copiar o link automaticamente.");
+      setError(t('demoInvites.messages.errorCopy'));
     } finally {
       setTimeout(() => resetMessages(), 3000);
     }
@@ -160,17 +166,17 @@ const DemoInvitesPanel = () => {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-50">
-            Convites de Demonstração
+            {t('demoInvites.title')}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Gere links temporários para que terapeutas testem a plataforma.
+            {t('demoInvites.subtitle')}
           </p>
         </div>
       </div>
 
       <form onSubmit={handleCreate} className="grid gap-4 md:grid-cols-4">
         <label className="flex flex-col gap-2 text-sm text-gray-700 dark:text-gray-300">
-          Nome do convidado
+          {t('demoInvites.form.guestName')}
           <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-emerald-400 focus-within:ring-1 focus-within:ring-emerald-200 dark:border-gray-700 dark:bg-gray-900">
             <User className="h-4 w-4 text-gray-400" />
             <input
@@ -180,13 +186,13 @@ const DemoInvitesPanel = () => {
               onChange={handleChange}
               required
               className="flex-1 bg-transparent outline-none placeholder:text-gray-400 dark:text-gray-100"
-              placeholder="Nome completo"
+              placeholder={t('demoInvites.form.guestNamePlaceholder')}
             />
           </div>
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-gray-700 dark:text-gray-300">
-          Email do convidado
+          {t('demoInvites.form.guestEmail')}
           <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-emerald-400 focus-within:ring-1 focus-within:ring-emerald-200 dark:border-gray-700 dark:bg-gray-900">
             <Mail className="h-4 w-4 text-gray-400" />
             <input
@@ -196,13 +202,13 @@ const DemoInvitesPanel = () => {
               onChange={handleChange}
               required
               className="flex-1 bg-transparent outline-none placeholder:text-gray-400 dark:text-gray-100"
-              placeholder="email@exemplo.com"
+              placeholder={t('demoInvites.form.guestEmailPlaceholder')}
             />
           </div>
         </label>
 
         <label className="flex flex-col gap-2 text-sm text-gray-700 dark:text-gray-300">
-          Duração (horas)
+          {t('demoInvites.form.duration')}
           <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-emerald-400 focus-within:ring-1 focus-within:ring-emerald-200 dark:border-gray-700 dark:bg-gray-900">
             <Clock className="h-4 w-4 text-gray-400" />
             <input
@@ -218,33 +224,25 @@ const DemoInvitesPanel = () => {
         </label>
 
         <div className="flex items-end">
-          <button
+          <ModernButton
             type="submit"
             disabled={creating}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+            variant="primary"
+            size="lg"
+            className="w-full"
+            icon={creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Clipboard className="w-4 h-4" />}
           >
-            {creating ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Gerando...
-              </>
-            ) : (
-              <>
-                <Clipboard className="h-4 w-4" />
-                Gerar convite
-              </>
-            )}
-          </button>
+            {creating ? t('demoInvites.form.generating') : t('demoInvites.form.generateButton')}
+          </ModernButton>
         </div>
       </form>
 
       {(error || success) && (
         <div
-          className={`rounded-lg border px-4 py-3 text-sm ${
-            error
-              ? "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200"
-              : "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"
-          }`}
+          className={`rounded-lg border px-4 py-3 text-sm ${error
+            ? "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200"
+            : "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"
+            }`}
         >
           {error || success}
         </div>
@@ -254,12 +252,12 @@ const DemoInvitesPanel = () => {
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
           <thead className="bg-gray-50 dark:bg-gray-900/40">
             <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-              <th className="px-4 py-3">Convidado</th>
-              <th className="px-4 py-3">E-mail</th>
-              <th className="px-4 py-3">Criado em</th>
-              <th className="px-4 py-3">Expira em</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Ações</th>
+              <th className="px-4 py-3">{t('demoInvites.table.guest')}</th>
+              <th className="px-4 py-3">{t('demoInvites.table.email')}</th>
+              <th className="px-4 py-3">{t('demoInvites.table.createdAt')}</th>
+              <th className="px-4 py-3">{t('demoInvites.table.expiresAt')}</th>
+              <th className="px-4 py-3">{t('demoInvites.table.status')}</th>
+              <th className="px-4 py-3 text-right">{t('demoInvites.table.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -272,19 +270,20 @@ const DemoInvitesPanel = () => {
             ) : sortedInvites.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                  Nenhum convite de demonstração gerado ainda.
+                  {t('demoInvites.messages.noInvites')}
                 </td>
               </tr>
             ) : (
               sortedInvites.map((invite) => {
                 const link = buildLink(invite);
                 const status = computeStatus(invite);
-                const statusBadge =
-                  status === "active"
-                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
-                    : status === "used"
-                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200"
-                    : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200";
+                const getStatusStyle = (s) => {
+                  switch (s) {
+                    case 'active': return { backgroundColor: themeColors.primary + '20', color: themeColors.primary };
+                    case 'used': return { backgroundColor: themeColors.secondary + '20', color: themeColors.secondary };
+                    default: return { backgroundColor: themeColors.error + '20', color: themeColors.error };
+                  }
+                };
 
                 return (
                   <tr key={invite.id} className="text-gray-600 dark:text-gray-300">
@@ -295,10 +294,13 @@ const DemoInvitesPanel = () => {
                     <td className="px-4 py-3">{formatDateTime(invite.createdAt)}</td>
                     <td className="px-4 py-3">{formatDateTime(invite.expiresAt)}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusBadge}`}>
-                        {status === "active" && "✅ Ativo"}
-                        {status === "used" && "📌 Utilizado"}
-                        {status === "expired" && "⌛ Expirado"}
+                      <span
+                        className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                        style={getStatusStyle(status)}
+                      >
+                        {status === "active" && t('demoInvites.status.active')}
+                        {status === "used" && t('demoInvites.status.used')}
+                        {status === "expired" && t('demoInvites.status.expired')}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -306,20 +308,32 @@ const DemoInvitesPanel = () => {
                         <button
                           type="button"
                           onClick={() => handleCopy(invite)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-600 transition hover:border-emerald-300 hover:text-emerald-600 dark:border-gray-600 dark:text-gray-300 dark:hover:border-emerald-500 dark:hover:text-emerald-300"
+                          className="inline-flex items-center gap-1 rounded-lg border px-3 py-1 text-xs font-semibold transition"
+                          style={{
+                            borderColor: themeColors.border || '#e5e7eb',
+                            color: themeColors.textSecondary || '#6b7280'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = themeColors.primary;
+                            e.currentTarget.style.color = themeColors.primary;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = themeColors.border || '#e5e7eb';
+                            e.currentTarget.style.color = themeColors.textSecondary || '#6b7280';
+                          }}
                         >
                           <Clipboard className="h-3.5 w-3.5" />
-                          Copiar link
+                          {t('demoInvites.actions.copyLink')}
                         </button>
                         {status === "active" && (
-                          <button
-                            type="button"
+                          <ModernButton
                             onClick={() => handleExpire(invite.id)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/50 dark:text-red-300 dark:hover:bg-red-900/40"
+                            variant="danger"
+                            size="sm"
+                            icon={<XCircle className="h-3.5 w-3.5" />}
                           >
-                            <XCircle className="h-3.5 w-3.5" />
-                            Encerrar
-                          </button>
+                            {t('demoInvites.actions.expire')}
+                          </ModernButton>
                         )}
                       </div>
                     </td>
@@ -338,3 +352,5 @@ export default DemoInvitesPanel;
 
 
 
+
+// Force reload - 12/02/2025 13:58:28

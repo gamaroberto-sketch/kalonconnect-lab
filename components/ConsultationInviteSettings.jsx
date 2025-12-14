@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  MessageSquare, 
-  Mail, 
-  Clock, 
-  CheckCircle, 
+import {
+  MessageSquare,
+  Mail,
+  Clock,
+  CheckCircle,
   AlertCircle,
   Send,
   Settings,
@@ -14,31 +14,41 @@ import {
   Smartphone
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
+import { formatDateObject } from '../utils/formatDate';
 
 const ConsultationInviteSettings = () => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  
+  const { t, language } = useTranslation();
+
   // Estados para configurações de envio
   const [autoSendEnabled, setAutoSendEnabled] = useState(false);
   const [sendOnDayBefore, setSendOnDayBefore] = useState(false);
   const [sendOnDayOf, setSendOnDayOf] = useState(false);
   const [send10MinBefore, setSend10MinBefore] = useState(false);
-  
+
   // Horários editáveis
   const [dayBeforeTime, setDayBeforeTime] = useState('18:00');
   const [dayOfTime, setDayOfTime] = useState('08:00');
-  
+
   // Canais de envio
   const [useWhatsApp, setUseWhatsApp] = useState(true);
   const [useEmail, setUseEmail] = useState(true);
-  
+
   // Link do Whereby e mensagem customizada
   const [wherebyLink, setWherebyLink] = useState('https://whereby.com/kalon-os-consulta');
-  const [customMessage, setCustomMessage] = useState(`Olá! Confirmando sua consulta online [data/hora].  
-Para participar, basta acessar este link no horário marcado:  
-[LINK_WHERBY_DO_PROFISSIONAL]  
-Qualquer dúvida, é só responder a esta mensagem.`);
+  const [customMessage, setCustomMessage] = useState('');
+
+  // Update message when language changes if not edited? 
+  // Better: Initialize local state with translation, but allow user override from localStorage.
+
+  useEffect(() => {
+    // Only set default if not loaded from storage
+    if (!localStorage.getItem('consultationInviteSettings')) {
+      setCustomMessage(t('invites.message.template'));
+    }
+  }, [t]);
 
   // Histórico de envios
   const [sendHistory, setSendHistory] = useState([]);
@@ -75,18 +85,18 @@ Qualquer dúvida, é só responder a esta mensagem.`);
       wherebyLink,
       customMessage
     };
-    
+
     localStorage.setItem('consultationInviteSettings', JSON.stringify(settings));
-    
+
     // Toast de feedback
-    alert('Configurações de convite salvas com sucesso!');
+    alert(t('invites.alerts.saved'));
   };
 
   // Envio manual de teste
   const handleManualSend = () => {
     const message = generateMessage(new Date(), 'Cliente Teste');
-    alert(`Mensagem gerada:\n\n${message}\n\nConfira o histórico abaixo.`);
-    
+    alert(t('invites.alerts.testGenerated').replace('{message}', message));
+
     // Adicionar ao histórico
     setSendHistory(prev => [{
       id: Date.now(),
@@ -100,7 +110,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
 
   // Gerar mensagem personalizada
   const generateMessage = (appointmentDate, clientName) => {
-    const formattedDate = appointmentDate.toLocaleString('pt-BR', {
+    const formattedDate = appointmentDate.toLocaleString(language, {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -111,7 +121,6 @@ Qualquer dúvida, é só responder a esta mensagem.`);
 
     return customMessage
       .replace('[data/hora]', formattedDate)
-      .replace('[LINK_WHERBY_DO_PROFISSIONAL]', wherebyLink)
       .replace('[CLIENTE]', clientName);
   };
 
@@ -123,10 +132,10 @@ Qualquer dúvida, é só responder a esta mensagem.`);
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Envio Automático de Convite da Consulta
+            {t('invites.title')}
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Configure quando e como enviar convites para seus clientes
+            {t('invites.subtitle')}
           </p>
         </div>
       </div>
@@ -135,7 +144,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center space-x-2">
           <MessageSquare className="w-5 h-5" />
-          <span>Canais de Envio</span>
+          <span>{t('invites.channels.title')}</span>
         </h3>
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center space-x-2 cursor-pointer">
@@ -147,7 +156,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
               style={{ accentColor: themeColors.primary }}
             />
             <Smartphone className="w-5 h-5" style={{ color: themeColors.success }} />
-            <span className="text-gray-700 dark:text-gray-300">WhatsApp</span>
+            <span className="text-gray-700 dark:text-gray-300">{t('invites.channels.whatsapp')}</span>
           </label>
           <label className="flex items-center space-x-2 cursor-pointer">
             <input
@@ -158,36 +167,37 @@ Qualquer dúvida, é só responder a esta mensagem.`);
               style={{ accentColor: themeColors.primary }}
             />
             <Mail className="w-5 h-5" style={{ color: themeColors.secondary }} />
-            <span className="text-gray-700 dark:text-gray-300">E-mail</span>
+            <span className="text-gray-700 dark:text-gray-300">{t('invites.channels.email')}</span>
           </label>
         </div>
       </div>
 
-      {/* Link do Whereby */}
+      {/* Link do Whereby - OCULTADO (Sistema Interno em Uso)
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center space-x-2">
           <Calendar className="w-5 h-5" />
-          <span>Link da Sala Whereby</span>
+          <span>{t('invites.whereby.title')}</span>
         </h3>
         <input
           type="text"
           value={wherebyLink}
           onChange={(e) => setWherebyLink(e.target.value)}
-          placeholder="https://whereby.com/sua-sala"
+          placeholder={t('invites.whereby.placeholder')}
           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
         />
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Este link será enviado automaticamente aos clientes
+          {t('invites.whereby.help')}
         </p>
       </div>
+      */}
 
       {/* Opções de Envio */}
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center space-x-2">
           <Clock className="w-5 h-5" />
-          <span>Quando Enviar</span>
+          <span>{t('invites.timing.title')}</span>
         </h3>
-        
+
         <div className="space-y-4">
           {/* Envio no dia anterior */}
           <label className="flex items-start space-x-3 cursor-pointer p-3 hover:bg-white dark:hover:bg-gray-800 rounded-lg transition-colors">
@@ -200,7 +210,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
             />
             <div className="flex-1">
               <div className="font-medium text-gray-800 dark:text-white">
-                Enviar no dia anterior, às
+                {t('invites.timing.dayBefore')}
               </div>
               {sendOnDayBefore && (
                 <input
@@ -224,7 +234,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
             />
             <div className="flex-1">
               <div className="font-medium text-gray-800 dark:text-white">
-                Enviar no dia da consulta, às
+                {t('invites.timing.dayOf')}
               </div>
               {sendOnDayOf && (
                 <input
@@ -248,7 +258,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
             />
             <div className="flex-1">
               <div className="font-medium text-gray-800 dark:text-white">
-                Enviar 10 minutos antes do início
+                {t('invites.timing.tenMinBefore')}
               </div>
             </div>
           </label>
@@ -259,17 +269,17 @@ Qualquer dúvida, é só responder a esta mensagem.`);
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center space-x-2">
           <MessageSquare className="w-5 h-5" />
-          <span>Mensagem do Convite (Editável)</span>
+          <span>{t('invites.message.title')}</span>
         </h3>
         <textarea
           value={customMessage}
           onChange={(e) => setCustomMessage(e.target.value)}
           rows={6}
           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-800 dark:text-white font-mono text-sm"
-          placeholder="Digite sua mensagem personalizada..."
+          placeholder={t('invites.message.placeholder')}
         />
         <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
-          Use [data/hora], [LINK_WHERBY_DO_PROFISSIONAL] e [CLIENTE] como placeholders
+          {t('invites.message.help')}
         </p>
       </div>
 
@@ -287,9 +297,9 @@ Qualquer dúvida, é só responder a esta mensagem.`);
           }}
         >
           <CheckCircle className="w-5 h-5" />
-          <span>Salvar Configurações</span>
+          <span>{t('invites.buttons.save')}</span>
         </button>
-        
+
         <button
           onClick={handleManualSend}
           className="px-6 py-3 text-white rounded-lg font-medium transition-colors flex items-center space-x-2"
@@ -302,7 +312,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
           }}
         >
           <Send className="w-5 h-5" />
-          <span>Enviar Teste Agora</span>
+          <span>{t('invites.buttons.test')}</span>
         </button>
       </div>
 
@@ -311,7 +321,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
         <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
           <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center space-x-2">
             <Clock className="w-5 h-5" />
-            <span>Histórico de Envios</span>
+            <span>{t('invites.history.title')}</span>
           </h3>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {sendHistory.map((entry) => (
@@ -323,7 +333,7 @@ Qualquer dúvida, é só responder a esta mensagem.`);
                 )}
                 <div className="flex-1 text-sm">
                   <div className="font-medium text-gray-800 dark:text-white">{entry.client}</div>
-                  <div className="text-gray-600 dark:text-gray-400">{entry.date}</div>
+                  <div className="text-gray-600 dark:text-gray-400">{formatDateObject(new Date(entry.date))}</div>
                 </div>
               </div>
             ))}

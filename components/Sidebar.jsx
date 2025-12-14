@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Home, 
-  Music, 
-  Droplet, 
-  Heart, 
-  Cloud, 
+import {
+  Home,
+  Music,
+  Droplet,
+  Heart,
+  Cloud,
   Settings,
   Sparkles,
   Brain,
@@ -22,16 +22,25 @@ import {
   HelpCircle,
   BookOpen,
   Briefcase,
-  BarChart3
+  BarChart3,
+  Info,
+  Activity,
+  Mail,
+  MessageSquare,
+  PieChart,
+  UserCheck,
+  ShoppingBag
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useAuth } from './AuthContext';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  const { userType } = useAuth();
-  
+  const { userType, user } = useAuth();
+  const { t } = useTranslation();
+
   const handleNavigation = (path) => {
     if (path === 'logout') {
       handleLogout();
@@ -39,6 +48,8 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
       window.location.href = '/home';
     } else if (path === 'client-registration') {
       window.location.href = '/client-registration';
+    } else if (path === 'products') {
+      window.location.href = '/products';
     } else if (path === 'consultations') {
       window.location.href = '/consultations';
     } else if (path === 'agendamentos') {
@@ -59,8 +70,24 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
       window.location.href = '/settings';
     } else if (path === 'profile') {
       window.location.href = '/profile';
+    } else if (path === 'admin-users') {
+      window.location.href = '/admin/users';
+    } else if (path === 'admin-audit-logs') {
+      window.location.href = '/admin/audit-logs';
+    } else if (path === 'admin-activity') {
+      window.location.href = '/admin/activity';
+    } else if (path === 'admin-email-templates') {
+      window.location.href = '/admin/email-templates';
+    } else if (path === 'about') {
+      window.location.href = '/about';
     } else if (path === 'ajuda' || path === 'guia') {
       window.location.href = '/guia-instalacao';
+    } else if (path === 'contact') {
+      window.location.href = '/contact';
+    } else if (path === 'admin-contact') {
+      window.location.href = '/admin/contact';
+    } else if (path === 'admin-referrals') {
+      window.location.href = '/admin/referrals';
     }
   };
 
@@ -72,74 +99,86 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
     window.location.href = '/';
   };
   const menuItems = [
-    { 
-      name: 'Início', 
-      icon: <Home className="w-5 h-5" />, 
+    {
+      name: t('sidebar.home'),
+      icon: <Home className="w-5 h-5" />,
       path: 'home'
     },
-    { 
-      name: 'Perfil do Profissional', 
-      icon: <Briefcase className="w-5 h-5" />, 
+    // Profile merged into Settings (v5.61)
+    /*{
+      name: t('sidebar.profile'),
+      icon: <Briefcase className="w-5 h-5" />,
       path: 'profile'
-    },
-    { 
-      name: 'Cadastro', 
-      icon: <User className="w-5 h-5" />, 
+    },*/
+    {
+      name: t('sidebar.clients'),
+      icon: <User className="w-5 h-5" />,
       path: 'client-registration'
     },
-    { 
-      name: 'Consultas', 
-      icon: <Video className="w-5 h-5" />, 
+    {
+      name: 'Meus Produtos', // TODO: Add translation later
+      icon: <ShoppingBag className="w-5 h-5" />,
+      path: 'products'
+    },
+    {
+      name: t('sidebar.consultations'),
+      icon: <Video className="w-5 h-5" />,
       path: 'consultations'
     },
-    { 
-      name: 'Agendamentos', 
-      icon: <Calendar className="w-5 h-5" />, 
+    {
+      name: t('sidebar.appointments'),
+      icon: <Calendar className="w-5 h-5" />,
       path: 'agendamentos'
     },
-    { 
-      name: 'Eventos', 
-      icon: <Calendar className="w-5 h-5" />, 
+    {
+      name: t('sidebar.events'),
+      icon: <Calendar className="w-5 h-5" />,
       path: 'events'
     },
-    { 
-      name: 'Documentos', 
-      icon: <FileText className="w-5 h-5" />, 
+    {
+      name: t('sidebar.documents'),
+      icon: <FileText className="w-5 h-5" />,
       path: 'documents'
     },
-    { 
-      name: 'Financeiro', 
-      icon: <DollarSign className="w-5 h-5" />, 
+    {
+      name: t('sidebar.financial'),
+      icon: <DollarSign className="w-5 h-5" />,
       path: 'financial'
     },
   ];
 
   if (userType === 'professional') {
-     const financialIndex = menuItems.findIndex((item) => item.path === 'financial');
-     const reportsItem = {
-       name: 'Relatórios',
-       icon: <BarChart3 className="w-5 h-5" />,
-       path: 'reports'
-     };
-     if (financialIndex >= 0) {
-       menuItems.splice(financialIndex + 1, 0, reportsItem);
-     } else {
-       menuItems.push(reportsItem);
-     }
+    // Reports removed
   }
 
   menuItems.push({
-    name: 'Configurações',
+    name: t('sidebar.settings'),
     icon: <Settings className="w-5 h-5" />,
     path: 'settings'
   });
+
   menuItems.push({
-    name: 'Ajuda',
+    name: t('sidebar.contact'),
+    icon: <MessageSquare className="w-5 h-5" />,
+    path: 'contact'
+  });
+
+
+
+
+
+  menuItems.push({
+    name: t('sidebar.about'),
+    icon: <Info className="w-5 h-5" />,
+    path: 'about'
+  });
+  menuItems.push({
+    name: t('sidebar.guide'),
     icon: <HelpCircle className="w-5 h-5" />,
     path: 'ajuda'
   });
   menuItems.push({
-    name: 'Sair',
+    name: t('sidebar.logout'),
     icon: <LogOut className="w-5 h-5" />,
     path: 'logout',
     isLogout: true
@@ -150,22 +189,21 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
       initial={{ x: -256 }}
       animate={{ x: sidebarOpen ? 0 : -256 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={`fixed top-[60px] left-0 w-64 h-[calc(100vh-60px)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-xl border-r border-gray-200/50 dark:border-gray-700/50 z-[900] overflow-y-auto ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}
+      className={`fixed top-[60px] left-0 w-64 h-[calc(100vh-60px)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-xl border-r border-gray-200/50 dark:border-gray-700/50 z-[900] overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
     >
       <div className="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
-        <motion.div 
+        <motion.div
           className="flex items-center space-x-3"
           whileHover={{ scale: 1.05 }}
         >
-          <div 
+          <div
             className="w-8 h-8 rounded-full flex items-center justify-center"
             style={{ backgroundColor: themeColors.primaryDark }}
           >
-            <img 
-              src="/logo.png" 
-              alt="Logo" 
+            <img
+              src="/logo.png"
+              alt="Logo"
               className="w-6 h-6"
               style={{ filter: 'brightness(0) invert(1)' }}
             />
@@ -175,22 +213,21 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
               KalonConnect
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Sistema de Consciência Integrada
+              {t('sidebar.subtitle')}
             </p>
           </div>
         </motion.div>
       </div>
-      
+
       <nav className="p-4 space-y-2">
         {menuItems.map((item, index) => (
           <motion.button
             key={index}
             onClick={() => handleNavigation(item.path)}
-            className={`w-full flex items-center p-3 text-base font-medium rounded-xl transition-all duration-200 ${
-              activeSection === item.path
-                ? 'shadow-md'
-                : 'hover:bg-gray-100/50 dark:hover:bg-gray-700/50 hover:shadow-sm'
-            }`}
+            className={`w-full flex items-center p-3 text-base font-medium rounded-xl transition-all duration-200 ${activeSection === item.path
+              ? 'shadow-md'
+              : 'hover:bg-gray-100/50 dark:hover:bg-gray-700/50 hover:shadow-sm'
+              }`}
             style={activeSection === item.path ? {
               backgroundColor: themeColors.primary,
               color: 'white',
@@ -202,7 +239,7 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
               color: themeColors.primaryDark,
               fontWeight: '600'
             }}
-            whileHover={{ 
+            whileHover={{
               scale: 1.02,
               x: 4,
               transition: { duration: 0.2 }
@@ -213,7 +250,7 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
             transition={{ delay: index * 0.1 }}
           >
             {activeSection === item.path ? (
-              <motion.span 
+              <motion.span
                 style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px' }}
                 whileHover={{ rotate: 5 }}
               >

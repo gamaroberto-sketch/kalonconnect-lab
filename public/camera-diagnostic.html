@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Câmera - Kalonos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status.pending { background: #ffc107; color: #000; }
+        .status.success { background: #28a745; color: white; }
+        .status.error { background: #dc3545; color: white; }
+        .status.info { background: #17a2b8; color: white; }
+        
+        video {
+            width: 100%;
+            max-width: 640px;
+            height: 480px;
+            background: #000;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover { background: #5568d3; transform: translateY(-2px); }
+        button:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        
+        .log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .log-line {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid transparent;
+        }
+        .log-line.error { border-left-color: #dc3545; background: rgba(220, 53, 69, 0.1); }
+        .log-line.success { border-left-color: #28a745; background: rgba(40, 167, 69, 0.1); }
+        .log-line.info { border-left-color: #17a2b8; background: rgba(23, 162, 184, 0.1); }
+        
+        .device-list {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .device-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .device-item:last-child { border-bottom: none; }
+        
+        .recommendation {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .recommendation h3 {
+            color: #856404;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .recommendation ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        .recommendation li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico de Câmera</h1>
+        <p class="subtitle">Ferramenta de diagnóstico para identificar bloqueios de hardware</p>
+
+        <!-- Teste 1: Permissões -->
+        <div class="test-section">
+            <h2>
+                <span id="status1" class="status pending">AGUARDANDO</span>
+                Teste 1: Verificar Permissões
+            </h2>
+            <button onclick="testPermissions()">Iniciar Teste de Permissões</button>
+            <div id="log1" class="log" style="display:none;"></div>
+        </div>
+
+        <!-- Teste 2: Listar Dispositivos -->
+        <div class="test-section">
+            <h2>
+                <span id="status2" class="status pending">AGUARDANDO</span>
+                Teste 2: Listar Câmeras Disponíveis
+            </h2>
+            <button onclick="listDevices()">Listar Dispositivos</button>
+            <div id="devices" class="device-list" style="display:none;"></div>
+            <div id="log2" class="log" style="display:none;"></div>
+        </div>
+
+        <!-- Teste 3: Acesso Direto -->
+        <div class="test-section">
+            <h2>
+                <span id="status3" class="status pending">AGUARDANDO</span>
+                Teste 3: Acesso Direto à Câmera
+            </h2>
+            <button onclick="testDirectAccess()">Testar Acesso Direto</button>
+            <video id="video" autoplay muted playsinline style="display:none;"></video>
+            <div id="log3" class="log" style="display:none;"></div>
+        </div>
+
+        <!-- Teste 4: Teste com Cada Dispositivo -->
+        <div class="test-section">
+            <h2>
+                <span id="status4" class="status pending">AGUARDANDO</span>
+                Teste 4: Testar Cada Câmera Individualmente
+            </h2>
+            <button onclick="testEachDevice()">Testar Todas as Câmeras</button>
+            <div id="log4" class="log" style="display:none;"></div>
+        </div>
+
+        <!-- Recomendações -->
+        <div id="recommendations" style="display:none;"></div>
+    </div>
+
+    <script>
+        let allDevices = [];
+        
+        function log(sectionId, message, type = 'info') {
+            const logEl = document.getElementById(`log${sectionId}`);
+            logEl.style.display = 'block';
+            const line = document.createElement('div');
+            line.className = `log-line ${type}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logEl.appendChild(line);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function setStatus(sectionId, status, text) {
+            const statusEl = document.getElementById(`status${sectionId}`);
+            statusEl.className = `status ${status}`;
+            statusEl.textContent = text;
+        }
+
+        async function testPermissions() {
+            log(1, 'Verificando permissões do navegador...', 'info');
+            setStatus(1, 'pending', 'TESTANDO');
+            
+            try {
+                const result = await navigator.permissions.query({ name: 'camera' });
+                log(1, `Permissão de câmera: ${result.state}`, result.state === 'granted' ? 'success' : 'error');
+                
+                if (result.state === 'granted') {
+                    setStatus(1, 'success', '✅ PERMITIDO');
+                    log(1, 'Câmera tem permissão do navegador', 'success');
+                } else if (result.state === 'prompt') {
+                    setStatus(1, 'info', 'PRECISA AUTORIZAR');
+                    log(1, 'Navegador vai pedir permissão ao acessar câmera', 'info');
+                } else {
+                    setStatus(1, 'error', '❌ BLOQUEADO');
+                    log(1, 'PROBLEMA: Permissão de câmera foi negada!', 'error');
+                    showRecommendation('permission');
+                }
+            } catch (error) {
+                log(1, `Erro ao verificar permissões: ${error.message}`, 'error');
+                setStatus(1, 'error', '❌ ERRO');
+            }
+        }
+
+        async function listDevices() {
+            log(2, 'Listando dispositivos de mídia...', 'info');
+            setStatus(2, 'pending', 'LISTANDO');
+            
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                allDevices = videoDevices;
+                
+                log(2, `Encontradas ${videoDevices.length} câmera(s)`, 'success');
+                
+                const devicesEl = document.getElementById('devices');
+                devicesEl.style.display = 'block';
+                devicesEl.innerHTML = '<h3 style="margin-bottom:10px;">Câmeras Detectadas:</h3>';
+                
+                videoDevices.forEach((device, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'device-item';
+                    div.innerHTML = `
+                        <div>
+                            <strong>${device.label || `Câmera ${index + 1}`}</strong><br>
+                            <small style="color:#666;">ID: ${device.deviceId.substring(0, 20)}...</small>
+                        </div>
+                        <span class="status info">DETECTADA</span>
+                    `;
+                    devicesEl.appendChild(div);
+                    log(2, `📹 ${device.label || `Câmera ${index + 1}`}`, 'info');
+                });
+                
+                setStatus(2, 'success', `✅ ${videoDevices.length} CÂMERA(S)`);
+                
+                if (videoDevices.length === 0) {
+                    log(2, 'PROBLEMA: Nenhuma câmera detectada!', 'error');
+                    showRecommendation('no-devices');
+                }
+            } catch (error) {
+                log(2, `Erro ao listar dispositivos: ${error.message}`, 'error');
+                setStatus(2, 'error', '❌ ERRO');
+            }
+        }
+
+        async function testDirectAccess() {
+            log(3, 'Tentando acesso direto à câmera...', 'info');
+            setStatus(3, 'pending', 'TESTANDO');
+            
+            const video = document.getElementById('video');
+            
+            try {
+                log(3, 'Chamando getUserMedia...', 'info');
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 1280, height: 720 },
+                    audio: false
+                });
+                
+                log(3, '✅ Stream obtido com sucesso!', 'success');
+                log(3, `Tracks: ${stream.getVideoTracks().length} vídeo`, 'success');
+                
+                video.style.display = 'block';
+                video.srcObject = stream;
+                
+                const track = stream.getVideoTracks()[0];
+                const settings = track.getSettings();
+                log(3, `Resolução: ${settings.width}x${settings.height}`, 'info');
+                log(3, `Device: ${settings.deviceId}`, 'info');
+                
+                setStatus(3, 'success', '✅ FUNCIONANDO');
+                log(3, 'CÂMERA ESTÁ FUNCIONANDO PERFEITAMENTE!', 'success');
+                
+            } catch (error) {
+                log(3, `❌ ERRO: ${error.name}`, 'error');
+                log(3, `Mensagem: ${error.message}`, 'error');
+                setStatus(3, 'error', '❌ FALHOU');
+                
+                if (error.name === 'NotReadableError') {
+                    log(3, 'DIAGNÓSTICO: Câmera está sendo usada por outro processo!', 'error');
+                    showRecommendation('not-readable');
+                } else if (error.name === 'NotAllowedError') {
+                    log(3, 'DIAGNÓSTICO: Permissão negada pelo usuário!', 'error');
+                    showRecommendation('not-allowed');
+                } else if (error.name === 'NotFoundError') {
+                    log(3, 'DIAGNÓSTICO: Nenhuma câmera encontrada!', 'error');
+                    showRecommendation('not-found');
+                }
+            }
+        }
+
+        async function testEachDevice() {
+            if (allDevices.length === 0) {
+                log(4, 'Execute o Teste 2 primeiro para listar dispositivos', 'error');
+                return;
+            }
+            
+            log(4, `Testando ${allDevices.length} dispositivo(s)...`, 'info');
+            setStatus(4, 'pending', 'TESTANDO');
+            
+            let successCount = 0;
+            
+            for (let i = 0; i < allDevices.length; i++) {
+                const device = allDevices[i];
+                log(4, `\nTestando: ${device.label || `Câmera ${i + 1}`}`, 'info');
+                
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { deviceId: { exact: device.deviceId } }
+                    });
+                    
+                    log(4, `✅ ${device.label}: FUNCIONANDO`, 'success');
+                    successCount++;
+                    
+                    // Parar stream
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                } catch (error) {
+                    log(4, `❌ ${device.label}: ${error.name}`, 'error');
+                    log(4, `   Motivo: ${error.message}`, 'error');
+                }
+            }
+            
+            if (successCount === allDevices.length) {
+                setStatus(4, 'success', '✅ TODAS OK');
+                log(4, '\n🎉 TODAS AS CÂMERAS FUNCIONAM!', 'success');
+            } else if (successCount > 0) {
+                setStatus(4, 'info', `⚠️ ${successCount}/${allDevices.length} OK`);
+                log(4, `\n⚠️ Apenas ${successCount} de ${allDevices.length} câmeras funcionam`, 'info');
+            } else {
+                setStatus(4, 'error', '❌ NENHUMA OK');
+                log(4, '\n❌ NENHUMA CÂMERA FUNCIONA', 'error');
+                showRecommendation('all-failed');
+            }
+        }
+
+        function showRecommendation(type) {
+            const recEl = document.getElementById('recommendations');
+            recEl.style.display = 'block';
+            
+            const recommendations = {
+                'permission': {
+                    title: '🔒 Problema de Permissão',
+                    items: [
+                        'Clique no ícone de cadeado na barra de endereço',
+                        'Certifique-se que "Câmera" está definida como "Permitir"',
+                        'Recarregue a página após alterar'
+                    ]
+                },
+                'not-readable': {
+                    title: '⚠️ Câmera em Uso por Outro Processo',
+                    items: [
+                        'Feche TODOS os outros programas que usam câmera (Zoom, Teams, Skype, etc.)',
+                        'Feche TODAS as abas do navegador',
+                        'Abra o Gerenciador de Tarefas e finalize processos da Logitech',
+                        'Reinicie o computador',
+                        'Teste novamente'
+                    ]
+                },
+                'not-allowed': {
+                    title: '🚫 Permissão Negada',
+                    items: [
+                        'Você clicou em "Bloquear" quando o navegador pediu permissão',
+                        'Vá em Configurações do Chrome → Privacidade → Câmera',
+                        'Remova este site da lista de bloqueados',
+                        'Recarregue e aceite a permissão'
+                    ]
+                },
+                'all-failed': {
+                    title: '💥 Problema Crítico de Hardware/Driver',
+                    items: [
+                        'Desinstale o driver da câmera no Gerenciador de Dispositivos',
+                        'Desconecte a câmera fisicamente (USB)',
+                        'Reinicie o PC',
+                        'Reconecte a câmera',
+                        'Deixe o Windows instalar o driver genérico',
+                        'NÃO instale o Logitech Capture'
+                    ]
+                }
+            };
+            
+            const rec = recommendations[type];
+            if (rec) {
+                recEl.innerHTML = `
+                    <div class="recommendation">
+                        <h3>${rec.title}</h3>
+                        <ul>
+                            ${rec.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

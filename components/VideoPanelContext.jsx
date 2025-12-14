@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   createContext,
   useCallback,
   useContext,
@@ -8,9 +8,11 @@ import React, {
   useRef,
   useState
 } from "react";
+import { LocalVideoTrack } from "livekit-client";
+import { BackgroundBlur, VirtualBackground } from "@livekit/track-processors";
 import { useTheme } from "./ThemeProvider";
 
-const VideoPanelContext = createContext(null);
+export const VideoPanelContext = createContext(null);
 
 const SESSION_TIMERS_ENDPOINT = "/api/session-timers";
 const SESSION_TIMERS_STORAGE_KEY = "kalon_session_timers";
@@ -37,7 +39,8 @@ export const VideoPanelProvider = ({
   onSessionEnd,
   sessionDuration = 60,
   elapsedTime = 0,
-  warningThreshold = 5
+  warningThreshold = 5,
+  brandingSlug = null
 }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
@@ -58,9 +61,55 @@ export const VideoPanelProvider = ({
   const [isHighMeshEnabled, setIsHighMeshEnabled] = useState(false);
   const [lowPowerMode, setLowPowerMode] = useState(false);
   const [recordingState, setRecordingState] = useState({ active: false, notifyClient: false });
-  
+  const [backgroundConfig, setBackgroundConfig] = useState({ type: 'none' });
+  const [branding, setBranding] = useState({ profile: null, themeColors: null, isLoading: true });
+
+  // Fetch Branding (Client Mode)
+  useEffect(() => {
+    if (!brandingSlug) {
+      if (!isProfessional) console.log("⚠️ No brandingSlug provided for Client mode");
+      return;
+    }
+
+    const fetchProfile = async () => {
+      try {
+        console.log(`🔍 Fetching profile for slug: ${brandingSlug}`);
+        const res = await fetch(`/api/public/professional?slug=${brandingSlug}`);
+        if (res.ok) {
+          const data = await res.json();
+          console.log("✅ Profile loaded:", data.name);
+          setBranding({
+            profile: data,
+            themeColors: data.themeColors || {},
+            isLoading: false
+          });
+        } else {
+          console.error("❌ Failed to fetch professional profile");
+          setBranding(prev => ({ ...prev, isLoading: false }));
+        }
+      } catch (error) {
+        console.error("❌ Error fetching profile:", error);
+        setBranding(prev => ({ ...prev, isLoading: false }));
+      }
+    };
+
+    fetchProfile();
+  }, [brandingSlug, isProfessional]);
+
   // LiveKit integration
-  const [consultationId, setConsultationId] = useState(null);
+  // 🟢 Fix: If we are the professional, our Consultation ID IS our Slug. 
+  // No need to wait for a button click to "set" it.
+  const [consultationId, setConsultationId] = useState(
+    (isProfessional && brandingSlug) ? brandingSlug : null
+  );
+
+  // Sync if prop changes (rare but safe)
+  useEffect(() => {
+    if (isProfessional && brandingSlug && !consultationId) {
+      console.log("🔒 Locking Consultation ID to Professional Slug:", brandingSlug);
+      setConsultationId(brandingSlug);
+    }
+  }, [isProfessional, brandingSlug, consultationId]);
   const [liveKitToken, setLiveKitToken] = useState(null);
   const [liveKitUrl, setLiveKitUrl] = useState(null);
   const [roomName, setRoomName] = useState(null);
@@ -69,12 +118,61 @@ export const VideoPanelProvider = ({
   const remoteVideoRef = useRef(null);
   const screenShareRef = useRef(null);
   const streamRef = useRef(null);
+  const livekitTrackRef = useRef(null);
+  const processorRef = useRef(null);
   const persistenceModeRef = useRef("api");
   const lastPersistRef = useRef(0);
   const persistTimeoutRef = useRef(null);
   const sessionDataRef = useRef(DEFAULT_SESSION_DATA);
   const persistStoreRef = useRef(null);
   const lowPowerRef = useRef(false);
+
+  const updateVideoProcessor = useCallback(async (config) => {
+    try {
+      if (!livekitTrackRef.current) {
+        console.log("⚠️ updateVideoProcessor: livekitTrackRef is null");
+        return;
+      }
+
+      console.log("🎨 updateVideoProcessor: Applying config", config);
+      const track = livekitTrackRef.current;
+
+      if (config.type === 'none') {
+        if (processorRef.current) {
+          await track.setProcessor(null);
+          await processorRef.current.destroy();
+          processorRef.current = null;
+          console.log("✅ Processor removed");
+        }
+        return;
+      }
+
+      if (config.type === 'blur') {
+        const blur = BackgroundBlur(20); // standard blur radius
+        await track.setProcessor(blur);
+        processorRef.current = blur;
+        console.log("✅ Blur processor applied");
+      } else if (config.type === 'image' && config.source) {
+        const virtualBg = VirtualBackground(config.source);
+        await track.setProcessor(virtualBg);
+        processorRef.current = virtualBg;
+        console.log("✅ Virtual background applied:", config.source);
+      }
+    } catch (error) {
+      console.error("❌ Failed to update video processor:", error);
+    }
+  }, []);
+
+  // Effect to apply background changes
+  useEffect(() => {
+    if (livekitTrackRef.current) {
+      // Debounce slightly to avoid rapid updates
+      const timer = setTimeout(() => {
+        updateVideoProcessor(backgroundConfig);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [backgroundConfig, updateVideoProcessor]);
 
   const logPerformanceEvent = useCallback(async (details) => {
     const sessionIdentifier =
@@ -279,7 +377,7 @@ export const VideoPanelProvider = ({
         audio: true
       });
       console.log('✅ Stream criado com sucesso');
-      
+
       stream.getVideoTracks().forEach((track) => {
         track.enabled = false;
         console.log('🎯 Video track desabilitado');
@@ -288,66 +386,45 @@ export const VideoPanelProvider = ({
         track.enabled = false;
         console.log('🎯 Audio track desabilitado');
       });
-      
+
       streamRef.current = stream;
       console.log('✅ Stream salvo na ref');
-      
+
+      // 🟢 Initialize LiveKit LocalVideoTrack
+      // We don't change resolution logic here, just wrap the existing stream
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        console.log('🌟 Creating LiveKit LocalVideoTrack wrapper...');
+        livekitTrackRef.current = new LocalVideoTrack(videoTrack, { name: "camera-native" });
+      }
+
+      // Conectar stream ao elemento de vídeo
       // Conectar stream ao elemento de vídeo
       if (localVideoRef.current) {
-        console.log('🔍 ANTES srcObject:', {
-          elementExists: !!localVideoRef.current,
-          streamActive: stream.active,
-          videoTracks: stream.getVideoTracks().length,
-          trackState: stream.getVideoTracks()[0]?.readyState
-        });
-        
-        localVideoRef.current.srcObject = stream;
-        console.log('✅ Stream conectado ao elemento de vídeo');
-        
+        if (livekitTrackRef.current) {
+          console.log('🔗 Attaching LiveKit track to video element...');
+          livekitTrackRef.current.attach(localVideoRef.current);
+        } else {
+          console.log('⚠️ Setting raw srcObject (fallback)...');
+          localVideoRef.current.srcObject = stream;
+        }
+
         // Habilitar video track para preview local
         stream.getVideoTracks().forEach((track) => {
           track.enabled = true;
-          console.log('✅ Video track habilitado:', {
-            enabled: track.enabled,
-            readyState: track.readyState,
-            muted: track.muted
-          });
         });
-        
-        console.log('🔍 APÓS srcObject:', {
-          srcObjectSet: !!localVideoRef.current.srcObject,
-          videoWidth: localVideoRef.current.videoWidth,
-          videoHeight: localVideoRef.current.videoHeight
-        });
-        
-        // Aguardar dimensões corretas (bug Chromium) com limite
-        let attempts = 0;
-        const maxAttempts = 60; // ~1 segundo
+
         const waitForDimensions = () => {
-          attempts++;
           if (localVideoRef.current && localVideoRef.current.videoWidth > 0) {
             console.log('✅ Dimensões obtidas:', localVideoRef.current.videoWidth, 'x', localVideoRef.current.videoHeight);
             localVideoRef.current.play().catch(e => console.log('❌ Erro no play:', e));
-          } else if (attempts < maxAttempts) {
-            requestAnimationFrame(waitForDimensions);
           } else {
-            console.log('⚠️ Timeout nas dimensões, forçando play mesmo assim');
-            localVideoRef.current.play().catch(e => console.log('❌ Erro no play:', e));
+            requestAnimationFrame(waitForDimensions);
           }
         };
-        
-        // Usar eventos alternativos conforme sugerido na resposta
-        localVideoRef.current.addEventListener('playing', () => {
-          console.log('📺 Evento "playing" disparado!');
-        }, { once: true });
-        
-        localVideoRef.current.addEventListener('resize', () => {
-          console.log('📺 Evento "resize" disparado!');
-        }, { once: true });
-        
         requestAnimationFrame(waitForDimensions);
       }
-      
+
       setIsConnected(true);
       console.log('✅ setIsConnected(true) executado');
       return stream;
@@ -447,7 +524,7 @@ export const VideoPanelProvider = ({
       return;
     }
     console.log('✅ Stream obtido');
-    
+
     const videoTrack = stream.getVideoTracks()[0];
     if (!videoTrack) {
       console.log('❌ Video track não encontrado');
@@ -482,11 +559,17 @@ export const VideoPanelProvider = ({
         console.log('🎯 Stream existe, habilitando track...');
         videoTrack.enabled = true;
         console.log('✅ Video track habilitado');
-        
+
+        // Conectar stream ao elemento de vídeo
         // Conectar stream ao elemento de vídeo
         if (localVideoRef.current) {
-          localVideoRef.current.srcObject = streamRef.current;
-          console.log('✅ Stream conectado ao elemento de vídeo');
+          if (livekitTrackRef.current) {
+            console.log('🔗 Attaching LiveKit track to video element (toggle)...');
+            livekitTrackRef.current.attach(localVideoRef.current);
+          } else {
+            localVideoRef.current.srcObject = streamRef.current;
+            console.log('✅ Stream conectado ao elemento de vídeo (fallback)');
+          }
         }
       }
       setIsCameraPreviewOn(true);
@@ -645,9 +728,9 @@ export const VideoPanelProvider = ({
       const historyEntry =
         duration > 0
           ? {
-              date: formatDate(sessionStart),
-              duration
-            }
+            date: formatDate(sessionStart),
+            duration
+          }
           : null;
       const nextHistory = historyEntry ? [historyEntry, ...prev.history] : prev.history;
       return {
@@ -660,12 +743,12 @@ export const VideoPanelProvider = ({
       history:
         duration > 0
           ? [
-              {
-                date: formatDate(sessionStart),
-                duration
-              },
-              ...sessionDataRef.current.history
-            ]
+            {
+              date: formatDate(sessionStart),
+              duration
+            },
+            ...sessionDataRef.current.history
+          ]
           : sessionDataRef.current.history
     };
     requestImmediatePersist();
@@ -762,13 +845,13 @@ export const VideoPanelProvider = ({
     if (!targetId) {
       return;
     }
-    
+
     try {
       const response = await fetch(
         `/api/livekit/token?roomName=consulta-${targetId}&participantName=professional-${targetId}&isHost=true`
       );
       const data = await response.json();
-      
+
       setLiveKitToken(data.token);
       setLiveKitUrl(data.wsUrl);
       setRoomName(data.roomName);
@@ -846,7 +929,10 @@ export const VideoPanelProvider = ({
     liveKitToken,
     liveKitUrl,
     roomName,
-    fetchLiveKitToken
+    fetchLiveKitToken,
+    backgroundConfig,
+    setBackgroundConfig,
+    branding
   };
 
   return (

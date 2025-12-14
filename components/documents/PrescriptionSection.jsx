@@ -5,11 +5,35 @@ import { motion } from 'framer-motion';
 import { FileText, HelpCircle, Volume2, Save, Download, Printer, Send } from 'lucide-react';
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
+import { useTranslation } from '../../hooks/useTranslation';
+import { useAuth } from '../AuthContext';
 
 const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  
+
+  const { t } = useTranslation();
+
+  const { user } = useAuth(); // Import useAuth from context (needs import)
+  const [profile, setProfile] = useState(null);
+
+  React.useEffect(() => {
+    const loadProfile = async () => {
+      if (user?.id) {
+        try {
+          const response = await fetch(`/api/user/profile?userId=${user.id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setProfile(data);
+          }
+        } catch (error) {
+          console.error("Failed to load profile for prescription branding", error);
+        }
+      }
+    };
+    loadProfile();
+  }, [user]);
+
   const [data, setData] = useState({
     patientName: '',
     medications: '',
@@ -18,189 +42,248 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
     date: new Date().toISOString().split('T')[0]
   });
 
-  const helpText = `Receituário: Preencha o nome do paciente, medicamentos e instruções. Clique no botão de assinatura, desenhe ou anexe sua assinatura, e gere o PDF para imprimir ou enviar. Em dúvida? Veja vídeo rápido ou clique para ouvir esta explicação.`;
+  const helpText = t('documents.help.prescription.text');
 
   const handleSave = () => {
-    alert('Receituário salvo com sucesso!');
+    alert(t('documents.prescription.successSave'));
   };
 
   const handleDownloadPDF = () => {
-    alert('PDF do receituário gerado com sucesso!');
+    alert(t('documents.prescription.successPDF'));
   };
 
   const handlePrint = () => {
-    window.print();
+    const logoHtml = profile?.photo
+      ? `<img src="${profile.photo}" style="height: 80px; width: auto; max-width: 200px; object-fit: contain;" alt="Logo" />`
+      : '';
+
+    // Fallback to simple name if no logo
+    const headerHtml = `
+      <div class="header">
+        <div class="logo-area">
+          ${logoHtml}
+        </div>
+        <div class="professional-info">
+          <h2>${profile?.name || 'Nome do Profissional'}</h2>
+          <p>${profile?.specialty || 'Especialidade'}</p>
+          <p>${profile?.social?.registro || data.crp || ''}</p>
+        </div>
+      </div>
+    `;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Receituário Médico</title>
+          <style>
+            body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #333; max-width: 800px; margin: 0 auto; }
+            .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #0f4c4c; padding-bottom: 20px; margin-bottom: 30px; }
+            .professional-info { text-align: right; }
+            .professional-info h2 { margin: 0; color: #0f4c4c; font-size: 24px; }
+            .professional-info p { margin: 5px 0 0; color: #555; }
+            .content { min-height: 400px; }
+            .field { margin-bottom: 25px; }
+            .label { font-weight: bold; color: #0f4c4c; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+            .value { padding: 10px 0; border-bottom: 1px dashed #ccc; font-size: 16px; line-height: 1.5; }
+            .medication-item { white-space: pre-wrap; }
+            .footer { margin-top: 50px; border-top: 1px solid #ddd; padding-top: 20px; text-align: center; font-size: 12px; color: #777; display: flex; justify-content: space-between; }
+            
+            @media print {
+              body { padding: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          ${headerHtml}
+          
+          <div class="content">
+            <div class="field">
+              <div class="label">Paciente</div>
+              <div class="value" style="font-weight: 500; font-size: 18px;">${data.patientName || ''}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">Prescrição</div>
+              <div class="value medication-item">${data.medications ? data.medications.replace(/\n/g, '<br>') : ''}</div>
+            </div>
+
+            ${data.instructions ? `
+            <div class="field">
+              <div class="label">Instruções Adicionais</div>
+              <div class="value">${data.instructions.replace(/\n/g, '<br>')}</div>
+            </div>
+            ` : ''}
+          </div>
+
+          <div class="field" style="margin-top: 40px; text-align: right;">
+            <div>${profile?.city || 'São Paulo, SP'}, ${new Date(data.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+          </div>
+
+          <div style="margin-top: 60px; display: flex; justify-content: flex-end;">
+            <div style="text-align: center; width: 250px; border-top: 1px solid #333; padding-top: 10px;">
+              <p style="margin: 0; font-weight: bold;">${profile?.name || 'Profissional Responsável'}</p>
+              <p style="margin: 5px 0 0; font-size: 12px;">${profile?.social?.registro || data.crp || ''}</p>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div>
+              ${profile?.social?.site ? `Site: ${profile.social.site[0]}` : ''}<br>
+              ${profile?.social?.instagram ? `Instagram: ${profile.social.instagram[0]}` : ''}
+            </div>
+            <div>
+              Emitido via KalonConnect
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    // Use timeout to ensure images load
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+      // printWindow.close(); // Optional, sometimes better to leave open
+    }, 500);
   };
 
   const handleSend = () => {
-    alert('Receituário enviado ao paciente!');
+    alert(t('documents.prescription.successSend'));
   };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`p-6 rounded-xl border-2 transition-all ${
-        highContrast 
-          ? 'bg-white border-black' 
-          : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-      }`}
+      className={`p-6 rounded-xl border-2 transition-all ${highContrast
+        ? 'bg-white border-black'
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+        }`}
       style={{ fontSize: `${fontSize}px` }}
     >
-      {/* Título com botões de ajuda */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className={`text-2xl font-bold ${
-          highContrast ? 'text-black' : 'text-gray-800 dark:text-white'
-        }`}>
+      {/* Título */}
+      <div className="mb-6 flex justify-between items-start">
+        <h2 className={`text-2xl font-bold ${highContrast ? 'text-black' : 'text-gray-800 dark:text-white'
+          }`}>
           <FileText className="w-6 h-6 inline mr-2" />
-          Receituário
+          {t('documents.prescription.title')}
         </h2>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => onShowHelp('prescription')}
-            className={`p-2 rounded-lg transition-colors ${
-              highContrast
-                ? 'bg-black text-white hover:bg-gray-800'
-                : ''
-            }`}
-            style={!highContrast ? { 
-              backgroundColor: themeColors.primaryLight, 
-              color: themeColors.primary 
-            } : {}}
-            aria-label="Como funciona o receituário?"
-            title="Como funciona?"
-          >
-            <HelpCircle className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => onReadHelp(helpText, 'prescription')}
-            className={`p-2 rounded-lg transition-colors ${
-              highContrast
-                ? 'bg-black text-white hover:bg-gray-800'
-                : ''
-            }`}
-            style={!highContrast ? { 
-              backgroundColor: themeColors.secondaryLight, 
-              color: themeColors.secondary 
-            } : {}}
-            aria-label="Ouvir explicação do receituário"
-            title="Ouvir explicação"
-          >
-            <Volume2 className="w-5 h-5" />
-          </button>
-        </div>
+        {profile && (
+          <div className="text-right text-xs text-gray-500">
+            <div className="flex items-center gap-2 justify-end">
+              {profile.photo && <img src={profile.photo} className="w-8 h-8 rounded-full object-cover" alt="Perfil" />}
+              <span>Usando perfil de: <strong>{profile.name}</strong></span>
+            </div>
+            <div className="mt-1">Para alterar logo/dados, edite seu Perfil.</div>
+          </div>
+        )}
       </div>
 
       {/* Campos do receituário */}
       <div className="space-y-4">
         {/* Nome do Paciente */}
         <div>
-          <label className={`block text-sm font-medium mb-2 ${
-            highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
-          }`}>
-            Nome do Paciente *
+          <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
+            }`}>
+            {t('documents.prescription.patientName')} *
           </label>
           <input
             type="text"
             value={data.patientName}
-            onChange={(e) => setData({...data, patientName: e.target.value})}
-            className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-              highContrast 
-                ? 'border-black bg-white text-black' 
-                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
-            }`}
+            onChange={(e) => setData({ ...data, patientName: e.target.value })}
+            className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${highContrast
+              ? 'border-black bg-white text-black'
+              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
+              }`}
             style={{ fontSize: `${fontSize}px` }}
-            placeholder="Digite o nome completo do paciente"
-            aria-label="Nome do paciente"
+            placeholder={t('documents.prescription.patientPlaceholder')}
+            aria-label={t('documents.prescription.patientName')}
             required
           />
         </div>
 
         {/* Medicamentos */}
         <div>
-          <label className={`block text-sm font-medium mb-2 ${
-            highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
-          }`}>
-            Medicamentos / Prescrição *
+          <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
+            }`}>
+            {t('documents.prescription.medications')} *
           </label>
           <textarea
             value={data.medications}
-            onChange={(e) => setData({...data, medications: e.target.value})}
+            onChange={(e) => setData({ ...data, medications: e.target.value })}
             rows={8}
-            className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all ${
-              highContrast 
-                ? 'border-black bg-white text-black' 
-                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
-            }`}
+            className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all ${highContrast
+              ? 'border-black bg-white text-black'
+              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
+              }`}
             style={{ fontSize: `${fontSize}px` }}
-            placeholder="Digite os medicamentos, dosagens e orientações"
-            aria-label="Medicamentos e prescrição"
+            placeholder={t('documents.prescription.medicationsPlaceholder')}
+            aria-label={t('documents.prescription.medications')}
             required
           />
         </div>
 
         {/* Instruções */}
         <div>
-          <label className={`block text-sm font-medium mb-2 ${
-            highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
-          }`}>
-            Instruções Adicionais
+          <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
+            }`}>
+            {t('documents.prescription.instructions')}
           </label>
           <textarea
             value={data.instructions}
-            onChange={(e) => setData({...data, instructions: e.target.value})}
+            onChange={(e) => setData({ ...data, instructions: e.target.value })}
             rows={4}
-            className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all ${
-              highContrast 
-                ? 'border-black bg-white text-black' 
-                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
-            }`}
+            className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all ${highContrast
+              ? 'border-black bg-white text-black'
+              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
+              }`}
             style={{ fontSize: `${fontSize}px` }}
-            placeholder="Orientações adicionais ao paciente sobre uso e cuidados"
-            aria-label="Instruções adicionais"
+            placeholder={t('documents.prescription.instructionsPlaceholder')}
+            aria-label={t('documents.prescription.instructions')}
           />
         </div>
 
         {/* CRP e Data */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
-            }`}>
-              CRP/CRM *
+            <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
+              }`}>
+              {t('documents.prescription.registry')}
             </label>
             <input
               type="text"
               value={data.crp}
-              onChange={(e) => setData({...data, crp: e.target.value})}
-              className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                highContrast 
-                  ? 'border-black bg-white text-black' 
-                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
-              }`}
+              onChange={(e) => setData({ ...data, crp: e.target.value })}
+              className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${highContrast
+                ? 'border-black bg-white text-black'
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
+                }`}
               style={{ fontSize: `${fontSize}px` }}
-              placeholder="000000"
-              aria-label="Número do conselho profissional"
+              placeholder={profile?.social?.registro || "000000"}
+              aria-label={t('documents.prescription.registry')}
               required
             />
           </div>
           <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
-            }`}>
-              Data *
+            <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
+              }`}>
+              {t('documents.prescription.date')} *
             </label>
             <input
               type="date"
               value={data.date}
-              onChange={(e) => setData({...data, date: e.target.value})}
-              className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                highContrast 
-                  ? 'border-black bg-white text-black' 
-                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
-              }`}
+              onChange={(e) => setData({ ...data, date: e.target.value })}
+              className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${highContrast
+                ? 'border-black bg-white text-black'
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
+                }`}
               style={{ fontSize: `${fontSize}px` }}
-              aria-label="Data do receituário"
+              aria-label={t('documents.prescription.date')}
               required
             />
           </div>
@@ -215,7 +298,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             size="lg"
             className="flex-1 min-w-[150px]"
           >
-            Salvar
+            {t('documents.actions.save')}
           </ModernButton>
           <ModernButton
             onClick={handleDownloadPDF}
@@ -224,7 +307,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             size="lg"
             className="flex-1 min-w-[150px]"
           >
-            PDF
+            {t('documents.actions.pdf')}
           </ModernButton>
           <ModernButton
             onClick={handlePrint}
@@ -233,7 +316,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             size="lg"
             className="flex-1 min-w-[150px]"
           >
-            Imprimir
+            {t('documents.actions.print')}
           </ModernButton>
           <ModernButton
             onClick={handleSend}
@@ -242,7 +325,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             size="lg"
             className="flex-1 min-w-[150px]"
           >
-            Enviar
+            {t('documents.actions.send')}
           </ModernButton>
         </div>
       </div>

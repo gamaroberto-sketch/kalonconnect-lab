@@ -9,15 +9,20 @@ import { Track } from "livekit-client";
 
 // 🎥 COMPONENT 1: LOCAL VIDEO (Persistent)
 // This renders the local camera stream directly from the browser, completely independent of LiveKit connection status.
-const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, t }) => {
+const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, processedTrack, t }) => {
   // Manual attach to prevent ref loss
   useEffect(() => {
-    if (currentStream && localVideoRef.current) {
+    if (processedTrack && localVideoRef.current) {
+      processedTrack.attach(localVideoRef.current);
+      return () => {
+        processedTrack.detach(localVideoRef.current);
+      };
+    } else if (currentStream && localVideoRef.current) {
       localVideoRef.current.srcObject = currentStream;
     } else if (!currentStream && localVideoRef.current) {
       localVideoRef.current.srcObject = null;
     }
-  }, [currentStream, localVideoRef]);
+  }, [currentStream, processedTrack, localVideoRef]);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
@@ -41,7 +46,7 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, t }) 
 // 🎥 COMPONENT 2: REMOTE SESSION (Transient)
 // This handles the connection logic, media publishing, and remote video rendering.
 // It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, isVideoOn, toggleScreenShare }) => {
+const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, toggleScreenShare }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
   const [publishedTrack, setPublishedTrack] = useState(null);
@@ -71,12 +76,19 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
         } else {
           try {
             // 🟢 v5.21: CLONE the track so LiveKit doesn't kill the original on disconnect
-            const clonedTrack = videoTrack.clone();
+            // IF processedTrack exists, use it directly (it's already a LocalVideoTrack)
+            let trackToPublish;
+            if (processedTrack) {
+              console.log("🌟 Publishing Processed Track (Virtual Background)");
+              trackToPublish = processedTrack;
+            } else {
+              trackToPublish = videoTrack.clone();
+            }
 
             // 🕒 v5.45: Small artificial delay to allow ICE to settle?
             // await new Promise(r => setTimeout(r, 500)); 
 
-            const pub = await localParticipant.publishTrack(clonedTrack, {
+            const pub = await localParticipant.publishTrack(trackToPublish, {
               name: 'camera',
               source: Track.Source.Camera,
               // 🛠️ v5.45: Increase timeout for self-hosted instances (default is 10s)
@@ -111,7 +123,7 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     const initTimer = setTimeout(() => handleTrack(), 500);
     return () => clearTimeout(initTimer);
 
-  }, [localParticipant, currentStream, isConnected, isVideoOn, publishedTrack, room]);
+  }, [localParticipant, currentStream, processedTrack, isConnected, isVideoOn, publishedTrack, room]);
 
   // B. 🖥️ Screen Share Sync
   useEffect(() => {
@@ -200,7 +212,8 @@ const VideoSurface = ({ roomId }) => {
     setIsConnected,
     isSessionStarted,
     toggleScreenShare,
-    setConsultationId
+    setConsultationId,
+    processedTrack // 🟢 Virtual Background
   } = useVideoPanel();
 
   const { t } = useTranslation();
@@ -215,12 +228,19 @@ const VideoSurface = ({ roomId }) => {
   const isConnectingRef = React.useRef(false); // 🟢 v5.41 FIX: Ref for synchronous lock
   const connectionAttempts = React.useRef(0);
 
-  // Auto-connect Logic
+  // Auto-connect Logic (🟢 FIX: Only connect if there's an actual consultation)
   useEffect(() => {
+    // 🛡️ SAFETY: Don't auto-connect unless there's a real consultation ID
+    if (!consultationId) {
+      console.log("⏸️ LiveKit auto-connect skipped: No consultation ID");
+      return;
+    }
+
     if ((isSessionStarted || isProfessional) && !liveKitConnect && !isConnecting && !liveKitToken) {
+      console.log("🚀 LiveKit auto-connecting for consultation:", consultationId);
       connectLiveKit();
     }
-  }, [isSessionStarted, liveKitConnect, isConnecting, liveKitToken, isProfessional]);
+  }, [isSessionStarted, liveKitConnect, isConnecting, liveKitToken, isProfessional, consultationId]);
 
   // Switch Room Logic
   useEffect(() => {
@@ -287,10 +307,12 @@ const VideoSurface = ({ roomId }) => {
     <div className="h-full w-full flex flex-col lg:flex-row gap-4 bg-gray-900 rounded-3xl overflow-hidden p-4">
 
       {/* 🟢 COMPONENT 1: LOCAL VIDEO (ALWAYS ON) */}
+      {/* 🟢 COMPONENT 1: LOCAL VIDEO (ALWAYS ON) */}
       <LocalVideoLayer
         localVideoRef={localVideoRef}
         showLocalPreview={showLocalPreview}
         currentStream={currentStream}
+        processedTrack={processedTrack}
         t={t}
       />
 
@@ -334,6 +356,7 @@ const VideoSurface = ({ roomId }) => {
             isScreenSharing={isScreenSharing}
             isConnected={liveKitConnect}
             currentStream={currentStream}
+            processedTrack={processedTrack}
             isVideoOn={isVideoOn}
             toggleScreenShare={toggleScreenShare}
           />

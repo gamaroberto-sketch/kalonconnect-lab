@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Calendar as CalendarIcon, 
-  Clock, 
-  User, 
-  CheckCircle, 
-  XCircle, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+  Clock,
+  User,
+  CheckCircle,
+  XCircle,
   AlertCircle,
   Plus,
   Edit,
@@ -19,27 +19,35 @@ import {
   MapPin
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
 
-const Calendar = ({ 
-  appointments = [], 
-  onDateSelect, 
+const Calendar = ({
+  appointments = [],
+  onDateSelect,
   onAppointmentClick,
   onAddAppointment,
   userType = 'professional',
-  selectedDate = null 
+  selectedDate = null
 }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { t, language } = useTranslation();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(selectedDate);
   const [viewMode, setViewMode] = useState('month'); // 'month', 'week', 'day'
 
   const months = [
-    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    t('calendar.months.january'), t('calendar.months.february'), t('calendar.months.march'),
+    t('calendar.months.april'), t('calendar.months.may'), t('calendar.months.june'),
+    t('calendar.months.july'), t('calendar.months.august'), t('calendar.months.september'),
+    t('calendar.months.october'), t('calendar.months.november'), t('calendar.months.december')
   ];
 
-  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const weekDays = [
+    t('calendar.weekDays.sun'), t('calendar.weekDays.mon'), t('calendar.weekDays.tue'),
+    t('calendar.weekDays.wed'), t('calendar.weekDays.thu'), t('calendar.weekDays.fri'),
+    t('calendar.weekDays.sat')
+  ];
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -50,7 +58,7 @@ const Calendar = ({
     const startingDayOfWeek = firstDay.getDay();
 
     const days = [];
-    
+
     // Dias do mês anterior
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
       const prevDate = new Date(year, month, -i);
@@ -90,15 +98,15 @@ const Calendar = ({
   };
 
   const getAppointmentsForDate = (date) => {
-    return appointments.filter(appointment => 
+    return appointments.filter(appointment =>
       isSameDay(new Date(appointment.date), date)
     );
   };
 
   const isSameDay = (date1, date2) => {
     return date1.getDate() === date2.getDate() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getFullYear() === date2.getFullYear();
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear();
   };
 
   const navigateMonth = (direction) => {
@@ -187,7 +195,7 @@ const Calendar = ({
             whileTap={{ scale: 0.95 }}
           >
             <Plus className="w-4 h-4" />
-            <span>Nova Sessão</span>
+            <span>{t('appointments.newAppointment')}</span>
           </motion.button>
         )}
       </div>
@@ -207,11 +215,10 @@ const Calendar = ({
           <motion.div
             key={index}
             onClick={() => handleDateClick(day)}
-            className={`p-3 min-h-[100px] border rounded-lg cursor-pointer transition-all duration-200 ${
-              day.isCurrentMonth 
-                ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' 
+            className={`p-3 min-h-[100px] border rounded-lg cursor-pointer transition-all duration-200 ${day.isCurrentMonth
+                ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
                 : 'bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-800 text-gray-400 dark:text-gray-600'
-            }`}
+              }`}
             style={{
               ...(day.isToday && {
                 border: `3px solid ${themeColors.primary}`,
@@ -226,11 +233,10 @@ const Calendar = ({
             whileTap={{ scale: 0.98 }}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-sm font-medium ${
-                day.isCurrentMonth 
-                  ? 'text-gray-800 dark:text-white' 
+              <span className={`text-sm font-medium ${day.isCurrentMonth
+                  ? 'text-gray-800 dark:text-white'
                   : 'text-gray-400 dark:text-gray-600'
-              }`}>
+                }`}>
                 {day.date.getDate()}
               </span>
               {day.appointments.length > 0 && (
@@ -249,9 +255,8 @@ const Calendar = ({
                       onAppointmentClick(appointment);
                     }
                   }}
-                  className={`p-1 rounded text-xs flex items-center space-x-1 cursor-pointer transition-colors ${
-                    getAppointmentStatusColor(appointment.status)
-                  }`}
+                  className={`p-1 rounded text-xs flex items-center space-x-1 cursor-pointer transition-colors ${getAppointmentStatusColor(appointment.status)
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -273,15 +278,15 @@ const Calendar = ({
       <div className="mt-6 flex flex-wrap gap-4 text-sm">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-green-500 rounded-full" />
-          <span className="text-gray-600 dark:text-gray-400">Confirmado</span>
+          <span className="text-gray-600 dark:text-gray-400">{t('appointments.status.confirmed')}</span>
         </div>
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-          <span className="text-gray-600 dark:text-gray-400">Pendente</span>
+          <span className="text-gray-600 dark:text-gray-400">{t('appointments.status.pending')}</span>
         </div>
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-red-500 rounded-full" />
-          <span className="text-gray-600 dark:text-gray-400">Cancelado</span>
+          <span className="text-gray-600 dark:text-gray-400">{t('appointments.status.cancelled')}</span>
         </div>
       </div>
     </div>

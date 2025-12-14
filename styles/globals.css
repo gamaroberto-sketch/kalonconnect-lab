@@ -37,10 +37,7 @@ header {
 .absolute.top-20.left-20.bg-indigo-200,
 .absolute.bottom-20.right-20.bg-pink-200,
 .absolute.bottom-20.right-20.bg-purple-200,
-.absolute.bottom-20.right-20.bg-indigo-200,
-.absolute.top-1\\/2.left-1\\/2.bg-pink-200,
-.absolute.top-1\\/2.left-1\\/2.bg-purple-200,
-.absolute.top-1\\/2.left-1\\/2.bg-indigo-200 {
+.absolute.bottom-20.right-20.bg-indigo-200 {
   pointer-events: none !important;
 }
 
@@ -67,6 +64,10 @@ header {
 html {
   scroll-behavior: smooth;
   background-color: var(--color-background, #f9fafb);
+  font-size: 16px;
+  /* Tamanho base para garantir legibilidade */
+  -webkit-text-size-adjust: 100%;
+  /* Previne ajuste automático de fonte no iOS */
 }
 
 body {
@@ -76,7 +77,13 @@ body {
   font-feature-settings: 'rlig' 1, 'calt' 1;
 }
 
-h1, h2, h3, h4, h5, h6, .main-menu {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.main-menu {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
 }
@@ -95,6 +102,7 @@ h1, h2, h3, h4, h5, h6, .main-menu {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -106,6 +114,7 @@ h1, h2, h3, h4, h5, h6, .main-menu {
     opacity: 0;
     transform: translateY(40px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -113,9 +122,12 @@ h1, h2, h3, h4, h5, h6, .main-menu {
 }
 
 @keyframes kalonFloat {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -389,6 +401,129 @@ h1, h2, h3, h4, h5, h6, .main-menu {
 
 :root {
   --alturaHeader: 80px;
-  --corFundoEscuro: #0f172a;
   --corMarcaMedia: rgba(148, 163, 184, 0.35);
+}
+
+/* Efeito Black Piano High-Gloss (Estilo Aparelho Eletrônico) */
+.piano-frame {
+  border-radius: 24px;
+  padding: 10px;
+  /* Moldura (Bezel) */
+  background: linear-gradient(145deg, #1e1e24, #0a0a0c);
+  /* Corpo escuro e brilhante */
+
+  /* Sombras complexas para simular acabamento premium */
+  box-shadow:
+    /* Sombra de elevação */
+    0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    /* Contorno nítido (corte do metal) */
+    0 0 0 1px #000,
+    /* Brilho especular na borda superior (luz de teto) */
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    /* Reflexo suave na borda inferior */
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+  z-index: 1;
+}
+
+/* Reflexo de vidro na moldura (Glossy Overlay) */
+.piano-frame::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 0%, transparent 100%);
+  border-radius: 22px 22px 100% 100% / 10px 10px 5px 5px;
+  pointer-events: none;
+}
+
+/* Estilização da tela interna (o vídeo em si) */
+.piano-screen {
+  border-radius: 16px;
+  /* Cantos da tela ligeiramente menores que a moldura */
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+  /* Sombra interna da tela (profundidade) */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  /* Borda sutil da tela */
+  height: 100%;
+  width: 100%;
+  position: relative;
+  /* Para posicionamento absoluto interno funcionar */
+  background-color: #000;
+  /* Fundo preto para a tela */
+}
+
+.piano-frame:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    0 40px 70px -15px rgba(0, 0, 0, 0.8),
+    0 0 0 1px #000,
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Variação menor para grids */
+.piano-frame-sm {
+  border-radius: 16px;
+  padding: 6px;
+  background: linear-gradient(145deg, #1e1e24, #0a0a0c);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.6),
+    0 0 0 1px #000,
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.piano-frame-sm .piano-screen {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background-color: #000;
+}
+
+.piano-frame-sm:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 15px 35px -5px rgba(0, 0, 0, 0.7),
+    0 0 0 1px #000,
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+/* Forçar vídeo a caber na tela sem cortar (Zoom Out) */
+/* Forçar vídeo a caber na tela sem cortar (Zoom Out) */
+.piano-screen video,
+.piano-screen .lk-video-container video,
+.piano-screen .livekit-video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  position: absolute !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* LiveKit Control Bar Overrides - Thicker Borders */
+.lk-control-bar .lk-button,
+.lk-button-group .lk-button,
+.lk-button {
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s;
+}
+
+.lk-control-bar .lk-button:hover,
+.lk-button-group .lk-button:hover,
+.lk-button:hover {
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }

@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from "react";
@@ -14,6 +15,7 @@ const VideoPanelContext = createContext(null);
 
 const SESSION_TIMERS_ENDPOINT = "/api/session-timers";
 const SESSION_TIMERS_STORAGE_KEY = "kalon_session_timers";
+const PERSIST_THROTTLE_MS = 10000;
 
 const DEFAULT_SESSION_DATA = {
   lastSession: {
@@ -36,92 +38,381 @@ export const VideoPanelProvider = ({
   isProfessional = true,
   onSessionEnd,
   sessionDuration = 60,
-  elapsedTime = 0,
+  elapsedTime: initialElapsedTime = 0,
   warningThreshold = 5
 }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
 
-  const [isVideoOn, setIsVideoOn] = useState(false);
-  const [isAudioOn, setIsAudioOn] = useState(false);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  // ============================================================
+  // 🧱 CENTRALIZED STATE MANAGEMENT
+  // ============================================================
+  const [session, setSession] = useState({
+    status: "idle",
+    duration: sessionDuration,
+    history: [],
+    startedAt: null
+  });
+
+  const [media, setMedia] = useState({
+    isVideoEnabled: false,
+    isAudioEnabled: false,
+    isPreviewOn: false,
+    hasStream: false,
+    isScreenSharing: false
+  });
+
+  const [connection, setConnection] = useState({
+    isConnected: false,
+    isPreConnected: false,
+    lowPowerMode: false
+  });
+
+  // UI State
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const [isSessionActive, setIsSessionActive] = useState(false);
-  const [isSessionStarted, setIsSessionStarted] = useState(false);
-  const [localSessionTime, setLocalSessionTime] = useState(0);
-  const [sessionData, setSessionData] = useState(DEFAULT_SESSION_DATA);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const [showScreenSharePanel, setShowScreenSharePanel] = useState(false);
-  const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
   const [useWhereby, setUseWhereby] = useState(false);
   const [isHighMeshEnabled, setIsHighMeshEnabled] = useState(false);
-  const [lowPowerMode, setLowPowerMode] = useState(false);
   const [recordingState, setRecordingState] = useState({ active: false, notifyClient: false });
-  
-  // LiveKit integration
   const [consultationId, setConsultationId] = useState(null);
-  const [liveKitToken, setLiveKitToken] = useState(null);
-  const [liveKitUrl, setLiveKitUrl] = useState(null);
-  const [roomName, setRoomName] = useState(null);
+  const [permissionError, setPermissionError] = useState(null);
 
+  // Refs for async safety
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const screenShareRef = useRef(null);
   const streamRef = useRef(null);
+  const sessionTimerRef = useRef(null);
+  const persistQueueRef = useRef(null);
+  const lastPersistTimeRef = useRef(0);
   const persistenceModeRef = useRef("api");
-  const lastPersistRef = useRef(0);
-  const persistTimeoutRef = useRef(null);
-  const sessionDataRef = useRef(DEFAULT_SESSION_DATA);
-  const persistStoreRef = useRef(null);
-  const lowPowerRef = useRef(false);
+  const sessionRef = useRef(session);
+  const elapsedTimeStateRef = useRef(initialElapsedTime);
 
-  const logPerformanceEvent = useCallback(async (details) => {
-    const sessionIdentifier =
-      sessionDataRef.current?.lastSession?.start || "unknown";
+  // ============================================================
+  // ⏱ SESSION STATE (declared early for use in persist)
+  // ============================================================
+  const [elapsedTimeState, setElapsedTime] = useState(initialElapsedTime);
+
+  // Update refs when state changes
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
+  useEffect(() => {
+    elapsedTimeStateRef.current = elapsedTimeState;
+  }, [elapsedTimeState]);
+
+  // Sync session duration from props
+  useEffect(() => {
+    setSession(prev => {
+      if (prev.duration === sessionDuration) return prev;
+      return { ...prev, duration: sessionDuration };
+    });
+  }, [sessionDuration]);
+
+  // ============================================================
+  // 💾 UNIFIED PERSISTENCE
+  // ============================================================
+  const persist = useCallback(async (force = false) => {
+    const now = Date.now();
+
+    if (!force && now - lastPersistTimeRef.current < PERSIST_THROTTLE_MS) {
+      if (persistQueueRef.current) clearTimeout(persistQueueRef.current);
+      const delay = PERSIST_THROTTLE_MS - (now - lastPersistTimeRef.current);
+      persistQueueRef.current = setTimeout(() => persist(true), delay);
+      return;
+    }
+
+    lastPersistTimeRef.current = now;
+    if (persistQueueRef.current) {
+      clearTimeout(persistQueueRef.current);
+      persistQueueRef.current = null;
+    }
+
+    const currentSession = sessionRef.current;
+    const currentElapsedTime = elapsedTimeStateRef.current;
+
+    const data = {
+      lastSession: {
+        start: currentSession.startedAt,
+        elapsed: currentSession.status === "idle" ? 0 : currentElapsedTime,
+        status: currentSession.status
+      },
+      history: currentSession.history
+    };
+
+    if (persistenceModeRef.current !== "localStorage") {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+        const response = await fetch(SESSION_TIMERS_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) return;
+        throw new Error("API save failed");
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          persistenceModeRef.current = "localStorage";
+        }
+      }
+    }
+
     try {
-      await fetch("/api/system/performance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId: sessionIdentifier,
-          details
-        })
-      });
-    } catch (error) {
-      console.warn("Não foi possível registrar no log de performance:", error);
+      localStorage.setItem(SESSION_TIMERS_STORAGE_KEY, JSON.stringify(data));
+    } catch {
+      // Ignore storage errors
     }
   }, []);
 
-  useEffect(() => {
-    return () => {
+  // ============================================================
+  // 🧲 MEDIA MANAGER
+  // ============================================================
+  const mediaManager = useRef({
+    // ✅ RESTORED: Standard getUserMedia logic with PHYSICAL CAMERA SELECTION
+    async startStream() {
+      console.log("🎬 mediaManager.startStream: Iniciando Preview Local");
+
+      if (streamRef.current) {
+        return streamRef.current;
+      }
+
+      try {
+        // 🎯 ENUMERATE DEVICES TO FIND PHYSICAL CAMERA
+        console.log("📡 Enumerando dispositivos...");
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+
+        console.log(`📹 Encontradas ${videoDevices.length} câmera(s):`);
+        videoDevices.forEach(d => console.log(`   - ${d.label}`));
+
+        // Procurar pela C920 física (não virtual)
+        const physicalCamera = videoDevices.find(d =>
+          d.label.includes('C920') && !d.label.includes('Logi Capture')
+        );
+
+        const constraints = {
+          video: physicalCamera
+            ? { deviceId: { exact: physicalCamera.deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } }
+            : { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
+          audio: true
+        };
+
+        if (physicalCamera) {
+          console.log(`✅ Usando câmera física: ${physicalCamera.label}`);
+        } else {
+          console.log("⚠️ C920 não encontrada, usando câmera padrão");
+        }
+
+        console.log("📡 Chamando navigator.mediaDevices.getUserMedia...");
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        streamRef.current = stream;
+
+        // Garantir que os tracks comecem habilitados
+        stream.getTracks().forEach(t => t.enabled = true);
+
+        return stream;
+      } catch (error) {
+        console.error("❌ Erro no getUserMedia:", error);
+        setPermissionError(error.message || "Erro de permissão da câmera");
+        return null;
+      }
+    },
+
+    stopStream() {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
       }
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (persistStoreRef.current) {
-        persistStoreRef.current(true);
+      setMedia((prev) => ({ ...prev, hasStream: false, isPreviewOn: false, isVideoEnabled: false, isAudioEnabled: false }));
+      setConnection((prev) => ({ ...prev, isConnected: false }));
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = null;
       }
-    };
-  }, []);
+    },
 
+    async setVideoTrackEnabled(enabled) {
+      const stream = await this.getStream();
+      if (!stream) return;
+
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = enabled;
+      }
+    },
+
+    async enableVideo(enabled) {
+      console.log(`🎥 mediaManager.enableVideo(${enabled}) called`);
+      try {
+        await this.setVideoTrackEnabled(enabled);
+      } catch (e) {
+        console.warn("⚠️ setVideoTrackEnabled failed, but forcing state update:", e);
+      }
+      setMedia((prev) => {
+        console.log(`✅ Updating isVideoEnabled to ${enabled}`);
+        return { ...prev, isVideoEnabled: enabled };
+      });
+    },
+
+    async enableAudio(enabled) {
+      const stream = await this.getStream();
+      if (!stream) return;
+
+      const audioTrack = stream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = enabled;
+        setMedia((prev) => ({ ...prev, isAudioEnabled: enabled }));
+      }
+    },
+
+    async getStream() {
+      if (streamRef.current) return streamRef.current;
+      return await this.startStream();
+    }
+  }).current;
+
+  // ============================================================
+  // 📸 VIDEO PREVIEW MANAGER
+  // ============================================================
+  const videoPreview = useRef({
+    update(stream) {
+      if (localVideoRef.current && stream) {
+        localVideoRef.current.srcObject = stream;
+      }
+    },
+
+    show() {
+      console.log("📸 videoPreview.show() chamado");
+      if (streamRef.current && localVideoRef.current) {
+        localVideoRef.current.srcObject = streamRef.current;
+        console.log("✅ srcObject configurado com sucesso");
+      } else {
+        console.error("❌ Não foi possível configurar srcObject");
+      }
+    },
+
+    hide() {
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = null;
+      }
+      setMedia((prev) => ({ ...prev, isPreviewOn: false }));
+    }
+  }).current;
+
+  // ============================================================
+  // ⏱ SESSION MACHINE
+  // ============================================================
+  const sessionMachineStart = useCallback(() => {
+    const startIso = new Date().toISOString();
+
+    setSession((prev) => ({
+      status: "active",
+      duration: sessionDuration,
+      history: prev.history,
+      startedAt: startIso
+    }));
+
+    setElapsedTime(0);
+
+    if (sessionTimerRef.current) clearInterval(sessionTimerRef.current);
+    sessionTimerRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
+
+    persist(true);
+  }, [sessionDuration, persist]);
+
+  const sessionMachinePause = useCallback(() => {
+    setSession((prev) => {
+      if (prev.status !== "active") return prev;
+      return { ...prev, status: "paused" };
+    });
+
+    if (sessionTimerRef.current) {
+      clearInterval(sessionTimerRef.current);
+      sessionTimerRef.current = null;
+    }
+
+    persist(true);
+  }, [persist]);
+
+  const sessionMachineResume = useCallback(() => {
+    setSession((prev) => {
+      if (prev.status !== "paused") return prev;
+      return { ...prev, status: "active" };
+    });
+
+    if (sessionTimerRef.current) clearInterval(sessionTimerRef.current);
+    sessionTimerRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
+
+    persist(true);
+  }, [persist]);
+
+  const sessionMachineReset = useCallback(() => {
+    setSession((prev) => {
+      const duration = elapsedTimeState;
+      const sessionStart = prev.startedAt ? new Date(prev.startedAt) : new Date();
+      const historyEntry = duration > 0 ? {
+        date: formatDate(sessionStart),
+        duration
+      } : null;
+
+      return {
+        status: "idle",
+        duration: sessionDuration,
+        history: historyEntry ? [historyEntry, ...prev.history] : prev.history,
+        startedAt: null
+      };
+    });
+
+    setElapsedTime(0);
+
+    if (sessionTimerRef.current) {
+      clearInterval(sessionTimerRef.current);
+      sessionTimerRef.current = null;
+    }
+
+    persist(true);
+  }, [elapsedTimeState, sessionDuration, persist]);
+
+  const sessionMachineEnd = useCallback(() => {
+    const duration = elapsedTimeState;
+    sessionMachineReset();
+    if (onSessionEnd) {
+      onSessionEnd({ duration, wasRecorded: false });
+    }
+  }, [elapsedTimeState, sessionMachineReset, onSessionEnd]);
+
+  const sessionMachine = useMemo(() => ({
+    start: sessionMachineStart,
+    pause: sessionMachinePause,
+    resume: sessionMachineResume,
+    reset: sessionMachineReset,
+    end: sessionMachineEnd
+  }), [sessionMachineStart, sessionMachinePause, sessionMachineResume, sessionMachineReset, sessionMachineEnd]);
+
+  // ============================================================
+  // 🔗 CONNECTION LOGIC
+  // ============================================================
   useEffect(() => {
     const stored = localStorage.getItem("kalonLowPowerMode");
     const enabled = stored ? JSON.parse(stored) : false;
-    setLowPowerMode(Boolean(enabled));
-    lowPowerRef.current = Boolean(enabled);
+    setConnection((prev) => ({ ...prev, lowPowerMode: enabled }));
 
     const handleChange = (event) => {
       const value = Boolean(event.detail?.enabled);
-      setLowPowerMode(value);
-      lowPowerRef.current = value;
-      logPerformanceEvent(
-        `mode: low-power | toggled: ${value ? "on" : "off"}`
-      );
+      setConnection((prev) => ({ ...prev, lowPowerMode: value }));
       window.dispatchEvent(
         new CustomEvent("kalon:media-control", {
           detail: { action: value ? "pause-waiting-music" : "resume-waiting-music" }
@@ -131,238 +422,38 @@ export const VideoPanelProvider = ({
 
     window.addEventListener("lowPowerModeChanged", handleChange);
     return () => window.removeEventListener("lowPowerModeChanged", handleChange);
-  }, [logPerformanceEvent]);
+  }, []);
 
   useEffect(() => {
     const handleVisibility = () => {
-      if (!lowPowerRef.current) return;
-      if (document.visibilityState === "hidden") {
-        window.dispatchEvent(
-          new CustomEvent("kalon:media-control", {
-            detail: { action: "pause-waiting-music" }
-          })
-        );
-        logPerformanceEvent("mode: low-power | paused: video, music");
-      } else {
-        window.dispatchEvent(
-          new CustomEvent("kalon:media-control", {
-            detail: { action: "resume-waiting-music" }
-          })
-        );
-      }
+      if (!connection.lowPowerMode) return;
+      window.dispatchEvent(
+        new CustomEvent("kalon:media-control", {
+          detail: { action: document.visibilityState === "hidden" ? "pause-waiting-music" : "resume-waiting-music" }
+        })
+      );
     };
 
     document.addEventListener("visibilitychange", handleVisibility);
-    return () =>
-      document.removeEventListener("visibilitychange", handleVisibility);
-  }, [logPerformanceEvent]);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [connection.lowPowerMode]);
 
   useEffect(() => {
-    if (isSessionStarted) {
-      const timer = setInterval(() => {
-        setLocalSessionTime((prev) => prev + 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [isSessionStarted]);
-
-  useEffect(() => {
-    sessionDataRef.current = sessionData;
-  }, [sessionData]);
-
-  useEffect(() => {
-    if (!isSessionStarted) {
+    if (session.status !== "active") {
       setShowTimeWarning(false);
       return;
     }
 
-    const remainingSeconds = sessionDuration * 60 - localSessionTime;
+    const remainingSeconds = sessionDuration * 60 - elapsedTimeState;
+    setShowTimeWarning(remainingSeconds <= warningThreshold * 60);
+  }, [elapsedTimeState, sessionDuration, session.status, warningThreshold]);
 
-    if (remainingSeconds <= warningThreshold * 60) {
-      setShowTimeWarning(true);
-    } else {
-      setShowTimeWarning(false);
-    }
-  }, [localSessionTime, sessionDuration, isSessionStarted, warningThreshold]);
-
-  const readLocalFallback = () => {
-    if (typeof window === "undefined") return DEFAULT_SESSION_DATA;
-    try {
-      const raw = window.localStorage.getItem(SESSION_TIMERS_STORAGE_KEY);
-      if (!raw) return DEFAULT_SESSION_DATA;
-      const parsed = JSON.parse(raw);
-      return {
-        lastSession: {
-          ...DEFAULT_SESSION_DATA.lastSession,
-          ...(parsed?.lastSession || {})
-        },
-        history: Array.isArray(parsed?.history) ? parsed.history : []
-      };
-    } catch {
-      return DEFAULT_SESSION_DATA;
-    }
-  };
-
-  const writeLocalFallback = (data) => {
+  // ============================================================
+  // 💾 LOAD SESSION DATA
+  // ============================================================
+  useEffect(() => {
     if (typeof window === "undefined") return;
-    try {
-      window.localStorage.setItem(SESSION_TIMERS_STORAGE_KEY, JSON.stringify(data));
-    } catch {
-      // ignore storage errors
-    }
-  };
 
-  const persistStore = useCallback(
-    async (force = false) => {
-      const data = sessionDataRef.current;
-      if (!data) return;
-
-      const now = Date.now();
-      if (!force && now - lastPersistRef.current < 10000) {
-        if (persistTimeoutRef.current) clearTimeout(persistTimeoutRef.current);
-        const delay = 10000 - (now - lastPersistRef.current);
-        persistTimeoutRef.current = setTimeout(() => {
-          persistTimeoutRef.current = null;
-          if (persistStoreRef.current) {
-            persistStoreRef.current(true);
-          }
-        }, delay);
-        return;
-      }
-
-      lastPersistRef.current = Date.now();
-
-      if (persistenceModeRef.current !== "localStorage") {
-        try {
-          const response = await fetch(SESSION_TIMERS_ENDPOINT, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-          });
-          if (!response.ok) {
-            throw new Error("Failed to persist via API");
-          }
-          return;
-        } catch (error) {
-          console.warn("Falling back to localStorage for session timers:", error);
-          persistenceModeRef.current = "localStorage";
-        }
-      }
-
-      writeLocalFallback(data);
-    },
-    []
-  );
-
-  persistStoreRef.current = persistStore;
-
-  const requestImmediatePersist = useCallback(() => {
-    setTimeout(() => {
-      if (persistStoreRef.current) {
-        persistStoreRef.current(true);
-      }
-    }, 0);
-  }, []);
-
-  const ensureLocalStream = async () => {
-    console.log('🎯 ensureLocalStream iniciado');
-    if (streamRef.current) {
-      console.log('✅ Stream já existe, retornando');
-      return streamRef.current;
-    }
-    try {
-      console.log('🎯 Solicitando getUserMedia...');
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      });
-      console.log('✅ Stream criado com sucesso');
-      
-      stream.getVideoTracks().forEach((track) => {
-        track.enabled = false;
-        console.log('🎯 Video track desabilitado');
-      });
-      stream.getAudioTracks().forEach((track) => {
-        track.enabled = false;
-        console.log('🎯 Audio track desabilitado');
-      });
-      
-      streamRef.current = stream;
-      console.log('✅ Stream salvo na ref');
-      
-      // Conectar stream ao elemento de vídeo
-      if (localVideoRef.current) {
-        console.log('🔍 ANTES srcObject:', {
-          elementExists: !!localVideoRef.current,
-          streamActive: stream.active,
-          videoTracks: stream.getVideoTracks().length,
-          trackState: stream.getVideoTracks()[0]?.readyState
-        });
-        
-        localVideoRef.current.srcObject = stream;
-        console.log('✅ Stream conectado ao elemento de vídeo');
-        
-        // Habilitar video track para preview local
-        stream.getVideoTracks().forEach((track) => {
-          track.enabled = true;
-          console.log('✅ Video track habilitado:', {
-            enabled: track.enabled,
-            readyState: track.readyState,
-            muted: track.muted
-          });
-        });
-        
-        console.log('🔍 APÓS srcObject:', {
-          srcObjectSet: !!localVideoRef.current.srcObject,
-          videoWidth: localVideoRef.current.videoWidth,
-          videoHeight: localVideoRef.current.videoHeight
-        });
-        
-        // Aguardar dimensões corretas (bug Chromium) com limite
-        let attempts = 0;
-        const maxAttempts = 60; // ~1 segundo
-        const waitForDimensions = () => {
-          attempts++;
-          if (localVideoRef.current && localVideoRef.current.videoWidth > 0) {
-            console.log('✅ Dimensões obtidas:', localVideoRef.current.videoWidth, 'x', localVideoRef.current.videoHeight);
-            localVideoRef.current.play().catch(e => console.log('❌ Erro no play:', e));
-          } else if (attempts < maxAttempts) {
-            requestAnimationFrame(waitForDimensions);
-          } else {
-            console.log('⚠️ Timeout nas dimensões, forçando play mesmo assim');
-            localVideoRef.current.play().catch(e => console.log('❌ Erro no play:', e));
-          }
-        };
-        
-        // Usar eventos alternativos conforme sugerido na resposta
-        localVideoRef.current.addEventListener('playing', () => {
-          console.log('📺 Evento "playing" disparado!');
-        }, { once: true });
-        
-        localVideoRef.current.addEventListener('resize', () => {
-          console.log('📺 Evento "resize" disparado!');
-        }, { once: true });
-        
-        requestAnimationFrame(waitForDimensions);
-      }
-      
-      setIsConnected(true);
-      console.log('✅ setIsConnected(true) executado');
-      return stream;
-    } catch (error) {
-      console.log("❌ Erro ao acessar mídia:", error);
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    persistStore();
-  }, [sessionData, persistStore]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return undefined;
     let cancelled = false;
 
     const mergeSessionData = (data) => ({
@@ -375,46 +466,86 @@ export const VideoPanelProvider = ({
 
     const loadSessionData = async () => {
       let loaded = DEFAULT_SESSION_DATA;
+
       try {
-        const response = await fetch(SESSION_TIMERS_ENDPOINT);
-        if (!response.ok) throw new Error("Failed request");
-        const payload = await response.json();
-        loaded = mergeSessionData(payload);
-        persistenceModeRef.current = "api";
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+        const response = await fetch(SESSION_TIMERS_ENDPOINT, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const payload = await response.json();
+          loaded = mergeSessionData(payload);
+          persistenceModeRef.current = "api";
+        } else {
+          throw new Error("Failed request");
+        }
       } catch (error) {
-        console.warn("Session timers API unavailable, using localStorage:", error);
-        loaded = mergeSessionData(readLocalFallback());
+        if (error.name !== 'AbortError') {
+          try {
+            const raw = localStorage.getItem(SESSION_TIMERS_STORAGE_KEY);
+            if (raw) {
+              loaded = mergeSessionData(JSON.parse(raw));
+            }
+          } catch {
+            // Ignore parse errors
+          }
+        }
         persistenceModeRef.current = "localStorage";
       }
 
       if (cancelled) return;
 
-      setSessionData(loaded);
-      sessionDataRef.current = loaded;
-
       const { lastSession } = loaded;
-      if (lastSession.status === "active" || (lastSession.status === "paused" && lastSession.elapsed > 0)) {
-        const resume = window.confirm(
-          "Há uma sessão em andamento. Deseja retomar o contador anterior ou iniciar do zero?"
-        );
-        if (resume) {
-          setLocalSessionTime(lastSession.elapsed || 0);
-          setIsSessionActive(true);
-          setIsSessionStarted(lastSession.status === "active");
-        } else {
-          const resetData = {
-            ...loaded,
-            lastSession: { ...DEFAULT_SESSION_DATA.lastSession }
-          };
-          setSessionData(resetData);
-          sessionDataRef.current = resetData;
-          setIsSessionActive(false);
-          setIsSessionStarted(false);
-          setLocalSessionTime(0);
-          requestImmediatePersist();
-        }
-      } else if (lastSession.elapsed > 0) {
-        setLocalSessionTime(lastSession.elapsed);
+      setSession({
+        status: lastSession.status || "idle",
+        duration: sessionDuration,
+        history: loaded.history,
+        startedAt: lastSession.start
+      });
+
+      if (lastSession.elapsed > 0) {
+        setElapsedTime(lastSession.elapsed);
+      }
+
+      const sessionStartTime = lastSession.start ? new Date(lastSession.start).getTime() : 0;
+      const now = Date.now();
+      const hoursSinceStart = (now - sessionStartTime) / (1000 * 60 * 60);
+      const isRecentSession = hoursSinceStart < 24;
+
+      if (lastSession.status === "active" && isRecentSession && lastSession.elapsed > 0) {
+        setTimeout(() => {
+          if (cancelled || typeof window === "undefined") return;
+          const resume = window.confirm(
+            "Há uma sessão em andamento. Deseja retomar o contador anterior ou iniciar do zero?"
+          );
+          if (resume) {
+            setElapsedTime(lastSession.elapsed || 0);
+            setSession((prev) => ({ ...prev, status: "active", startedAt: lastSession.start }));
+            if (sessionTimerRef.current) clearInterval(sessionTimerRef.current);
+            sessionTimerRef.current = setInterval(() => {
+              setElapsedTime((prev) => prev + 1);
+            }, 1000);
+          } else {
+            setSession((prev) => ({
+              ...prev,
+              status: "idle",
+              startedAt: null
+            }));
+            setElapsedTime(0);
+            persist(true);
+          }
+        }, 500);
+      } else {
+        setSession((prev) => ({
+          ...prev,
+          status: "idle",
+          startedAt: null
+        }));
+        setElapsedTime(0);
       }
     };
 
@@ -422,403 +553,184 @@ export const VideoPanelProvider = ({
 
     return () => {
       cancelled = true;
-      if (persistTimeoutRef.current) {
-        clearTimeout(persistTimeoutRef.current);
-        persistTimeoutRef.current = null;
+      if (persistQueueRef.current) {
+        clearTimeout(persistQueueRef.current);
+        persistQueueRef.current = null;
       }
     };
-  }, [persistStore, requestImmediatePersist]);
+  }, [sessionDuration]);
 
-  const toggleAudio = async () => {
-    const stream = await ensureLocalStream();
-    if (!stream) return;
-    const audioTrack = stream.getAudioTracks()[0];
-    if (!audioTrack) return;
-    const nextState = !isAudioOn;
-    audioTrack.enabled = nextState;
-    setIsAudioOn(nextState);
-  };
-
-  const toggleCameraPreview = async () => {
-    console.log('🎯 toggleCameraPreview chamado!');
-    const stream = await ensureLocalStream();
-    if (!stream) {
-      console.log('❌ Stream não obtido');
-      return;
-    }
-    console.log('✅ Stream obtido');
-    
-    const videoTrack = stream.getVideoTracks()[0];
-    if (!videoTrack) {
-      console.log('❌ Video track não encontrado');
-      return;
-    }
-    console.log('✅ Video track encontrado');
-
-    if (isCameraPreviewOn) {
-      console.log('🎯 Desligando câmera...');
-      stream.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-      setIsConnected(false);
-      setIsCameraPreviewOn(false);
-      if (isVideoOn) {
-        setIsVideoOn(false);
+  // ============================================================
+  // 🧹 CLEANUP ON UNMOUNT
+  // ============================================================
+  useEffect(() => {
+    return () => {
+      // ✅ NÃO parar tracks automaticamente - apenas limpar timers
+      // A câmera só deve ser parada por ação explícita do usuário
+      if (sessionTimerRef.current) {
+        clearInterval(sessionTimerRef.current);
       }
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = null;
+      if (persistQueueRef.current) {
+        clearTimeout(persistQueueRef.current);
       }
+      persist(true);
+    };
+  }, []);
+
+  // ============================================================
+  // 🎛 PUBLIC API FUNCTIONS
+  // ============================================================
+  const toggleAudio = useCallback(async () => {
+    const nextState = !media.isAudioEnabled;
+    await mediaManager.enableAudio(nextState);
+  }, [media.isAudioEnabled, mediaManager]);
+
+  const toggleCameraPreview = useCallback(async () => {
+    console.log("🎥 toggleCameraPreview: INÍCIO", { isPreviewOn: media.isPreviewOn });
+
+    if (media.isPreviewOn) {
+      console.log("🔴 Desligando câmera...");
+      mediaManager.stopStream();
+      videoPreview.hide();
+      setMedia((prev) => ({ ...prev, isPreviewOn: false }));
+      console.log("✅ Câmera desligada");
     } else {
-      console.log('🎯 Ligando câmera...');
-      if (!streamRef.current) {
-        console.log('🎯 Stream não existe, criando novo...');
-        const freshStream = await ensureLocalStream();
-        if (!freshStream) return;
-        freshStream.getVideoTracks().forEach((track) => {
-          track.enabled = true;
-          console.log('✅ Video track habilitado (fresh stream)');
-        });
-        console.log('✅ Fresh stream criado (VideoSurface fará a conexão)');
-      } else {
-        console.log('🎯 Stream existe, habilitando track...');
-        videoTrack.enabled = true;
-        console.log('✅ Video track habilitado');
-        
-        // Conectar stream ao elemento de vídeo
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = streamRef.current;
-          console.log('✅ Stream conectado ao elemento de vídeo');
-        }
-      }
-      setIsCameraPreviewOn(true);
-      console.log('✅ setIsCameraPreviewOn(true) executado');
-    }
-  };
-
-  const toggleVideo = async () => {
-    const stream = await ensureLocalStream();
-    if (!stream) return;
-    const videoTrack = stream.getVideoTracks()[0];
-    if (!videoTrack) return;
-
-    if (isVideoOn) {
-      setIsVideoOn(false);
-      if (!isCameraPreviewOn) {
-        videoTrack.enabled = false;
-      }
-    } else {
-      if (!isCameraPreviewOn) {
-        videoTrack.enabled = true;
-        setIsCameraPreviewOn(true);
-      }
-      setIsVideoOn(true);
-    }
-  };
-
-  const toggleScreenShare = async () => {
-    if (!isScreenSharing) {
+      console.log("🟢 Ligando câmera...");
       try {
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true
-        });
-        if (screenShareRef.current) {
-          screenShareRef.current.srcObject = screenStream;
+        console.log("📡 Solicitando stream...");
+        const stream = await mediaManager.startStream();
+        console.log("📡 Stream recebido:", stream);
+
+        if (stream) {
+          console.log("✅ Stream OK, habilitando track...");
+          await mediaManager.setVideoTrackEnabled(true);
+          console.log("✅ Track habilitado, chamando videoPreview.show()...");
+          videoPreview.show();
+          setMedia((prev) => ({ ...prev, isPreviewOn: true }));
+          console.log("✅ videoPreview.show() chamado e isPreviewOn definido como true");
+        } else {
+          console.error("❌ Stream é null/undefined");
         }
-        setIsScreenSharing(true);
-        setShowScreenSharePanel(true);
       } catch (error) {
-        console.log("Erro ao compartilhar tela:", error);
+        console.error("❌ Erro ao iniciar câmera:", error);
       }
+    }
+    console.log("🎥 toggleCameraPreview: FIM");
+  }, [media.isPreviewOn, mediaManager, videoPreview]);
+
+  const toggleVideo = useCallback(async () => {
+    // 🔒 SAFETY: If session is active, LiveKit manages hardware.
+    // We only update the logical state prevents race conditions.
+    if (session.status === "active") {
+      console.log("🎥 toggleVideo: Fluxo simplificado (Sessão Ativa) - Apenas State Update");
+      setMedia((prev) => ({ ...prev, isVideoEnabled: !prev.isVideoEnabled }));
+      return;
+    }
+
+    if (media.isVideoEnabled) {
+      if (!media.isPreviewOn) {
+        await mediaManager.enableVideo(false);
+        videoPreview.hide();
+      }
+      setMedia((prev) => ({ ...prev, isVideoEnabled: false }));
     } else {
-      if (screenShareRef.current?.srcObject) {
-        screenShareRef.current.srcObject.getTracks().forEach((track) => track.stop());
-        screenShareRef.current.srcObject = null;
+      if (!media.isPreviewOn) {
+        await mediaManager.startStream();
+        await mediaManager.enableVideo(true);
+        videoPreview.show();
+      } else {
+        await mediaManager.setVideoTrackEnabled(true);
       }
-      setIsScreenSharing(false);
+      setMedia((prev) => ({ ...prev, isVideoEnabled: true }));
+    }
+  }, [media.isVideoEnabled, media.isPreviewOn, mediaManager, videoPreview, session.status]);
+
+  const toggleScreenShare = useCallback(async () => {
+    if (!media.isScreenSharing) {
+      setMedia((prev) => ({ ...prev, isScreenSharing: true }));
+      setShowScreenSharePanel(true);
+    } else {
+      setMedia((prev) => ({ ...prev, isScreenSharing: false }));
       setShowScreenSharePanel(false);
     }
-  };
+  }, [media.isScreenSharing]);
 
-  const handleSessionConnect = () => {
-    if (isSessionActive) {
-      if (!isSessionStarted) {
-        setIsSessionStarted(true);
-        setSessionData((prev) => {
-          const next = {
-            ...prev,
-            lastSession: {
-              ...prev.lastSession,
-              status: "active",
-              start: prev.lastSession.start ?? new Date().toISOString()
-            }
-          };
-          return next;
-        });
-        sessionDataRef.current = {
-          ...sessionDataRef.current,
-          lastSession: {
-            ...sessionDataRef.current.lastSession,
-            status: "active",
-            start: sessionDataRef.current.lastSession.start ?? new Date().toISOString()
-          }
-        };
-        requestImmediatePersist();
-      }
+  const handleSessionConnect = useCallback(() => {
+    console.log("🔄 handleSessionConnect chamado, status atual:", session.status);
+    if (session.status === "active") return;
+    if (session.status === "paused") {
+      sessionMachine.resume();
       return;
     }
-    setIsSessionActive(true);
-    setIsSessionStarted(true);
-    setLocalSessionTime(0);
-    const startIso = new Date().toISOString();
-    setSessionData((prev) => ({
-      ...prev,
-      lastSession: {
-        start: startIso,
-        elapsed: 0,
-        status: "active"
-      }
-    }));
-    sessionDataRef.current = {
-      ...sessionDataRef.current,
-      lastSession: {
-        start: startIso,
-        elapsed: 0,
-        status: "active"
-      }
-    };
-    requestImmediatePersist();
-  };
-
-  const handleSessionPause = () => {
-    setIsSessionStarted(false);
-    setSessionData((prev) => ({
-      ...prev,
-      lastSession: {
-        ...prev.lastSession,
-        elapsed: localSessionTime,
-        status: "paused",
-        start: prev.lastSession.start ?? new Date().toISOString()
-      }
-    }));
-    sessionDataRef.current = {
-      ...sessionDataRef.current,
-      lastSession: {
-        ...sessionDataRef.current.lastSession,
-        elapsed: localSessionTime,
-        status: "paused",
-        start: sessionDataRef.current.lastSession.start ?? new Date().toISOString()
-      }
-    };
-    requestImmediatePersist();
-  };
-
-  const handleSessionResume = () => {
-    if (!isSessionActive) return;
-    setIsSessionStarted(true);
-    setSessionData((prev) => ({
-      ...prev,
-      lastSession: {
-        ...prev.lastSession,
-        elapsed: localSessionTime,
-        status: "active",
-        start: prev.lastSession.start ?? new Date().toISOString()
-      }
-    }));
-    sessionDataRef.current = {
-      ...sessionDataRef.current,
-      lastSession: {
-        ...sessionDataRef.current.lastSession,
-        elapsed: localSessionTime,
-        status: "active",
-        start: sessionDataRef.current.lastSession.start ?? new Date().toISOString()
-      }
-    };
-    requestImmediatePersist();
-  };
-
-  const handleSessionReset = () => {
-    const duration = localSessionTime;
-    const sessionStart = sessionDataRef.current.lastSession.start
-      ? new Date(sessionDataRef.current.lastSession.start)
-      : new Date();
-    setSessionData((prev) => {
-      const historyEntry =
-        duration > 0
-          ? {
-              date: formatDate(sessionStart),
-              duration
-            }
-          : null;
-      const nextHistory = historyEntry ? [historyEntry, ...prev.history] : prev.history;
-      return {
-        lastSession: { ...DEFAULT_SESSION_DATA.lastSession },
-        history: nextHistory
-      };
-    });
-    sessionDataRef.current = {
-      lastSession: { ...DEFAULT_SESSION_DATA.lastSession },
-      history:
-        duration > 0
-          ? [
-              {
-                date: formatDate(sessionStart),
-                duration
-              },
-              ...sessionDataRef.current.history
-            ]
-          : sessionDataRef.current.history
-    };
-    requestImmediatePersist();
-
-    setIsSessionActive(false);
-    setIsSessionStarted(false);
-    setLocalSessionTime(0);
-    setShowTimeWarning(false);
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
+    if (session.status === "idle") {
+      sessionMachine.start();
     }
-    setIsConnected(false);
-    setIsCameraPreviewOn(false);
-    setIsVideoOn(false);
-    setIsAudioOn(false);
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
-    }
-  };
+  }, [session.status, sessionMachine]);
 
-  useEffect(() => {
-    if (!isSessionActive) return;
-    setSessionData((prev) => {
-      const start = prev.lastSession.start ?? new Date().toISOString();
-      const nextStatus = isSessionStarted ? "active" : "paused";
-      if (
-        prev.lastSession.elapsed === localSessionTime &&
-        prev.lastSession.status === nextStatus &&
-        prev.lastSession.start === start
-      ) {
-        return prev;
-      }
-      return {
-        ...prev,
-        lastSession: {
-          ...prev.lastSession,
-          start,
-          elapsed: localSessionTime,
-          status: nextStatus
-        }
-      };
-    });
-    const updatedStart = sessionDataRef.current.lastSession.start ?? new Date().toISOString();
-    sessionDataRef.current = {
-      ...sessionDataRef.current,
-      lastSession: {
-        ...sessionDataRef.current.lastSession,
-        start: updatedStart,
-        elapsed: localSessionTime,
-        status: isSessionStarted ? "active" : "paused"
-      }
-    };
-  }, [isSessionActive, isSessionStarted, localSessionTime]);
+  const handleSessionPause = useCallback(() => {
+    sessionMachine.pause();
+  }, [sessionMachine]);
 
-  const endSession = () => {
-    setIsSessionActive(false);
-    setIsSessionStarted(false);
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-    setIsConnected(false);
-    setIsCameraPreviewOn(false);
-    setIsVideoOn(false);
-    setIsAudioOn(false);
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
-    }
-    if (onSessionEnd) {
-      onSessionEnd({ duration: localSessionTime, wasRecorded: false });
-    }
-  };
+  const handleSessionResume = useCallback(() => {
+    sessionMachine.resume();
+  }, [sessionMachine]);
 
-  const handleOpenSettings = () => {
+  const handleSessionReset = useCallback(() => {
+    sessionMachine.reset();
+  }, [sessionMachine]);
+
+  const endSession = useCallback(() => {
+    sessionMachine.end();
+  }, [sessionMachine]);
+
+  const handleOpenSettings = useCallback(() => {
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("openSessionSettings"));
     }
-  };
+  }, []);
 
-  const toggleHighMesh = () => {
+  const toggleHighMesh = useCallback(() => {
     setIsHighMeshEnabled((prev) => !prev);
-  };
+  }, []);
 
-  const formatTime = (seconds) => {
+  const formatTime = useCallback((seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  };
+  }, []);
 
-  // Função para obter token do LiveKit conforme documento
-  const fetchLiveKitToken = async () => {
-    if (!consultationId) {
-      return;
-    }
-    
-    try {
-      const response = await fetch(
-        `/api/livekit/token?roomName=consulta-${consultationId}&participantName=professional-${consultationId}&isHost=true`
-      );
-      const data = await response.json();
-      
-      setLiveKitToken(data.token);
-      setLiveKitUrl(data.wsUrl);
-      setRoomName(data.roomName);
-    } catch (error) {
-      console.error('Erro ao obter token LiveKit:', error);
-    }
-  };
-
-  // SOLUÇÃO: useEffect para monitorar quando consultationId e sessão estão disponíveis
-  useEffect(() => {
-    if (consultationId && isSessionActive && isProfessional && !liveKitToken) {
-      fetchLiveKitToken();
-    }
-  }, [consultationId, isSessionActive, isProfessional, liveKitToken]);
-
-  // Função para definir consultationId a partir do link gerado
   const setConsultationIdFromLink = useCallback((token) => {
     setConsultationId(token);
-    // Se sessão já está ativa, obter token imediatamente
-    if (isSessionActive && isProfessional) {
-      // Aguardar um tick para consultationId ser atualizado
-      setTimeout(() => fetchLiveKitToken(), 100);
-    }
-  }, [isSessionActive, isProfessional, fetchLiveKitToken]);
+  }, []);
 
+  // ============================================================
+  // 📤 CONTEXT VALUE
+  // ============================================================
   const value = {
     isProfessional,
     onSessionEnd,
     sessionDuration,
-    elapsedTime,
+    elapsedTime: initialElapsedTime,
     warningThreshold,
     themeColors,
-    isVideoOn,
-    isAudioOn,
-    isScreenSharing,
+    isVideoOn: media.isVideoEnabled,
+    isAudioOn: media.isAudioEnabled,
+    isScreenSharing: media.isScreenSharing,
     isFullscreen,
-    isConnected,
-    isSessionActive,
-    isSessionStarted,
-    localSessionTime,
+    isConnected: connection.isConnected,
+    isSessionActive: session.status !== "idle",
+    isSessionStarted: session.status === "active",
+    localSessionTime: elapsedTimeState,
     showTimeWarning,
     showScreenSharePanel,
-    isCameraPreviewOn,
+    isCameraPreviewOn: media.isPreviewOn,
     useWhereby,
     isHighMeshEnabled,
-    lowPowerMode,
+    lowPowerMode: connection.lowPowerMode,
     recordingState,
     localVideoRef,
     remoteVideoRef,
     screenShareRef,
-    streamRef,
     setIsFullscreen,
     setUseWhereby,
     setShowScreenSharePanel,
@@ -828,7 +740,7 @@ export const VideoPanelProvider = ({
     toggleCameraPreview,
     toggleScreenShare,
     toggleHighMesh,
-    setLowPowerMode,
+    setLowPowerMode: (value) => setConnection((prev) => ({ ...prev, lowPowerMode: value })),
     handleSessionConnect,
     handleSessionPause,
     handleSessionResume,
@@ -836,14 +748,10 @@ export const VideoPanelProvider = ({
     endSession,
     handleOpenSettings,
     formatTime,
-    // LiveKit integration
     consultationId,
     setConsultationId,
     setConsultationIdFromLink,
-    liveKitToken,
-    liveKitUrl,
-    roomName,
-    fetchLiveKitToken
+    permissionError
   };
 
   return (
@@ -858,7 +766,3 @@ export const useVideoPanel = () => {
   }
   return context;
 };
-
-
-
-

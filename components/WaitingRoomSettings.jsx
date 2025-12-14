@@ -1,7 +1,4 @@
-﻿
 "use client";
-// Version: 2024-12-07-09:00 - Refactored for Separate Inputs & Asset Library
-
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,6 +12,7 @@ import {
   Trash2,
   Loader2,
   MonitorPlay,
+  Smartphone,
   ToggleLeft,
   ToggleRight,
   FolderOpen,
@@ -23,14 +21,21 @@ import {
   FileText,
   LogOut,
   Eye,
-  X
+  X,
+  Save
 } from "lucide-react";
 import ModernButton from "./ModernButton";
 import { useTheme } from "./ThemeProvider";
 import { useTranslation } from "../hooks/useTranslation";
-import { useAuth } from "./AuthContext"; // 🟢 v5.26: Auth Context
+import { useAuth } from "./AuthContext";
+import { VideoPanelContext } from "./VideoPanelContext";
+import WaitingRoomDisplay from "./WaitingRoomDisplay";
+import ClientExitScreen from "./ClientExitScreen";
+import DeviceSimulator from "./DeviceSimulator";
+import ConsultationWelcome from "./ConsultationWelcome";
+
 const DEFAULT_WAITING_ROOM = {
-  activeMediaType: "video", // 'video' | 'image' | 'slides'
+  activeMediaType: "video",
   mediaAssets: {
     video: "",
     image: "",
@@ -46,17 +51,7 @@ const DEFAULT_WAITING_ROOM = {
   specialtyOverrides: {}
 };
 
-const SPECIALTY_OPTIONS = [
-  "Acupuntura",
-  "MetaHipnose",
-  "Psicoterapia",
-  "Terapia Cognitiva",
-  "Mindfulness",
-  "Coaching"
-];
-
 const waitingRoomReducer = (settings) => {
-  // Migration for old format (if mediaSrc existed but mediaAssets didn't)
   const base = {
     ...DEFAULT_WAITING_ROOM,
     ...settings,
@@ -70,16 +65,14 @@ const waitingRoomReducer = (settings) => {
     }
   };
 
-  // Backwards compatibility: if user had old 'mediaSrc', put it in the correct slot
   if (settings?.mediaSrc && !settings?.mediaAssets?.video) {
     if (settings.mediaType === 'video') base.mediaAssets.video = settings.mediaSrc;
     if (settings.mediaType === 'imagem') base.mediaAssets.image = settings.mediaSrc;
     if (settings.mediaType === 'slides') base.mediaAssets.slides = settings.mediaSrc;
   }
 
-  // Ensure activeMediaType is set
   if (settings?.mediaType) {
-    const map = { 'imagem': 'image' }; // fix potential typo mapping
+    const map = { 'imagem': 'image' };
     base.activeMediaType = map[settings.mediaType] || settings.mediaType;
   }
 
@@ -89,10 +82,9 @@ const waitingRoomReducer = (settings) => {
 const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [previewAsset, setPreviewAsset] = useState(null); // path of asset to preview
+  const [previewAsset, setPreviewAsset] = useState(null);
   const { getThemeColors } = useTheme();
 
-  // Reset preview when modal opens/closes or type changes
   useEffect(() => {
     setPreviewAsset(null);
   }, [isOpen, type]);
@@ -103,13 +95,12 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
       fetch("/api/user/assets")
         .then(res => res.json())
         .then(data => {
-          // Filter assets by type
           const filtered = data.files.filter(f => {
             if (type === 'music') return f.type === 'audio';
             if (type === 'video') return f.type === 'video';
             if (type === 'image') return f.type === 'image';
-            if (type === 'slides') return f.type === 'image'; // Slides should be invalid for videos
-            if (type === 'farewell') return ['image'].includes(f.type); // Farewell is static image
+            if (type === 'slides') return f.type === 'image';
+            if (type === 'farewell') return ['image'].includes(f.type);
             if (type === 'waitingRoomBackground') return ['image'].includes(f.type);
             return true;
           });
@@ -125,20 +116,16 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-4xl w-full max-h-[85vh] flex flex-col md:flex-row overflow-hidden border border-gray-200 dark:border-gray-700">
-
-        {/* Left Side: List */}
         <div className="flex-1 flex flex-col border-r border-gray-100 dark:border-gray-700 min-w-[300px]">
           <div className="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <Library className="w-5 h-5 text-primary-500" />
               Biblioteca
             </h3>
-            {/* Mobile Close Button */}
             <button onClick={onClose} className="md:hidden px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs text-gray-700 dark:text-gray-300">
               Fechar
             </button>
           </div>
-
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
             {loading ? (
               <div className="flex justify-center p-8"><Loader2 className="animate-spin w-8 h-8 text-primary-500" /></div>
@@ -165,8 +152,6 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
                       <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{asset.name.replace(/[_-]/g, ' ').replace(/\.[^/.]+$/, '')}</p>
                     </div>
                   </div>
-
-                  {/* Action Buttons: Preview (Eye) & Select (Check) */}
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={(e) => { e.stopPropagation(); onSelect(asset.path); }}
@@ -180,13 +165,10 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
               ))
             )}
           </div>
-
           <div className="p-2 bg-gray-50 dark:bg-gray-800 text-[10px] text-gray-400 text-center border-t border-gray-100 dark:border-gray-800/30">
             Local: assets/waiting-room
           </div>
         </div>
-
-        {/* Right Side: Preview */}
         <div className="w-full md:w-[400px] bg-gray-50 dark:bg-gray-900/50 flex flex-col">
           <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:block">Pré-visualização</span>
@@ -197,7 +179,6 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
               Fechar Janela
             </button>
           </div>
-
           <div className="flex-1 flex flex-col items-center justify-center p-6 text-center overflow-y-auto">
             {previewAsset ? (
               <div className="w-full space-y-4">
@@ -215,12 +196,10 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
                     </div>
                   )}
                 </div>
-
                 <div className="text-left">
                   <h4 className="font-bold text-gray-900 dark:text-white break-all">{previewAsset.name}</h4>
                   <p className="text-xs text-gray-500 mt-1 font-mono">{previewAsset.path}</p>
                 </div>
-
                 <ModernButton
                   onClick={() => onSelect(previewAsset.path)}
                   variant="primary"
@@ -237,7 +216,6 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -247,64 +225,80 @@ const WaitingRoomSettings = () => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
   const { t } = useTranslation();
-  const { user } = useAuth(); // 🟢 Get User
-
+  const { user } = useAuth();
   const [settings, setSettings] = useState(DEFAULT_WAITING_ROOM);
   const [loading, setLoading] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(false); // 🟢 Protection against empty saves
+  const [isLoaded, setIsLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-
-  const [newSpecialty, setNewSpecialty] = useState("");
-  const [overrideMessage, setOverrideMessage] = useState("");
-  const [overrideVideo, setOverrideVideo] = useState("");
-  const [overrideMusic, setOverrideMusic] = useState("");
-
-  // Library Modal State
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [libraryTarget, setLibraryTarget] = useState(null);
-  const [previewOpen, setPreviewOpen] = useState(false); // { type: 'video'|'music'|'image', callback: (path) => ... }
 
-  // Preview states
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [previewType, setPreviewType] = useState(''); // 'video', 'music', 'message'
-  const [previewContent, setPreviewContent] = useState('');
-  const audioPreviewRef = React.useRef(null);
+  // Simulator State
+  const [profileData, setProfileData] = useState(null);
+  const [simDevice, setSimDevice] = useState('mobile');
+  const [simView, setSimView] = useState('welcome');
 
+  // Fetch full profile for photo
   useEffect(() => {
-    if (showPreviewModal && previewType === 'music' && audioPreviewRef.current) {
-      audioPreviewRef.current.play().catch(() => { });
+    if (user?.id) {
+      fetch(`/api/user/profile?userId=${user.id}`)
+        .then(res => res.json())
+        .then(data => setProfileData(data))
+        .catch(err => console.error("Error loading profile:", err));
     }
-  }, [showPreviewModal, previewType, previewContent]);
+  }, [user?.id]);
+
+  const previewProfessional = useMemo(() => ({
+    id: user?.id || 'preview',
+    name: profileData?.name || user?.name || 'Seu Nome',
+    title: profileData?.specialty || user?.specialty || 'Sua Especialidade',
+    photo: profileData?.photo || user?.photo || user?.photoUrl || user?.photoURL || null,
+    specialty: profileData?.specialty || user?.specialty || 'Especialidade',
+    waitingRoom: settings,
+    theme: {
+      primaryColor: themeColors.primary,
+      secondaryColor: themeColors.secondary
+    }
+  }), [user, settings, themeColors, profileData]);
+
+  // NOTE: Helper to get button style
+  const getToggleStyle = (viewName) => {
+    const isActive = simView === viewName;
+    return {
+      backgroundColor: isActive ? themeColors.primary : '#f3f4f6', // primary or gray-100
+      color: isActive ? '#ffffff' : '#6b7280', // white or gray-500
+      fontWeight: '500'
+    };
+  };
+
+  const mockProducts = [
+    { id: 1, name: 'Exemplo Produto', description: 'Descrição do seu produto aparecerá aqui.', price: 97.00, image: '', actionType: 'link' }
+  ];
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        if (!user?.id) return; // Wait for auth
-        const response = await fetch(`/api/user/settings?userId=${user.id}`, { // 🟢 Add query param as backup
+        if (!user?.id) return;
+        const response = await fetch(`/api/user/settings?userId=${user.id}`, {
           cache: "no-cache",
-          headers: {
-            'x-user-id': user.id // 🟢 Add Header
-          }
+          headers: { 'x-user-id': user.id }
         });
-        if (!response.ok) {
-          throw new Error("Falha ao carregar configuraÃ§Ãµes");
-        }
+        if (!response.ok) throw new Error("Falha ao carregar configurações");
         const data = await response.json();
         setSettings(waitingRoomReducer(data.waitingRoom));
-        setIsLoaded(true); // 🟢 Mark as safely loaded
+        setIsLoaded(true);
       } catch (err) {
         console.error(err);
         setError(t('waitingRoom.errors.load') + " - Tente recarregar a página.");
-        setIsLoaded(false); // 🟢 Block saving
+        setIsLoaded(false);
       } finally {
         setLoading(false);
       }
     };
-
     fetchSettings();
-  }, [user?.id]); // 🟢 Re-fetch when user loads
+  }, [user?.id]);
 
   useEffect(() => {
     if (!success) return;
@@ -313,36 +307,20 @@ const WaitingRoomSettings = () => {
   }, [success]);
 
   const handleSettingChange = (key, value) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: value
-    }));
+    setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleAssetChange = (assetType, value) => {
     setSettings(prev => {
       const newState = {
         ...prev,
-        mediaAssets: {
-          ...prev.mediaAssets,
-          [assetType]: value
-        }
+        mediaAssets: { ...prev.mediaAssets, [assetType]: value }
       };
-
-      // Auto-activate main media types when populated
       if (value && ['video', 'image', 'slides'].includes(assetType)) {
         newState.activeMediaType = assetType;
       }
-
       return newState;
     });
-  };
-
-  const handleToggle = (key) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
   };
 
   const readFileAsBase64 = (file) =>
@@ -355,54 +333,33 @@ const WaitingRoomSettings = () => {
 
   const uploadMedia = async ({ file, defaultName }) => {
     if (!file) return null;
-
-    // 🟢 Fix: Build safe filename with correct extension
     let baseName = defaultName || file.name;
     const ext = file.name.split('.').pop();
     if (defaultName && ext && !baseName.endsWith(`.${ext}`)) {
       baseName = `${baseName}.${ext}`;
     }
-
     const base64 = await readFileAsBase64(file);
-
     const response = await fetch("/api/user/upload", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        fileName: baseName,
-        data: base64
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fileName: baseName, data: base64 })
     });
-
     if (!response.ok) {
-      if (response.status === 413) {
-        throw new Error("Arquivo muito grande (Limite: 500MB). Tente um vídeo menor.");
-      }
+      if (response.status === 413) throw new Error("Arquivo muito grande (Limite: 500MB).");
       const payload = await response.json().catch(() => ({}));
-      throw new Error(
-        payload?.message || "Erro ao fazer upload. Verifique sua conexão."
-      );
+      throw new Error(payload?.message || "Erro ao fazer upload.");
     }
-
     const payload = await response.json();
-    console.log("Upload success:", payload);
     return payload.path;
   };
 
   const handleFileSelection = async (event, updateCallback, defaultName) => {
     const [file] = event.target.files || [];
     if (!file) return;
-
     setError("");
-    setSaving(true); // Show spinner
-
+    setSaving(true);
     try {
-      const path = await uploadMedia({
-        file,
-        defaultName: defaultName || file.name
-      });
+      const path = await uploadMedia({ file, defaultName: defaultName || file.name });
       if (path) {
         updateCallback(path);
         setSuccess(true);
@@ -432,35 +389,25 @@ const WaitingRoomSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     setError("");
-
     try {
-      // Map back to API expected format (keeping new structure too for future)
-      // The API backend might just save whatever object we send, but let's be safe.
-      // We will save the entire 'settings' object as is, assuming the backend just merges it.
-
-      // Legacy compatibility: populate 'mediaSrc' and 'mediaType' based on active selection
       const payload = {
         waitingRoom: {
           ...settings,
-          // Fallbacks for older clients if needed
           mediaSrc: settings.mediaAssets[settings.activeMediaType],
-          mediaType: settings.activeMediaType
+          mediaType: settings.activeMediaType,
+          exitImage: settings.mediaAssets.farewell,
+          backgroundImage: settings.mediaAssets.waitingRoomBackground,
         }
       };
-
       const response = await fetch("/api/user/settings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": user?.id // 🟢 Add Header
+          "x-user-id": user?.id
         },
         body: JSON.stringify(payload)
       });
-
-      if (!response.ok) {
-        throw new Error(t('waitingRoom.errors.saveGeneric'));
-      }
-
+      if (!response.ok) throw new Error(t('waitingRoom.errors.saveGeneric'));
       setSuccess(true);
     } catch (err) {
       console.error(err);
@@ -470,40 +417,79 @@ const WaitingRoomSettings = () => {
     }
   };
 
-  const handleAddSpecialty = () => {
-    if (!newSpecialty.trim()) return;
-    setSettings((prev) => ({
-      ...prev,
-      specialtyOverrides: {
-        ...prev.specialtyOverrides,
-        [newSpecialty.trim()]: {
-          message: overrideMessage.trim(),
-          mediaSrc: overrideVideo.trim(),
-          music: overrideMusic.trim()
-        }
-      }
-    }));
-    setNewSpecialty("");
-    setOverrideMessage("");
-    setOverrideVideo("");
-    setOverrideMusic("");
-  };
+  const renderMediaInput = (type, label, icon) => {
+    const value = settings.mediaAssets[type];
+    const isActive = settings.activeMediaType === type;
+    const hasContent = !!value;
+    const shouldHighlight = isActive || hasContent;
 
-  const removeSpecialty = (key) => {
-    setSettings((prev) => {
-      const next = { ...prev.specialtyOverrides };
-      delete next[key];
-      return {
-        ...prev,
-        specialtyOverrides: next
-      };
-    });
-  };
+    const helperInfo = {
+      video: "MP4, MOV, WEBM (Max 50MB)",
+      image: "JPG, PNG (Max 10MB)",
+      slides: "JPG, PNG (Max 10MB)",
+      farewell: "JPG, PNG (Max 10MB)",
+      music: "MP3, WAV, OGG (Max 10MB)",
+      waitingRoomBackground: "JPG, PNG (Wallpaper 1920x1080)"
+    };
+    const helperText = helperInfo[type] || "";
 
-  const specialtyList = useMemo(
-    () => Object.entries(settings.specialtyOverrides || {}),
-    [settings.specialtyOverrides]
-  );
+    return (
+      <div className={`p-4 rounded-xl border transition-all ${shouldHighlight ? 'border-primary-500 bg-primary-50/50 dark:border-primary-500 dark:bg-primary-900/20 ring-2 ring-primary-500 ring-offset-1 dark:ring-offset-gray-900' : 'border-gray-200 dark:border-gray-700'}`}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleSettingChange('activeMediaType', type)}>
+            <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isActive ? 'border-primary-500' : 'border-gray-400'}`}>
+              {isActive && <div className="w-2 h-2 rounded-full bg-primary-500" />}
+            </div>
+            <span className={`font-medium ${shouldHighlight ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
+              {label}
+            </span>
+          </div>
+          {icon}
+        </div>
+        <div className={`flex flex-col gap-3 ${shouldHighlight ? 'opacity-100' : 'opacity-60 grayscale'}`}>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => handleAssetChange(type, e.target.value)}
+            placeholder={`Link ou caminho do ${label}...`}
+            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Fazer Upload">
+              <Upload className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              <input
+                type="file"
+                className="hidden"
+                accept={type === 'image' || type === 'slides' || type === 'farewell' || type === 'waitingRoomBackground' ? 'image/*' : 'video/*'}
+                onChange={(e) => handleFileSelection(e, (path) => handleAssetChange(type, path))}
+              />
+            </label>
+            <button
+              onClick={() => openLibrary(type, (path) => handleAssetChange(type, path))}
+              className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              title="Selecionar da Biblioteca"
+            >
+              <Library className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAssetChange(type, "");
+              }}
+              disabled={!value}
+              className={`p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors group ${!value ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-800 cursor-pointer'}`}
+              title="Limpar campo"
+            >
+              <Trash2 className={`w-4 h-4 text-gray-400 ${value ? 'group-hover:text-red-500' : ''}`} />
+            </button>
+          </div>
+        </div>
+        <div className="mt-2 text-[10px] text-gray-400 dark:text-gray-500 flex justify-end">
+          <span className="bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">Suporta: {helperText}</span>
+        </div>
+      </div>
+    );
+  };
 
   if (loading) {
     return (
@@ -516,468 +502,389 @@ const WaitingRoomSettings = () => {
     );
   }
 
-  // Helper to render media input group
-  const renderMediaInput = (type, label, icon) => {
-    const value = settings.mediaAssets[type];
-    const isActive = settings.activeMediaType === type;
-
-    // Helper text definitions
-    const helperInfo = {
-      video: "MP4, MOV, WEBM (Max 50MB)",
-      image: "JPG, PNG (Max 10MB)",
-      slides: "JPG, PNG (Max 10MB)",
-      farewell: "JPG, PNG (Max 10MB)",
-      music: "MP3, WAV, OGG (Max 10MB)",
-      waitingRoomBackground: "JPG, PNG (Wallpaper 1920x1080)"
-    };
-    const helperText = helperInfo[type] || "";
-
-    return (
-      <div className={`p-4 rounded-xl border transition-all ${isActive ? 'border-primary-500 bg-primary-50/50 dark:border-primary-500 dark:bg-primary-900/20 ring-2 ring-primary-500 ring-offset-1 dark:ring-offset-gray-900' : 'border-gray-200 dark:border-gray-700'}`}>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleSettingChange('activeMediaType', type)}>
-            <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isActive ? 'border-primary-500' : 'border-gray-400'}`}>
-              {isActive && <div className="w-2 h-2 rounded-full bg-primary-500" />}
-            </div>
-            <span className={`font-medium ${isActive ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
-              {label}
-            </span>
-          </div>
-          {icon}
-        </div>
-
-        <div className={`flex items-center gap-2 ${isActive ? 'opacity-100' : 'opacity-60 grayscale'}`}>
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => handleAssetChange(type, e.target.value)}
-            placeholder={`Link ou caminho do ${label}...`}
-            className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
-          />
-
-          {/* Upload Button */}
-          <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700" title="Fazer Upload">
-            <Upload className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-            <span className="text-xs font-medium text-gray-700 dark:text-gray-300 hidden lg:inline">Upload</span>
-            <input
-              type="file"
-              className="hidden"
-              accept={type === 'image' || type === 'slides' || type === 'farewell' || type === 'waitingRoomBackground' ? 'image/*' : 'video/*'}
-              onChange={(e) => handleFileSelection(e, (path) => handleAssetChange(type, path))}
-            />
-          </label>
-
-          {/* Library Button */}
-          <button
-            onClick={() => openLibrary(type, (path) => handleAssetChange(type, path))}
-            className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-            title="Selecionar da Biblioteca"
-          >
-            <Library className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Biblioteca</span>
-          </button>
-
-          {/* Clear Button */}
-          {value && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAssetChange(type, "");
-              }}
-              className="p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-800 transition-colors group"
-              title="Limpar campo"
-            >
-              <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
-            </button>
-          )}
-        </div>
-
-        {/* Helper Text */}
-        <div className="mt-2 text-[10px] text-gray-400 dark:text-gray-500 flex justify-end">
-          <span className="bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">Suporta: {helperText}</span>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className="kalon-card p-6 space-y-6">
-      <AssetLibraryModal
-        isOpen={libraryOpen}
-        onClose={() => setLibraryOpen(false)}
-        onSelect={handleLibrarySelect}
-        type={libraryTarget?.type}
-      />
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+      <div className="xl:col-span-7 kalon-card p-6 space-y-6">
+        <AssetLibraryModal
+          isOpen={libraryOpen}
+          onClose={() => setLibraryOpen(false)}
+          onSelect={handleLibrarySelect}
+          type={libraryTarget?.type}
+        />
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div
-            className="p-3 rounded-xl"
-            style={{ backgroundColor: themeColors.primary }}
-          >
-            <MonitorPlay className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-              {t('waitingRoom.title')}
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('waitingRoom.subtitle')}
-            </p>
-          </div>
-        </div>
-        {/* Top Save Button Removed */}
-      </div>
-
-      {/* Success/Error Alerts */}
-      <AnimatePresence>
-        {success && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="rounded-lg border px-4 py-3 flex items-center space-x-2"
-            style={{ backgroundColor: themeColors.success + "20", borderColor: themeColors.success + "40" }}
-          >
-            <CheckCircle className="w-5 h-5" style={{ color: themeColors.success }} />
-            <span className="text-sm font-medium" style={{ color: themeColors.success }}>{t('waitingRoom.success')}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="rounded-lg border border-red-300 bg-red-50 dark:bg-red-900/20 px-4 py-3 flex items-center space-x-2 text-red-600 dark:text-red-400"
-          >
-            <AlertCircle className="w-5 h-5" />
-            <span className="text-sm font-medium">{error}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Visual Media Section (Left) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4"
-        >
-          <div className="flex items-center space-x-2 mb-2">
-            <VideoIcon className="w-5 h-5 text-gray-500" />
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-              Visual da Sala
-            </h3>
-          </div>
-          <p className="text-sm text-gray-500 mb-4">Escolha qual tipo de mídia será exibido para o cliente.</p>
-
-          <div className="space-y-3">
-            {renderMediaInput('video', 'Vídeo de Fundo', <VideoIcon className="w-4 h-4 text-gray-400" />)}
-            {renderMediaInput('image', 'Imagem Estática', <ImageIcon className="w-4 h-4 text-gray-400" />)}
-            {renderMediaInput('slides', 'Slides / Texto', <FileText className="w-4 h-4 text-gray-400" />)}
-
-            <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-primary-500" />
-                Personalização do Fundo
-              </h4>
-              {renderMediaInput('waitingRoomBackground', 'Imagem de Fundo (Wallpaper)', <ImageIcon className="w-4 h-4 text-gray-400" />)}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+              <MonitorPlay className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                {t('waitingRoom.title')}
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t('waitingRoom.subtitle')}
+              </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Right Column: Music & Farewell */}
-        <div className="space-y-6">
-          {/* Music Section */}
+        <AnimatePresence>
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="rounded-lg border px-4 py-3 flex items-center space-x-2"
+              style={{ backgroundColor: themeColors.success + "20", borderColor: themeColors.success + "40" }}
+            >
+              <CheckCircle className="w-5 h-5" style={{ color: themeColors.success }} />
+              <span className="text-sm font-medium" style={{ color: themeColors.success }}>{t('waitingRoom.success')}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="rounded-lg border border-red-300 bg-red-50 dark:bg-red-900/20 px-4 py-3 flex items-center space-x-2 text-red-600 dark:text-red-400"
+            >
+              <AlertCircle className="w-5 h-5" />
+              <span className="text-sm font-medium">{error}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4"
           >
-            <div className="flex items-center space-x-2">
-              <Music className="w-5 h-5 text-gray-500" />
+            <div className="flex items-center space-x-2 mb-2">
+              <VideoIcon className="w-5 h-5 text-gray-500" />
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                {t('waitingRoom.music.title')}
+                Visual da Sala
               </h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('waitingRoom.music.description')}
-            </p>
+            <p className="text-sm text-gray-500 mb-4">Escolha qual tipo de mídia será exibido para o cliente.</p>
 
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={settings.music}
-                onChange={(e) => handleSettingChange('music', e.target.value)}
-                placeholder="Caminho da música..."
-                className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
-              />
+            <div className="space-y-3">
+              {renderMediaInput('video', 'Vídeo de Fundo', <VideoIcon className="w-4 h-4 text-gray-400" />)}
+              {renderMediaInput('image', 'Imagem Estática', <ImageIcon className="w-4 h-4 text-gray-400" />)}
+              {renderMediaInput('slides', 'Slides / Texto', <FileText className="w-4 h-4 text-gray-400" />)}
 
-              <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700" title="Upload">
-                <Upload className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 hidden lg:inline">Upload</span>
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="audio/*"
-                  onChange={(e) => handleFileSelection(e, (path) => handleSettingChange('music', path))}
-                />
-              </label>
-
-              <button
-                onClick={() => openLibrary('music', (path) => handleSettingChange('music', path))}
-                className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-                title="Biblioteca"
-              >
-                <Library className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Biblioteca</span>
-              </button>
-
-              {/* Clear Music Button */}
-              {settings.music && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSettingChange('music', "");
-                  }}
-                  className="p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-800 transition-colors group"
-                  title="Limpar música"
-                >
-                  <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
-                </button>
-              )}
-            </div>
-            <div className="mt-1 text-[10px] text-gray-400 dark:text-gray-500 text-right">
-              <span className="bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">Suporta: MP3, WAV, OGG (Max 10MB)</span>
+              <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-primary-500" />
+                  Personalização do Fundo
+                </h4>
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-2 items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
+                    {['#111827', '#0f172a', '#000000', '#18181b', '#1e1b4b', '#064e3b', '#450a0a'].map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => handleAssetChange('waitingRoomBackground', color)}
+                        className={`w-8 h-8 rounded-full shadow-sm transition-all ${settings.mediaAssets.waitingRoomBackground === color
+                            ? 'ring-2 ring-offset-2 ring-primary-500 scale-110 z-10'
+                            : 'hover:scale-105 border border-black/10'
+                          }`}
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      />
+                    ))}
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-gray-600 shadow-sm transition-all hover:scale-105 group" title="Mais cores">
+                      <input
+                        type="color"
+                        className="absolute inset-0 w-[150%] h-[150%] -top-1/4 -left-1/4 cursor-pointer p-0 border-0 opacity-0 group-hover:opacity-100"
+                        value={settings.mediaAssets.waitingRoomBackground?.startsWith('#') ? settings.mediaAssets.waitingRoomBackground : '#000000'}
+                        onChange={(e) => handleAssetChange('waitingRoomBackground', e.target.value)}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-green-500 to-blue-500 pointer-events-none" />
+                    </div>
+                  </div>
+                  {renderMediaInput('waitingRoomBackground', 'Imagem de Fundo (Upload)', <ImageIcon className="w-4 h-4 text-gray-400" />)}
+                </div>
+              </div>
             </div>
           </motion.div>
 
-          {/* Farewell Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4"
-          >
-            <div className="flex items-center space-x-2">
-              <LogOut className="w-5 h-5 text-gray-500" />
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Imagem de Despedida
-              </h3>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Exibida ao encerrar a sessão.
-            </p>
+          <div className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4"
+            >
+              <div className="flex items-center space-x-2">
+                <Music className="w-5 h-5 text-gray-500" />
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  {t('waitingRoom.music.title')}
+                </h3>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t('waitingRoom.music.description')}
+              </p>
 
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={settings.mediaAssets.farewell}
-                onChange={(e) => handleAssetChange('farewell', e.target.value)}
-                placeholder="Caminho da imagem..."
-                className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
-              />
+              <div className={`p-4 rounded-xl border transition-all ${settings.music ? 'border-primary-500 bg-primary-50/50 dark:border-primary-500 dark:bg-primary-900/20 ring-2 ring-primary-500 ring-offset-1 dark:ring-offset-gray-900' : 'border-gray-200 dark:border-gray-700'}`}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${settings.music ? 'border-primary-500' : 'border-gray-400'}`}>
+                      {settings.music && <div className="w-2 h-2 rounded-full bg-primary-500" />}
+                    </div>
+                    <span className={`font-medium ${settings.music ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
+                      Arquivo de Áudio
+                    </span>
+                  </div>
+                  <Music className="w-4 h-4 text-gray-400" />
+                </div>
 
-              <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700" title="Upload">
-                <Upload className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 hidden lg:inline">Upload</span>
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={(e) => handleFileSelection(e, (path) => handleAssetChange('farewell', path))}
-                />
-              </label>
+                <div className={`flex flex-col gap-3 ${settings.music ? 'opacity-100' : 'opacity-100'}`}>
+                  <input
+                    type="text"
+                    value={settings.music}
+                    onChange={(e) => handleSettingChange('music', e.target.value)}
+                    placeholder="Caminho da música..."
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
+                  />
 
-              <button
-                onClick={() => openLibrary('farewell', (path) => handleAssetChange('farewell', path))}
-                className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-                title="Biblioteca"
-              >
-                <Library className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Biblioteca</span>
-              </button>
+                  <div className="flex items-center justify-end gap-2">
+                    <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Upload">
+                      <Upload className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="audio/*"
+                        onChange={(e) => handleFileSelection(e, (path) => handleSettingChange('music', path))}
+                      />
+                    </label>
 
-              {/* Clear Farewell Button */}
-              {settings.mediaAssets.farewell && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAssetChange('farewell', "");
-                  }}
-                  className="p-2 ml-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-800 transition-colors group"
-                  title="Limpar imagem"
-                >
-                  <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
-                </button>
-              )}
-            </div>
-            <div className="mt-1 text-[10px] text-gray-400 dark:text-gray-500 text-right">
-              <span className="bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">Suporta: JPG, PNG (Max 10MB)</span>
-            </div>
-          </motion.div>
+                    <button
+                      onClick={() => openLibrary('music', (path) => handleSettingChange('music', path))}
+                      className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      title="Biblioteca"
+                    >
+                      <Library className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSettingChange('music', "");
+                      }}
+                      disabled={!settings.music}
+                      className={`p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors group ${!settings.music ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-800 cursor-pointer'}`}
+                      title="Limpar música"
+                    >
+                      <Trash2 className={`w-4 h-4 text-gray-400 ${settings.music ? 'group-hover:text-red-500' : ''}`} />
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-2 text-[10px] text-gray-400 dark:text-gray-500 flex justify-end">
+                  <span className="bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">Suporta: MP3, WAV, OGG (Max 10MB)</span>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4"
+            >
+              <div className="flex items-center space-x-2">
+                <LogOut className="w-5 h-5 text-gray-500" />
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  Imagem de Despedida
+                </h3>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Exibida ao encerrar a sessão.
+              </p>
+
+              <div className={`p-4 rounded-xl border transition-all ${settings.mediaAssets.farewell ? 'border-primary-500 bg-primary-50/50 dark:border-primary-500 dark:bg-primary-900/20 ring-2 ring-primary-500 ring-offset-1 dark:ring-offset-gray-900' : 'border-gray-200 dark:border-gray-700'}`}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${settings.mediaAssets.farewell ? 'border-primary-500' : 'border-gray-400'}`}>
+                      {settings.mediaAssets.farewell && <div className="w-2 h-2 rounded-full bg-primary-500" />}
+                    </div>
+                    <span className={`font-medium ${settings.mediaAssets.farewell ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
+                      Arquivo de Imagem
+                    </span>
+                  </div>
+                  <ImageIcon className="w-4 h-4 text-gray-400" />
+                </div>
+
+                <div className={`flex flex-col gap-3 ${settings.mediaAssets.farewell ? 'opacity-100' : 'opacity-100'}`}>
+                  <input
+                    type="text"
+                    value={settings.mediaAssets.farewell}
+                    onChange={(e) => handleAssetChange('farewell', e.target.value)}
+                    placeholder="Caminho da imagem..."
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
+                  />
+
+                  <div className="flex items-center justify-end gap-2">
+                    <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Upload">
+                      <Upload className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={(e) => handleFileSelection(e, (path) => handleAssetChange('farewell', path))}
+                      />
+                    </label>
+
+                    <button
+                      onClick={() => openLibrary('farewell', (path) => handleAssetChange('farewell', path))}
+                      className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      title="Biblioteca"
+                    >
+                      <Library className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAssetChange('farewell', "");
+                      }}
+                      disabled={!settings.mediaAssets.farewell}
+                      className={`p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors group ${!settings.mediaAssets.farewell ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-800 cursor-pointer'}`}
+                      title="Limpar imagem"
+                    >
+                      <Trash2 className={`w-4 h-4 text-gray-400 ${settings.mediaAssets.farewell ? 'group-hover:text-red-500' : ''}`} />
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-2 text-[10px] text-gray-400 dark:text-gray-500 flex justify-end">
+                  <span className="bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">Suporta: JPG, PNG (Max 10MB)</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
-      </div>
 
-      {/* Message + toggles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4"
-        >
+        <div className="mt-6 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4">
           <div className="flex items-center space-x-2">
             <Text className="w-5 h-5 text-gray-500" />
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-              {t('waitingRoom.message.title')}
+              Mensagem de Boas-vindas
             </h3>
           </div>
           <textarea
             value={settings.message}
-            onChange={(event) =>
-              handleSettingChange("message", event.target.value)
-            }
-            placeholder=""
-            className="w-full min-h-[120px] px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-200"
+            onChange={(e) => handleSettingChange('message', e.target.value)}
+            rows={4}
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 outline-none transition-all resize-none"
+            placeholder="Digite a mensagem que aparecerá para o cliente..."
           />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm space-y-4"
-        >
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-            {t('waitingRoom.visualPreferences.title')}
-          </h3>
-          <div className="space-y-4">
-            {/* Preferences Toggles (Same as before) */}
-            {[
-              {
-                key: "animatedMessage",
-                label: t('waitingRoom.visualPreferences.animatedMessage'),
-                description: t('waitingRoom.visualPreferences.animatedMessageDesc')
-              },
-              {
-                key: "allowClientPreview",
-                label: t('waitingRoom.visualPreferences.allowClientPreview'),
-                description: t('waitingRoom.visualPreferences.allowClientPreviewDesc')
-              },
-              {
-                key: "alertOnClientJoin",
-                label: t('waitingRoom.visualPreferences.alertOnClientJoin'),
-                description: t('waitingRoom.visualPreferences.alertOnClientJoinDesc')
-              }
-            ].map((item) => {
-              const active = Boolean(settings[item.key]);
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => handleToggle(item.key)}
-                  className={`w-full flex items-start justify-between rounded-xl border px-4 py-3 text-left transition-colors ${active
-                    ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
-                    : "border-gray-200 dark:border-gray-700 hover:border-primary-400"
-                    }`}
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white">
-                      {item.label}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {item.description}
-                    </p>
-                  </div>
-                  <div className="ml-4">
-                    {active ? <ToggleRight className="w-6 h-6 text-primary-500" /> : <ToggleLeft className="w-6 h-6 text-gray-400" />}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Specialty Overrides Removed */}
-        </motion.div>
+        <div className="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-700">
+          <p className="text-sm text-gray-500">
+            Lembre-se de salvar suas alterações.
+          </p>
+          <ModernButton
+            onClick={handleSave}
+            icon={saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            disabled={saving || !isLoaded}
+            variant="primary"
+            size="lg"
+          >
+            {saving ? 'Salvando...' : 'Salvar Configurações'}
+          </ModernButton>
+        </div>
       </div>
 
-      {/* Bottom Save Button */}
-      <div className="sticky bottom-0 bg-white dark:bg-gray-910 p-4 border-t border-gray-100 dark:border-gray-700 -mx-6 -mb-6 mt-6 flex items-center justify-end gap-3">
-        <ModernButton
-          onClick={() => {
-            localStorage.setItem('kalon_preview_settings', JSON.stringify(settings));
-            setPreviewOpen(true);
-          }}
-          variant="outline"
-          size="lg"
-          className="w-full md:w-auto min-w-[160px] justify-center"
-        >
-          <Eye className="w-5 h-5 mr-2" />
-          <span>{t('waitingRoom.preview')}</span>
-        </ModernButton>
-
-        <ModernButton
-          onClick={handleSave}
-          variant={isLoaded ? "primary" : "outline"} // Visual cue
-          size="lg"
-          className="w-full md:w-auto min-w-[200px] justify-center shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={saving || !isLoaded} // 🟢 Disable if not loaded safely
-        >
-          {saving ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              <span>{t('waitingRoom.saving')}</span>
-            </>
-          ) : !isLoaded ? (
-            <>
-              <AlertCircle className="w-5 h-5 mr-2 text-red-500" />
-              <span className="text-red-500">Erro ao Carregar</span>
-            </>
-          ) : (
-            <>
-              <CheckCircle className="w-5 h-5 mr-2" />
-              <span>{t('waitingRoom.saveButton')}</span>
-            </>
-          )}
-        </ModernButton>
-      </div>
-
-      {/* Preview Modal */}
-      <AnimatePresence>
-        {previewOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full h-full max-w-6xl max-h-[90vh] bg-black rounded-2xl overflow-hidden shadow-2xl relative flex flex-col"
-            >
-              <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800">
-                <h3 className="text-white font-medium flex items-center gap-2">
-                  <Eye className="w-4 h-4 text-primary-400" />
-                  Pré-visualização ao Vivo
-                </h3>
+      <div className="xl:col-span-5 relative hidden xl:block">
+        <div className="sticky top-28 space-y-4">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <h3 className="font-bold text-gray-700 dark:text-white flex items-center gap-2">
+                <Eye className="w-4 h-4 text-primary-500" />
+                Preview em Tempo Real
+              </h3>
+              <div className="flex bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
                 <button
-                  onClick={() => setPreviewOpen(false)}
-                  className="p-1 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                  onClick={() => setSimDevice('desktop')}
+                  className={`p-2 rounded-md transition-all ${simDevice === 'desktop' ? 'bg-white dark:bg-gray-700 shadow text-primary-500' : 'text-gray-400'}`}
+                  title="Modo Desktop"
                 >
-                  <X className="w-6 h-6" />
+                  <MonitorPlay className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setSimDevice('mobile')}
+                  className={`p-2 rounded-md transition-all ${simDevice === 'mobile' ? 'bg-white dark:bg-gray-700 shadow text-primary-500' : 'text-gray-400'}`}
+                  title="Modo Celular"
+                >
+                  <Smartphone className="w-4 h-4" />
                 </button>
               </div>
-
-              <div className="flex-1 bg-gray-900 relative">
-                <iframe
-                  src={`/waiting-room?preview_mode=true&ver=${Date.now()}`}
-                  className="absolute inset-0 w-full h-full border-0"
-                  title="Preview"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                />
-              </div>
-            </motion.div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSimView('welcome')}
+                className="flex-1 text-xs py-2 rounded-lg transition-colors"
+                style={getToggleStyle('welcome')}
+              >
+                Entrada
+              </button>
+              <button
+                onClick={() => setSimView('waiting')}
+                className="flex-1 text-xs py-2 rounded-lg transition-colors"
+                style={getToggleStyle('waiting')}
+              >
+                Sala Espera
+              </button>
+              <button
+                onClick={() => setSimView('exit')}
+                className="flex-1 text-xs py-2 rounded-lg transition-colors"
+                style={getToggleStyle('exit')}
+              >
+                Saída
+              </button>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
-    </div >
+          {/* The Simulator */}
+          <div className="flex justify-center h-full min-h-[600px] overflow-hidden">
+            <div className={`transform transition-all duration-500 origin-top ${simDevice === 'desktop' ? 'scale-[0.45] w-[1280px] h-[720px]' : 'scale-[1.0]'}`}>
+              {/* 🟢 Mock Provider for ClientExitScreen */}
+              <VideoPanelContext.Provider value={{
+                branding: {
+                  exitImage: settings.mediaAssets.farewell || null,
+                  profile: previewProfessional,
+                  themeColors: themeColors
+                }
+              }}>
+                <DeviceSimulator deviceMode={simDevice}>
+                  {simView === 'welcome' && (
+                    <ConsultationWelcome
+                      professional={previewProfessional}
+                      onEnter={() => setSimView('waiting')}
+                      isLoading={false}
+                    />
+                  )}
+                  {simView === 'waiting' && (
+                    <WaitingRoomDisplay
+                      professional={previewProfessional}
+                      onJoin={() => { }}
+                      isMobile={simDevice === 'mobile'}
+                    />
+                  )}
+                  {simView === 'exit' && (
+                    <ClientExitScreen
+                      professional={previewProfessional}
+                      onReconnect={() => { }}
+                      initialProducts={mockProducts}
+                      isMobile={simDevice === 'mobile'}
+                    />
+                  )}
+                </DeviceSimulator>
+              </VideoPanelContext.Provider>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

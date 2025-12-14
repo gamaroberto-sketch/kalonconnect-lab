@@ -23,18 +23,23 @@ import {
   User,
   FileText,
   Send,
-  MessageSquare
+  MessageSquare,
+  Calendar
 } from 'lucide-react';
 import ConsultationInviteSettings from './ConsultationInviteSettings';
 import CredentialsPanel from './CredentialsPanel';
 import ThemeSelector from './ThemeSelector';
 import ModernButton from './ModernButton';
+import CustomSelect from './CustomSelect';
+import WaitingRoomSettings from './WaitingRoomSettings';
 import { useTheme } from './ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
 
 const AdvancedSettings = () => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  
+  const { t, changeLanguage } = useTranslation();
+
   // Estados para temas de fundo de tela
   const [screenBackground, setScreenBackground] = useState({
     type: 'predefined',
@@ -66,6 +71,9 @@ const AdvancedSettings = () => {
   // Estado para idioma
   const [language, setLanguage] = useState('pt-BR');
 
+  // Estado para formato de data
+  const [dateFormat, setDateFormat] = useState('ddmmyyyy');
+
   // Estados para Google Drive
   const [googleDriveConnected, setGoogleDriveConnected] = useState(false);
   const [googleDriveFolder, setGoogleDriveFolder] = useState('');
@@ -84,11 +92,11 @@ const AdvancedSettings = () => {
   const [lowPowerMode, setLowPowerMode] = useState(false);
 
   const tabs = [
-    { id: 'general', name: 'Geral', icon: <Settings className="w-5 h-5" /> },
-    { id: 'branding', name: 'Identidade', icon: <Palette className="w-5 h-5" /> },
-    { id: 'integrations', name: 'Integrações', icon: <Cloud className="w-5 h-5" /> },
-    { id: 'invites', name: 'Convites', icon: <Send className="w-5 h-5" /> },
-    { id: 'credentials', name: 'Credenciais', icon: <Save className="w-5 h-5" /> }
+    { id: 'general', name: t('settings.tabs.general'), icon: <Settings className="w-5 h-5" /> },
+    { id: 'branding', name: t('settings.tabs.branding'), icon: <Palette className="w-5 h-5" /> },
+    { id: 'integrations', name: t('settings.tabs.integrations'), icon: <Cloud className="w-5 h-5" /> },
+    { id: 'invites', name: t('settings.tabs.invites'), icon: <Send className="w-5 h-5" /> },
+    { id: 'credentials', name: t('settings.tabs.credentials'), icon: <Save className="w-5 h-5" /> }
   ];
 
   // Carregar configurações salvas
@@ -118,6 +126,7 @@ const AdvancedSettings = () => {
     primaryColor,
     secondaryColor,
     language,
+    dateFormat,
     googleDriveFolder,
     whatsappNumber,
     autoMessageEnabled,
@@ -129,7 +138,7 @@ const AdvancedSettings = () => {
       const saved = localStorage.getItem('kalonAdvancedSettings');
       if (saved) {
         const settings = JSON.parse(saved);
-        
+
         setScreenBackground(settings.screenBackground || screenBackground);
         setVideoBackground(settings.videoBackground || videoBackground);
         setProfessionalLogo(settings.professionalLogo || null);
@@ -141,6 +150,7 @@ const AdvancedSettings = () => {
         setPrimaryColor(settings.primaryColor || '#10b981');
         setSecondaryColor(settings.secondaryColor || '#6366f1');
         setLanguage(settings.language || 'pt-BR');
+        setDateFormat(settings.dateFormat || 'ddmmyyyy');
         setGoogleDriveConnected(settings.googleDriveConnected || false);
         setGoogleDriveFolder(settings.googleDriveFolder || '');
         setWhatsappNumber(settings.whatsappNumber || '');
@@ -149,7 +159,7 @@ const AdvancedSettings = () => {
         setVideoConferenceLink(settings.videoConferenceLink || '');
         setLowPowerMode(
           settings.lowPowerMode ??
-            JSON.parse(localStorage.getItem('kalonLowPowerMode') || 'false')
+          JSON.parse(localStorage.getItem('kalonLowPowerMode') || 'false')
         );
       }
     } catch (error) {
@@ -171,6 +181,7 @@ const AdvancedSettings = () => {
         primaryColor,
         secondaryColor,
         language,
+        dateFormat,
         googleDriveConnected,
         googleDriveFolder,
         whatsappNumber,
@@ -182,10 +193,13 @@ const AdvancedSettings = () => {
 
       localStorage.setItem('kalonAdvancedSettings', JSON.stringify(settings));
       localStorage.setItem('kalonLowPowerMode', JSON.stringify(lowPowerMode));
-      
+
+      // Disparar evento para notificar outros componentes
+      window.dispatchEvent(new CustomEvent('kalonSettingsChanged', { detail: settings }));
+
       if (showMessage) {
         setShowSuccess(true);
-        
+
         // Anunciar para leitores de tela
         const announcement = document.getElementById('screen-reader-announcement');
         if (announcement) {
@@ -194,7 +208,7 @@ const AdvancedSettings = () => {
             announcement.textContent = '';
           }, 5000);
         }
-        
+
         setTimeout(() => setShowSuccess(false), 3000);
       }
     } catch (error) {
@@ -216,7 +230,7 @@ const AdvancedSettings = () => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result;
-      
+
       switch (type) {
         case 'screen':
           setCustomScreenBg(base64String);
@@ -245,6 +259,15 @@ const AdvancedSettings = () => {
   const connectGoogleDrive = async () => {
     // Simulação de conexão - implementar com Google OAuth utilizado
     setGoogleDriveConnected(true);
+    if (!googleDriveFolder) {
+      setGoogleDriveFolder('KalonConnect_Dados');
+      // Salvar imediatamente para persistir a sugestão
+      localStorage.setItem('kalonAdvancedSettings', JSON.stringify({
+        ...JSON.parse(localStorage.getItem('kalonAdvancedSettings') || '{}'),
+        googleDriveConnected: true,
+        googleDriveFolder: 'KalonConnect_Dados'
+      }));
+    }
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
   };
@@ -256,15 +279,10 @@ const AdvancedSettings = () => {
   };
 
   const connectWhatsApp = () => {
-    // Implementar conexão com WhatsApp Business API
-    if (whatsappNumber && whatsappNumber.length >= 10) {
-      setWhatsappConnected(true);
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
-    } else {
-      setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
-    }
+    // Simulação de conexão
+    setWhatsappConnected(true);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
   };
 
   const disconnectWhatsApp = () => {
@@ -284,15 +302,15 @@ const AdvancedSettings = () => {
   }, [lowPowerMode]);
 
   const predefinedScreenBackgrounds = [
-    { id: 'gradient-blue', name: 'Azul Gradiente', preview: 'bg-gradient-to-br from-blue-100 to-blue-300' },
-    { id: 'gradient-green', name: 'Verde Gradiente', preview: 'bg-gradient-to-br from-green-100 to-green-300' },
-    { id: 'gradient-purple', name: 'Roxo Gradiente', preview: 'bg-gradient-to-br from-purple-100 to-purple-300' }
+    { id: 'gradient-blue', name: t('settings.backgrounds.screen.gradientBlue'), preview: 'bg-gradient-to-br from-blue-100 to-blue-300' },
+    { id: 'gradient-green', name: t('settings.backgrounds.screen.gradientGreen'), preview: 'bg-gradient-to-br from-green-100 to-green-300' },
+    { id: 'gradient-purple', name: t('settings.backgrounds.screen.gradientPurple'), preview: 'bg-gradient-to-br from-purple-100 to-purple-300' }
   ];
 
   const predefinedVideoBackgrounds = [
-    { id: 'blur-nature', name: 'Natureza Suave', preview: 'bg-gradient-to-br from-green-200 to-green-400' },
-    { id: 'blur-ocean', name: 'Oceano Calmo', preview: 'bg-gradient-to-br from-blue-200 to-cyan-400' },
-    { id: 'blur-sunset', name: 'Pôr do Sol', preview: 'bg-gradient-to-br from-orange-200 to-pink-400' }
+    { id: 'blur-nature', name: t('settings.backgrounds.video.blurNature'), preview: 'bg-gradient-to-br from-green-200 to-green-400' },
+    { id: 'blur-ocean', name: t('settings.backgrounds.video.blurOcean'), preview: 'bg-gradient-to-br from-blue-200 to-cyan-400' },
+    { id: 'blur-sunset', name: t('settings.backgrounds.video.blurSunset'), preview: 'bg-gradient-to-br from-orange-200 to-pink-400' }
   ];
 
   const languages = [
@@ -317,10 +335,10 @@ const AdvancedSettings = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                Configurações Avançadas
+                {t('settings.title')}
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Personalize sua experiência <span className="font-bold normal-case">KalonConnect</span>
+                {t('settings.subtitle')}
               </p>
             </div>
           </div>
@@ -335,11 +353,10 @@ const AdvancedSettings = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'text-white shadow-lg'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === tab.id
+                ? 'text-white shadow-lg'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
               style={activeTab === tab.id ? { backgroundColor: themeColors.primary } : {}}
             >
               {tab.icon}
@@ -360,7 +377,7 @@ const AdvancedSettings = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className="mb-4 p-4 border rounded-lg flex items-center space-x-2"
-            style={{ 
+            style={{
               backgroundColor: themeColors.success + '20',
               borderColor: themeColors.success + '40'
             }}
@@ -369,7 +386,7 @@ const AdvancedSettings = () => {
           >
             <CheckCircle className="w-5 h-5" style={{ color: themeColors.success }} aria-hidden="true" />
             <span className="font-medium" style={{ color: themeColors.success }}>
-              Configurações salvas com sucesso!
+              {t('settings.messages.saveSuccess')}
             </span>
             <span className="sr-only">
               Seu link de videoconferência foi salvo com sucesso! Ele será utilizado automaticamente em todos seus eventos e consultas no KalonConnect.
@@ -386,7 +403,7 @@ const AdvancedSettings = () => {
           >
             <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
             <span className="text-red-700 dark:text-red-300 font-medium">
-              Erro ao salvar configurações. Tente novamente.
+              {t('settings.messages.saveError')}
             </span>
           </motion.div>
         )}
@@ -405,99 +422,98 @@ const AdvancedSettings = () => {
               <div className="flex items-center space-x-2 mb-4">
                 <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Idioma
+                  {t('settings.language.title')}
                 </h2>
               </div>
 
-              <select
+              <CustomSelect
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {languages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => {
+                  setLanguage(value);
+                  changeLanguage(value);
+                }}
+                options={languages.map(lang => ({
+                  value: lang.code,
+                  label: lang.name
+                }))}
+                label={t('settings.language.title')}
+              />
 
-              {/* Link de Videoconferência */}
+              {/* Formato de Data */}
+              <div className="mt-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                    {t('settings.dateFormat.title')}
+                  </h2>
+                </div>
+
+                <CustomSelect
+                  value={dateFormat}
+                  onChange={(value) => setDateFormat(value)}
+                  options={[
+                    { value: 'ddmmyyyy', label: t('settings.dateFormat.formats.ddmmyyyy') },
+                    { value: 'mmddyyyy', label: t('settings.dateFormat.formats.mmddyyyy') },
+                    { value: 'yyyymmdd', label: t('settings.dateFormat.formats.yyyymmdd') }
+                  ]}
+                  label={t('settings.dateFormat.title')}
+                  ariaLabel={t('settings.dateFormat.label')}
+                />
+              </div>
+
+              {/* Link de Videoconferência - OCULTADO (Sistema Interno em Uso)
               <div className="mt-6">
                 <div className="flex items-center space-x-2 mb-4">
                   <VideoIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                   <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                    Link da Sala de Vídeo
+                    {t('settings.videoLink.title')}
                   </h2>
                 </div>
 
                 <label htmlFor="video-conference-link" className="sr-only">
-                  Link da Sala de Vídeo - Campo obrigatório. Informe seu link pessoal de vídeo.
+                  Link da Sala de Vídeo - Opcional.
                 </label>
                 <input
                   id="video-conference-link"
                   type="text"
                   value={videoConferenceLink}
                   onChange={(e) => setVideoConferenceLink(e.target.value)}
-                  placeholder="https://whereby.com/seunome ou https://meet.jit.si/SEUNOME"
+                  placeholder="https://seu-link-personalizado.com"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-label="Digite ou cole o endereço da sua sala de videoconferência, por exemplo: whereby.com/seunome. Este link será usado automaticamente em todas as suas sessões e eventos virtuais."
+                  aria-label="Link da sua sala de videoconferência personalizada."
                   aria-describedby="video-link-help"
-                  aria-required="true"
                 />
                 <span id="video-link-help" className="sr-only">
-                  Campo obrigatório. Informe seu link pessoal de vídeo. Caso não tenha, clique no link de ajuda para criar gratuitamente uma conta Whereby ou Jitsi.
+                  Opcional. Se deixado em branco, o sistema criará uma sala segura automaticamente.
                 </span>
 
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   <span aria-hidden="true">
-                    Cole aqui seu link pessoal de videoconferência (exemplo: https://whereby.com/seunome).
-                    <br />
-                    Se não possui, crie gratuitamente em{' '}
-                    <a 
-                      href="https://whereby.com/signup" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="font-bold underline hover:opacity-80 transition-opacity"
-                      style={{ color: themeColors.primary }}
-                      aria-label="Criar conta gratuita no Whereby (abre em nova aba)"
-                    >
-                      Whereby
-                    </a>
-                    {' '}ou{' '}
-                    <a 
-                      href="https://jitsi.org/get-started/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="font-bold underline hover:opacity-80 transition-opacity"
-                      style={{ color: themeColors.primary }}
-                      aria-label="Criar conta gratuita no Jitsi (abre em nova aba)"
-                    >
-                      Jitsi
-                    </a>
-                    .
+                    {t('settings.videoLink.help')}
                   </span>
                 </p>
               </div>
+              */}
 
               <div className="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-gray-800 dark:text-white">
-                    Modo de Baixa Energia
+                    {t('settings.lowPowerMode.title')}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Desativa recursos de mídia quando a sessão estiver em segundo plano.
+                    {t('settings.lowPowerMode.description')}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setLowPowerMode((prev) => !prev)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold tracking-widest ${
-                    lowPowerMode
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
-                  }`}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold tracking-widest ${lowPowerMode
+                    ? 'text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
+                    }`}
+                  style={lowPowerMode ? { backgroundColor: themeColors.primary } : {}}
                 >
-                  {lowPowerMode ? 'Ativado' : 'Desativado'}
+                  {lowPowerMode ? t('settings.lowPowerMode.enabled') : t('settings.lowPowerMode.disabled')}
                 </button>
               </div>
             </motion.div>
@@ -511,18 +527,18 @@ const AdvancedSettings = () => {
               <div className="flex items-center space-x-2 mb-4">
                 <FileText className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Frase / Slogan Personalizado
+                  {t('settings.slogan.title')}
                 </h2>
               </div>
 
               <textarea
                 value={customSlogan}
                 onChange={(e) => setCustomSlogan(e.target.value)}
-                placeholder="Digite sua frase ou slogan personalizado aqui..."
+                placeholder={t('settings.slogan.placeholder')}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
               />
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Esta frase será exibida nos cabeçalhos e telas principais
+                {t('settings.slogan.description')}
               </p>
             </motion.div>
           </>
@@ -540,10 +556,10 @@ const AdvancedSettings = () => {
               <div className="flex items-center space-x-2 mb-6">
                 <Palette className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Escolha seu Tema
+                  {t('settings.branding.chooseTheme')}
                 </h2>
               </div>
-              
+
               <ThemeSelector />
             </motion.div>
 
@@ -557,7 +573,7 @@ const AdvancedSettings = () => {
               <div className="flex items-center space-x-2 mb-6">
                 <Image className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Imagens
+                  {t('settings.branding.images')}
                 </h2>
               </div>
 
@@ -565,7 +581,7 @@ const AdvancedSettings = () => {
                 {/* Logo */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Logo do Profissional
+                    {t('settings.branding.professionalLogo')}
                   </label>
                   <label className="block p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
                     <input
@@ -581,7 +597,7 @@ const AdvancedSettings = () => {
                         <>
                           <FileImage className="w-8 h-8 text-gray-400" />
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Upload Logo
+                            {t('settings.branding.uploadLogo')}
                           </span>
                         </>
                       )}
@@ -592,7 +608,7 @@ const AdvancedSettings = () => {
                 {/* Foto */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Foto do Profissional
+                    {t('settings.branding.professionalPhoto')}
                   </label>
                   <label className="block p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
                     <input
@@ -608,7 +624,7 @@ const AdvancedSettings = () => {
                         <>
                           <User className="w-8 h-8 text-gray-400" />
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Upload Foto
+                            {t('settings.branding.uploadPhoto')}
                           </span>
                         </>
                       )}
@@ -619,7 +635,7 @@ const AdvancedSettings = () => {
                 {/* Avatar */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Avatar
+                    {t('settings.branding.avatar')}
                   </label>
                   <label className="block p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
                     <input
@@ -635,7 +651,7 @@ const AdvancedSettings = () => {
                         <>
                           <User className="w-8 h-8 text-gray-400" />
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Upload Avatar
+                            {t('settings.branding.uploadAvatar')}
                           </span>
                         </>
                       )}
@@ -668,19 +684,19 @@ const AdvancedSettings = () => {
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-800 dark:text-white">
-                      Status da Conexão
+                      {t('settings.integrations.googleDrive.status')}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {googleDriveConnected ? 'Conectado' : 'Desconectado'}
+                      {googleDriveConnected ? t('settings.integrations.googleDrive.connected') : t('settings.integrations.googleDrive.disconnected')}
                     </p>
                   </div>
                   {googleDriveConnected ? (
                     <ModernButton
                       onClick={disconnectGoogleDrive}
-                      variant="danger"
+                      variant="secondary"
                       size="sm"
                     >
-                      Desconectar
+                      {t('settings.integrations.googleDrive.disconnect')}
                     </ModernButton>
                   ) : (
                     <ModernButton
@@ -688,7 +704,7 @@ const AdvancedSettings = () => {
                       variant="primary"
                       size="sm"
                     >
-                      Conectar
+                      {t('settings.integrations.googleDrive.connect')}
                     </ModernButton>
                   )}
                 </div>
@@ -697,51 +713,51 @@ const AdvancedSettings = () => {
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Pasta Padrão para Arquivos
+                        {t('settings.integrations.googleDrive.folderLabel')}
                       </label>
                       <input
                         type="text"
                         value={googleDriveFolder}
                         onChange={(e) => setGoogleDriveFolder(e.target.value)}
-                        placeholder="Ex: Clientes/KalonConnect"
+                        placeholder={t('settings.integrations.googleDrive.folderPlaceholder')}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 rounded-lg border" style={{ 
+                      <div className="p-4 rounded-lg border" style={{
                         backgroundColor: themeColors.primary,
                         borderColor: themeColors.primary + '40'
                       }}>
                         <FolderOpen className="w-6 h-6 mb-2" style={{ color: 'white' }} />
-                        <p className="font-medium text-gray-800 dark:text-white">
-                          Cadastro de Clientes
+                        <p className="font-medium text-white">
+                          {t('settings.integrations.googleDrive.features.clients.title')}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Automático
+                        <p className="text-sm text-white/90">
+                          {t('settings.integrations.googleDrive.features.clients.desc')}
                         </p>
                       </div>
 
-                      <div className="p-4 rounded-lg border" style={{ 
+                      <div className="p-4 rounded-lg border" style={{
                         backgroundColor: themeColors.secondaryLight,
                         borderColor: themeColors.secondary + '40'
                       }}>
-                        <VideoIcon className="w-6 h-6 mb-2" style={{ color: themeColors.secondary }} />
-                        <p className="font-medium text-gray-800 dark:text-white">
-                          Vídeos de Sessão
+                        <VideoIcon className="w-6 h-6 mb-2 text-gray-600" />
+                        <p className="font-medium text-gray-800">
+                          {t('settings.integrations.googleDrive.features.videos.title')}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Backup Automático
+                        <p className="text-sm text-gray-700">
+                          {t('settings.integrations.googleDrive.features.videos.desc')}
                         </p>
                       </div>
 
                       <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 md:col-span-2">
-                        <FileText className="w-6 h-6 text-purple-600 dark:text-purple-400 mb-2" />
+                        <FileText className="w-6 h-6 mb-2" style={{ color: themeColors.primary }} />
                         <p className="font-medium text-gray-800 dark:text-white">
-                          Registros de Consultas
+                          {t('settings.integrations.googleDrive.features.records.title')}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Armazenamento Seguro
+                          {t('settings.integrations.googleDrive.features.records.desc')}
                         </p>
                       </div>
                     </div>
@@ -768,19 +784,19 @@ const AdvancedSettings = () => {
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-800 dark:text-white">
-                      Status da Conexão
+                      {t('settings.integrations.whatsapp.status')}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {whatsappConnected ? 'Conectado' : 'Desconectado'}
+                      {whatsappConnected ? t('settings.integrations.whatsapp.connected') : t('settings.integrations.whatsapp.disconnected')}
                     </p>
                   </div>
                   {whatsappConnected ? (
                     <ModernButton
                       onClick={disconnectWhatsApp}
-                      variant="danger"
+                      variant="secondary"
                       size="sm"
                     >
-                      Desconectar
+                      {t('settings.integrations.whatsapp.disconnect')}
                     </ModernButton>
                   ) : (
                     <ModernButton
@@ -788,7 +804,7 @@ const AdvancedSettings = () => {
                       variant="primary"
                       size="sm"
                     >
-                      Conectar
+                      {t('settings.integrations.whatsapp.connect')}
                     </ModernButton>
                   )}
                 </div>
@@ -797,20 +813,20 @@ const AdvancedSettings = () => {
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Número do Celular
+                        {t('settings.integrations.whatsapp.phoneLabel')}
                       </label>
                       <input
                         type="tel"
                         value={whatsappNumber}
                         onChange={(e) => setWhatsappNumber(e.target.value)}
-                        placeholder="+55 21 98765-4321"
+                        placeholder={t('settings.integrations.whatsapp.phonePlaceholder')}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
 
-                    <div className="flex items-center space-x-3 p-4 rounded-lg border" style={{ 
-                      backgroundColor: themeColors.success + '20',
-                      borderColor: themeColors.success + '40'
+                    <div className="flex items-center space-x-3 p-4 rounded-lg border" style={{
+                      backgroundColor: themeColors.secondaryLight,
+                      borderColor: themeColors.secondary + '40'
                     }}>
                       <input
                         type="checkbox"
@@ -818,27 +834,27 @@ const AdvancedSettings = () => {
                         checked={autoMessageEnabled}
                         onChange={(e) => setAutoMessageEnabled(e.target.checked)}
                         className="w-5 h-5 rounded focus:ring-2"
-                        style={{ 
-                          accentColor: themeColors.success,
-                          focusRingColor: themeColors.success
+                        style={{
+                          accentColor: themeColors.primary,
+                          focusRingColor: themeColors.primary
                         }}
                       />
-                      <label htmlFor="autoMessage" className="text-sm font-medium text-gray-800 dark:text-white cursor-pointer">
+                      <label htmlFor="autoMessage" className="text-sm font-medium text-gray-800 cursor-pointer">
                         Ativar envio automático de mensagens de confirmação
                       </label>
                     </div>
 
                     {autoMessageEnabled && (
-                      <div className="p-4 rounded-lg border" style={{ 
+                      <div className="p-4 rounded-lg border" style={{
                         backgroundColor: themeColors.primary,
                         borderColor: themeColors.primary + '40'
                       }}>
-                        <Phone className="w-6 h-6 mb-2" style={{ color: 'white' }} />
-                        <p className="font-medium text-gray-800 dark:text-white mb-1">
-                          Mensagens Automáticas
+                        <Phone className="w-6 h-6 mb-2 text-white" />
+                        <p className="font-medium text-white mb-1">
+                          {t('settings.integrations.whatsapp.autoMessage')}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Confirmações de agendamento serão enviadas automaticamente
+                        <p className="text-sm text-white/90">
+                          {t('settings.integrations.whatsapp.autoMessageDesc')}
                         </p>
                       </div>
                     )}
@@ -871,7 +887,7 @@ const AdvancedSettings = () => {
           </motion.div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

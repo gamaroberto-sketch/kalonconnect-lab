@@ -5,15 +5,18 @@ import { motion } from 'framer-motion';
 import { PenTool, HelpCircle, Volume2, Upload, Download, X } from 'lucide-react';
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  
+
+  const { t } = useTranslation();
+
   const [signatureImage, setSignatureImage] = useState(null);
   const [showTutorial, setShowTutorial] = useState(false);
 
-  const helpText = `Assinatura eletrônica: É possível assinar com o mouse, dedo (touch) ou inserir uma imagem. Se não possuir assinatura digital: Use o botão 'Desenhar assinatura' ou clique em 'Como criar minha assinatura?' para tutorial fácil.`;
+  const helpText = t('documents.help.signature.text');
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -29,7 +32,7 @@ const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, curre
   const handleSave = () => {
     if (signatureImage) {
       localStorage.setItem('professionalSignature', signatureImage);
-      alert('Assinatura salva com sucesso!');
+      alert(t('documents.signature.success'));
     }
   };
 
@@ -51,62 +54,25 @@ const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, curre
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className={`p-6 rounded-xl border-2 transition-all ${
-        highContrast 
-          ? 'bg-white border-black' 
-          : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-      }`}
+      className={`p-6 rounded-xl border-2 transition-all ${highContrast
+        ? 'bg-white border-black'
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+        }`}
       style={{ fontSize: `${fontSize}px` }}
     >
       {/* Título */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className={`text-2xl font-bold ${
-          highContrast ? 'text-black' : 'text-gray-800 dark:text-white'
-        }`}>
+      <div className="mb-6">
+        <h2 className={`text-2xl font-bold ${highContrast ? 'text-black' : 'text-gray-800 dark:text-white'
+          }`}>
           <PenTool className="w-6 h-6 inline mr-2" />
-          Assinatura Eletrônica
+          {t('documents.signature.title')}
         </h2>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => onShowHelp('signature')}
-            className={`p-2 rounded-lg transition-colors ${
-              highContrast
-                ? 'bg-black text-white hover:bg-gray-800'
-                : ''
-            }`}
-            style={!highContrast ? { 
-              backgroundColor: themeColors.primaryLight, 
-              color: themeColors.primary 
-            } : {}}
-            aria-label="Como funciona a assinatura eletrônica?"
-            title="Como funciona?"
-          >
-            <HelpCircle className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => onReadHelp(helpText, 'signature')}
-            className={`p-2 rounded-lg transition-colors ${
-              highContrast
-                ? 'bg-black text-white hover:bg-gray-800'
-                : ''
-            }`}
-            style={!highContrast ? { 
-              backgroundColor: themeColors.secondaryLight, 
-              color: themeColors.secondary 
-            } : {}}
-            aria-label="Ouvir explicação da assinatura eletrônica"
-            title="Ouvir explicação"
-          >
-            <Volume2 className="w-5 h-5" />
-          </button>
-        </div>
       </div>
 
       <div className="space-y-4">
-        <p className={`text-sm ${
-          highContrast ? 'text-black' : 'text-gray-600 dark:text-gray-400'
-        }`}>
-          Assine digitalmente usando mouse, toque ou upload de imagem
+        <p className={`text-sm ${highContrast ? 'text-black' : 'text-gray-600 dark:text-gray-400'
+          }`}>
+          {t('documents.help.signature.text')}
         </p>
 
         {/* Botão Desenhar Assinatura */}
@@ -117,33 +83,42 @@ const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, curre
           size="lg"
           className="w-full"
         >
-          Desenhar Assinatura
+          {t('documents.signature.draw')}
         </ModernButton>
 
         {/* Botão Upload Imagem */}
-        <label className="block">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-            aria-label="Upload de imagem de assinatura"
-          />
-          <ModernButton
-            variant="secondary"
-            size="lg"
-            className="w-full cursor-pointer"
-            icon={<Upload className="w-5 h-5" />}
-          >
-            Upload de Imagem
-          </ModernButton>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+          id="signature-upload"
+          aria-label="Upload de imagem de assinatura"
+        />
+        <label
+          htmlFor="signature-upload"
+          className="w-full px-4 py-2 text-base rounded-lg font-medium transition-transform transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02]"
+          style={{
+            backgroundColor: themeColors.secondary,
+            color: themeColors.textPrimary,
+            borderWidth: '0',
+            borderStyle: 'solid'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = themeColors.secondaryDark;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = themeColors.secondary;
+          }}
+        >
+          <Upload className="w-5 h-5" />
+          <span>{t('documents.signature.upload')}</span>
         </label>
 
         {/* Preview da Assinatura */}
         {signatureImage && (
-          <div className={`p-4 border-2 rounded-lg ${
-            highContrast ? 'border-black' : 'border-gray-300 dark:border-gray-600'
-          }`}>
+          <div className={`p-4 border-2 rounded-lg ${highContrast ? 'border-black' : 'border-gray-300 dark:border-gray-600'
+            }`}>
             <div className="flex items-center justify-between mb-3">
               <p className="font-medium">Preview:</p>
               <ModernButton
@@ -161,7 +136,7 @@ const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, curre
                 size="md"
                 className="flex-1"
               >
-                Salvar
+                {t('documents.actions.save')}
               </ModernButton>
               <ModernButton
                 onClick={handleDownload}
@@ -176,28 +151,87 @@ const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, curre
           </div>
         )}
 
-        {/* Tutorial de Criação */}
-        <div className={`p-4 border-2 rounded-lg ${
-          highContrast ? 'bg-yellow-50 border-black' : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700'
-        }`}>
-          <p className={`text-sm font-medium mb-2 ${
-            highContrast ? 'text-black' : 'text-gray-800 dark:text-white'
-          }`}>
-            💡 Como criar assinatura digital?
-          </p>
-          <p className={`text-sm mb-3 ${
-            highContrast ? 'text-black' : 'text-gray-600 dark:text-gray-400'
-          }`}>
-            Você pode usar aplicativos gratuitos como gov.br ou criar sua própria. Clique no botão de ajuda para tutorial completo.
-          </p>
-          <ModernButton
-            onClick={() => onShowHelp('signature-tutorial')}
-            variant="secondary"
-            size="sm"
-          >
-            Ver Tutorial
-          </ModernButton>
-        </div>
+        {/* Modal de Desenho de Assinatura */}
+        {showTutorial && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowTutorial(false)}>
+            <div
+              className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                  {t('documents.signature.draw')}
+                </h3>
+                <button
+                  onClick={() => setShowTutorial(false)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="border-2 border-gray-300 dark:border-gray-600 rounded-lg mb-4">
+                <canvas
+                  id="signature-canvas"
+                  width={600}
+                  height={200}
+                  className="w-full bg-white cursor-crosshair"
+                  onMouseDown={(e) => {
+                    const canvas = e.currentTarget;
+                    const ctx = canvas.getContext('2d');
+                    const rect = canvas.getBoundingClientRect();
+                    ctx.beginPath();
+                    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+                    canvas.isDrawing = true;
+                  }}
+                  onMouseMove={(e) => {
+                    const canvas = e.currentTarget;
+                    if (!canvas.isDrawing) return;
+                    const ctx = canvas.getContext('2d');
+                    const rect = canvas.getBoundingClientRect();
+                    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                    ctx.stroke();
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.isDrawing = false;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.isDrawing = false;
+                  }}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <ModernButton
+                  onClick={() => {
+                    const canvas = document.getElementById('signature-canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                  }}
+                  variant="outline"
+                  size="md"
+                  className="flex-1"
+                >
+                  {t('common.clear')}
+                </ModernButton>
+                <ModernButton
+                  onClick={() => {
+                    const canvas = document.getElementById('signature-canvas');
+                    const dataUrl = canvas.toDataURL('image/png');
+                    setSignatureImage(dataUrl);
+                    setShowTutorial(false);
+                  }}
+                  variant="primary"
+                  size="md"
+                  className="flex-1"
+                >
+                  {t('documents.actions.save')}
+                </ModernButton>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </motion.div>
   );

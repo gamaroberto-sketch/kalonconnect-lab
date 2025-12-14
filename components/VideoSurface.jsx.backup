@@ -1,0 +1,182 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { VideoOff } from "lucide-react";
+import { useVideoPanel } from "./VideoPanelContext";
+import ProfessionalSessionView from "./ProfessionalSessionView";
+import { useTranslation } from '../hooks/useTranslation';
+
+const VideoSurface = ({ roomId }) => {
+  const {
+    useWhereby,
+    isProfessional,
+    isVideoOn,
+    isCameraPreviewOn,
+    isScreenSharing,
+    localVideoRef,
+    remoteVideoRef,
+    screenShareRef,
+    recordingState,
+    lowPowerMode,
+    isConnected,
+    permissionError,
+    isSessionStarted,
+  } = useVideoPanel();
+
+  const { t } = useTranslation();
+
+  // Estados para LiveKit
+  const [liveKitToken, setLiveKitToken] = useState(null);
+  const [liveKitWsUrl, setLiveKitWsUrl] = useState(null);
+  const [liveKitConnect, setLiveKitConnect] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  const connectionAttempts = React.useRef(0);
+
+  // Auto-connect when session starts
+  useEffect(() => {
+    if (isSessionStarted && !liveKitConnect && !isConnecting) {
+      if (connectionAttempts.current >= 1) {
+        console.warn("⚠️ LiveKit Auto-Connect aborted: exceeded max attempts.");
+        return;
+      }
+      console.log("🚀 Session Started! Triggering LiveKit connection...");
+      connectLiveKit();
+    }
+  }, [isSessionStarted, liveKitConnect, isConnecting]);
+
+  // Função para conectar ao LiveKit
+  const connectLiveKit = async () => {
+    try {
+      if (isConnecting || liveKitConnect) return;
+      connectionAttempts.current += 1;
+      setIsConnecting(true);
+
+      const targetRoom = roomId || "consultation-room";
+      console.log(`🎥 LIVEKIT: Connecting to room: ${targetRoom}`);
+
+      const res = await fetch("/api/livekit/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roomName: targetRoom,
+          participantName: isProfessional ? "Profissional" : "Cliente",
+        }),
+      });
+
+      if (!res.ok) throw new Error("Token API failed");
+
+      const data = await res.json();
+      if (data.token) {
+        console.log("✅ LiveKit Token acquired!", data);
+        setLiveKitToken(data.token);
+        setLiveKitWsUrl(data.wsUrl);
+        setLiveKitConnect(true);
+      } else {
+        console.error("❌ LiveKit success=false in response:", data);
+      }
+    } catch (error) {
+      console.error("❌ CRITICAL: Erro ao conectar LiveKit:", error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Show local video if Preview is ON OR if Video is Transmitting OR Session Active
+  const showLocalPreview =
+    (isCameraPreviewOn || isVideoOn || isSessionStarted) && (!lowPowerMode || isConnected);
+
+  // Whereby fallback
+  if (useWhereby) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-gray-900">
+        <iframe
+          src="https://whereby.com/kalon-os-consulta"
+          allow="camera; microphone; fullscreen; speaker; display-capture"
+          style={{ width: "95%", height: "75vh", border: "2px solid #ccc", borderRadius: "16px" }}
+        />
+      </div>
+    );
+  }
+
+  // --- RENDER ---
+  return (
+    <div className="h-full w-full flex flex-col relative">
+
+      {/* Overlays */}
+      {recordingState?.active && (
+        <div className="absolute top-4 left-4 z-30 flex items-center gap-3 px-3 py-1 rounded-full bg-red-600/90 text-white text-xs font-semibold shadow-lg">
+          <span className="h-2.5 w-2.5 rounded-full bg-white animate-ping" />
+          <span>Gravação ativa</span>
+          {typeof recordingState?.elapsed === "string" && <span className="text-[11px] font-mono">{recordingState.elapsed}</span>}
+        </div>
+      )}
+
+      {permissionError && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-6 rounded-xl shadow-2xl border border-red-200 text-center">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Erro de Acesso</h3>
+          <p className="text-sm text-gray-500 mb-4">{permissionError}</p>
+        </div>
+      )}
+
+      {/* VIEW SWITCHING LOGIC */}
+      {liveKitConnect && liveKitToken && liveKitWsUrl ? (
+        // ✅ LIVEKIT SESSION VIEW
+        <ProfessionalSessionView
+          token={liveKitToken}
+          wsUrl={liveKitWsUrl}
+          onDisconnected={() => {
+            console.log("LiveKit Disconnected");
+            setLiveKitConnect(false);
+          }}
+          onError={(err) => console.error("LiveKit Error", err)}
+        />
+      ) : (
+        // ⏹️ LEGACY PREVIEW VIEW (Pre-Call)
+        <div className="flex flex-1 flex-col lg:flex-row gap-6 p-4">
+          <div className="flex-1 flex flex-col piano-frame relative">
+            <div className="piano-screen flex items-center justify-center">
+              <video
+                ref={localVideoRef}
+                autoPlay
+                muted
+                playsInline
+                className={`${showLocalPreview ? "block" : "hidden"} h-full w-full object-cover`}
+                style={{ minHeight: "300px", backgroundColor: "#000" }}
+              />
+              {!showLocalPreview && <VideoOff className="w-12 h-12 text-gray-400" />}
+            </div>
+            <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
+              <span className="px-3 py-1.5 text-xs font-medium text-white bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+                {showLocalPreview
+                  ? isProfessional
+                    ? t('videoControls.labels.professionalPreview')
+                    : t('videoControls.labels.clientPreview')
+                  : lowPowerMode && !isConnected
+                    ? t('videoControls.labels.previewPaused')
+                    : t('videoControls.labels.cameraOff')}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col piano-frame relative">
+            <div className="piano-screen flex items-center justify-center">
+              {isScreenSharing ? (
+                <video ref={screenShareRef} autoPlay className="h-full w-full object-cover" />
+              ) : (
+                <video ref={remoteVideoRef} autoPlay className="h-full w-full object-cover" />
+              )}
+            </div>
+            <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
+              <span className="px-3 py-1.5 text-xs font-medium text-white bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+                {isScreenSharing ? t('videoControls.labels.sharingScreen') : t('videoControls.labels.client')}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default VideoSurface;

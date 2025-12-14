@@ -2,25 +2,28 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  Users, 
-  Edit2, 
-  Trash2, 
-  BarChart3, 
+import {
+  Calendar,
+  Users,
+  Edit2,
+  Trash2,
+  BarChart3,
   Play,
   FileText,
   Image as ImageIcon
 } from 'lucide-react';
 import ModernButton from './ModernButton';
 import { useTheme } from './ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
+import { formatDate } from '../utils/formatDate';
 
 const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  
+  const { t } = useTranslation();
+
   const getStatusColor = (status) => {
-    switch(status) {
+    switch (status) {
       case 'agendado':
         return `text-xs font-semibold px-3 py-1 rounded-full`;
       case 'ativo':
@@ -33,7 +36,7 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
   };
 
   const getTypeColor = (type) => {
-    switch(type) {
+    switch (type) {
       case 'curso':
         return `text-xs font-semibold px-3 py-1 rounded-full`;
       case 'palestra':
@@ -55,8 +58,8 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
       {event.banner && (
         <div className="h-32 bg-gradient-to-r from-purple-400 to-orange-400 relative">
           {event.banner.startsWith('data:') ? (
-            <img 
-              src={event.banner} 
+            <img
+              src={event.banner}
               alt={event.name}
               className="w-full h-full object-cover"
             />
@@ -83,23 +86,23 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
 
         {/* Badges */}
         <div className="flex flex-wrap gap-2 mb-4">
-          <span 
+          <span
             className={`px-3 py-1 rounded-full text-xs font-semibold`}
-            style={{ 
-              backgroundColor: `${themeColors.primaryLight}`, 
-              color: `${themeColors.primary}` 
+            style={{
+              backgroundColor: themeColors.primary,
+              color: 'white'
             }}
           >
-            {event.status === 'agendado' ? 'Agendado' : event.status === 'ativo' ? 'Em Andamento' : 'Finalizado'}
+            {event.status === 'agendado' ? t('events.status.scheduled') : event.status === 'ativo' ? t('events.status.active') : t('events.status.past')}
           </span>
-          <span 
+          <span
             className={`px-3 py-1 rounded-full text-xs font-semibold`}
-            style={{ 
-              backgroundColor: `${themeColors.secondaryLight}`, 
-              color: `${themeColors.secondary}` 
+            style={{
+              backgroundColor: themeColors.secondary,
+              color: themeColors.textPrimary
             }}
           >
-            {event.type === 'curso' ? 'Curso' : event.type === 'palestra' ? 'Palestra' : 'Webinar'}
+            {event.type === 'curso' ? t('events.types.course') : event.type === 'palestra' ? t('events.types.lecture') : t('events.types.webinar')}
           </span>
         </div>
 
@@ -107,12 +110,12 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
         <div className="space-y-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex items-center space-x-2">
             <Calendar className="w-4 h-4" />
-            <span>{event.startDate} às {event.startTime}</span>
+            <span>{formatDate(event.startDate)} {t('events.at')} {event.startTime}</span>
           </div>
           {event.participants && (
             <div className="flex items-center space-x-2">
               <Users className="w-4 h-4" />
-              <span>{event.participants.length} participantes</span>
+              <span>{event.participants.length} {t('events.participants')}</span>
             </div>
           )}
         </div>
@@ -127,7 +130,7 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
               size="sm"
               className="justify-center"
             >
-              Entrar
+              {t('events.enter')}
             </ModernButton>
           ) : (
             <ModernButton
@@ -137,10 +140,10 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
               size="sm"
               className="justify-center"
             >
-              Relatório
+              {t('events.report')}
             </ModernButton>
           )}
-          
+
           <ModernButton
             icon={<Edit2 className="w-4 h-4" />}
             onClick={onEdit}
@@ -148,7 +151,7 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
             size="sm"
             className="justify-center"
           >
-            Editar
+            {t('common.edit')}
           </ModernButton>
         </div>
 
@@ -162,7 +165,7 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
               size="sm"
               className="w-full justify-center"
             >
-              Excluir Evento
+              {t('events.deleteEvent')}
             </ModernButton>
           </div>
         )}
@@ -177,11 +180,11 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
               size="sm"
               className="w-full justify-center"
             >
-              Ver Relatório
+              {t('events.viewReport')}
             </ModernButton>
           </div>
         )}
-        
+
         {/* Botão Marketing */}
         {onMarketing && (
           <div className="mt-2">
@@ -192,7 +195,7 @@ const EventCard = ({ event, onEdit, onDelete, onViewReport, onEnter, onMarketing
               size="sm"
               className="w-full justify-center"
             >
-              Marketing
+              {t('events.marketing')}
             </ModernButton>
           </div>
         )}

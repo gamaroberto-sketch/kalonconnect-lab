@@ -76,13 +76,13 @@ const buildMinimalPdf = ({ title, duration, transcription, summary }) => {
   const safe = (value) => value.replace(/[()]/g, "");
   const transcriptionLines = transcription
     ? transcription.split(/\r?\n/).map((line, index) =>
-        `BT /F1 10 Tf 50 ${680 - index * 14} Td (${safe(line)}) Tj ET`
-      )
+      `BT /F1 10 Tf 50 ${680 - index * 14} Td (${safe(line)}) Tj ET`
+    )
     : ["BT /F1 10 Tf 50 680 Td (Transcrição não disponível.) Tj ET"];
   const summaryLines = summary
     ? summary.split(/\r?\n/).map((line, index) =>
-        `BT /F1 10 Tf 50 ${460 - index * 14} Td (${safe(line)}) Tj ET`
-      )
+      `BT /F1 10 Tf 50 ${460 - index * 14} Td (${safe(line)}) Tj ET`
+    )
     : ["BT /F1 10 Tf 50 460 Td (Resumo não disponível.) Tj ET"];
 
   const contentStream = [
@@ -131,7 +131,10 @@ const RecordingPanel = () => {
     setRecordingState
   } = useVideoPanel();
   const { user, userType } = useAuth();
-  const { canUseFeature } = useAccessControl(user?.version);
+
+  // Force PRO version for admin users for feature access
+  const effectiveVersion = (userType === 'admin' || user?.email === 'bobgama@uol.com.br') ? 'PRO' : user?.version;
+  const { canUseFeature } = useAccessControl(effectiveVersion);
   const { trackAction: trackUsageAction } = useUsageTrackerContext();
   const allowRecording = canUseFeature("video.recording");
   const allowTranscription = canUseFeature("video.transcription");
@@ -637,13 +640,13 @@ const RecordingPanel = () => {
         try {
           const result = await processRecording({
             clientId,
-                clientName: clientId,
-                professionalId,
+            clientName: clientId,
+            professionalId,
             sessionId,
             recordingPath,
             duration: formatClock(recordingMetadata?.duration || recordingElapsed),
-                recordingMode,
-                recordedAt: payload?.metadata?.savedAt
+            recordingMode,
+            recordedAt: payload?.metadata?.savedAt
           });
 
           setTranscription(result.transcript || "");
@@ -658,7 +661,7 @@ const RecordingPanel = () => {
           console.error(processingError);
           setErrorMessage(
             processingError.message ||
-              "Não foi possível concluir a transcrição e o resumo automáticos."
+            "Não foi possível concluir a transcrição e o resumo automáticos."
           );
           setProcessingStatus("idle");
         } finally {
@@ -1271,9 +1274,8 @@ const RecordingPanel = () => {
                 style={{ color: notifyClient ? themeColors?.primary : textSecondary }}
               >
                 <span
-                  className={`h-2.5 w-2.5 rounded-full ${
-                    notifyClient ? "bg-emerald-500" : "bg-gray-400"
-                  }`}
+                  className={`h-2.5 w-2.5 rounded-full ${notifyClient ? "bg-emerald-500" : "bg-gray-400"
+                    }`}
                 />
                 {notifyClient ? "Ativo" : "Silencioso"}
               </button>
@@ -1468,9 +1470,9 @@ const RecordingPanel = () => {
                 )}
               </AnimatePresence>
 
-            <p className="text-xs text-center px-4" style={{ color: textSecondary }}>
-              Esta gravação é pessoal e confidencial. Você pode optar por não informar o cliente.
-            </p>
+              <p className="text-xs text-center px-4" style={{ color: textSecondary }}>
+                Esta gravação é pessoal e confidencial. Você pode optar por não informar o cliente.
+              </p>
 
               {isRecording && (
                 <div
@@ -1561,8 +1563,8 @@ const RecordingPanel = () => {
               {isGeneratingTranscription
                 ? "Gerando transcrição, aguarde..."
                 : draftSavedAt
-                ? `Rascunho salvo às ${draftSavedAt.toLocaleTimeString()}`
-                : "Edite livremente — este texto não é enviado ao cliente."}
+                  ? `Rascunho salvo às ${draftSavedAt.toLocaleTimeString()}`
+                  : "Edite livremente — este texto não é enviado ao cliente."}
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1826,50 +1828,49 @@ const RecordingPanel = () => {
                   <div
                     key={item.sessionId}
                     onClick={() => handleSelectHistorySession(item.sessionId)}
-                    className={`rounded-xl border px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3 transition cursor-pointer ${
-                      isActive
+                    className={`rounded-xl border px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3 transition cursor-pointer ${isActive
                         ? "border-primary-500 bg-primary-500/10 dark:border-primary-400"
                         : "border-gray-200 dark:border-gray-700"
-                    }`}
+                      }`}
                     style={{ backgroundColor: cardBackground }}
                   >
-                  <div>
-                    <p className="text-sm font-semibold" style={{ color: textPrimary }}>
-                      Sessão {item.sessionId}
-                    </p>
-                    <p className="text-xs" style={{ color: textSecondary }}>
-                      {item.metadata?.savedAt
-                        ? new Date(item.metadata.savedAt).toLocaleString()
-                        : "Data desconhecida"}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-                    <span>Duração: {formatClock(item.metadata?.duration || 0)}</span>
-                    <span>
-                      Transcrição:{" "}
-                      <strong
-                        className={
-                          item.metadata?.transcriptionStatus === "completed"
-                            ? "text-emerald-500"
-                            : "text-yellow-500"
-                        }
-                      >
-                        {item.metadata?.transcriptionStatus || "pendente"}
-                      </strong>
-                    </span>
-                    <span>
-                      Resumo:{" "}
-                      <strong
-                        className={
-                          item.metadata?.summaryStatus === "completed"
-                            ? "text-emerald-500"
-                            : "text-yellow-500"
-                        }
-                      >
-                        {item.metadata?.summaryStatus || "pendente"}
-                      </strong>
-                    </span>
-                  </div>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: textPrimary }}>
+                        Sessão {item.sessionId}
+                      </p>
+                      <p className="text-xs" style={{ color: textSecondary }}>
+                        {item.metadata?.savedAt
+                          ? new Date(item.metadata.savedAt).toLocaleString()
+                          : "Data desconhecida"}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                      <span>Duração: {formatClock(item.metadata?.duration || 0)}</span>
+                      <span>
+                        Transcrição:{" "}
+                        <strong
+                          className={
+                            item.metadata?.transcriptionStatus === "completed"
+                              ? "text-emerald-500"
+                              : "text-yellow-500"
+                          }
+                        >
+                          {item.metadata?.transcriptionStatus || "pendente"}
+                        </strong>
+                      </span>
+                      <span>
+                        Resumo:{" "}
+                        <strong
+                          className={
+                            item.metadata?.summaryStatus === "completed"
+                              ? "text-emerald-500"
+                              : "text-yellow-500"
+                          }
+                        >
+                          {item.metadata?.summaryStatus || "pendente"}
+                        </strong>
+                      </span>
+                    </div>
                   </div>
                 );
               })}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Mic,
@@ -18,19 +18,46 @@ import {
   Minimize2,
   Share2
 } from "lucide-react";
+
 import { useVideoPanel } from "./VideoPanelContext";
 import { useAuth } from "./AuthContext";
 import { useAccessControl } from "../hooks/useAccessControl";
 import { useUsageTrackerContext } from "./UsageTrackerContext";
-import ShareConsultationLink from "./ShareConsultationLink";
+import { generateClientLink, debugOrigin } from "@/utils/generateClientLink";
+import { useTranslation } from "../hooks/useTranslation";
 
 const baseButtonClasses =
-  "px-3 py-2 rounded-full border border-transparent text-sm font-medium transition-colors";
+  "px-3 py-2 rounded-full border-2 border-transparent text-sm font-medium transition-colors";
 
 const iconButtonClasses =
-  "p-3 rounded-full border border-transparent text-sm transition-all flex items-center justify-center shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-1";
+  "p-3 rounded-full border-2 border-transparent text-sm transition-all flex items-center justify-center shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-1";
 
-const VideoControls = () => {
+const VideoControls = ({ professionalId: professionalIdFromProps }) => {
+  const { user } = useAuth();
+  const { canUseFeature } = useAccessControl(user?.version);
+  const { trackAction: trackUsageAction } = useUsageTrackerContext();
+  /* 🟢 v5.38: Local State for Fresh Slug Fetching */
+  const [fetchedSlug, setFetchedSlug] = React.useState(null);
+
+  useEffect(() => {
+    // If user is logged in but slug is missing (or stale), try to fetch fresh profile
+    if (user?.id && !user.slug) {
+      console.log("🔄 VideoControls: Fetching fresh slug for user", user.id);
+      fetch(`/api/user/profile?userId=${user.id}`, { headers: { 'x-user-id': user.id } })
+        .then(res => res.json())
+        .then(data => {
+          if (data?.slug) {
+            console.log("✅ VideoControls: Slug fetched", data.slug);
+            setFetchedSlug(data.slug);
+          }
+        })
+        .catch(err => console.error("❌ Slug fetch error", err));
+    }
+  }, [user]);
+
+  const { t } = useTranslation();
+
+
   const {
     themeColors,
     isAudioOn,
@@ -39,12 +66,9 @@ const VideoControls = () => {
     isConnected,
     isSessionActive,
     isSessionStarted,
-    isCameraPreviewOn: contextCameraPreviewOn,
-    useWhereby,
-    isHighMeshEnabled,
-    setUseWhereby,
-    toggleHighMesh,
+    isCameraPreviewOn,
     toggleAudio,
+    toggleCameraPreview,
     toggleVideo,
     toggleScreenShare,
     handleSessionConnect,
@@ -55,61 +79,127 @@ const VideoControls = () => {
     sessionDuration,
     formatTime,
     isFullscreen,
-    setIsFullscreen,
+    setIsFullscreen, // 🟢 RESTORED
     handleOpenSettings,
     showTimeWarning,
-    consultationId,
-    isProfessional
+    isProfessional,
+    setConsultationId // 🟢 Added
   } = useVideoPanel();
-  
-  // Estado local para evitar loops com contexto
-  const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
-  const { user } = useAuth();
-  const { canUseFeature } = useAccessControl(user?.version);
-  const { trackAction: trackUsageAction } = useUsageTrackerContext();
-  const allowFullscreen = canUseFeature("video.fullscreen");
-  
-  const [showSharePanel, setShowSharePanel] = useState(false);
-  const [cameraActiveMinimal, setCameraActiveMinimal] = useState(false);
-  
-  // Função para testar fluxo mínimo DIRETO
-  const handleMinimalCameraToggle = async () => {
-    console.log('🎯 VideoControls: Usando fluxo mínimo direto');
-    
-    if (cameraActiveMinimal) {
-      // Desligar usando função global
-      window.kalonDeactivateCamera?.();
-      setCameraActiveMinimal(false);
-    } else {
-      // Ligar usando função global (fluxo mínimo)
-      const stream = await window.kalonActivateCamera?.();
-      setCameraActiveMinimal(!!stream);
-    }
-  };
 
+  // ---------------------------------------------------------
+  // 🔒 ID do Profissional — FONTE ÚNICA DE VERDADE (slug do nome)
+  // ---------------------------------------------------------
+  // 🟢 v5.28: Prefer Slug over ID
+  const professionalId = professionalIdFromProps || user?.slug || user?.id || user?.email || null;
+
+  // Debug: Log professionalId
+  useEffect(() => {
+    console.log("🔍 VideoControls: professionalId atualizado", {
+      professionalId,
+      professionalIdFromProps,
+      hasProfessionalId: !!professionalId
+    });
+  }, [professionalId, professionalIdFromProps]);
+
+  // ---------------------------------------------------------
+  // 🔍 Debug de origem
+  // ---------------------------------------------------------
+  useEffect(() => {
+    debugOrigin();
+  }, []);
+
+  // ---------------------------------------------------------
+  // 🔄 Sincronizar estado de fullscreen com o navegador
+  // ---------------------------------------------------------
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+      setIsFullscreen(isCurrentlyFullscreen);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+    };
+  }, [setIsFullscreen]);
+
+  // ---------------------------------------------------------
+  // 🟦 Copiar link do cliente — v5.39 Clean
+  // ---------------------------------------------------------
+  async function handleCopyClientLink() {
+    // 🟢 v5.38: Use fetchedSlug (fresh) > user.slug (session) > email fallback
+    // 🟢 v5.54 Fix: Prioritize 'professionalId' passed from Parent (Single Source of Truth)
+    const rawSlug = professionalId || fetchedSlug || user?.slug || user?.id || user?.email?.split('@')[0].replace(/\./g, '-') || "sala-publica";
+    const slug = rawSlug.toString().toLowerCase(); // Ensure string for IDs
+    const cid = slug;
+
+    // 🟢 v5.34: Ensure Professional is in the correct room matches the client
+    if (setConsultationId) {
+      // FIX: VideoPanelContext adds 'consulta-' prefix internally. We must pass only the SLUG here.
+      setConsultationId(cid);
+    }
+
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const link = `${origin}/consultations/client/${cid}`;
+
+    console.log("🔗 Copiar Link:", link);
+
+    try {
+      await navigator.clipboard.writeText(link);
+      alert("Link copiado!\n\n" + link);
+    } catch (err) {
+      console.warn("⚠️ Clip failed", err);
+      prompt("Copie seu link:", link);
+    }
+  }
+
+  // ---------------------------------------------------------
+  // Temporizador
+  // ---------------------------------------------------------
   const totalSessionSeconds = sessionDuration * 60;
   const remainingSeconds = Math.max(totalSessionSeconds - localSessionTime, 0);
   const isOverLimit = remainingSeconds <= 0 && totalSessionSeconds > 0;
-  const timerDisplay = `${formatTime(localSessionTime)} / ${formatTime(remainingSeconds)}`;
+  const timerDisplay = `${formatTime(localSessionTime)} / ${formatTime(
+    remainingSeconds
+  )}`;
 
-  // 🎯 NOVO: Verificar se pode iniciar sessão (profissional precisa ter link gerado)
-  const canStartSession = !isProfessional || !!consultationId;
+  const allowFullscreen = canUseFeature("video.fullscreen");
 
+  // ---------------------------------------------------------
+  // Handlers diversos (inalterados)
+  // ---------------------------------------------------------
   const handleStartSession = () => {
-    if (!canStartSession) {
-      return; // Não permite iniciar se não tem link (apenas profissional)
-    }
     trackUsageAction({ type: "sessionStart" });
+
+    // 🟢 FIX: Ensure consultationId is set if missing (Start button clicked without Copy Link)
+    if (setConsultationId && !isSessionStarted) {
+      // Prefer fetchedSlug -> professionalId -> user fallback
+      const rawSlug = professionalId || fetchedSlug || user?.slug || user?.id || user?.email?.split('@')[0].replace(/\./g, '-');
+      if (rawSlug) {
+        const cid = rawSlug.toString().toLowerCase();
+        console.log("🚀 Starting Session for Slug:", cid);
+        setConsultationId(cid);
+      }
+    }
+
     handleSessionConnect();
   };
 
   const handlePlay = () => {
-    if (!canStartSession) {
-      return; // Não permite iniciar se não tem link (apenas profissional)
-    }
-    if (!isSessionActive) {
-      handleStartSession();
-    } else {
+    if (!isSessionActive) handleStartSession();
+    else {
       trackUsageAction({ type: "sessionResume" });
       handleSessionResume();
     }
@@ -126,34 +216,22 @@ const VideoControls = () => {
   };
 
   const handleToggleAudio = async () => {
-    console.log('🎯 Usuário clicou botão áudio');
-    trackUsageAction({ type: isAudioOn ? "muteAudio" : "unmuteAudio", featureKey: "audio" });
+    trackUsageAction({
+      type: isAudioOn ? "muteAudio" : "unmuteAudio",
+      featureKey: "audio"
+    });
     await toggleAudio();
   };
 
   const handleToggleCameraPreview = async () => {
-    console.log('🎯 Usuário clicou botão câmera - USANDO FLUXO MÍNIMO DIRETO');
-    
-    // 🎯 USAR APENAS FLUXO MÍNIMO - SEM CONTEXTO PARA EVITAR LOOPS
-    if (isCameraPreviewOn) {
-      // Desligar usando função global
-      window.kalonDeactivateCamera?.();
-      setIsCameraPreviewOn(false);
-      trackUsageAction({
-        type: "disableCameraPreview",
-        featureKey: "cameraPreview"
-      });
-    } else {
-      // Ligar usando função global (fluxo mínimo)
-      const stream = await window.kalonActivateCamera?.();
-      if (stream) {
-        setIsCameraPreviewOn(true);
-        trackUsageAction({
-          type: "enableCameraPreview",
-          featureKey: "cameraPreview"
-        });
-      }
-    }
+    console.log("🎬 handleToggleCameraPreview chamado! isCameraPreviewOn:", isCameraPreviewOn);
+    console.trace("🕵️‍♂️ Rastreando origem da chamada handleToggleCameraPreview");
+    trackUsageAction({
+      type: isCameraPreviewOn ? "disableCameraPreview" : "enableCameraPreview",
+      featureKey: "cameraPreview"
+    });
+    await toggleCameraPreview();
+    console.log("✅ toggleCameraPreview() concluído");
   };
 
   const handleToggleVideo = async () => {
@@ -165,7 +243,6 @@ const VideoControls = () => {
   };
 
   const handleToggleScreenShare = async () => {
-    console.log('🎯 Usuário clicou compartilhar tela');
     trackUsageAction({
       type: isScreenSharing ? "stopScreenShare" : "startScreenShare",
       featureKey: "screenShare"
@@ -173,27 +250,109 @@ const VideoControls = () => {
     await toggleScreenShare();
   };
 
-  const handleToggleWhereby = () => {
-    trackUsageAction({ type: "toggleWhereby", featureKey: "whereby", metadata: { next: !useWhereby } });
-    setUseWhereby((prev) => !prev);
-  };
-
-  const handleToggleHighMesh = () => {
-    trackUsageAction({
-      type: isHighMeshEnabled ? "disableHighMesh" : "enableHighMesh",
-      featureKey: "video.highMesh"
-    });
-    toggleHighMesh();
-  };
-
   const handleToggleFullscreen = () => {
-    if (!allowFullscreen) return;
-    const next = !isFullscreen;
-    trackUsageAction({
-      type: next ? "enterFullscreen" : "exitFullscreen",
-      featureKey: "video.fullscreen"
-    });
-    setIsFullscreen(next);
+    if (!allowFullscreen) {
+      console.warn("Fullscreen não permitido para este plano");
+      alert(t('videoControls.fullscreenError'));
+      return;
+    }
+
+    // Verificar estado real do fullscreen no navegador
+    const isCurrentlyFullscreen = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+
+    const next = !isCurrentlyFullscreen;
+    const videoArea = document.getElementById("videoArea");
+
+    if (videoArea) {
+      try {
+        if (next) {
+          // Entrar em tela cheia
+          if (videoArea.requestFullscreen) {
+            videoArea.requestFullscreen().then(() => {
+              setIsFullscreen(true);
+              trackUsageAction({
+                type: "enterFullscreen",
+                featureKey: "video.fullscreen"
+              });
+            }).catch(err => {
+              console.error("Erro ao entrar em tela cheia:", err);
+            });
+          } else if (videoArea.webkitRequestFullscreen) {
+            videoArea.webkitRequestFullscreen();
+            setIsFullscreen(true);
+            trackUsageAction({
+              type: "enterFullscreen",
+              featureKey: "video.fullscreen"
+            });
+          } else if (videoArea.mozRequestFullScreen) {
+            videoArea.mozRequestFullScreen();
+            setIsFullscreen(true);
+            trackUsageAction({
+              type: "enterFullscreen",
+              featureKey: "video.fullscreen"
+            });
+          } else if (videoArea.msRequestFullscreen) {
+            videoArea.msRequestFullscreen();
+            setIsFullscreen(true);
+            trackUsageAction({
+              type: "enterFullscreen",
+              featureKey: "video.fullscreen"
+            });
+          } else {
+            console.warn("Fullscreen API não suportada neste navegador");
+            return;
+          }
+        } else {
+          // Sair de tela cheia - verificar se realmente está em fullscreen
+          if (isCurrentlyFullscreen) {
+            if (document.exitFullscreen) {
+              document.exitFullscreen().then(() => {
+                setIsFullscreen(false);
+                trackUsageAction({
+                  type: "exitFullscreen",
+                  featureKey: "video.fullscreen"
+                });
+              }).catch(err => {
+                console.error("Erro ao sair de tela cheia:", err);
+              });
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+              setIsFullscreen(false);
+              trackUsageAction({
+                type: "exitFullscreen",
+                featureKey: "video.fullscreen"
+              });
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+              setIsFullscreen(false);
+              trackUsageAction({
+                type: "exitFullscreen",
+                featureKey: "video.fullscreen"
+              });
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+              setIsFullscreen(false);
+              trackUsageAction({
+                type: "exitFullscreen",
+                featureKey: "video.fullscreen"
+              });
+            }
+          } else {
+            // Já não está em fullscreen, apenas atualiza o estado
+            setIsFullscreen(false);
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao alternar tela cheia:", err);
+      }
+    } else {
+      console.warn("Elemento videoArea não encontrado");
+    }
   };
 
   const handleOpenSettingsWithTracking = () => {
@@ -201,17 +360,20 @@ const VideoControls = () => {
     handleOpenSettings();
   };
 
-  const timerButtonClasses = `${baseButtonClasses} font-mono text-sm px-4 ${
-    showTimeWarning ? "animate-pulse" : ""
-  }`;
+  // ---------------------------------------------------------
+  // Estilos (inalterados)
+  // ---------------------------------------------------------
+  const timerButtonClasses = `${baseButtonClasses} font-mono text-sm px-4 ${showTimeWarning ? "animate-pulse" : ""
+    }`;
+
   const primaryColor = themeColors.primary ?? "#0f172a";
   const primaryDark = themeColors.primaryDark ?? primaryColor;
   const secondaryColor = themeColors.secondary ?? "#e2e8f0";
   const secondaryLight =
-    themeColors.secondaryLight ?? themeColors.backgroundSecondary ?? "#f1f5f9";
-  const backgroundColor = themeColors.background ?? "#ffffff";
+    themeColors.secondaryLight ??
+    themeColors.backgroundSecondary ??
+    "#f1f5f9";
   const textColor = themeColors.textPrimary ?? "#1f2937";
-  const warningHighlight = themeColors.warning ?? "#f59e0b";
 
   const controlsBarStyle = {
     backgroundColor: secondaryLight,
@@ -226,212 +388,193 @@ const VideoControls = () => {
   });
 
   const timerButtonStyle = {
-    backgroundColor: showTimeWarning && !isOverLimit ? warningHighlight : primaryColor,
-    color: showTimeWarning && !isOverLimit ? textColor : "#ffffff",
+    backgroundColor:
+      showTimeWarning && !isOverLimit ? themeColors.warning ?? "#f59e0b" : primaryColor,
+    color: "#ffffff",
     borderColor: primaryDark
-  };
-
-  const startButtonStyle = {
-    backgroundColor: primaryColor,
-    color: "#ffffff",
-    borderColor: primaryDark,
-    boxShadow: `0 12px 30px ${primaryColor}26`
-  };
-
-  const configButtonStyle = {
-    backgroundColor: secondaryColor,
-    color: textColor,
-    borderColor: "transparent"
-  };
-
-  const playButtonStyle = {
-    backgroundColor: primaryColor,
-    color: "#ffffff",
-    borderColor: primaryDark,
-    boxShadow: `0 8px 24px ${primaryColor}24`
-  };
-
-  const pauseButtonStyle = {
-    backgroundColor: secondaryColor,
-    color: textColor,
-    borderColor: "transparent",
-    boxShadow: `0 6px 18px ${secondaryColor}40`
-  };
-
-  const stopButtonStyle = {
-    backgroundColor: primaryDark,
-    color: "#ffffff",
-    borderColor: primaryDark,
-    boxShadow: `0 6px 18px ${primaryDark}40`
   };
 
   const audioButtonStyle = makeToggleStyle(isAudioOn);
   const cameraButtonStyle = makeToggleStyle(isCameraPreviewOn);
-  const shareButtonStyle = makeToggleStyle(isVideoOn);
+  const videoButtonStyle = makeToggleStyle(isVideoOn);
   const screenShareButtonStyle = makeToggleStyle(isScreenSharing);
   const fullscreenButtonStyle = makeToggleStyle(allowFullscreen && isFullscreen);
-  const wherebyButtonStyle = makeToggleStyle(useWhereby);
-  const highMeshButtonStyle = makeToggleStyle(isHighMeshEnabled);
 
+
+  // ---------------------------------------------------------
+  // Rendering
+  // ---------------------------------------------------------
   return (
     <div className="w-full">
       <div
         className="w-full rounded-3xl border shadow p-4 flex flex-wrap items-center justify-between gap-4"
         style={controlsBarStyle}
       >
-        {/* Left section */}
+        {/* LEFT */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <div className={timerButtonClasses} style={timerButtonStyle}>
               {timerDisplay}
             </div>
+
             <button
               type="button"
               onClick={handleOpenSettingsWithTracking}
-              className={`${iconButtonClasses}`}
-              style={configButtonStyle}
-              title="Abrir configurações da sessão"
+              className={iconButtonClasses}
+              style={{
+                backgroundColor: secondaryColor,
+                color: textColor,
+                borderColor: "transparent"
+              }}
+              title={t('videoControls.openSettings')}
             >
               <Settings className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Play / Pause / Stop */}
           <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handlePlay}
-                    className={`${iconButtonClasses} ${!canStartSession ? "opacity-60 cursor-not-allowed" : ""}`}
-                    style={playButtonStyle}
-                    disabled={!canStartSession}
-                    title={
-                      !canStartSession
-                        ? "Gere um link primeiro para iniciar a sessão"
-                        : "Iniciar / Retomar"
-                    }
-                  >
-                    <Play className="w-4 h-4" />
-                  </button>
+            <button
+              type="button"
+              onClick={handlePlay}
+              className={iconButtonClasses}
+              style={{
+                backgroundColor: primaryColor,
+                color: "#fff",
+                borderColor: primaryDark
+              }}
+            >
+              <Play className="w-4 h-4" />
+            </button>
+
             <button
               type="button"
               onClick={handlePause}
-              className={`${iconButtonClasses} ${!isSessionStarted ? "opacity-60 cursor-not-allowed" : ""}`}
-              style={pauseButtonStyle}
+              className={`${iconButtonClasses} ${!isSessionStarted ? "opacity-60 cursor-not-allowed" : ""
+                }`}
               disabled={!isSessionStarted}
-              title="Pausar"
             >
               <Pause className="w-4 h-4" />
             </button>
+
             <button
               type="button"
               onClick={handleReset}
               className={iconButtonClasses}
-              style={stopButtonStyle}
-              title="Parar e zerar"
+              style={{
+                backgroundColor: primaryDark,
+                color: "#fff"
+              }}
             >
               <Square className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Center section */}
+        {/* CENTER */}
         <div className="flex flex-wrap items-center justify-center gap-4 mx-auto">
+          {/* Audio & Camera Preview */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleToggleAudio}
               className={iconButtonClasses}
               style={audioButtonStyle}
-              title={isAudioOn ? "Desativar microfone" : "Ativar microfone"}
             >
               {isAudioOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
             </button>
+
             <button
               type="button"
               onClick={handleToggleCameraPreview}
               className={iconButtonClasses}
               style={cameraButtonStyle}
-              title={
-                isCameraPreviewOn
-                  ? "Desligar visualização da câmera"
-                  : "Ativar visualização da câmera"
-              }
             >
-              {isCameraPreviewOn ? <Camera className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
+              {isCameraPreviewOn ? (
+                <Camera className="w-4 h-4" />
+              ) : (
+                <VideoOff className="w-4 h-4" />
+              )}
             </button>
           </div>
 
+          {/* Start Session */}
           <button
             type="button"
-            onClick={handleStartSession}
-            className={`${baseButtonClasses} font-semibold hover:opacity-90 ${!canStartSession ? "opacity-60 cursor-not-allowed" : ""}`}
-            style={startButtonStyle}
-            disabled={!canStartSession}
-            title={
-              !canStartSession
-                ? "Gere um link primeiro para iniciar a sessão"
-                : "Iniciar Sessão"
-            }
+            onClick={() => {
+              try {
+                trackUsageAction({ type: "sessionStart" });
+              } catch (e) {
+                console.warn("Tracking failed", e);
+              }
+              handleSessionConnect();
+            }}
+            className={`${baseButtonClasses} font-semibold`}
+            style={{
+              backgroundColor: isSessionStarted ? "#10b981" : primaryColor, // Green if active
+              color: "#fff",
+              opacity: isSessionStarted ? 0.8 : 1,
+              cursor: isSessionStarted ? "default" : "pointer"
+            }}
+            disabled={isSessionStarted}
           >
-            Iniciar Sessão
+            {isSessionStarted ? "Sessão Iniciada" : t('videoControls.startSession')}
           </button>
 
+          {/* Video & Screen Share */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleToggleVideo}
-              className={`${iconButtonClasses} ${
-                !isCameraPreviewOn || !isConnected ? "opacity-60 cursor-not-allowed" : ""
-              }`}
-              style={shareButtonStyle}
-              disabled={!isCameraPreviewOn || !isConnected}
-              title={
-                isVideoOn
-                  ? "Parar compartilhamento da câmera com o cliente"
-                  : "Compartilhar câmera com o cliente"
-              }
+              className={`${iconButtonClasses} ${!isConnected ? "opacity-50" : ""}`}
+              style={videoButtonStyle}
+            // 🟢 v5.17: Always allow clicking (removed disabled prop) to prevent "Inactive" complaints
+            // Logic inside/LiveKit will handle the rest.
             >
               <Video className="w-4 h-4" />
             </button>
+
             <button
               type="button"
               onClick={handleToggleScreenShare}
               className={iconButtonClasses}
               style={screenShareButtonStyle}
-              title={isScreenSharing ? "Parar compartilhamento" : "Compartilhar tela"}
+              title={isScreenSharing ? t('videoControls.stopScreenShare') : t('videoControls.screenShare')}
             >
-              {isScreenSharing ? <MonitorOff className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
+              {isScreenSharing ? (
+                <MonitorOff className="w-4 h-4" />
+              ) : (
+                <Monitor className="w-4 h-4" />
+              )}
             </button>
           </div>
         </div>
 
-        {/* Right section */}
+        {/* RIGHT */}
         <div className="flex items-center gap-3">
           {isProfessional && (
             <button
               type="button"
-              onClick={() => setShowSharePanel(!showSharePanel)}
-              className={`${baseButtonClasses} hover:opacity-90`}
+              onClick={handleCopyClientLink}
+              className={`${baseButtonClasses} font-semibold`}
               style={{
-                backgroundColor: consultationId ? (themeColors.success || '#10b981') : (themeColors.primary || '#0f172a'),
-                color: '#ffffff',
-                border: `2px solid ${consultationId ? (themeColors.successDark || '#059669') : (themeColors.primaryDark || '#0f172a')}`
+                backgroundColor: primaryColor,
+                color: "#fff",
+                borderColor: primaryDark,
+                cursor: "pointer"
               }}
+              title="Copiar Link para o Cliente"
             >
-              <Share2 className="w-4 h-4 mr-2" />
-              {consultationId ? "Link Gerado" : "Gerar Link"}
+              Copiar Link
             </button>
           )}
+
           <button
             type="button"
             onClick={handleToggleFullscreen}
-            className={`${iconButtonClasses} ${allowFullscreen ? "" : "opacity-60 cursor-not-allowed"}`}
+            className={`${iconButtonClasses} ${allowFullscreen ? "" : "opacity-60 cursor-not-allowed"
+              }`}
             style={fullscreenButtonStyle}
-            title={
-              allowFullscreen
-                ? isFullscreen
-                  ? "Sair de tela cheia"
-                  : "Tela cheia"
-                : "Disponível a partir da versão Normal"
-            }
             disabled={!allowFullscreen}
           >
             {isFullscreen ? (
@@ -442,45 +585,8 @@ const VideoControls = () => {
           </button>
         </div>
       </div>
-      
-      {/* Painel flutuante de compartilhamento */}
-      {showSharePanel && (
-        <div 
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
-          onClick={() => setShowSharePanel(false)}
-        >
-          <div 
-            className="rounded-lg shadow-xl border p-4 min-w-[400px] max-w-[600px] max-h-[80vh] overflow-y-auto relative"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: themeColors.background || '#ffffff',
-              borderColor: themeColors.border || '#e2e8f0',
-              zIndex: 10000
-            }}
-          >
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="font-semibold text-lg" style={{ color: themeColors.textPrimary || '#1f2937' }}>
-                Compartilhar Consulta
-              </h3>
-              <button
-                onClick={() => setShowSharePanel(false)}
-                className="text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
-              >
-                ×
-              </button>
-            </div>
-            <ShareConsultationLink 
-              professionalId={user?.id || "professional-default"}
-              clientId={null}
-              consultationType="video"
-              onClose={() => setShowSharePanel(false)}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default VideoControls;
-

@@ -6,17 +6,19 @@ import { FileText, X, HelpCircle } from 'lucide-react';
 import ModernButton from './ModernButton';
 import { useTheme } from './ThemeProvider';
 import { useAccessibility } from './AccessibilityHelper';
-import AccessibilityControls from './AccessibilityControls';
 import PrescriptionSection from './documents/PrescriptionSection';
 import SignatureSection from './documents/SignatureSection';
 import ReceiptSection from './documents/ReceiptSection';
 import ConsentSection from './documents/ConsentSection';
 import PaymentSection from './documents/PaymentSection';
 
+import { useTranslation } from '../hooks/useTranslation';
+
 const DocumentsLegal = () => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  
+  const { t } = useTranslation();
+
   // Estados para acessibilidade
   const [highContrast, setHighContrast] = useState(false);
   const [fontSize, setFontSize] = useState(16);
@@ -29,29 +31,29 @@ const DocumentsLegal = () => {
   // Textos de ajuda para o modal
   const helpContent = {
     prescription: {
-      title: 'Como usar o Receituário',
-      text: 'Preencha o nome do paciente, medicamentos e instruções. Clique no botão de assinatura, desenhe ou anexe sua assinatura, e gere o PDF para imprimir ou enviar.',
-      video: 'Vídeo tutorial disponível em breve'
+      title: t('documents.help.prescription.title'),
+      text: t('documents.help.prescription.text'),
+      video: t('documents.help.prescription.video')
     },
     signature: {
-      title: 'Como criar Assinatura Eletrônica',
-      text: 'É possível assinar com o mouse, dedo (touch) ou inserir uma imagem. Use gov.br ou desenhe sua própria assinatura.',
-      video: 'Tutorial passo a passo disponível'
+      title: t('documents.help.signature.title'),
+      text: t('documents.help.signature.text'),
+      video: t('documents.help.signature.video')
     },
     receipt: {
-      title: 'Como emitir Recibo',
-      text: 'Informe valor, serviço e selecione a assinatura. Gere o recibo em PDF, imprima ou envie ao cliente.',
-      video: 'Orientações completas no botão de ajuda'
+      title: t('documents.help.receipt.title'),
+      text: t('documents.help.receipt.text'),
+      video: t('documents.help.receipt.video')
     },
     consent: {
-      title: 'Sobre o Termo de Consentimento',
-      text: 'Leia o termo completo, clique para ouvir em áudio. O cliente pode assinar usando o mouse ou dedo.',
-      video: 'Explicação completa disponível'
+      title: t('documents.help.consent.title'),
+      text: t('documents.help.consent.text'),
+      video: t('documents.help.consent.video')
     },
     payment: {
-      title: 'Como configurar Pagamento PIX',
-      text: 'Cadastre sua chave PIX clicando no botão. Para gerar QR Code, informe o valor e clique em "Gerar QR".',
-      video: 'Links oficiais e tutorial disponível'
+      title: t('documents.help.payment.title'),
+      text: t('documents.help.payment.text'),
+      video: t('documents.help.payment.video')
     }
   };
 
@@ -65,13 +67,12 @@ const DocumentsLegal = () => {
   };
 
   return (
-    <div 
-      className={`p-6 transition-all duration-300 ${
-        highContrast 
-          ? 'text-black' 
-          : 'text-gray-800 dark:text-white'
-      }`}
-      style={{ 
+    <div
+      className={`p-6 transition-all duration-300 ${highContrast
+        ? 'text-black'
+        : 'text-gray-800 dark:text-white'
+        }`}
+      style={{
         fontSize: `${fontSize}px`,
         backgroundColor: highContrast ? 'white' : 'transparent'
       }}
@@ -84,49 +85,34 @@ const DocumentsLegal = () => {
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center space-x-3">
-            <div 
-              className={`p-3 rounded-xl ${
-                highContrast 
-                ? 'bg-black text-white' 
+            <div
+              className={`p-3 rounded-xl ${highContrast
+                ? 'bg-black text-white'
                 : ''
-              }`}
-              style={!highContrast ? { 
-                backgroundColor: themeColors.primaryDark, 
+                }`}
+              style={!highContrast ? {
+                backgroundColor: themeColors.primaryDark,
                 color: 'white',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
               } : {}}
             >
-              <FileText 
-                className={`w-8 h-8 ${
-                  highContrast ? 'text-white' : ''
-                }`}
+              <FileText
+                className={`w-8 h-8 ${highContrast ? 'text-white' : ''
+                  }`}
                 style={!highContrast ? { color: 'white' } : {}}
               />
             </div>
             <div>
-              <h1 className={`text-3xl font-bold ${
-                highContrast ? 'text-black' : 'text-gray-800 dark:text-white'
-              }`}>
-                Documentos e Legais
+              <h1 className={`text-3xl font-bold ${highContrast ? 'text-black' : 'text-gray-800 dark:text-white'
+                }`}>
+                {t('documents.title')}
               </h1>
-              <p className={`text-sm ${
-                highContrast ? 'text-black' : 'text-gray-600 dark:text-gray-400'
-              }`}>
-                Sistema completo de documentos com acessibilidade total
+              <p className={`text-sm ${highContrast ? 'text-black' : 'text-gray-600 dark:text-gray-400'
+                }`}>
+                {t('documents.subtitle')}
               </p>
             </div>
           </div>
-
-          {/* Controles de Acessibilidade */}
-          <AccessibilityControls
-            highContrast={highContrast}
-            setHighContrast={setHighContrast}
-            fontSize={fontSize}
-            setFontSize={setFontSize}
-            onReadText={handleReadHelp}
-            isReading={isReading}
-            onStopReading={stopReading}
-          />
         </div>
       </motion.div>
 
@@ -193,11 +179,10 @@ const DocumentsLegal = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className={`max-w-2xl w-full p-6 rounded-xl ${
-                highContrast
-                  ? 'bg-white border-2 border-black'
-                  : 'border-2'
-              }`}
+              className={`max-w-2xl w-full p-6 rounded-xl ${highContrast
+                ? 'bg-white border-2 border-black'
+                : 'border-2'
+                }`}
               style={!highContrast ? {
                 backgroundColor: themeColors.background || 'white',
                 borderColor: themeColors.border || themeColors.primary + '40'
@@ -207,7 +192,7 @@ const DocumentsLegal = () => {
                 <div className="flex items-center space-x-2">
                   <HelpCircle className="w-6 h-6 text-blue-500" />
                   <h2 className="text-2xl font-bold">
-                    {helpContent[activeHelpSection]?.title || 'Ajuda'}
+                    {helpContent[activeHelpSection]?.title || t('common.help')}
                   </h2>
                 </div>
                 <button

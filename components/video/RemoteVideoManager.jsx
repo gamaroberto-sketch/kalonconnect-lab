@@ -1,244 +1,78 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React from 'react';
 import {
   VideoTrack,
+  useTracks,
   useRoomContext,
+  RoomAudioRenderer,
 } from '@livekit/components-react';
-import { Track as LiveKitTrack, RoomEvent } from 'livekit-client';
-
-// Componente auxiliar para renderizar o track (para isolar re-renders)
-const TrackRenderer = React.memo(({ trackRef, isLocal, professionalName }) => {
-  const name = isLocal 
-    ? professionalName 
-    : (trackRef?.participant?.name || trackRef?.participant?.identity || 'Participante');
-
-  if (!trackRef || !trackRef.publication?.track) {
-    return (
-      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
-        {isLocal ? 'Aguardando câmera...' : 'Aguardando participante...'}
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <VideoTrack
-        trackRef={trackRef}
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-      />
-      <div style={{ position: 'absolute', bottom: 8, left: 8, color: 'white', background: 'rgba(0,0,0,0.5)', padding: '4px 8px', borderRadius: 4 }}>
-        {name}
-      </div>
-    </>
-  );
-}, (prevProps, nextProps) => {
-  const prevTrackSid = prevProps.trackRef?.publication?.trackSid;
-  const nextTrackSid = nextProps.trackRef?.publication?.trackSid;
-  return (
-    prevTrackSid === nextTrackSid &&
-    prevProps.isLocal === nextProps.isLocal &&
-    prevProps.professionalName === nextProps.professionalName
-  );
-});
-
-TrackRenderer.displayName = 'TrackRenderer';
+import { Track } from 'livekit-client';
 
 export function RemoteVideoManager({ isProfessional }) {
   const room = useRoomContext();
-  const [allTracks, setAllTracks] = useState([]);
-  const lastTracksIdRef = useRef('');
-  const isUpdatingRef = useRef(false);
-  const updateTimeoutRef = useRef(null);
-  const roomRef = useRef(room); // 🔴 CRÍTICO: Ref para room
-  const localParticipantRef = useRef(null); // 🔴 CRÍTICO: Ref para localParticipant
 
-  // 🔴 CRÍTICO: Atualiza refs a cada render (sem causar re-renders)
-  useEffect(() => {
-    roomRef.current = room;
-    if (room) {
-      localParticipantRef.current = room.localParticipant;
-    }
-  });
+  // 🟢 REFACTOR: Use native useTracks hook for reliable updates
+  // This automatically handles all events (Subscribed, Published, Muted, etc.)
+  // and gives us a clean list of tracks to render.
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: false } // Show Local Tracks too!
+  );
 
-  // 🔴 SOLUÇÃO EXTREMA: updateTracks sem dependências instáveis
-  const updateTracks = React.useCallback(() => {
-    const currentRoom = roomRef.current;
-    const currentLocalParticipant = localParticipantRef.current;
+  // 🟢 v5.6 ROBUST PIP LAYOUT
+  // Seperate tracks by ownership
+  const localTrack = tracks.find(t => t.participant.isLocal && t.source === Track.Source.Camera);
+  const remoteTrack = tracks.find(t => !t.participant.isLocal && t.source === Track.Source.Camera);
+  const screenTrack = tracks.find(t => t.source === Track.Source.ScreenShare);
 
-    if (!currentRoom || isUpdatingRef.current) return;
-    
-    // Limpa timeout anterior
-    if (updateTimeoutRef.current) {
-      clearTimeout(updateTimeoutRef.current);
-    }
-
-    // 🔴 Throttling agressivo: 2000ms (aumentado)
-    updateTimeoutRef.current = setTimeout(() => {
-      if (isUpdatingRef.current || !roomRef.current) return;
-      
-      isUpdatingRef.current = true;
-      
-      try {
-        const tracks = [];
-        const room = roomRef.current;
-        const localParticipant = room?.localParticipant;
-        
-        // Tracks locais
-        if (localParticipant && localParticipant.videoTrackPublications) {
-          // 🔴 CORREÇÃO: videoTrackPublications pode ser Map
-          const publications = localParticipant.videoTrackPublications instanceof Map
-            ? Array.from(localParticipant.videoTrackPublications.values())
-            : Array.isArray(localParticipant.videoTrackPublications)
-            ? localParticipant.videoTrackPublications
-            : [];
-          
-          publications.forEach(pub => {
-            if (pub && pub.track && pub.source === LiveKitTrack.Source.Camera) {
-              tracks.push({ 
-                publication: pub, 
-                participant: localParticipant, 
-                source: pub.source 
-              });
-            }
-          });
-        }
-
-        // Tracks remotos
-        if (room && room.participants) {
-          // 🔴 CORREÇÃO: room.participants pode ser Map ou array
-          const participants = room.participants instanceof Map 
-            ? Array.from(room.participants.values())
-            : Array.isArray(room.participants)
-            ? room.participants
-            : [];
-          
-          participants.forEach(participant => {
-            if (participant && participant.videoTrackPublications) {
-              // 🔴 CORREÇÃO: videoTrackPublications também pode ser Map
-              const publications = participant.videoTrackPublications instanceof Map
-                ? Array.from(participant.videoTrackPublications.values())
-                : Array.isArray(participant.videoTrackPublications)
-                ? participant.videoTrackPublications
-                : [];
-              
-              publications.forEach(pub => {
-                if (pub && pub.isSubscribed && pub.track && pub.source === LiveKitTrack.Source.Camera) {
-                  tracks.push({ 
-                    publication: pub, 
-                    participant, 
-                    source: pub.source 
-                  });
-                }
-              });
-            }
-          });
-        }
-        
-        // Comparar IDs antes de atualizar
-        const tracksId = tracks.map(t => `${t.participant?.sid}-${t.publication?.trackSid}`).sort().join(',');
-        
-        if (tracksId !== lastTracksIdRef.current) {
-          lastTracksIdRef.current = tracksId;
-          setAllTracks(tracks);
-        }
-      } finally {
-        isUpdatingRef.current = false;
-      }
-    }, 2000); // 🔴 Throttling de 2 segundos
-  }, []); // 🔴 CRÍTICO: Dependências vazias - função estável
-
-  // 🔴 useEffect que escuta eventos e chama função estável
-  useEffect(() => {
-    if (!room) return;
-
-    // Escuta apenas eventos essenciais
-    room.on(RoomEvent.TrackSubscribed, updateTracks);
-    room.on(RoomEvent.TrackUnsubscribed, updateTracks);
-    room.on(RoomEvent.ParticipantConnected, updateTracks);
-    room.on(RoomEvent.ParticipantDisconnected, updateTracks);
-    
-    // Chamada inicial com delay maior
-    const initialTimeout = setTimeout(updateTracks, 1000);
-
-    return () => {
-      clearTimeout(initialTimeout);
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current);
-      }
-      isUpdatingRef.current = false;
-      room.off(RoomEvent.TrackSubscribed, updateTracks);
-      room.off(RoomEvent.TrackUnsubscribed, updateTracks);
-      room.off(RoomEvent.ParticipantConnected, updateTracks);
-      room.off(RoomEvent.ParticipantDisconnected, updateTracks);
-    };
-  }, [room, updateTracks]); // 🔴 updateTracks é estável, room é a única dependência instável
-
-  // Lógica de layout
-  const displayTracks = useMemo(() => {
-    const tracks = allTracks;
-
-    const filteredTracks = isProfessional
-      ? tracks
-      : tracks.filter(trackRef => !trackRef.participant?.isLocal);
-
-    if (!isProfessional) {
-      return filteredTracks.length > 0 ? [filteredTracks[0]] : [null];
-    }
-    
-    const localTrack = filteredTracks.find(t => t.participant?.isLocal);
-    const remoteTrack = filteredTracks.find(t => !t.participant?.isLocal);
-
-    return [
-      localTrack || null,
-      remoteTrack || null,
-    ];
-  }, [allTracks, isProfessional]);
-
-  // Nome do profissional
-  const professionalName = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const profile = JSON.parse(localStorage.getItem('user-profile') || '{}');
-        return profile.apelido || profile.nickname || profile.name?.split(' ')[0] || 'Profissional';
-      } catch {
-        return 'Profissional';
-      }
-    }
-    return 'Profissional';
-  }, []);
+  const mainVideo = screenTrack || remoteTrack;
+  const pipVideo = localTrack;
 
   return (
-    <div 
-      style={{ 
-        display: 'grid', 
-        gap: '8px', 
-        padding: '0',
-        gridTemplateColumns: isProfessional ? '1fr 1fr' : '1fr',
-        gridAutoRows: '1fr',
-        background: '#000', 
-        width: '100%', 
-        height: '100%',
-      }}
-    >
-      {displayTracks.map((trackRef, index) => (
-        <div
-          key={trackRef ? `${trackRef.publication?.trackSid || trackRef.participant?.sid}-${index}` : `empty-${index}`}
-          style={{ 
-            position: 'relative', 
-            width: '100%', 
-            height: '100%',
-            backgroundColor: '#000', 
-            overflow: 'hidden' 
-          }}
-        >
-          <TrackRenderer 
-            trackRef={trackRef} 
-            isLocal={trackRef?.participant?.isLocal}
-            professionalName={professionalName}
+    <div className="relative w-full h-full bg-slate-900 overflow-hidden">
+      {/* 🔴 FORCE CSS for Object Fit */}
+      <style jsx global>{`
+        .video-cover video { object-fit: cover !important; }
+      `}</style>
+
+      {/* 1. LAYER ZERO: Main Content (Remote) */}
+      {mainVideo ? (
+        <div className="absolute inset-0 w-full h-full z-0">
+          <VideoTrack
+            trackRef={mainVideo}
+            className="w-full h-full video-cover"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </div>
-      ))}
+      ) : (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white/40 z-0 gap-4">
+          <div className="w-16 h-16 rounded-full border-2 border-dashed border-white/20 animate-spin"></div>
+          <p className="text-sm tracking-widest uppercase">Aguardando Profissional...</p>
+        </div>
+      )}
+
+      {/* 2. LAYER ONE: PiP (Local Self-View) */}
+      {/* Moved higher up (bottom-32) to avoid overlapping the inline controls */}
+      {pipVideo && (
+        <div className="absolute bottom-32 right-4 w-28 h-40 bg-black/50 rounded-2xl overflow-hidden border border-white/20 shadow-2xl z-10">
+          <VideoTrack
+            trackRef={pipVideo}
+            className="w-full h-full video-cover"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </div>
+      )}
+
+      {/* Debug Info (faint) */}
+      {/* Debug Info (faint) */}
+      <div className="absolute top-4 left-4 text-[10px] text-white/50 pointer-events-none z-0 bg-black/50 px-2 py-1 rounded">
+        v7.0 - CLOUD (HD) | {room?.name || "No Room"}
+      </div>
+      <RoomAudioRenderer />
     </div>
   );
 }

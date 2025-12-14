@@ -22,8 +22,7 @@ const MobileControlsV6 = () => {
         // 1. Wait for connection
         if (room.state !== 'connected') {
             console.log("⏳ Action Delayed: Room not fully connected yet...");
-            // Simple retry after 1s
-            setTimeout(() => safeToggleTrack(kind, targetState), 1000);
+            alert(`Aguardando conexão com a sala... (Status: ${room.state})`);
             return;
         }
 
@@ -55,6 +54,7 @@ const MobileControlsV6 = () => {
     const [hasEnded, setHasEnded] = React.useState(false);
 
     const handleEndCall = () => {
+        alert("Botão Encerrar Clicado");
         if (confirm("Deseja sair da sala?")) {
             room?.disconnect();
             // 🟢 v5.23: Stay on page, show "Session Ended" message. No redirect.
@@ -111,7 +111,7 @@ const MobileControlsV6 = () => {
             {/* Version Marker & Room Name for debugging */}
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center pointer-events-none">
                 <div className="text-xs font-bold text-indigo-300 bg-black/80 px-4 py-2 rounded-full whitespace-nowrap mb-1 border border-indigo-500/50 shadow-lg">
-                    v6.0 - MOBILE PATCH FINAL {room?.name || ""}
+                    v7.0 - CLOUD (HD) | State: {room?.state || "N/A"} | Room: {!!room}
                 </div>
             </div>
         </div>

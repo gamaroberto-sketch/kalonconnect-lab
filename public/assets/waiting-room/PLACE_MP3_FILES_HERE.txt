@@ -1,0 +1,7 @@
+<!-- Placeholder file - Replace with actual MP3 files -->
+This file should be replaced with:
+- relaxing-1.mp3 (calm ambient music)
+- relaxing-2.mp3 (nature sounds)  
+- relaxing-3.mp3 (soft piano)
+
+You can add your own MP3 files here for the waiting room.

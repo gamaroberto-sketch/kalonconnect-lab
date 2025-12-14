@@ -1,19 +1,16 @@
-"use client";
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Clock, 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  AlertTriangle,
-  CheckCircle,
+import {
+  Clock,
+  RotateCcw,
   X,
   Save,
-  Edit
+  Edit,
+  Check,
+  Upload
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import { useVideoPanel } from './VideoPanelContext';
 
 const SessionSettings = ({
   isOpen,
@@ -21,30 +18,52 @@ const SessionSettings = ({
   currentDuration,
   onDurationChange,
   onWarningChange,
-  elapsedTime,
+  currentBackground,
+  onBackgroundChange,
   isSessionActive = false,
   warningThreshold = 5,
   disableCustomDuration = false
 }) => {
   const [newDuration, setNewDuration] = useState(currentDuration);
   const [isEditing, setIsEditing] = useState(false);
-  const [warningMinutes, setWarningMinutes] = useState(warningThreshold);
-  const [customWarningInput, setCustomWarningInput] = useState(String(warningThreshold));
 
-  const predefinedDurations = disableCustomDuration ? [currentDuration] : [30, 45, 60, 90];
-  
-  const remainingTime = Math.max(
-    0,
-    newDuration * 60 - (isNaN(elapsedTime) ? 0 : elapsedTime)
+  // Initialize with correct logic for custom values
+  const [warningMinutes, setWarningMinutes] = useState(warningThreshold);
+  const [isCustomWarning, setIsCustomWarning] = useState(
+    ![1, 3, 5, 10, 15].includes(warningThreshold)
   );
+
+  const predefinedDurations = [30, 45, 60, 90];
 
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-  const accent = themeColors?.primary ?? '#1e3a8a';
-  const accentDark = themeColors?.primaryDark ?? accent;
-  const accentSoft = themeColors?.secondaryLight ?? '#e0f2fe';
-  const neutralBorder = themeColors?.border ?? '#d1d5db';
+
+  // 🟢 Virtual Background Integration
+  const videoPanel = useVideoPanel(); // May be null if used outside provider
+
+  // 🟢 Stored Backgrounds State (Persistence)
+  const [storedBackgrounds, setStoredBackgrounds] = useState([]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('kalon_custom_bgs');
+      if (saved) {
+        setStoredBackgrounds(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.warn("Failed to load custom backgrounds", e);
+    }
+  }, []);
+
+  // Priority: Prop > Context > Default
+  const effectiveBackground = currentBackground ?? videoPanel?.backgroundConfig;
+  const handleBackgroundChange = onBackgroundChange ?? videoPanel?.setBackgroundConfig;
+
+  const primary = themeColors?.primary ?? '#1e3a8a';
+  const secondary = themeColors?.secondary ?? '#64748b';
+  const background = themeColors?.background ?? '#ffffff';
   const textPrimary = themeColors?.textPrimary ?? '#111827';
+  const border = themeColors?.border ?? '#e2e8f0';
 
   const warningOptions = useMemo(
     () => [
@@ -58,67 +77,67 @@ const SessionSettings = ({
     []
   );
 
-  const formatTime = (seconds) => {
-    // Garantir que seconds seja um número válido
-    const validSeconds = isNaN(seconds) || seconds < 0 ? 0 : Math.floor(seconds);
-    
-    const hours = Math.floor(validSeconds / 3600);
-    const mins = Math.floor((validSeconds % 3600) / 60);
-    const secs = validSeconds % 60;
-    
-    if (hours > 0) {
-      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const backgroundOptions = [
+    { label: 'Nenhum', value: 'none', type: 'none' },
+    { label: 'Desfoque', value: 'blur', type: 'blur' },
+    { label: 'Escritório Moderno', value: '/images/spatium/office_modern.png', type: 'image' },
+    { label: 'Jardim Zen', value: '/images/spatium/garden.png', type: 'image' },
+    { label: 'Recepção Clean', value: '/images/spatium/reception_modern.png', type: 'image' }
+  ];
+
+  useEffect(() => {
+    if (isOpen) {
+      setNewDuration(currentDuration);
+      setIsEditing(false); // Reset edit mode on open
+      setWarningMinutes(warningThreshold);
+      setIsCustomWarning(![1, 3, 5, 10, 15].includes(warningThreshold));
     }
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, [isOpen, currentDuration, warningThreshold]);
 
   const handleSave = () => {
     if (onDurationChange) {
       onDurationChange(newDuration);
     }
     setIsEditing(false);
+    onClose(); // Close on save
   };
 
-  useEffect(() => {
-    setNewDuration(currentDuration);
-    setIsEditing(false);
-  }, [currentDuration, disableCustomDuration]);
+  const handleQuickSet = (duration) => {
+    if (disableCustomDuration) return;
+    setNewDuration(duration);
+    if (onDurationChange) {
+      onDurationChange(duration);
+    }
+    onClose(); // Instant close on quick set
+  };
 
   const handleReset = () => {
     setNewDuration(currentDuration);
     setIsEditing(false);
   };
 
-  const handleQuickSet = (duration) => {
-    setNewDuration(duration);
-    if (onDurationChange) {
-      onDurationChange(duration);
+  const handleWarningPresetChange = (e) => {
+    const value = e.target.value;
+    if (value === 'custom') {
+      setIsCustomWarning(true);
+      return;
     }
-    setIsEditing(false);
-  };
-
-  const handleWarningPresetChange = (value) => {
-    if (value === 'custom') return;
+    setIsCustomWarning(false);
     const numericValue = Number(value);
     setWarningMinutes(numericValue);
-    setCustomWarningInput(String(numericValue));
     if (onWarningChange) {
       onWarningChange(numericValue);
     }
   };
 
-  const handleCustomWarningBlur = () => {
-    const sanitized = Math.max(0, Math.min(60, Number(customWarningInput) || 0));
-    setWarningMinutes(sanitized);
-    setCustomWarningInput(String(sanitized));
+  const handleCustomWarningChange = (e) => {
+    const val = e.target.value;
+    const num = parseInt(val) || 0;
+    setWarningMinutes(num);
     if (onWarningChange) {
-      onWarningChange(sanitized);
+      onWarningChange(num);
     }
   };
-
-  const selectedWarningOption = warningOptions.find(
-    (option) => option.value === warningMinutes
-  );
 
   return (
     <AnimatePresence>
@@ -130,74 +149,93 @@ const SessionSettings = ({
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
         >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="kalon-card max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-200/50"
             style={{
-              borderColor: neutralBorder,
-              background: themeColors?.background ?? '#ffffff'
+              backgroundColor: background,
+              color: textPrimary
             }}
           >
             {/* Header */}
             <div
-              className="flex items-center justify-between p-6"
+              className="px-6 py-4 flex items-center justify-between"
               style={{
-                background: `linear-gradient(135deg, ${accent}, ${accentDark})`,
+                background: primary,
                 color: '#ffffff'
               }}
             >
               <div className="flex items-center space-x-3">
-                <div
-                  className="p-2 rounded-lg bg-white/20 backdrop-blur"
-                >
-                  <Clock className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold">
-                    Configurações da Sessão
-                  </h2>
-                  <p className="text-sm opacity-80">
-                    Gerencie o tempo e a duração conforme sua preferência
-                  </p>
-                </div>
+                <Clock className="w-5 h-5 opacity-90" />
+                <h2 className="text-lg font-semibold">Configuração da Sessão</h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-white/15 transition-colors"
-                style={{ color: '#ffffff' }}
+                className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6 overflow-y-auto">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium" style={{ color: textPrimary }}>
-                    Duração da Sessão
-                  </h3>
-                  {!disableCustomDuration && !isEditing && (
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="flex items-center space-x-1 px-3 py-1 rounded-lg transition-colors shadow-sm"
-                      style={{
-                        color: '#ffffff',
-                        background: accent,
-                        boxShadow: `0 4px 6px ${accent}33`
-                      }}
-                    >
-                      <Edit className="w-4 h-4 text-white" />
-                      <span>Editar</span>
-                    </button>
-                  )}
-                </div>
+            <div className="p-6 space-y-6">
 
-                {isEditing ? (
-                  <div className="space-y-4">
+              {/* CURRENT DURATION DISPLAY */}
+              <div className="text-center">
+                <p className="text-sm font-medium opacity-60 uppercase tracking-wider mb-1">
+                  Duração Atual
+                </p>
+                <div
+                  className="text-5xl font-bold tracking-tight"
+                  style={{ color: primary }}
+                >
+                  {isEditing ? newDuration : currentDuration}
+                  <span className="text-xl ml-1 font-normal opacity-50">min</span>
+                </div>
+              </div>
+
+              {/* DURATION SELECTOR */}
+              <div className="space-y-3">
+                {!isEditing ? (
+                  <>
+                    <div className="grid grid-cols-4 gap-3">
+                      {predefinedDurations.map((duration) => (
+                        <button
+                          key={duration}
+                          onClick={() => handleQuickSet(duration)}
+                          disabled={disableCustomDuration}
+                          className="flex flex-col items-center justify-center p-3 rounded-xl border transition-all hover:scale-105 active:scale-95 shadow-sm"
+                          style={{
+                            borderColor: duration === currentDuration ? primary : border,
+                            backgroundColor: duration === currentDuration ? `${primary}15` : background,
+                            color: duration === currentDuration ? primary : textPrimary
+                          }}
+                        >
+                          <span className="text-lg font-bold">{duration}</span>
+                          <span className="text-[10px] uppercase opacity-70">min</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {!disableCustomDuration && (
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="w-full py-2.5 flex items-center justify-center space-x-2 rounded-xl border border-dashed transition-colors hover:bg-gray-50/50"
+                        style={{
+                          borderColor: secondary,
+                          color: secondary
+                        }}
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span className="text-sm font-medium">Definir outro tempo</span>
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <div className="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Nova Duração (minutos)
+                      <label className="block text-sm font-medium mb-1.5 opacity-80">
+                        Tempo personalizado (minutos)
                       </label>
                       <input
                         type="number"
@@ -205,122 +243,66 @@ const SessionSettings = ({
                         onChange={(e) => setNewDuration(parseInt(e.target.value) || 0)}
                         min="1"
                         max="480"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                        autoFocus
+                        className="w-full px-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-offset-1 outline-none transition-all text-lg font-medium"
+                        style={{
+                          borderColor: border,
+                          backgroundColor: background,
+                          color: textPrimary,
+                          '--tw-ring-color': primary
+                        }}
                       />
                     </div>
-                    
-                    <div className="flex space-x-2">
-                      <motion.button
-                        onClick={handleSave}
-                        className="flex items-center space-x-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        disabled={disableCustomDuration}
-                      >
-                        <Save className="w-4 h-4" />
-                        <span>Salvar</span>
-                      </motion.button>
-                      <motion.button
+
+                    <div className="flex space-x-3 pt-2">
+                      <button
                         onClick={handleReset}
-                        className="flex items-center space-x-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className="flex-1 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 border"
+                        style={{
+                          borderColor: border,
+                          color: textPrimary
+                        }}
                       >
                         <RotateCcw className="w-4 h-4" />
                         <span>Cancelar</span>
-                      </motion.button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {predefinedDurations.map((duration) => (
-                      <button
-                        key={duration}
-                        className={`px-3 py-2 rounded-lg border transition-colors ${
-                          newDuration === duration
-                            ? 'bg-primary-100 border-primary-400 text-primary-700'
-                            : 'bg-white border-gray-200 hover:bg-gray-50'
-                        }`}
-                        onClick={() => handleQuickSet(duration)}
-                        disabled={disableCustomDuration}
-                      >
-                        {duration} min
                       </button>
-                    ))}
+                      <button
+                        onClick={handleSave}
+                        className="flex-1 py-2.5 rounded-lg font-medium shadow-md shadow-blue-900/10 transition-all hover:brightness-110 flex items-center justify-center space-x-2 text-white"
+                        style={{
+                          backgroundColor: primary
+                        }}
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Confirmar</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Durações Pré-definidas */}
-              <div>
-                <h3 className="font-medium text-gray-800 dark:text-white mb-3">
-                  Durações Rápidas
-                </h3>
-                <div className="grid grid-cols-4 gap-2">
-                  {predefinedDurations.map((duration) => (
-                    <motion.button
-                      key={duration}
-                      onClick={() => handleQuickSet(duration)}
-                      className="p-3 rounded-lg border-2 transition-all duration-200 shadow-sm text-sm font-semibold"
-                      style={{
-                        backgroundColor:
-                          duration === currentDuration ? accent : themeColors?.background ?? '#ffffff',
-                        borderColor:
-                          duration === currentDuration ? accent : neutralBorder,
-                        color:
-                          duration === currentDuration ? '#ffffff' : textPrimary
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <div className="text-base leading-none">{duration}</div>
-                      <div
-                        className="text-xs mt-1"
-                        style={{
-                          color:
-                            duration === currentDuration
-                              ? 'rgba(255,255,255,0.85)'
-                              : themeColors?.textSecondary ?? '#4b5563'
-                        }}
-                      >
-                        min
-                      </div>
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
+              <div className="h-px w-full" style={{ backgroundColor: border }} />
 
-      {/* Avisos e Configurações */}
-              <div
-                className="rounded-lg p-4 space-y-4"
-                style={{
-                  backgroundColor: accentSoft,
-                  border: `1px solid ${neutralBorder}`,
-                  color: textPrimary
-                }}
-              >
-                <div>
-                  <span
-                    className="block font-medium mb-2"
-                    style={{ color: accent }}
-                  >
-                    Aviso de tempo
-                  </span>
-                  <div className="flex items-center gap-2 flex-wrap">
+              {/* WARNING SETTINGS */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-medium flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+                    <span>Avisar quando faltar</span>
+                  </h3>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <div className="relative flex-1">
                     <select
-                      value={
-                        selectedWarningOption
-                          ? String(selectedWarningOption.value)
-                          : 'custom'
-                      }
-                      onChange={(event) => handleWarningPresetChange(event.target.value)}
-                      className="px-3 py-2 rounded-lg focus:outline-none focus:ring-2"
+                      value={isCustomWarning ? 'custom' : warningMinutes}
+                      onChange={handleWarningPresetChange}
+                      className="w-full appearance-none pl-4 pr-10 py-2.5 rounded-lg border outline-none focus:ring-2 cursor-pointer"
                       style={{
-                        backgroundColor: themeColors?.background ?? '#ffffff',
+                        borderColor: border,
+                        backgroundColor: background,
                         color: textPrimary,
-                        border: `1px solid ${neutralBorder}`,
-                        boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08)',
-                        fontSize: '0.875rem'
+                        '--tw-ring-color': `${primary}40`
                       }}
                     >
                       {warningOptions.map((option) => (
@@ -329,49 +311,230 @@ const SessionSettings = ({
                         </option>
                       ))}
                     </select>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        value={customWarningInput}
-                        onChange={(event) => setCustomWarningInput(event.target.value)}
-                        onBlur={handleCustomWarningBlur}
-                        min={0}
-                        max={60}
-                        className="w-20 px-3 py-2 rounded-lg focus:outline-none focus:ring-2"
-                        style={{
-                          backgroundColor: themeColors?.background ?? '#ffffff',
-                          border: `1px solid ${neutralBorder}`,
-                          color: textPrimary,
-                          boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08)',
-                          fontSize: '0.875rem'
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontSize: '0.875rem',
-                          color: themeColors?.textSecondary ?? '#4b5563'
-                        }}
-                      >
-                        minutos antes do término
-                      </span>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </div>
                   </div>
-                  <p
-                    className="mt-2"
-                    style={{ fontSize: '0.875rem', color: `${accent}CC` }}
-                  >
-                    O botão do tempo começa a piscar quando faltar o intervalo definido.
-                  </p>
+
+                  {isCustomWarning && (
+                    <div className="flex items-center space-x-2 w-24">
+                      <input
+                        type="number"
+                        value={warningMinutes === 0 ? '' : warningMinutes}
+                        onChange={handleCustomWarningChange}
+                        placeholder="0"
+                        className="w-full px-3 py-2.5 rounded-lg border text-center font-medium outline-none focus:ring-2"
+                        style={{
+                          borderColor: border,
+                          backgroundColor: background,
+                          color: textPrimary,
+                          '--tw-ring-color': `${primary}40`
+                        }}
+                      />
+                      <span className="text-sm opacity-60">min</span>
+                    </div>
+                  )}
                 </div>
-                <p
-                  style={{ fontSize: '0.875rem', color: themeColors?.textSecondary ?? '#4b5563' }}
-                >
-                  • Tempo extra: contado automaticamente
-                </p>
-                <p
-                  style={{ fontSize: '0.875rem', color: themeColors?.textSecondary ?? '#4b5563' }}
-                >
-                  • Edição: permitida durante a sessão
+              </div>
+
+              <div className="h-px w-full" style={{ backgroundColor: border }} />
+
+              {/* BACKGROUND SETTINGS */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-medium flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    <span>Fundo da Câmera (Virtual)</span>
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {backgroundOptions.map((bg) => {
+                    const isSelected = effectiveBackground?.type === bg.type &&
+                      (bg.type !== 'image' || effectiveBackground?.source === bg.value);
+
+                    return (
+                      <button
+                        key={bg.label}
+                        onClick={() => {
+                          if (handleBackgroundChange) {
+                            handleBackgroundChange({ type: bg.type, source: bg.value });
+                          } else {
+                            console.warn("⚠️ handleBackgroundChange is missing!");
+                          }
+                        }}
+                        className="group relative aspect-video rounded-lg overflow-hidden border-2 transition-all hover:scale-105 active:scale-95 shadow-sm bg-slate-100 dark:bg-slate-800"
+                        style={{
+                          borderColor: isSelected ? primary : 'transparent'
+                        }}
+                        title={bg.label}
+                      >
+                        {bg.type === 'image' ? (
+                          <img
+                            src={bg.value}
+                            alt={bg.label}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : bg.type === 'blur' ? (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+                            <div className="w-12 h-12 rounded-full bg-blue-500/30 blur-xl flex items-center justify-center">
+                              <span className="w-6 h-6 bg-blue-500 rounded-full blur-sm" />
+                            </div>
+                            <span className="absolute bottom-6 text-[10px] font-semibold text-slate-500">Desfoque</span>
+                          </div>
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                            <X className="w-8 h-8 opacity-50" />
+                            <span className="mt-1 text-[10px] font-semibold">Sem Fundo</span>
+                          </div>
+                        )}
+
+                        <div className={`absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-300 ${isSelected ? 'bg-transparent' : ''}`} />
+
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 bg-green-500 text-white p-0.5 rounded-full shadow-sm">
+                            <Check className="w-3 h-3" />
+                          </div>
+                        )}
+
+                        {bg.type === 'image' && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-1 backdrop-blur-sm">
+                            <span className="text-[9px] font-bold text-white block text-center truncate tracking-wide">{bg.label}</span>
+                          </div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-xs font-medium text-slate-500 mb-1">
+                  Ou use uma imagem personalizada:
+                </label>
+
+                <div className="flex flex-col gap-3">
+                  {/* URL Input */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Cole um link (https://...)"
+                      className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none"
+                      value={effectiveBackground?.type === 'image' && effectiveBackground?.source?.startsWith('http') ? effectiveBackground.source : ''}
+                      onChange={(e) => handleBackgroundChange && handleBackgroundChange({ type: 'image', source: e.target.value })}
+                    />
+                    <button
+                      onClick={() => {
+                        const currentUrl = effectiveBackground?.source;
+                        if (currentUrl && currentUrl.startsWith('http') && !storedBackgrounds.includes(currentUrl)) {
+                          const updatedBgs = [currentUrl, ...storedBackgrounds].slice(0, 5);
+                          setStoredBackgrounds(updatedBgs);
+                          localStorage.setItem('kalon_custom_bgs', JSON.stringify(updatedBgs));
+                        }
+                      }}
+                      disabled={!effectiveBackground?.source?.startsWith('http') || storedBackgrounds.includes(effectiveBackground?.source)}
+                      className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-slate-600 dark:text-slate-300"
+                      title="Salvar em Minhas Fotos"
+                    >
+                      <Save className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold">OU</span>
+                    <div className="h-[1px] bg-slate-200 dark:bg-slate-700 flex-1"></div>
+                  </div>
+
+                  {/* File Upload */}
+                  {/* Minhas Fotos Section */}
+                  {storedBackgrounds.length > 0 && (
+                    <div className="mb-3">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Minhas Fotos ({storedBackgrounds.length}/5)</span>
+                        <button
+                          onClick={() => {
+                            setStoredBackgrounds([]);
+                            localStorage.removeItem('kalon_custom_bgs');
+                          }}
+                          className="text-[9px] text-red-400 hover:text-red-500 hover:underline"
+                        >
+                          Limpar
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2">
+                        {storedBackgrounds.map((bg, idx) => (
+                          <div key={idx} className="group relative aspect-video rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                            <img src={bg} className="w-full h-full object-cover" alt={`Custom ${idx}`} />
+
+                            {/* Select Action */}
+                            <button
+                              onClick={() => handleBackgroundChange && handleBackgroundChange({ type: 'image', source: bg })}
+                              className="absolute inset-0 bg-transparent hover:bg-black/10 transition-colors"
+                            />
+
+                            {/* Delete Action */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const newBgs = storedBackgrounds.filter((_, i) => i !== idx);
+                                setStoredBackgrounds(newBgs);
+                                localStorage.setItem('kalon_custom_bgs', JSON.stringify(newBgs));
+                              }}
+                              className="absolute top-0.5 right-0.5 bg-black/50 hover:bg-red-500 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+
+                            {/* Active Indicator */}
+                            {effectiveBackground?.source === bg && (
+                              <div className="absolute bottom-0.5 right-0.5 bg-green-500 text-white p-0.5 rounded-full shadow-sm pointer-events-none">
+                                <Check className="w-2 h-2" />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* File Upload */}
+                  <label className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors border border-dashed border-slate-300 dark:border-slate-500">
+                    <Upload className="w-4 h-4 text-slate-500 dark:text-slate-300" />
+                    <span className="text-sm text-slate-600 dark:text-slate-200 font-medium">Carregar Nova Foto</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (ev) => {
+                            const dataUrl = ev.target.result;
+
+                            // 🟢 Save to LocalStorage
+                            const updatedBgs = [dataUrl, ...storedBackgrounds].slice(0, 5); // Limit 5
+                            setStoredBackgrounds(updatedBgs);
+                            localStorage.setItem('kalon_custom_bgs', JSON.stringify(updatedBgs));
+
+                            // Apply immediately
+                            if (handleBackgroundChange) {
+                              handleBackgroundChange({ type: 'image', source: dataUrl });
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <p className="text-[10px] text-slate-400 mt-2">
+                  Suporta JPG e PNG. A imagem é processada localmente.
                 </p>
               </div>
             </div>
@@ -383,5 +546,3 @@ const SessionSettings = ({
 };
 
 export default SessionSettings;
-
-

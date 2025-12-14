@@ -13,15 +13,15 @@ const hexToRgba = (hex, alpha = 0.15) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const ModernButton = ({ 
-  icon, 
-  children, 
-  variant = 'primary', 
+const ModernButton = ({
+  icon,
+  children,
+  variant = 'primary',
   size = 'md',
   className = '',
   isActive = false,
   activeColor,
-  ...props 
+  ...props
 }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
@@ -158,7 +158,7 @@ const ModernButton = ({
       {...props}
     >
       {icon && <span className={iconSizes[size]}>{icon}</span>}
-      <span>{children}</span>
+      {children && <span>{children}</span>}
     </button>
   );
 };

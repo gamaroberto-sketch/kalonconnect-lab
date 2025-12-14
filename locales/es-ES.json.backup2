@@ -1,0 +1,466 @@
+{
+    "common": {
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "add": "Añadir",
+        "remove": "Eliminar",
+        "close": "Cerrar",
+        "confirm": "Confirmar",
+        "loading": "Cargando",
+        "error": "Error",
+        "success": "Éxito",
+        "warning": "Advertencia",
+        "info": "Información",
+        "yes": "Sí",
+        "no": "No",
+        "search": "Buscar",
+        "filter": "Filtrar",
+        "upload": "Subir",
+        "download": "Descargar",
+        "connect": "Conectar",
+        "disconnect": "Desconectar",
+        "back": "Volver",
+        "next": "Siguiente",
+        "finish": "Finalizar",
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "phone": "Teléfono",
+        "date": "Fecha",
+        "time": "Hora",
+        "status": "Estado",
+        "actions": "Acciones",
+        "preferredLanguage": "Idioma preferido",
+        "portugueseBR": "Portugués (BR)",
+        "spanish": "Español",
+        "english": "Inglés",
+        "update": "Actualizar",
+        "register": "Registrarse",
+        "professional": "Profesional Kalon",
+        "home": "Inicio",
+        "consultations": "Consultas",
+        "events": "Eventos",
+        "clients": "Clientes",
+        "passwordPlaceholder": "Su contraseña",
+        "loginButton": "Entrar",
+        "forgotPassword": "¿Olvidó su contraseña?",
+        "noAccount": "¿No tiene una cuenta?",
+        "signUp": "Regístrese",
+        "errors": {
+            "invalidCredentials": "Correo electrónico o contraseña inválidos",
+            "emptyFields": "Por favor, complete todos los campos"
+        },
+        "tagline": {
+            "main": "Tecnología con Alma",
+            "sub": "Cuando el Alma habla, el Cuerpo escucha y el Espíritu guía..."
+        },
+        "hidePassword": "Ocultar contraseña",
+        "showPassword": "Mostrar contraseña",
+        "developedBy": "Desarrollado por:"
+    },
+    "home": {
+        "welcome": "Bienvenido, {name}",
+        "tagline": "El Alma se expande, el Cuerpo se relaja, el Espíritu guía.",
+        "quickActions": "Acciones Rápidas",
+        "recentActivity": "Actividad Reciente",
+        "upcomingAppointments": "Próximas Citas",
+        "statistics": "Estadísticas",
+        "noAppointments": "No hay citas próximas",
+        "guide": {
+            "title": "Guía de Usuario",
+            "description": "¿Primera vez usando <span className=\"font-bold normal-case\">KalonConnect</span>? Acceda a la guía completa para configurar todo.",
+            "open": "Abrir Guía"
+        },
+        "actions": {
+            "manageClients": "Gestionar clientes",
+            "videoSessions": "Sesiones de video en línea",
+            "calendar": "Calendario y gestión",
+            "documents": "Recetas y términos",
+            "financial": "Control financiero",
+            "settings": "Personalice el sistema"
+        }
+    },
+    "consultations": {
+        "title": "Consultas",
+        "newConsultation": "Nueva Consulta",
+        "activeConsultations": "Consultas Activas",
+        "pastConsultations": "Consultas Anteriores",
+        "noConsultations": "No se encontraron consultas",
+        "startConsultation": "Iniciar Consulta",
+        "endConsultation": "Finalizar Consulta",
+        "clientName": "Nombre del Cliente",
+        "duration": "Duración",
+        "notes": "Notas",
+        "panels": {
+            "relaxation": {
+                "label": "Reproductor",
+                "title": "Reproductor de Relajación"
+            },
+            "chat": {
+                "label": "Chat",
+                "title": "Chat de la Sesión"
+            },
+            "notes": {
+                "label": "Notas",
+                "title": "Notas de la Consulta"
+            },
+            "files": {
+                "label": "Archivos",
+                "title": "Archivos de la Sesión"
+            },
+            "recording": {
+                "label": "Grabación",
+                "title": "Grabación de la Sesión"
+            },
+            "clientRecord": {
+                "label": "Ficha",
+                "title": "Ficha del Cliente"
+            }
+        }
+    },
+    "events": {
+        "title": "Eventos",
+        "newEvent": "Nuevo Evento",
+        "upcomingEvents": "Próximos Eventos",
+        "pastEvents": "Eventos Pasados",
+        "noEvents": "No se encontraron eventos",
+        "eventName": "Nombre del Evento",
+        "eventDate": "Fecha del Evento",
+        "participants": "Participantes",
+        "description": "Descripción",
+        "createFirstEvent": "Crear Primer Evento",
+        "editEvent": "Editar Evento",
+        "createNewEvent": "Crear Nuevo Evento",
+        "type": "Tipo",
+        "format": "Formato",
+        "startDate": "Fecha de Inicio",
+        "startTime": "Hora de Inicio",
+        "fillRequired": "Por favor, complete todos los campos obligatorios (nombre, fecha y hora)."
+    },
+    "clients": {
+        "title": "Clientes",
+        "newClient": "Nuevo Cliente",
+        "clientList": "Lista de Clientes",
+        "noClients": "Ningún cliente registrado",
+        "clientDetails": "Detalles del Cliente",
+        "editClient": "Editar Cliente",
+        "deleteClient": "Eliminar Cliente",
+        "confirmDelete": "¿Está seguro de que desea eliminar este cliente?",
+        "description": "Gestione sus clientes y acceda a las consultas rápidamente",
+        "registeredOn": "Registrado el",
+        "lastSession": "Última sesión",
+        "goToConsultation": "Ir a Consulta"
+    },
+    "appointments": {
+        "title": "Citas",
+        "newAppointment": "Nueva Cita",
+        "upcomingAppointments": "Próximas Citas",
+        "pastAppointments": "Citas Pasadas",
+        "noAppointments": "No se encontraron citas",
+        "scheduleAppointment": "Agendar",
+        "cancelAppointment": "Cancelar Cita",
+        "reschedule": "Reprogramar",
+        "manageSessions": "Gestione sus sesiones y clientes",
+        "viewAppointments": "Vea y gestione sus citas",
+        "searchPlaceholder": "Buscar citas...",
+        "listTitle": "Lista de Citas",
+        "confirmDelete": "¿Está seguro de que desea eliminar esta cita?",
+        "selectedProfessional": "Profesional Seleccionado",
+        "status": {
+            "pending": "Pendientes",
+            "confirmed": "Confirmadas",
+            "cancelled": "Canceladas"
+        }
+    },
+    "profile": {
+        "title": "Perfil Profesional",
+        "personalInfo": "Información Personal",
+        "professionalInfo": "Información Profesional",
+        "specialty": "Especialidad",
+        "bio": "Biografía",
+        "saveProfile": "Guardar Perfil",
+        "changePassword": "Cambiar Contraseña",
+        "currentPassword": "Contraseña Actual",
+        "newPassword": "Nueva Contraseña",
+        "confirmPassword": "Confirmar Contraseña",
+        "namePlaceholder": "Ingrese el nombre por el que es conocido",
+        "nameHelp": "Este nombre se mostrará en los mensajes de bienvenida y durante la consulta.",
+        "photoTitle": "Foto Profesional",
+        "errors": {
+            "load": "No se pudo cargar el perfil.",
+            "imageLoad": "No se pudo cargar la imagen.",
+            "camera": "No se pudo acceder a la cámara del dispositivo.",
+            "save": "No se pudieron guardar los datos."
+        },
+        "success": {
+            "save": "¡Perfil guardado con éxito!"
+        },
+        "camera": {
+            "take": "Tomar foto ahora",
+            "upload": "Subir",
+            "remove": "Eliminar foto actual",
+            "capture": "Capturar foto",
+            "stop": "Detener cámara",
+            "formats": "Formatos aceptados: JPG, PNG. Tamaño recomendado: 800x800px."
+        },
+        "signature": {
+            "title": "Firma",
+            "digital": "Firma digital",
+            "clear": "Limpiar",
+            "text": "Firma de texto",
+            "fullName": "Nombre completo",
+            "registry": "Registro profesional (opcional)"
+        },
+        "services": {
+            "title": "Valores y Servicios",
+            "add": "Añadir servicio",
+            "empty": "Ningún servicio registrado.",
+            "namePlaceholder": "Nombre de la terapia",
+            "pricePlaceholder": "Valor ($)"
+        },
+        "social": {
+            "title": "Redes Sociales"
+        }
+    },
+    "settings": {
+        "title": "Configuración Avanzada",
+        "subtitle": "Personalice su experiencia KalonConnect",
+        "activeVersion": "Versión activa: {{version}}",
+        "restrictedAccess": "Función disponible solo en la versión Normal o Pro.",
+        "tabs": {
+            "general": "General",
+            "branding": "Marca",
+            "integrations": "Integraciones",
+            "invites": "Invitaciones",
+            "credentials": "Credenciales"
+        },
+        "language": {
+            "title": "Idioma",
+            "label": "Seleccionar idioma"
+        },
+        "videoLink": {
+            "title": "Enlace de la Sala de Video",
+            "placeholder": "https://su-enlace-personalizado.com",
+            "help": "Si tiene un enlace fijo de reunión, péguelo aquí. De lo contrario, el sistema generará una sala exclusiva para cada sesión automáticamente."
+        },
+        "slogan": {
+            "title": "Frase / Eslogan Personalizado",
+            "placeholder": "Ingrese su frase o eslogan personalizado aquí...",
+            "help": "Esta frase se mostrará en los encabezados y pantallas principales"
+        },
+        "lowPowerMode": {
+            "title": "Modo de Baja Energía",
+            "description": "Desactiva funciones multimedia cuando la sesión está en segundo plano.",
+            "enabled": "Activado",
+            "disabled": "Desactivado"
+        },
+        "theme": {
+            "title": "Elija su Tema"
+        },
+        "images": {
+            "title": "Imágenes",
+            "logo": "Logo Profesional",
+            "photo": "Foto Profesional",
+            "avatar": "Avatar",
+            "uploadLogo": "Subir Logo",
+            "uploadPhoto": "Subir Foto",
+            "uploadAvatar": "Subir Avatar"
+        },
+        "googleDrive": {
+            "title": "Google Drive",
+            "status": "Estado de la Conexión",
+            "connected": "Conectado",
+            "disconnected": "Desconectado",
+            "folderLabel": "Carpeta Predeterminada para Archivos",
+            "folderPlaceholder": "Ej: Clientes/KalonConnect"
+        },
+        "whatsapp": {
+            "title": "WhatsApp",
+            "status": "Estado de la Conexión",
+            "phoneLabel": "Número de Celular"
+        },
+        "messages": {
+            "saveSuccess": "¡Configuración guardada con éxito!",
+            "saveError": "Error al guardar la configuración. Intente nuevamente."
+        }
+    },
+    "waitingRoom": {
+        "title": "Sala de Espera Premium",
+        "subtitle": "Configure el video, música ambiental y experiencia del cliente antes de la consulta.",
+        "video": {
+            "title": "Video de bienvenida",
+            "description": "Este video se reproducirá automáticamente tan pronto como el cliente ingrese a la sala.",
+            "mediaType": "Tipo de medio",
+            "types": {
+                "video": "Video",
+                "slides": "Diapositivas",
+                "image": "Imagen"
+            }
+        },
+        "music": {
+            "title": "Música ambiental",
+            "description": "La música sigue sonando en bucle mientras el cliente espera."
+        },
+        "message": {
+            "title": "Mensaje al cliente",
+            "placeholder": "Respire hondo y espere. Pronto comenzaremos.",
+            "tip": "Consejo: use marcadores simples como {client} y {specialty} para personalizar el mensaje."
+        },
+        "preferences": {
+            "title": "Preferencias visuales",
+            "animatedMessage": {
+                "label": "Mostrar mensaje animado",
+                "description": "El mensaje pulsará suavemente durante la espera."
+            },
+            "allowClientPreview": {
+                "label": "Permitir vista previa del cliente",
+                "description": "El profesional puede ver la cámara del cliente antes de comenzar."
+            },
+            "alertOnClientJoin": {
+                "label": "Alertar cuando el cliente ingrese",
+                "description": "Reproduce un sonido discreto y muestra alerta al profesional."
+            },
+            "multiSpecialty": {
+                "label": "Mensajes por especialidad",
+                "description": "Personalice medios para diferentes especialidades."
+            }
+        },
+        "saveButton": "Guardar cambios",
+        "saving": "Guardando...",
+        "saveNow": "Guardar ahora"
+    },
+    "videoControls": {
+        "startSession": "Iniciar Sesión",
+        "endSession": "Finalizar Sesión",
+        "camera": "Cámara",
+        "microphone": "Micrófono",
+        "video": "Video",
+        "audio": "Audio",
+        "screenShare": "Compartir pantalla",
+        "stopScreenShare": "Dejar de compartir",
+        "settings": "Configuración",
+        "participants": "Participantes",
+        "chat": "Chat",
+        "mute": "Silenciar",
+        "unmute": "Activar sonido",
+        "activateExperience": "Activar Experiencia",
+        "loadingEnvironment": "Cargando entorno...",
+        "generateLink": "Generar Enlace",
+        "generateLinkTitle": "Generar enlace del cliente",
+        "generateLinkError": "ID del profesional no encontrado",
+        "openSettings": "Abrir configuración",
+        "fullscreenError": "La función de pantalla completa no está disponible en su plan actual.",
+        "linkCopied": "¡Enlace copiado al portapapeles!",
+        "linkGenerated": "Enlace generado:",
+        "copyManually": "Haga clic en Aceptar para copiar manualmente.",
+        "linkCopiedSuccess": "¡Enlace copiado!",
+        "generateLinkFailed": "Error al generar el enlace:",
+        "preview": {
+            "title": "Su Vista Previa",
+            "cameraActive": "Cámara Activa",
+            "cameraOff": "Cámara Apagada",
+            "checkAppearance": "Verifique su apariencia y audio antes de entrar."
+        }
+    },
+    "waitingRoomPage": {
+        "title": "Sala de Espera",
+        "defaultMessage": "Esperando a que el profesional inicie la sesión…",
+        "sessionStarted": "¡Sesión iniciada! Será redirigido ahora.",
+        "enteringRoom": "Entrando a la sala...",
+        "activateExperience": "Activar Experiencia",
+        "loadingEnvironment": "Cargando entorno...",
+        "preview": {
+            "title": "Su Vista Previa",
+            "cameraActive": "Cámara Activa",
+            "cameraOff": "Cámara Apagada",
+            "checkAppearance": "Verifique su apariencia y audio antes de entrar."
+        }
+    },
+    "forms": {
+        "required": "Campo obligatorio",
+        "invalidEmail": "Correo electrónico inválido",
+        "invalidPhone": "Teléfono inválido",
+        "passwordMismatch": "Las contraseñas no coinciden",
+        "minLength": "Mínimo de {count} caracteres",
+        "maxLength": "Máximo de {count} caracteres"
+    },
+    "notifications": {
+        "newMessage": "Nuevo mensaje",
+        "newAppointment": "Nueva cita",
+        "appointmentReminder": "Recordatorio de cita",
+        "sessionStarting": "Sesión iniciando",
+        "clientJoined": "Cliente ingresó a la sala"
+    },
+    "reports": {
+        "title": "Informes Terapéuticos",
+        "subtitle": "Indicadores automáticos de las sesiones con transcripción y observaciones.",
+        "restrictedAccess": "Función disponible solo en la versión Pro",
+        "restrictedMessage": "Los informes automáticos son exclusivos para profesionales en la versión Pro de KalonConnect.",
+        "resetFilters": "Restablecer filtros",
+        "generateReport": "Generar informe completo",
+        "generateReportTooltip": "Disponible solo en la versión Pro",
+        "filters": {
+            "client": "Cliente",
+            "allClients": "Todos los clientes",
+            "keyword": "Palabra clave",
+            "allKeywords": "Todas",
+            "period": "Período",
+            "last7days": "Últimos 7 días",
+            "last15days": "Últimos 15 días",
+            "last30days": "Últimos 30 días",
+            "last90days": "Últimos 90 días",
+            "last6months": "Últimos 6 meses",
+            "lastYear": "Último año",
+            "searchPlaceholder": "Buscar por cliente, sesión, palabra..."
+        },
+        "pdfStatus": {
+            "success": "Informe generado el {{date}}. Archivo guardado en {{path}}.",
+            "now": "ahora"
+        },
+        "errors": {
+            "loadFailed": "Error al cargar los informes.",
+            "loadError": "No se pudieron cargar los datos.",
+            "generateFailed": "Error al generar el informe en PDF.",
+            "generateError": "No se pudo generar el informe completo."
+        },
+        "noData": {
+            "title": "Los informes se generarán automáticamente",
+            "message": "Tan pronto como sus sesiones tengan transcripción u observaciones, los indicadores aparecerán aquí."
+        },
+        "stats": {
+            "totalHours": "Total de horas",
+            "totalHoursDesc": "Tiempo acumulado de las sesiones registradas",
+            "clientsServed": "Clientes atendidos",
+            "clientsServedDesc": "Clientes con registros en el período",
+            "sessionsAnalyzed": "Sesiones analizadas",
+            "sessionsAnalyzedDesc": "Consultas con transcripción o notas",
+            "averageMood": "Humor promedio",
+            "averageMoodDesc": "Promedio general de los moodScores informados",
+            "trendingWords": "Palabras en tendencia",
+            "noData": "Sin datos"
+        },
+        "charts": {
+            "moodEvolution": "Evolución del humor por cliente",
+            "moodEvolutionDesc": "Cada línea representa la variación del moodScore a lo largo de las sesiones.",
+            "noMoodData": "Sin moodScores registrados en el período seleccionado.",
+            "topThemes": "Temas más recurrentes",
+            "topThemesDesc": "Frecuencia de las principales palabras clave identificadas.",
+            "noThemes": "Ningún tema fue identificado en el período.",
+            "modeDistribution": "Distribución por modo",
+            "modeDistributionDesc": "Entienda qué formatos de atención utiliza con más frecuencia.",
+            "noModeData": "Sin datos suficientes para el gráfico.",
+            "highlightedWords": "Palabras destacadas",
+            "highlightedWordsDesc": "Conjunto de términos más citados en las transcripciones y en las notas.",
+            "noHighlightedWords": "Sin términos destacados para mostrar."
+        },
+        "recentSessions": {
+            "title": "Sesiones más recientes",
+            "subtitle": "Últimas atenciones registradas con transcripción o notas.",
+            "session": "Sesión",
+            "noDate": "Fecha no informada",
+            "duration": "Duración"
+        }
+    }
+}

@@ -21,6 +21,7 @@
     "dependencies": {
         "@livekit/components-react": "^2.9.16",
         "@livekit/components-styles": "^1.2.0",
+        "@livekit/track-processors": "^0.7.0",
         "@react-email/components": "^1.0.1",
         "@stripe/stripe-js": "^8.5.3",
         "@supabase/supabase-js": "^2.86.0",

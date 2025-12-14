@@ -9,15 +9,39 @@ const Header = ({ sidebarOpen, setSidebarOpen, darkMode, setDarkMode }) => {
   const [mounted, setMounted] = useState(false);
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const [customSlogan, setCustomSlogan] = useState('');
 
   useEffect(() => {
     setMounted(true);
+
+    const loadSettings = () => {
+      try {
+        const saved = localStorage.getItem('kalonAdvancedSettings');
+        if (saved) {
+          const settings = JSON.parse(saved);
+          setCustomSlogan(settings.customSlogan || '');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar slogan:', error);
+      }
+    };
+
+    loadSettings();
+
+    // Listeners para atualizações
+    window.addEventListener('storage', loadSettings);
+    window.addEventListener('kalonSettingsChanged', loadSettings);
+
+    return () => {
+      window.removeEventListener('storage', loadSettings);
+      window.removeEventListener('kalonSettingsChanged', loadSettings);
+    };
   }, []);
 
   if (!mounted) return null;
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -44,8 +68,8 @@ const Header = ({ sidebarOpen, setSidebarOpen, darkMode, setDarkMode }) => {
               <Menu className="w-5 h-5" />
             )}
           </button>
-          
-          <motion.div 
+
+          <motion.div
             className="flex items-center space-x-2"
             whileHover={{ scale: 1.03 }}
           >
@@ -56,21 +80,34 @@ const Header = ({ sidebarOpen, setSidebarOpen, darkMode, setDarkMode }) => {
                 background: themeColors.primaryDark ?? themeColors.primary ?? '#0f172a'
               }}
             >
-              <img 
-                src="/logo.png" 
-                alt="KalonConnect Logo" 
+              <img
+                src="/logo.png"
+                alt="KalonConnect Logo"
                 className="h-8 w-8 object-contain"
               />
             </div>
-            <span
-              className="text-lg font-semibold normal-case tracking-wide"
-              style={{
-                color: themeColors.secondary ?? '#e2e8f0',
-                textShadow: '0 1px 3px rgba(15, 23, 42, 0.35)'
-              }}
-            >
-              KalonConnect
-            </span>
+            <div className="flex flex-col">
+              <span
+                className="text-lg font-semibold normal-case tracking-wide leading-none"
+                style={{
+                  color: themeColors.secondary ?? '#e2e8f0',
+                  textShadow: '0 1px 3px rgba(15, 23, 42, 0.35)'
+                }}
+              >
+                KalonConnect
+              </span>
+              {customSlogan && (
+                <span
+                  className="text-xs font-medium tracking-wider uppercase"
+                  style={{
+                    color: themeColors.secondary ?? '#e2e8f0',
+                    textShadow: '0 1px 3px rgba(15, 23, 42, 0.35)'
+                  }}
+                >
+                  {customSlogan}
+                </span>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>
