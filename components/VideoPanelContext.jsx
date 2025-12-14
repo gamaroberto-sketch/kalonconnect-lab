@@ -63,6 +63,8 @@ export const VideoPanelProvider = ({
   const [recordingState, setRecordingState] = useState({ active: false, notifyClient: false });
   const [backgroundConfig, setBackgroundConfig] = useState({ type: 'none' });
   const [branding, setBranding] = useState({ profile: null, themeColors: null, isLoading: true });
+  // 🟢 Fix: Track active stream for external consumers (like VideoSurface)
+  const [currentStream, setCurrentStream] = useState(null);
 
   // Fetch Branding (Client Mode)
   useEffect(() => {
@@ -388,7 +390,8 @@ export const VideoPanelProvider = ({
       });
 
       streamRef.current = stream;
-      console.log('✅ Stream salvo na ref');
+      setCurrentStream(stream); // 🟢 Expose to Context
+      console.log('✅ Stream salvo na ref e no state');
 
       // 🟢 Initialize LiveKit LocalVideoTrack
       // We don't change resolution logic here, just wrap the existing stream
@@ -908,7 +911,9 @@ export const VideoPanelProvider = ({
     localVideoRef,
     remoteVideoRef,
     screenShareRef,
+    screenShareRef,
     streamRef,
+    currentStream, // 🟢 Exposed!
     setIsConnected, // 🟢 FIX: Expose this setter!
     setIsFullscreen,
     setUseWhereby,
