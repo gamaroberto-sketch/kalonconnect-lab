@@ -225,11 +225,16 @@ const VideoSurface = ({ roomId }) => {
   const [isConnecting, setIsConnecting] = useState(false);
 
 
+  const [fatalError, setFatalError] = useState(false);
+
   const isConnectingRef = React.useRef(false); // 🟢 v5.41 FIX: Ref for synchronous lock
   const connectionAttempts = React.useRef(0);
 
   // Auto-connect Logic (🟢 FIX: Only connect if there's an actual consultation)
   useEffect(() => {
+    // 🛑 SAFETY: If fatal error (quota exceeded), NEVER reconnect
+    if (fatalError) return;
+
     // 🛡️ SAFETY: Don't auto-connect unless there's a real consultation ID
     if (!consultationId) {
       console.log("⏸️ LiveKit auto-connect skipped: No consultation ID");
@@ -240,7 +245,7 @@ const VideoSurface = ({ roomId }) => {
       console.log("🚀 LiveKit auto-connecting for consultation:", consultationId);
       connectLiveKit();
     }
-  }, [isSessionStarted, liveKitConnect, isConnecting, liveKitToken, isProfessional, consultationId]);
+  }, [isSessionStarted, liveKitConnect, isConnecting, liveKitToken, isProfessional, consultationId, fatalError]);
 
   // Switch Room Logic
   useEffect(() => {
@@ -348,6 +353,14 @@ const VideoSurface = ({ roomId }) => {
               console.warn("⚠️ [PROFESSIONAL] Publish Error (Retrying internally):", err.message);
               return;
             }
+            // 🛑 SAFETY LOCK: Connection Limit Exceeded
+            if (err?.message?.includes("minutes limit exceeded") || err?.message?.includes("429")) {
+              console.error("🚨 [CRITICAL] LiveKit Quota Exceeded. Stopping all connection attempts.");
+              setFatalError(true);
+              setLiveKitConnect(false);
+              return;
+            }
+
             console.error("❌ [PROFESSIONAL] LiveKit Error:", err);
           }}
         >
@@ -364,9 +377,17 @@ const VideoSurface = ({ roomId }) => {
       ) : (
         /* DISCONNECTED / CONNECTING STATE */
         <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
-          <p className="text-white text-sm animate-pulse">
-            {isConnecting ? "Conectando ao Servidor..." : "Pronto para Conectar"}
-          </p>
+          {fatalError ? (
+            <div className="text-red-500 text-center p-4">
+              <p className="font-bold text-lg mb-2">⛔ Limite de Conexão Excedido</p>
+              <p className="text-sm text-white/70">Sua conta LiveKit atingiu o limite gratuito.</p>
+              <p className="text-xs text-white/50 mt-2">Crie um novo projeto ou adicione créditos.</p>
+            </div>
+          ) : (
+            <p className="text-white text-sm animate-pulse">
+              {isConnecting ? "Conectando ao Servidor..." : "Pronto para Conectar"}
+            </p>
+          )}
         </div>
       )}
 
