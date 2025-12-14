@@ -660,6 +660,13 @@ export const VideoPanelProvider = ({
         status: "active"
       }
     }));
+    // 🟢 v10.6 AUTO-PUBLISH: Ensure video is flagged as ON when session starts
+    if (typeof document !== 'undefined' && document.visibilityState !== 'hidden') {
+      console.log("🚀 [VideoPanel] Auto-enabling Video for Session");
+      setIsVideoOn(true);
+      if (!isCameraPreviewOn) setIsCameraPreviewOn(true);
+    }
+
     sessionDataRef.current = {
       ...sessionDataRef.current,
       lastSession: {
