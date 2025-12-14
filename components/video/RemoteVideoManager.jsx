@@ -71,11 +71,14 @@ export function RemoteVideoManager({ isProfessional }) {
       {/* Debug Info (faint) */}
       {/* Debug Info (Enhanced for Manuscript) */}
       <div className="absolute top-4 left-4 text-[10px] text-white/70 pointer-events-none z-[9999] bg-black/80 px-2 py-2 rounded border border-white/20 flex flex-col gap-1 max-w-[200px]">
-        <div><strong>VER:</strong> v10.5 - ROOM FIX</div>
+        <div><strong>VER:</strong> v10.8 - VIDEO STATS</div>
         <div><strong>ROOM:</strong> {room?.name || "Disconnected"}</div>
         <div><strong>STATE:</strong> {room?.state || "Unknown"}</div>
         <div><strong>PEERS:</strong> {room?.participants ? room.participants.size : 0}</div>
         <div><strong>TRACKS:</strong> {tracks ? tracks.length : 0}</div>
+        <div className="text-[9px] text-gray-300 mt-1">
+          {remoteTrack ? `REM: ${remoteTrack.dimensions?.width}x${remoteTrack.dimensions?.height} | ${remoteTrack.isMuted ? "MUTED" : "LIVE"}` : "NO REMOTE"}
+        </div>
       </div>
       <RoomAudioRenderer />
     </div>
