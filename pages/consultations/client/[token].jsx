@@ -27,6 +27,10 @@ export async function getServerSideProps(context) {
 
 // ✅ Internal Component to consume Context (Must be child of VideoPanelProvider)
 const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, connectionStatus }) => {
+  // 🟢 MANUS DBG: Version Banner
+  // If the user does NOT see this, they are viewing an old cached version.
+  const DEBUG_VERSION = "v10.0 - REESCRITA MANUS (14/12 16:30)";
+
   // Use hook safely
   const { branding } = useVideoPanel();
   const [hasJoined, setHasJoined] = useState(false);
@@ -57,6 +61,10 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
     }
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 flex-col gap-4">
+        {/* 🟢 DEBUG BANNER */}
+        <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[9999]">
+          {DEBUG_VERSION}
+        </div>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary-600"></div>
         <p className="text-gray-500">Localizando profissional...</p>
       </div>
@@ -66,17 +74,25 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   // 1. Lobby / Waiting Room
   if (!hasJoined) {
     return (
-      <WaitingRoomDisplay
-        professional={branding.profile}
-        themeColors={branding.themeColors || {}}
-        onJoin={() => setHasJoined(true)}
-      />
+      <>
+        <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[9999]">
+          {DEBUG_VERSION}
+        </div>
+        <WaitingRoomDisplay
+          professional={branding.profile}
+          themeColors={branding.themeColors || {}}
+          onJoin={() => setHasJoined(true)}
+        />
+      </>
     );
   }
 
   // 2. Active Session (Video Room)
   return (
     <div className="fixed inset-0 flex flex-col bg-black text-white" style={{ zIndex: 1 }}>
+      <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[9999]">
+        {DEBUG_VERSION}
+      </div>
       <div className="flex-1 relative w-full h-full overflow-hidden bg-black">
         {liveKitToken && liveKitUrl ? (
           <LiveKitRoomWrapped
