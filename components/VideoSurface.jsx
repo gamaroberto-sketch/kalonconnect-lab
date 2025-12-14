@@ -315,14 +315,23 @@ const VideoSurface = ({ roomId }) => {
     <div className="h-full w-full flex flex-col lg:flex-row gap-4 bg-gray-900 rounded-3xl overflow-hidden p-4">
 
       {/* 🟢 COMPONENT 1: LOCAL VIDEO (ALWAYS ON) */}
-      {/* 🟢 COMPONENT 1: LOCAL VIDEO (ALWAYS ON) */}
-      <LocalVideoLayer
-        localVideoRef={localVideoRef}
-        showLocalPreview={showLocalPreview}
-        currentStream={currentStream}
-        processedTrack={processedTrack}
-        t={t}
-      />
+      <div className="relative flex-1 flex flex-col">
+        {/* UPPER STATUS INDICATOR */}
+        <div className="absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 shadow-lg">
+          <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+          <span className="text-xs font-bold text-white tracking-wide uppercase">
+            {isConnected ? "ONLINE (Ao Vivo)" : "OFFLINE"}
+          </span>
+        </div>
+
+        <LocalVideoLayer
+          localVideoRef={localVideoRef}
+          showLocalPreview={showLocalPreview}
+          currentStream={currentStream}
+          processedTrack={processedTrack}
+          t={t}
+        />
+      </div>
 
       {/* 🔴 COMPONENT 2: REMOTE SESSION (TRANSIENT / CONNECTING) */}
       {liveKitToken && liveKitWsUrl ? (
