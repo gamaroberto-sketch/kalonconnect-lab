@@ -69,8 +69,17 @@ export function RemoteVideoManager({ isProfessional }) {
 
       {/* Debug Info (faint) */}
       {/* Debug Info (faint) */}
-      <div className="absolute top-4 left-4 text-[10px] text-white/50 pointer-events-none z-0 bg-black/50 px-2 py-1 rounded">
-        v7.0 - CLOUD (HD) | {room?.name || "No Room"}
+      {/* Debug Info (Enhanced for Manuscript) */}
+      <div className="absolute top-4 left-4 text-[10px] text-white/70 pointer-events-none z-[9999] bg-black/80 px-2 py-2 rounded border border-white/20 flex flex-col gap-1 max-w-[200px]">
+        <div><strong>VER:</strong> v10.2 - DEBUG</div>
+        <div><strong>ROOM:</strong> {room?.name || "Disconnected"}</div>
+        <div><strong>STATE:</strong> {room?.state}</div>
+        <div><strong>SID:</strong> {room?.sid}</div>
+        <div><strong>PEERS:</strong> {room?.participants.size - 1}</div>
+        <div><strong>TRACKS:</strong> {tracks.length}</div>
+        <div className="text-[8px] opacity-50 break-all">
+          {(Array.from(room?.participants.values() || [])).map(p => p.identity).join(', ')}
+        </div>
       </div>
       <RoomAudioRenderer />
     </div>
