@@ -373,9 +373,9 @@ export const VideoPanelProvider = ({
       return streamRef.current;
     }
     try {
-      console.log('🎯 Solicitando getUserMedia...');
+      console.log('🎯 Solicitando getUserMedia (HD)...');
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
         audio: true
       });
       console.log('✅ Stream criado com sucesso');
@@ -663,10 +663,9 @@ export const VideoPanelProvider = ({
         status: "active"
       }
     }));
-    // 🟢 v10.7 AUTO-PUBLISH: Force Enabled (No conditions)
-    console.log("🚀 [VideoPanel] Auto-enabling Video for Session (Unconditional)");
-    setIsVideoOn(true);
-    if (!isCameraPreviewOn) setIsCameraPreviewOn(true);
+    // 🟢 v11.0 MANUAL CONTROL RESTORED
+    // Video must be started manually by the professional.
+    // console.log("🚀 [VideoPanel] Auto-Start disabled (Manual Mode)");
 
     sessionDataRef.current = {
       ...sessionDataRef.current,
