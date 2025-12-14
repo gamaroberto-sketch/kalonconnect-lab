@@ -1,20 +1,16 @@
-// 🟢 v4.0 STABLE CLIENT RESTORED
-// Combines stable V3.0 connection logic with V2.3 UI components
+// 🟢 v10.1 MANUAL STABILIZATION - Case Sensitive Room Fix
 import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
 // Dynamic imports to avoid SSR issues
-import { VideoPanelProvider, useVideoPanel } from '../../../components/VideoPanelContext'; // 🟢 Now non-dynamic to allow context usage?
-// Wait, if we use dynamic import for provider, we can't easily access context in same file unless we pass props.
-// Let's keep Provider simple import if possible, Next.js handles it.
-// Actually, 'use client' is in VideoPanelContext. So normal import is fine.
+import { VideoPanelProvider, useVideoPanel } from '../../../components/VideoPanelContext';
 
 const LiveKitRoomWrapped = dynamic(() => import('../../../components/video/LiveKitRoomWrapped'), { ssr: false });
 const ThemeProvider = dynamic(() => import('../../../components/ThemeProvider').then(mod => ({ default: mod.ThemeProvider })), { ssr: false });
 const MobileControlsV6 = dynamic(() => import('../../../components/MobileControlsV6'), { ssr: false });
-const WaitingRoomDisplay = dynamic(() => import('../../../components/WaitingRoomDisplay'), { ssr: false }); // 🟢 Lobby UI
+const WaitingRoomDisplay = dynamic(() => import('../../../components/WaitingRoomDisplay'), { ssr: false });
 
 export async function getServerSideProps(context) {
   const { token } = context.params;
@@ -27,14 +23,11 @@ export async function getServerSideProps(context) {
 
 // ✅ Internal Component to consume Context (Must be child of VideoPanelProvider)
 const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, connectionStatus }) => {
-  // 🟢 MANUS DBG: Version Banner
-  // If the user does NOT see this, they are viewing an old cached version.
-  const DEBUG_VERSION = "v10.0 - REESCRITA MANUS (14/12 16:30)";
+  // 🟢 DEBUG BANNER (Will remove in v11)
+  const DEBUG_VERSION = "v10.1 - CASE SENSITIVE FIX (ROOM)";
 
-  // Use hook safely
   const { branding } = useVideoPanel();
   const [hasJoined, setHasJoined] = useState(false);
-
   const [timeoutError, setTimeoutError] = useState(false);
 
   useEffect(() => {
@@ -62,7 +55,7 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 flex-col gap-4">
         {/* 🟢 DEBUG BANNER */}
-        <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[9999]">
+        <div className="fixed top-0 left-0 w-full bg-orange-600 text-white text-xs text-center font-bold py-1 z-[99999]">
           {DEBUG_VERSION}
         </div>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary-600"></div>
@@ -75,7 +68,7 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   if (!hasJoined) {
     return (
       <>
-        <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[9999]">
+        <div className="fixed top-0 left-0 w-full bg-orange-600 text-white text-xs text-center font-bold py-1 z-[99999]">
           {DEBUG_VERSION}
         </div>
         <WaitingRoomDisplay
@@ -90,8 +83,8 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   // 2. Active Session (Video Room)
   return (
     <div className="fixed inset-0 flex flex-col bg-black text-white" style={{ zIndex: 1 }}>
-      <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-xs text-center font-bold py-1 z-[9999]">
-        {DEBUG_VERSION}
+      <div className="fixed top-0 left-0 w-full bg-orange-600 text-white text-xs text-center font-bold py-1 z-[99999]">
+        {DEBUG_VERSION} - ({roomName})
       </div>
       <div className="flex-1 relative w-full h-full overflow-hidden bg-black">
         {liveKitToken && liveKitUrl ? (
@@ -122,21 +115,13 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
 export default function ClientConsultationPage({ token: serverToken }) {
   const router = useRouter();
   const { token: routerToken, p: querySlug } = router.query;
-  // Use routerToken or serverToken
   const finalToken = serverToken || routerToken;
-
-  // 🟢 v5.32 FIX: Vanity URL Logic
-  // If ?p= is missing, it means the TOKEN itself is the Professional Slug (Vanity URL)
-  // e.g. /client/bobgama -> token="bobgama", p=undefined
   const brandingSlug = querySlug || finalToken;
 
   const [liveKitToken, setLiveKitToken] = useState(null);
   const [liveKitUrl, setLiveKitUrl] = useState(null);
   const [roomName, setRoomName] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState("Conectando...");
-
-  // ✅ PRE-FETCH TOKEN (Background)
-  // We fetch the token immediately so it's ready when user clicks "Enter"
   const hasFetchedToken = useRef(false);
 
   useEffect(() => {
@@ -146,8 +131,11 @@ export default function ClientConsultationPage({ token: serverToken }) {
 
     const connect = async () => {
       try {
-        const roomNameValue = `consulta-${finalToken.toLowerCase()}`;
-        const participantName = `client-${finalToken}`;
+        // 🟢 ULTRA SAFE ROOM NORMALIZATION
+        // Must match useConsultationSession hook exactly: `consulta-${normalizedId}`
+        const normalizedToken = finalToken.toLowerCase().trim();
+        const roomNameValue = `consulta-${normalizedToken}`;
+        const participantName = `client-${normalizedToken}-${Math.random().toString(36).substr(2, 5)}`;
 
         console.log(`🔴 [CLIENT] Fetching LiveKit Token...`);
         console.log(`   -> Target Room: ${roomNameValue}`);
@@ -184,7 +172,6 @@ export default function ClientConsultationPage({ token: serverToken }) {
       </Head>
 
       <ThemeProvider>
-        {/* 🟢 Inject Provider with Branding Slug */}
         <VideoPanelProvider isProfessional={false} brandingSlug={brandingSlug}>
           <ClientConsultationContent
             token={finalToken}

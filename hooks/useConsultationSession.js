@@ -1,100 +1,78 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
-/**
- * useConsultationSession
- * 
- * Gerencia a sessão de consulta (Token LiveKit, Nome da Sala).
- * Isolado da UI de vídeo.
- */
-export function useConsultationSession(isProfessional = true) {
-    const [sessionState, setSessionState] = useState({
-        token: null,
-        serverUrl: null,
-        roomName: null,
-        isConnecting: false,
-        isConnected: false,
-        error: null
-    });
+export const useConsultationSession = (isProfessional = false) => {
+    const [token, setToken] = useState(null);
+    const [serverUrl, setServerUrl] = useState(null);
+    const [roomName, setRoomName] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
+    const [error, setError] = useState(null);
 
-    const isConnectingRef = useRef(false);
+    // Keep track of connection attempt
+    const isConnecting = useRef(false);
 
-    // 1. Conectar à Sessão
-    const connectSession = useCallback(async (consultationIdOrSlug) => {
-        if (!consultationIdOrSlug) {
-            console.warn("⚠️ useConsultationSession: ID de consulta não fornecido via connectSession.");
+    const connectSession = useCallback(async (identifier) => {
+        if (!identifier) {
+            console.warn("⚠️ [useConsultationSession] No identifier provided.");
             return;
         }
 
-        if (isConnectingRef.current) return;
-        isConnectingRef.current = true;
+        // 🟢 CRITICAL FIX: Normalize Identifier to Lowercase
+        // This ensures 'Roberto-Gama' and 'roberto-gama' always map to 'consulta-roberto-gama'.
+        // LiveKit room names ARE case-sensitive, so we must standardize.
+        const normalizedId = identifier.toLowerCase().trim();
 
-        setSessionState(prev => ({ ...prev, isConnecting: true, error: null }));
+        if (isConnecting.current) return;
+        isConnecting.current = true;
 
         try {
-            // Normalização do Nome da Sala
-            let roomToConnect = consultationIdOrSlug;
-            if (!roomToConnect.startsWith('consulta-') && !roomToConnect.startsWith('event-')) {
-                roomToConnect = `consulta-${roomToConnect}`;
-            }
+            console.log(`🔌 [useConsultationSession] Connecting to: ${normalizedId}`);
 
-            console.log(`🔗 useConsultationSession: Buscando token para [${roomToConnect}]...`);
+            const payload = {
+                roomName: `consulta-${normalizedId}`, // 🟢 Standardized Prefix + Lowercase ID
+                participantName: isProfessional ? "Profissional" : `Client-${Math.random().toString(36).substr(2, 5)}`
+            };
 
-            const res = await fetch("/api/livekit/token", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    roomName: roomToConnect,
-                    participantName: isProfessional ? "Profissional" : "Cliente",
-                }),
+            const res = await fetch('/api/livekit/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
 
-            if (!res.ok) throw new Error("Falha ao obter token de vídeo");
+            if (!res.ok) throw new Error("Failed to fetch token");
 
             const data = await res.json();
+            console.log("✅ [useConsultationSession] Token Received:", data.roomName);
 
-            if (!data.token) throw new Error("Token vazio retornado pela API");
-
-            console.log("✅ useConsultationSession: Token obtido.");
-
-            setSessionState({
-                token: data.token,
-                serverUrl: data.wsUrl,
-                roomName: roomToConnect, // Usa o nome normalizado
-                isConnecting: false,
-                isConnected: true, // Conceitualmente conectado (LiveKitRoom fará o resto)
-                error: null
-            });
+            setToken(data.token);
+            setServerUrl(data.wsUrl);
+            setRoomName(data.roomName);
+            setIsConnected(true);
+            setError(null);
 
         } catch (err) {
-            console.error("❌ useConsultationSession: Erro de conexão:", err);
-            setSessionState(prev => ({
-                ...prev,
-                isConnecting: false,
-                isConnected: false,
-                error: err.message
-            }));
+            console.error("❌ [useConsultationSession] Connection Error:", err);
+            setError(err.message);
+            setIsConnected(false);
         } finally {
-            isConnectingRef.current = false;
+            isConnecting.current = false;
         }
     }, [isProfessional]);
 
-    // 2. Desconectar
     const disconnectSession = useCallback(() => {
-        console.log("🔌 useConsultationSession: Desconectando...");
-        setSessionState({
-            token: null,
-            serverUrl: null,
-            roomName: null,
-            isConnecting: false,
-            isConnected: false,
-            error: null
-        });
-        isConnectingRef.current = false;
+        console.log("🔌 [useConsultationSession] Disconnecting...");
+        setToken(null);
+        setServerUrl(null);
+        setRoomName(null);
+        setIsConnected(false);
     }, []);
 
     return {
-        ...sessionState,
+        token,
+        serverUrl,
+        roomName,
+        isConnected,
+        error,
         connectSession,
         disconnectSession
     };
-}
+};
