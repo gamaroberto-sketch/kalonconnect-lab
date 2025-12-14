@@ -905,6 +905,7 @@ export const VideoPanelProvider = ({
     remoteVideoRef,
     screenShareRef,
     streamRef,
+    setIsConnected, // 🟢 FIX: Expose this setter!
     setIsFullscreen,
     setUseWhereby,
     setShowScreenSharePanel,
