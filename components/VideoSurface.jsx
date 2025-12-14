@@ -210,116 +210,49 @@ const VideoSurface = ({ roomId }) => {
     consultationId,
     currentStream,
     setIsConnected,
-    isConnected,
+    isConnected, // From Context
     isSessionStarted,
     toggleScreenShare,
-    setConsultationId,
     processedTrack // 🟢 Virtual Background
   } = useVideoPanel();
 
   const { t } = useTranslation();
 
-  // LiveKit Connection State
-  const [liveKitToken, setLiveKitToken] = useState(null);
-  const [liveKitWsUrl, setLiveKitWsUrl] = useState(null);
-  const [liveKitConnect, setLiveKitConnect] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
+  // 🟢 REFACTOR PHASE 1: Decoupled Connection Logic
+  // We use the new hook to manage LiveKit session state
+  const {
+    token: liveKitToken,
+    serverUrl: liveKitWsUrl,
+    roomName: normalizedRoomName,
+    isConnected: isRoomConnected,
+    connectSession,
+    disconnectSession
+  } = useConsultationSession(isProfessional);
 
-
-  const [fatalError, setFatalError] = useState(false);
-
-  const isConnectingRef = React.useRef(false); // 🟢 v5.41 FIX: Ref for synchronous lock
-  const connectionAttempts = React.useRef(0);
-
-  // Auto-connect Logic (🟢 FIX: Only connect if there's an actual consultation)
+  // 1. Sync Logic: Context (SessionStarted) -> Hook (Connect/Disconnect)
   useEffect(() => {
-    // 🛑 SAFETY: If fatal error (quota exceeded), NEVER reconnect
-    if (fatalError) return;
-
-    // 🛡️ SAFETY: Don't auto-connect unless there's a real consultation ID
-    if (!consultationId) {
-      console.log("⏸️ LiveKit auto-connect skipped: No consultation ID");
-      return;
+    // 🛡️ Only connect if session is started AND we have a valid ID
+    if (isSessionStarted && !isRoomConnected && !liveKitToken) {
+      const targetRoom = consultationId || roomId;
+      if (targetRoom) {
+        console.log(`🚀 [VideoSurface] Starting Session for: ${targetRoom}`);
+        connectSession(targetRoom);
+      }
     }
-
-    // 🟢 v8.0 OPTIMIZATION: Connect ONLY when Session Starts (Save Credits)
-    // We removed '|| isProfessional' so user can enter room, adjust settings,
-    // and see local preview WITHOUT connecting to LiveKit.
-    if (isSessionStarted && !liveKitConnect && !isConnecting && !liveKitToken) {
-      console.log("🚀 LiveKit auto-connecting for consultation:", consultationId);
-      connectLiveKit();
+    // 🛡️ Disconnect if session stops
+    else if (!isSessionStarted && isRoomConnected) {
+      console.log("🛑 [VideoSurface] Stopping Session...");
+      disconnectSession();
     }
-  }, [isSessionStarted, liveKitConnect, isConnecting, liveKitToken, consultationId, fatalError]);
+  }, [isSessionStarted, isRoomConnected, liveKitToken, consultationId, roomId, connectSession, disconnectSession]);
 
-  // Switch Room Logic
+  // 2. Sync Logic: Hook (Connected) -> Context (Online Status)
+  // This updates the "ONLINE" badge in the UI
   useEffect(() => {
-    if (consultationId) {
-      console.log(`📡 Detected Room Switch to: ${consultationId}. Resetting connection...`);
-      setLiveKitConnect(false);
-      setLiveKitToken(null);
-      isConnectingRef.current = false; // Reset lock
+    if (isConnected !== isRoomConnected) {
+      setIsConnected(isRoomConnected);
     }
-  }, [consultationId]);
-
-
-  const connectLiveKit = async () => {
-    try {
-      if (isConnectingRef.current) return; // 🟢 Block duplicate calls
-      isConnectingRef.current = true;
-      setIsConnecting(true);
-      connectionAttempts.current += 1;
-
-      // 🟢 FIX v9.0: Normalize Room Name to match Client
-      // Client Page uses: `consulta-${slug}`
-      // Professional Context usually provides just the slug (e.g. "roberto-gama")
-      let roomToConnect = consultationId || roomId || "consultation-room";
-      if (!roomToConnect.startsWith('consulta-') && !roomToConnect.startsWith('event-')) {
-        roomToConnect = `consulta-${roomToConnect}`;
-      }
-
-      console.log(`🎥 Connecting to: ${roomToConnect}`);
-
-      const res = await fetch("/api/livekit/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomName: roomToConnect,
-          participantName: isProfessional ? "Profissional" : "Cliente",
-        }),
-      });
-
-      const data = await res.json();
-
-      // 🟢 v5.43 FIX: Stale Request Prevention
-      // If the room changed while we were fetching (e.g. ID -> Slug switch), discard this token.
-      // We check consultationId from the *latest* render cycle via a ref or by comparing effectively?
-      // Since we can't easily access the "future" prop, we rely on the fact that if we triggered a switch,
-      // we reset the state. But here we are setting it again.
-      // Ideally we'd use a ref to track "current desired room".
-      // For now, let's rely on the React State update batching, but safer to check:
-      if (data.token) {
-        // Simple check: if we are supposed to be in a specific consultationId, make sure the token matches?
-        // Actually best way:
-        // 🟢 v5.43 FIX: Stale Request Prevention - Temporarily removed due to variable reference error
-        // The room switching logic at useEffect handles resets.
-        /*
-        if (consultationId && targetRoom !== consultationId) {
-          console.warn(`🛑 Discarding stale token for ${targetRoom} (Current: ${consultationId})`);
-          return;
-        }
-        */
-
-        setLiveKitToken(data.token);
-        setLiveKitWsUrl(data.wsUrl);
-        setLiveKitConnect(true);
-      }
-    } catch (error) {
-      console.error("❌ Connection failed:", error);
-    } finally {
-      setIsConnecting(false);
-      isConnectingRef.current = false; // Release lock
-    }
-  };
+  }, [isRoomConnected, isConnected, setIsConnected]);
 
   const showLocalPreview = isCameraPreviewOn || isVideoOn || isSessionStarted;
 
@@ -330,9 +263,9 @@ const VideoSurface = ({ roomId }) => {
       <div className="relative flex-1 flex flex-col">
         {/* UPPER STATUS INDICATOR */}
         <div className="absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 shadow-lg">
-          <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+          <div className={`w-3 h-3 rounded-full ${isRoomConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
           <span className="text-xs font-bold text-white tracking-wide uppercase">
-            {isConnected ? "ONLINE (Ao Vivo)" : "OFFLINE"}
+            {isRoomConnected ? "ONLINE (Ao Vivo)" : "OFFLINE"}
           </span>
         </div>
 
@@ -350,48 +283,26 @@ const VideoSurface = ({ roomId }) => {
         <LiveKitRoom
           token={liveKitToken}
           serverUrl={liveKitWsUrl}
-          connect={liveKitConnect} // 🟢 Bind to state
+          connect={true} // Hook ensures we have token, so connect immediately
           video={false} // We handle video manually via RemoteSessionLogic
           audio={true}
           style={{ display: 'contents' }}
           onConnected={() => {
             console.log("✅ [PROFESSIONAL] LiveKit Connected!");
-            console.log("   -> Room:", consultationId || roomId);
-            setIsConnected(true);
           }}
           onDisconnected={(reason) => {
             console.warn("⚠️ [PROFESSIONAL] LiveKit Disconnected!", reason);
-            // 🟢 v5.42 FIX: Strict Mode Resilience
-            // We do NOT update state here. If Strict Mode unmounts us, we want to stay "conceptually" connected
-            // so the re-mount can reconnect immediately.
-            // Only manual actions (hanging up) should kill the state.
+            // We don't clear state here to handle re-renders/strict mode gracefully.
+            // disconnectSession() should be called by the effect if isSessionStarted becomes false.
           }}
           onError={(err) => {
-            // 🔇 Mute expected "Client initiated disconnect" to avoid panic
-            if (err?.message?.includes("Client initiated disconnect")) {
-              console.log("ℹ️ Disconnect confirmed (ignoring error trace).");
-              return;
-            }
-            // 🟢 v5.80: Suppress Publish Error Alerts (Let retry logic handle it)
-            if (err?.message?.includes("publishing rejected") || err?.name === "PublishTrackError") {
-              console.warn("⚠️ [PROFESSIONAL] Publish Error (Retrying internally):", err.message);
-              return;
-            }
-            // 🛑 SAFETY LOCK: Connection Limit Exceeded
-            if (err?.message?.includes("minutes limit exceeded") || err?.message?.includes("429")) {
-              console.error("🚨 [CRITICAL] LiveKit Quota Exceeded. Stopping all connection attempts.");
-              setFatalError(true);
-              setLiveKitConnect(false);
-              return;
-            }
-
             console.error("❌ [PROFESSIONAL] LiveKit Error:", err);
           }}
         >
           <RemoteSessionLogic
             isProfessional={isProfessional}
             isScreenSharing={isScreenSharing}
-            isConnected={liveKitConnect}
+            isConnected={isRoomConnected}
             currentStream={currentStream}
             processedTrack={processedTrack}
             isVideoOn={isVideoOn}
@@ -401,22 +312,18 @@ const VideoSurface = ({ roomId }) => {
       ) : (
         /* DISCONNECTED / CONNECTING STATE */
         <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
-          {fatalError ? (
-            <div className="text-red-500 text-center p-4">
-              <p className="font-bold text-lg mb-2">⛔ Limite de Conexão Excedido</p>
-              <p className="text-sm text-white/70">Sua conta LiveKit atingiu o limite gratuito.</p>
-              <p className="text-xs text-white/50 mt-2">Crie um novo projeto ou adicione créditos.</p>
-            </div>
-          ) : (
-            <p className="text-white text-sm animate-pulse">
-              {isConnecting ? "Conectando ao Servidor..." : "Pronto para Conectar"}
-            </p>
-          )}
+          <p className="text-white text-sm animate-pulse">
+            {isSessionStarted ? "Conectando ao Servidor..." : "Pronto para Conectar"}
+          </p>
+          {/* Debug info enabled for checking room name */}
+          <div className="absolute bottom-4 text-[10px] text-white/30">
+            Target: {consultationId || roomId || "N/A"}
+          </div>
         </div>
       )}
 
     </div>
   );
-};
+}; // End VideoSurface
 
 export default VideoSurface;
