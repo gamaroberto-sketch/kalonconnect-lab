@@ -669,7 +669,11 @@
       "duration": "Durée"
     }
   },
-  "_documents_defunct": {
+  "documents": {
+    "common": {
+      "usingProfile": "Utilisation du profil de",
+      "editProfileHint": "Pour modifier le logo/données, éditez votre Profil."
+    },
     "help": {
       "prescription": {
         "title": "Comment utiliser les Ordonnances",

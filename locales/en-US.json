@@ -670,6 +670,10 @@
     }
   },
   "documents": {
+    "common": {
+      "usingProfile": "Using profile of",
+      "editProfileHint": "To change logo/data, edit your Profile."
+    },
     "help": {
       "prescription": {
         "title": "How to use Prescriptions",

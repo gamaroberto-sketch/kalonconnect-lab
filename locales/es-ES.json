@@ -665,6 +665,10 @@
     }
   },
   "documents": {
+    "common": {
+      "usingProfile": "Usando perfil de",
+      "editProfileHint": "Para cambiar logo/datos, edite su Perfil."
+    },
     "help": {
       "prescription": {
         "title": "Cómo usar Recetas",
