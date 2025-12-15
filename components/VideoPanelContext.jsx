@@ -155,15 +155,18 @@ export const VideoPanelProvider = ({
       }
 
       if (config.type === 'blur') {
-        const blur = BackgroundBlur(20); // standard blur radius
+        const blur = BackgroundBlur(20, {  // Radius 20 (mais forte)
+          edgeBlur: 5,   // Suaviza bordas
+          maskBlur: 3    // Blur na máscara
+        });
         await track.setProcessor(blur);
         processorRef.current = blur;
         console.log("✅ Blur processor applied");
       } else if (config.type === 'image' && config.source) {
         const virtualBg = VirtualBackground(config.source, {
-          edgeBlur: 8,              // Suaviza bordas (reduz instabilidade)
-          maskBlur: 5,              // Blur geral da máscara
-          backgroundThreshold: 0.5  // Sensibilidade de detecção
+          edgeBlur: 15,             // Aumentado: bordas muito mais suaves
+          maskBlur: 10,             // Aumentado: máscara mais suave
+          backgroundThreshold: 0.6  // Aumentado: detecção mais agressiva
         });
         await track.setProcessor(virtualBg);
         processorRef.current = virtualBg;
