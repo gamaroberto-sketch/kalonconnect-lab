@@ -12,12 +12,12 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     setMounted(true);
-    
-    // Timeout de segurança: se loading não terminar em 2 segundos, prosseguir
+
+    // Timeout de segurança: se loading não terminar em 5 segundos, prosseguir
     const timeout = setTimeout(() => {
       setTimeoutReached(true);
-    }, 2000);
-    
+    }, 5000); // Aumentado de 2 para 5 segundos
+
     return () => clearTimeout(timeout);
   }, []);
 
@@ -25,8 +25,8 @@ const ProtectedRoute = ({ children }) => {
     if (!mounted) return;
     // Aguardar timeout OU loading terminar
     if (loading && !timeoutReached) return;
-    // Se não tem usuário após timeout, redirecionar
-    if (!user && timeoutReached) {
+    // Se não tem usuário após loading terminar E timeout, redirecionar
+    if (!loading && !user) {
       router.push("/login");
     }
   }, [user, loading, mounted, timeoutReached, router]);
