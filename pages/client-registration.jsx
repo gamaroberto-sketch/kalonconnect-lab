@@ -19,7 +19,8 @@ import {
   Plus,
   X,
   Upload,
-  Image
+  Image,
+  Search
 } from 'lucide-react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -48,6 +49,7 @@ export default function ClientRegistration() {
     photo: '',
     preferredLanguage: 'pt-BR'
   });
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setMounted(true);
@@ -138,6 +140,19 @@ export default function ClientRegistration() {
   const handleConsultation = (client) => {
     window.location.href = '/consultations';
   };
+
+  // Filter and sort clients
+  const filteredClients = clients
+    .filter(client => {
+      if (!searchQuery) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        client.name.toLowerCase().includes(query) ||
+        client.email.toLowerCase().includes(query) ||
+        client.phone.includes(query)
+      );
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   if (!mounted) {
     return (
@@ -232,11 +247,11 @@ export default function ClientRegistration() {
                 transition={{ delay: 0.2 }}
               >
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
-                  {t('clients.clientList')} ({clients.length})
+                  {searchQuery ? `Resultados (${filteredClients.length})` : `${t('clients.clientList')} (${filteredClients.length})`}
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {clients.map((client) => (
+                  {filteredClients.map((client) => (
                     <motion.div
                       key={client.id}
                       className="rounded-lg p-6 border hover:shadow-lg transition-all duration-300"
