@@ -30,6 +30,7 @@ import ModernButton from '../components/ModernButton';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
 import { useClients } from '../hooks/useClients';
+import { compressImage } from '../lib/imageCompression';
 
 export default function ClientRegistration() {
   const { user, userType } = useAuth();
