@@ -17,7 +17,9 @@ import {
   Edit,
   Trash2,
   Plus,
-  X
+  X,
+  Upload,
+  Image
 } from 'lucide-react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -363,14 +365,45 @@ export default function ClientRegistration() {
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Foto do Cliente (opcional)
                         </label>
-                        <input
-                          type="text"
-                          value={formData.photo}
-                          onChange={(e) => handleInputChange('photo', e.target.value)}
-                          placeholder="URL da foto ou base64"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent dark:bg-gray-800 dark:text-white"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Cole a URL da foto ou dados base64</p>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-4">
+                            {formData.photo && (
+                              <div className="relative">
+                                <img
+                                  src={formData.photo}
+                                  alt="Preview"
+                                  className="w-20 h-20 rounded-full object-cover border-2"
+                                  style={{ borderColor: themeColors.primary }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleInputChange('photo', '')}
+                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            )}
+                            <label className="flex-1">
+                              <div
+                                className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-opacity-60 transition-all"
+                                style={{ borderColor: themeColors.primary + '40' }}
+                              >
+                                <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: themeColors.primary }} />
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  Clique ou arraste uma foto aqui
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">PNG, JPG até 5MB</p>
+                              </div>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handlePhotoUpload}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        </div>
                       </div>
 
                       <div>
