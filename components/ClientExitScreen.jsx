@@ -22,6 +22,7 @@ export default function ClientExitScreen({ initialProducts = [], isMobile = fals
         safeMediaAssets.farewell ||
         waitingRoom.exitImage ||
         safeMediaAssets.image ||
+        waitingRoom.image ||
         waitingRoom.visualPreferences?.image ||
         (typeof waitingRoom.mediaSrc === 'string' && waitingRoom.mediaSrc.match(/\.(jpeg|jpg|png|webp)$/i) ? waitingRoom.mediaSrc : null);
 

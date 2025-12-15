@@ -22,6 +22,7 @@ export default function ConsultationWelcome({ professional, onEnter, isLoading }
         mediaAssets.waitingRoomBackground ||
         waitingRoom.background ||
         mediaAssets.image ||
+        waitingRoom.image ||
         waitingRoom.visualPreferences?.image ||
         (typeof waitingRoom.mediaSrc === 'string' && waitingRoom.mediaSrc.match(/\.(jpeg|jpg|png|webp)$/i) ? waitingRoom.mediaSrc : null) ||
         null;
