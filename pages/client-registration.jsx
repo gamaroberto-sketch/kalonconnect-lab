@@ -464,6 +464,18 @@ export default function ClientRegistration() {
                               <div
                                 className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-opacity-60 transition-all"
                                 style={{ borderColor: themeColors.primary + '40' }}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  const file = e.dataTransfer.files?.[0];
+                                  if (file && file.type.startsWith('image/')) {
+                                    handlePhotoUpload({ target: { files: [file] } });
+                                  }
+                                }}
                               >
                                 <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: themeColors.primary }} />
                                 <p className="text-sm text-gray-600 dark:text-gray-400">
