@@ -104,6 +104,7 @@ export default function ClientConsultationPage({ token: serverToken }) {
   const { token: routerToken, p: querySlug } = router.query;
   const finalToken = serverToken || routerToken;
   const brandingSlug = querySlug || finalToken;
+  console.log("🔍 [ClientPage] brandingSlug:", brandingSlug);
 
   const [liveKitToken, setLiveKitToken] = useState(null);
   const [liveKitUrl, setLiveKitUrl] = useState(null);

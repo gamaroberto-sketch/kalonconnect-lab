@@ -76,10 +76,15 @@ export const VideoPanelProvider = ({
     const fetchProfile = async () => {
       try {
         console.log(`🔍 Fetching profile for slug: ${brandingSlug}`);
-        const res = await fetch(`/api/public/professional?slug=${brandingSlug}`);
+        const res = await fetch(`/api/public/professional?slug=${brandingSlug}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         if (res.ok) {
           const data = await res.json();
-          console.log("✅ Profile loaded:", data.name);
+          console.log("✅ [VideoPanelContext] Branding Profile loaded:", data.name);
+          console.log("   -> waitingRoom Config Present?", !!data.waitingRoom);
+          console.log("   -> waitingRoom Keys:", data.waitingRoom ? Object.keys(data.waitingRoom) : 'N/A');
           setBranding({
             profile: data,
             themeColors: data.themeColors || {},
