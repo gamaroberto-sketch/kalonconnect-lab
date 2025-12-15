@@ -59,19 +59,19 @@ export default function ForgotPasswordPage() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao enviar email');
+                throw new Error(data.error || t('forgotPassword.errorSending'));
             }
 
             setStatus({
                 type: 'success',
-                message: 'Email de recuperação enviado! Verifique sua caixa de entrada (e spam) para redefinir sua senha.'
+                message: t('forgotPassword.successMessage')
             });
             setEmail(''); // Clear email on success
         } catch (error) {
             console.error("Erro ao solicitar recuperação:", error);
             setStatus({
                 type: 'error',
-                message: error.message || 'Ocorreu um erro. Tente novamente mais tarde.'
+                message: error.message || t('forgotPassword.errorGeneric')
             });
         } finally {
             setLoading(false);
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
                     style={{ color: palette.textPrimary }}
                 >
                     <ArrowLeft className="w-4 h-4" />
-                    Voltar para Login
+                    {t('forgotPassword.backToLogin')}
                 </button>
 
                 <div className="bg-white rounded-3xl shadow-xl overflow-hidden border" style={{ borderColor: `${palette.primary}1a` }}>
@@ -101,17 +101,17 @@ export default function ForgotPasswordPage() {
                                 className="text-2xl font-bold mb-2"
                                 style={{ color: palette.textPrimary }}
                             >
-                                Recuperar Senha
+                                {t('forgotPassword.title')}
                             </h1>
                             <p className="text-gray-600">
-                                Digite seu email para receber um link de redefinição de senha.
+                                {t('forgotPassword.subtitle')}
                             </p>
                         </div>
 
                         {status.message && (
                             <div className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${status.type === 'success'
-                                    ? 'bg-green-50 border border-green-200 text-green-800'
-                                    : 'bg-red-50 border border-red-200 text-red-800'
+                                ? 'bg-green-50 border border-green-200 text-green-800'
+                                : 'bg-red-50 border border-red-200 text-red-800'
                                 }`}>
                                 {status.type === 'success' ? (
                                     <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
@@ -129,14 +129,14 @@ export default function ForgotPasswordPage() {
                                     className="text-sm font-semibold uppercase tracking-[0.2em]"
                                     style={{ color: `${palette.textPrimary}cc` }}
                                 >
-                                    Email
+                                    {t('forgotPassword.email')}
                                 </label>
                                 <div className="relative">
                                     <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                                     <input
                                         id="email"
                                         type="email"
-                                        placeholder="seu@email.com"
+                                        placeholder={t('forgotPassword.emailPlaceholder')}
                                         value={email}
                                         onChange={(event) => setEmail(event.target.value)}
                                         required
@@ -169,7 +169,7 @@ export default function ForgotPasswordPage() {
                                     event.currentTarget.style.backgroundColor = palette.primary;
                                 }}
                             >
-                                {loading ? 'Enviando...' : 'Enviar Link'}
+                                {loading ? t('forgotPassword.sending') : t('forgotPassword.sendButton')}
                                 {!loading && <ChevronRight className="w-5 h-5" />}
                             </button>
                         </form>

@@ -127,6 +127,32 @@
     "showPassword": "Mostrar contraseña",
     "developedBy": "Desarrollado por:"
   },
+  "register": {
+    "title": "Crea tu cuenta",
+    "subtitle": "Comienza tus 7 días de acceso PRO gratis",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre completo",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "createButton": "Comenzar Ahora",
+    "creating": "Creando...",
+    "hasAccount": "¿Ya tienes una cuenta? Iniciar sesión",
+    "errorCreating": "Error al crear cuenta."
+  },
+  "forgotPassword": {
+    "title": "Recuperar Contraseña",
+    "subtitle": "Ingresa tu email para recibir un enlace de restablecimiento de contraseña.",
+    "backToLogin": "Volver al Login",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "sendButton": "Enviar Enlace",
+    "sending": "Enviando...",
+    "successMessage": "¡Email de recuperación enviado! Verifica tu bandeja de entrada (y spam) para restablecer tu contraseña.",
+    "errorSending": "Error al enviar email",
+    "errorGeneric": "Ocurrió un error. Intenta nuevamente más tarde."
+  },
   "home": {
     "welcome": "Bienvenido, {name}",
     "tagline": "El Alma se expande, el Cuerpo se relaja, el Espíritu guía.",

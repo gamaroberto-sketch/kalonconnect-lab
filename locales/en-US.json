@@ -126,6 +126,32 @@
     "showPassword": "Show password",
     "developedBy": "Developed by:"
   },
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Start your 7 days of FREE PRO access",
+    "name": "Name",
+    "namePlaceholder": "Your full name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "createButton": "Start Now",
+    "creating": "Creating...",
+    "hasAccount": "Already have an account? Sign in",
+    "errorCreating": "Error creating account."
+  },
+  "forgotPassword": {
+    "title": "Recover Password",
+    "subtitle": "Enter your email to receive a password reset link.",
+    "backToLogin": "Back to Login",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "sendButton": "Send Link",
+    "sending": "Sending...",
+    "successMessage": "Recovery email sent! Check your inbox (and spam) to reset your password.",
+    "errorSending": "Error sending email",
+    "errorGeneric": "An error occurred. Please try again later."
+  },
   "home": {
     "welcome": "Welcome, {name}",
     "tagline": "The Soul expands, the Body relaxes, the Spirit leads.",
