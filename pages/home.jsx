@@ -174,8 +174,7 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32 transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : ''
-        }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32 transition-all duration-300">
         <div className="text-center mb-12" style={{ marginTop: '1rem' }}>
           <motion.div
             className="flex items-center justify-center mb-4"
