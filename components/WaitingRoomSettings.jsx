@@ -565,20 +565,20 @@ const WaitingRoomSettings = () => {
             <div className="flex items-center space-x-2 mb-2">
               <VideoIcon className="w-5 h-5 text-gray-500" />
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Visual da Sala
+                {t('waitingRoom.roomVisual')}
               </h3>
             </div>
-            <p className="text-sm text-gray-500 mb-4">Escolha qual tipo de mídia será exibido para o cliente.</p>
+            <p className="text-sm text-gray-500 mb-4">{t('waitingRoom.roomVisualDesc')}</p>
 
             <div className="space-y-3">
-              {renderMediaInput('video', 'Vídeo de Fundo', <VideoIcon className="w-4 h-4 text-gray-400" />)}
-              {renderMediaInput('image', 'Imagem Estática', <ImageIcon className="w-4 h-4 text-gray-400" />)}
-              {renderMediaInput('slides', 'Slides / Texto', <FileText className="w-4 h-4 text-gray-400" />)}
+              {renderMediaInput('video', t('waitingRoom.backgroundVideo'), <VideoIcon className="w-4 h-4 text-gray-400" />)}
+              {renderMediaInput('image', t('waitingRoom.staticImage'), <ImageIcon className="w-4 h-4 text-gray-400" />)}
+              {renderMediaInput('slides', t('waitingRoom.slidesText'), <FileText className="w-4 h-4 text-gray-400" />)}
 
               <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
                   <ImageIcon className="w-4 h-4 text-primary-500" />
-                  Personalização do Fundo
+                  {t('waitingRoom.backgroundCustomization')}
                 </h4>
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2 items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
@@ -604,7 +604,7 @@ const WaitingRoomSettings = () => {
                       <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-green-500 to-blue-500 pointer-events-none" />
                     </div>
                   </div>
-                  {renderMediaInput('waitingRoomBackground', 'Imagem de Fundo (Upload)', <ImageIcon className="w-4 h-4 text-gray-400" />)}
+                  {renderMediaInput('waitingRoomBackground', t('waitingRoom.backgroundImageUpload'), <ImageIcon className="w-4 h-4 text-gray-400" />)}
                 </div>
               </div>
             </div>
@@ -633,7 +633,7 @@ const WaitingRoomSettings = () => {
                       {settings.music && <div className="w-2 h-2 rounded-full bg-primary-500" />}
                     </div>
                     <span className={`font-medium ${settings.music ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
-                      Arquivo de Áudio
+                      {t('waitingRoom.audioFile')}
                     </span>
                   </div>
                   <Music className="w-4 h-4 text-gray-400" />
@@ -694,7 +694,7 @@ const WaitingRoomSettings = () => {
               <div className="flex items-center space-x-2">
                 <LogOut className="w-5 h-5 text-gray-500" />
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  Imagem de Despedida
+                  {t('waitingRoom.farewellImage')}
                 </h3>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -708,7 +708,7 @@ const WaitingRoomSettings = () => {
                       {settings.mediaAssets.farewell && <div className="w-2 h-2 rounded-full bg-primary-500" />}
                     </div>
                     <span className={`font-medium ${settings.mediaAssets.farewell ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
-                      Arquivo de Imagem
+                      {t('waitingRoom.imageFile')}
                     </span>
                   </div>
                   <ImageIcon className="w-4 h-4 text-gray-400" />
@@ -767,7 +767,7 @@ const WaitingRoomSettings = () => {
           <div className="flex items-center space-x-2">
             <Text className="w-5 h-5 text-gray-500" />
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-              Mensagem de Boas-vindas
+              {t('waitingRoom.welcomeMessage')}
             </h3>
           </div>
           <textarea
@@ -791,7 +791,7 @@ const WaitingRoomSettings = () => {
             variant="primary"
             size="lg"
           >
-            {saving ? 'Salvando...' : 'Salvar Configurações'}
+            {saving ? t('waitingRoom.saving') : t('waitingRoom.saveButton')}
           </ModernButton>
         </div>
       </div>
