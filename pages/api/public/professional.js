@@ -97,7 +97,7 @@ export default async function handler(req, res) {
         }
 
         // Retorna apenas dados públicos seguros, com fallbacks para foto
-        const photoUrl = user.photo || user.raw_user_meta_data?.avatar_url || user.raw_user_meta_data?.picture || user.raw_user_meta_data?.photo || null;
+        const photoUrl = user.photo_url || user.photo || user.raw_user_meta_data?.avatar_url || user.raw_user_meta_data?.picture || user.raw_user_meta_data?.photo || null;
 
         // Parse social JSON safely
         let socialData = {};
