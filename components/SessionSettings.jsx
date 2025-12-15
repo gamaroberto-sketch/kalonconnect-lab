@@ -349,6 +349,9 @@ const SessionSettings = ({
                     <span>Fundo da Câmera (Virtual)</span>
                   </h3>
                 </div>
+                <p className="text-xs text-slate-500 mb-3 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-100 dark:border-blue-800">
+                  💡 <strong>Dica:</strong> O <strong>Desfoque</strong> é mais estável que imagens virtuais (bordas mais suaves).
+                </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {backgroundOptions.map((bg) => {
