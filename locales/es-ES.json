@@ -139,6 +139,7 @@
     "createButton": "Comenzar Ahora",
     "creating": "Creando...",
     "hasAccount": "¿Ya tienes una cuenta? Iniciar sesión",
+    "backToLogin": "Volver al Login",
     "errorCreating": "Error al crear cuenta."
   },
   "forgotPassword": {

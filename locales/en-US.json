@@ -138,6 +138,7 @@
     "createButton": "Start Now",
     "creating": "Creating...",
     "hasAccount": "Already have an account? Sign in",
+    "backToLogin": "Back to Login",
     "errorCreating": "Error creating account."
   },
   "forgotPassword": {
