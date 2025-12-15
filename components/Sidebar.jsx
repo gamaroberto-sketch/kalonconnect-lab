@@ -116,11 +116,6 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
       path: 'client-registration'
     },
     {
-      name: 'Meus Produtos', // TODO: Add translation later
-      icon: <ShoppingBag className="w-5 h-5" />,
-      path: 'products'
-    },
-    {
       name: t('sidebar.consultations'),
       icon: <Video className="w-5 h-5" />,
       path: 'consultations'
@@ -155,6 +150,12 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
     name: t('sidebar.settings'),
     icon: <Settings className="w-5 h-5" />,
     path: 'settings'
+  });
+
+  menuItems.push({
+    name: 'Meus Produtos',
+    icon: <ShoppingBag className="w-5 h-5" />,
+    path: 'products'
   });
 
   menuItems.push({
