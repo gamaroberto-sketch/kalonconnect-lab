@@ -236,6 +236,33 @@ export default function ClientRegistration() {
                 </div>
               </motion.div>
 
+              {/* Search Bar */}
+              <motion.div
+                className="kalon-card p-4"
+                style={{
+                  backgroundColor: themeColors.background || 'rgba(255, 255, 255, 0.8)'
+                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Buscar por nome, email ou telefone..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                    style={{
+                      outlineColor: themeColors.primary
+                    }}
+                  />
+                </div>
+              </motion.div>
+
               {/* Lista de Clientes */}
               <motion.div
                 className="kalon-card p-6"
