@@ -488,8 +488,8 @@ export default function Home() {
               >
                 <ShoppingBag className="w-8 h-8" style={{ color: 'white' }} />
               </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Meus Produtos</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Gerencie seus produtos e serviços</p>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('products.title')}</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('products.description')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
             </div>
           </motion.button>
