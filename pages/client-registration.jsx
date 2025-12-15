@@ -76,20 +76,24 @@ export default function ClientRegistration() {
   const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log('Photo upload started, file size:', file.size);
       if (file.size > 5 * 1024 * 1024) {
         alert('Arquivo muito grande! Máximo 5MB');
         return;
       }
 
       try {
+        console.log('Compressing image...');
         const compressedBase64 = await compressImage(file, 200, 0.6);
+        console.log('Image compressed, base64 length:', compressedBase64.length);
         setFormData(prev => ({
           ...prev,
           photo: compressedBase64
         }));
+        console.log('Photo set in form data');
       } catch (error) {
         console.error('Error compressing image:', error);
-        alert('Erro ao processar imagem');
+        alert('Erro ao processar imagem: ' + error.message);
       }
     }
   };
@@ -343,7 +347,7 @@ export default function ClientRegistration() {
                         </div>
                         <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                           <Calendar className="w-4 h-4" />
-                          <span>{t('clients.registeredOn')} {new Date(client.registrationDate).toLocaleDateString()}</span>
+                          <span>{t('clients.registeredOn')} {client.registrationDate ? new Date(client.registrationDate).toLocaleDateString('pt-BR') : 'N/A'}</span>
                         </div>
                         <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                           <Clock className="w-4 h-4" />
