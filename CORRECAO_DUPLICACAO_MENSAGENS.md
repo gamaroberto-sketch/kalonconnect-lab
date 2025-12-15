@@ -98,3 +98,9 @@ if (livekitStatus.fatal) {
 O script agora mostra uma única mensagem clara quando Docker não está rodando.
 
 
+
+
+
+
+
+

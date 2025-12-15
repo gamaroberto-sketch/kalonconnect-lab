@@ -172,3 +172,9 @@ Quando LiveKit estiver rodando e você executar `npm run dev-lab:ngrok`:
 ```
 
 
+
+
+
+
+
+

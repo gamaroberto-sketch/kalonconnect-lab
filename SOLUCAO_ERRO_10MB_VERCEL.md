@@ -97,3 +97,9 @@ Se ainda for muito grande (>50MB), use a Opção 1 (Git).
 
 **A forma mais fácil é conectar ao Git. O Vercel faz tudo automaticamente!**
 
+
+
+
+
+
+

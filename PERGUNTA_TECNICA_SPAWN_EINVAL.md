@@ -122,3 +122,9 @@ Preciso de uma solução que:
 Qual é a melhor abordagem?
 
 
+
+
+
+
+
+

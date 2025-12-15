@@ -175,3 +175,9 @@ Se você escolher LiveKit Cloud ou binário, posso criar uma versão simplificad
 
 **Qual você prefere?**
 
+
+
+
+
+
+

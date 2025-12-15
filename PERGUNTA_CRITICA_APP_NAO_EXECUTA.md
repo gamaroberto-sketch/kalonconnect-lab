@@ -64,3 +64,9 @@ kalonconnect-lab/
 
 **URGENTE**: Preciso de solução ou workaround para fazer o código executar no cliente.
 
+
+
+
+
+
+

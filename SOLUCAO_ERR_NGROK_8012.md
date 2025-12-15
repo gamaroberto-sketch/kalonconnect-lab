@@ -86,3 +86,9 @@ O `ERR_NGROK_8012` é um erro de **conectividade**, não de autenticação. Sign
 Isso geralmente acontece porque o serviço não está rodando ou não está acessível na porta especificada.
 
 
+
+
+
+
+
+

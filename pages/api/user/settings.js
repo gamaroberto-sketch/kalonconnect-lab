@@ -47,7 +47,16 @@ export default async function handler(req, res) {
 
       // Settings are stored inside the 'social' JSON column under 'waitingRoom' key
       // This allows us to use existing column without migration
-      const savedSettings = data.social?.waitingRoom || {};
+      let socialData = data.social || {};
+      if (typeof socialData === 'string') {
+        try {
+          socialData = JSON.parse(socialData);
+        } catch (e) {
+          console.error("Error parsing socialData in GET settings:", e);
+          socialData = {};
+        }
+      }
+      const savedSettings = socialData.waitingRoom || {};
 
       return res.status(200).json({
         waitingRoom: { ...DEFAULT_SETTINGS, ...savedSettings }

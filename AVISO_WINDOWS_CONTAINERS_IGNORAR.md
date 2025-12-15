@@ -100,3 +100,9 @@ Se o Docker Desktop não estiver iniciando por outro motivo (não relacionado a 
    - Botão direito no ícone da bandeja → Quit
    - Abra novamente
 
+
+
+
+
+
+

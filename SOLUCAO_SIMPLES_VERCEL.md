@@ -122,3 +122,9 @@ Verifique se `LIVEKIT_API_KEY` e `LIVEKIT_API_SECRET` estão corretos no Vercel
 
 **É isso! Simples e funciona de verdade.** 🎉
 
+
+
+
+
+
+

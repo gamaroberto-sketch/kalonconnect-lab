@@ -7,20 +7,7 @@
     "allowClientPreview": true,
     "alertOnClientJoin": true,
     "multiSpecialty": false,
-    "animatedMessage": false,
+    "animatedMessage": true,
     "specialtyOverrides": {}
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

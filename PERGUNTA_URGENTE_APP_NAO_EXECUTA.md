@@ -67,3 +67,9 @@ export default function App({ Component, pageProps }) {
 - React 19.2.0
 - Apenas Pages Router (sem App Router)
 
+
+
+
+
+
+

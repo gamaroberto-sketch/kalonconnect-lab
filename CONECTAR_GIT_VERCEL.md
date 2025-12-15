@@ -114,3 +114,9 @@ Depois de conectar ao Git, **todos os pushes** fazem deploy automaticamente. Nã
 
 **Pronto! Agora é só fazer push e o Vercel faz o resto!** 🚀
 
+
+
+
+
+
+

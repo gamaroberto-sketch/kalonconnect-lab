@@ -93,3 +93,9 @@ O aviso não impede o funcionamento. O script:
 **Ação:** Feche a janela do aviso e aguarde Docker Desktop terminar de iniciar. O script continuará automaticamente.
 
 
+
+
+
+
+
+

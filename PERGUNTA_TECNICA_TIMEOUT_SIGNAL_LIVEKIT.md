@@ -267,3 +267,9 @@ Especificamente:
 Qual é a melhor abordagem para resolver esse problema?
 
 
+
+
+
+
+
+

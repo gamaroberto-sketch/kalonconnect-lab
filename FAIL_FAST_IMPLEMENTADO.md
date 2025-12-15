@@ -183,3 +183,9 @@ npm run dev-lab:ngrok
 O script agora faz exit imediato quando Docker não está rodando, evitando confusão e aguardas desnecessárias.
 
 
+
+
+
+
+
+

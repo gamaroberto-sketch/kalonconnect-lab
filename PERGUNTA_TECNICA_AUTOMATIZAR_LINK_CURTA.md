@@ -74,3 +74,9 @@ Aplicação Next.js + LiveKit requer múltiplos passos manuais para gerar link v
 **Qual a melhor arquitetura e implementação?**
 
 
+
+
+
+
+
+

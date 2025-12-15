@@ -178,3 +178,9 @@ O script agora tenta iniciar Docker Desktop automaticamente quando necessário, 
 4. **Validar** em diferentes ambientes Windows
 
 
+
+
+
+
+
+

@@ -248,3 +248,9 @@ export default async function handler(req, res) {
 Qual é a melhor arquitetura e implementação para automatizar completamente esse fluxo?
 
 
+
+
+
+
+
+

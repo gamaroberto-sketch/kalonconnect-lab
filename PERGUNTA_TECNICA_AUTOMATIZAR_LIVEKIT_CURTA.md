@@ -40,3 +40,9 @@ async function ensureLiveKitRunning() {
 **Qual a melhor abordagem?**
 
 
+
+
+
+
+
+

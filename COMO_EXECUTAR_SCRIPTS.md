@@ -85,3 +85,9 @@ Eles funcionam tanto no PowerShell quanto no CMD sem precisar do `.\`.
 
 
 
+
+
+
+
+
+

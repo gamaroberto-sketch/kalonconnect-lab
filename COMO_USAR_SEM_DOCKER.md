@@ -167,3 +167,9 @@ npm install -g ngrok
 - Funciona com qualquer método de LiveKit
 - Ideal para desenvolvimento quando Docker não funciona
 
+
+
+
+
+
+

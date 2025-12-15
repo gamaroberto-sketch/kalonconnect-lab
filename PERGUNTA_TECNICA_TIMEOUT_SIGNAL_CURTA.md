@@ -76,3 +76,9 @@ could not establish signal connection: room connection has timed out (signal)
 **Qual a causa raiz e como resolver?**
 
 
+
+
+
+
+
+

@@ -50,3 +50,9 @@ async function checkDockerStatus() {
 **Qual a melhor abordagem?**
 
 
+
+
+
+
+
+

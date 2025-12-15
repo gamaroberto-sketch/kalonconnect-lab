@@ -57,3 +57,9 @@ Há mudanças não commitadas no `_app.js` com código de vídeo adicional. Essa
 3. Verificar se o vídeo aparece nas consultas
 4. Commitar mudanças se tudo estiver funcionando
 
+
+
+
+
+
+

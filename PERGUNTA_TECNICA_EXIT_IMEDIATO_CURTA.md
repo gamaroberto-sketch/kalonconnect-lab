@@ -43,3 +43,9 @@ if (!dockerStatus.available && dockerStatus.reason === 'daemon_not_running') {
 **Qual a melhor abordagem?**
 
 
+
+
+
+
+
+

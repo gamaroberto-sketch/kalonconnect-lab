@@ -229,3 +229,9 @@ Ao consultar outra IA, inclua:
 - Status do túnel ngrok
 
 
+
+
+
+
+
+

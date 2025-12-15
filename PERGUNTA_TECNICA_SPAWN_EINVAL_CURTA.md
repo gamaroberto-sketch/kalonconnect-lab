@@ -39,3 +39,9 @@ const nextProcess = spawn(npmCmd, ['run', 'dev-lab'], {
 Qual a solução mais robusta?
 
 
+
+
+
+
+
+

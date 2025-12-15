@@ -214,3 +214,9 @@ Se os logs mostrarem URL correta mas ainda houver timeout:
 5. Considerar alternativas ao ngrok (Cloudflare Tunnel)
 
 
+
+
+
+
+
+

@@ -48,3 +48,9 @@ connectex: Nenhuma conexão pôde ser feita porque a máquina de destino as recu
 **Qual a melhor abordagem?**
 
 
+
+
+
+
+
+

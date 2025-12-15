@@ -1,15 +1,11 @@
 {
   "banks": {
     "341": {
-      "pixKeys": [
-        "21996455554"
-      ],
+      "pixKeys": [],
       "accounts": []
     },
     "403": {
-      "pixKeys": [
-        "87653958834"
-      ],
+      "pixKeys": [],
       "accounts": []
     }
   }

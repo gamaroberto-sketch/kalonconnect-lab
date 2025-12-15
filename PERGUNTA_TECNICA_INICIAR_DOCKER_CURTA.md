@@ -52,3 +52,9 @@ async function startDockerDesktop() {
 **Qual a melhor abordagem?**
 
 
+
+
+
+
+
+

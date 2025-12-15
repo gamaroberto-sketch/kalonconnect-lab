@@ -235,3 +235,9 @@ Especificamente:
 Qual é a melhor abordagem para lidar com esse cenário?
 
 
+
+
+
+
+
+

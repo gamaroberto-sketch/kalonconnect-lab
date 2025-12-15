@@ -58,3 +58,9 @@ Se você ver mensagens como:
 
 Essas são mensagens de teste manual no console. Elas não indicam problemas no app.
 
+
+
+
+
+
+

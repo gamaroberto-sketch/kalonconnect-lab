@@ -94,3 +94,9 @@ O script `dev-with-ngrok.js` está funcionando **perfeitamente**!
 O script está pronto para uso. Basta iniciar o Docker Desktop e executar `npm run dev-lab:ngrok`.
 
 
+
+
+
+
+
+

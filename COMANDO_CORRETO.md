@@ -86,3 +86,9 @@ Se você sempre trabalha com `kalonconnect-lab`, configure o terminal do Cursor 
 Ou simplesmente sempre execute `cd C:\kalonos\kalonconnect-lab` antes de rodar comandos.
 
 
+
+
+
+
+
+

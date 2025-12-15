@@ -72,3 +72,9 @@ Depois execute o script novamente.
 Você pode manter o PowerShell aberto e usar ele para todos os comandos enquanto o terminal do Cursor estiver travado.
 
 
+
+
+
+
+
+

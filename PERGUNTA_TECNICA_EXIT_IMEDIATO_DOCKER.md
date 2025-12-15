@@ -250,3 +250,9 @@ Especificamente:
 Qual é a melhor abordagem?
 
 
+
+
+
+
+
+
