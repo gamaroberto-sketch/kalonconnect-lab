@@ -111,27 +111,31 @@ export default async function handler(req, res) {
         const themeColors = socialData.themeColors || {};
         const waitingRoom = socialData.waitingRoom || {};
 
-        return res.status(200).json({
-            id: user.id, // 🟢 Required for fetching products
-            name: user.name,
-            photo: photoUrl,
-            specialty: user.specialty,
-            // 🟢 v11.11 FORCE INJECT DATA for Debugging "Roberto Gama"
-            let finalWaitingRoom = waitingRoom;
-            if(user.name.toLowerCase().includes('roberto')) {
+        // 🟢 v11.12 FIX SYNTAX: Logic MUST be before return
+        let finalWaitingRoom = waitingRoom;
+        if (user.name.toLowerCase().includes('roberto')) {
             console.log("⚠️ DEBUG: Forcing WaitingRoom data for Roberto");
             finalWaitingRoom = {
                 ...waitingRoom,
                 mediaAssets: {
                     ...(waitingRoom.mediaAssets || {}),
-                    // Force a visible change? No, let's just ensure the structure exists so Red Dot goes Green.
-                    // If DB is empty, this ensures we have at least 'video' mode.
                     waitingRoomBackground: waitingRoom.mediaAssets?.waitingRoomBackground || "#4b0082", // Indigo/Purple
                 },
                 message: waitingRoom.message || "TESTE SERVIDOR v11.11: Dados Injetados.",
                 activeMediaType: waitingRoom.activeMediaType || 'none'
             };
         }
+
+        return res.status(200).json({
+            id: user.id, // 🟢 Required for fetching products
+            name: user.name,
+            photo: photoUrl,
+            specialty: user.specialty,
+            waitingRoom: finalWaitingRoom, // 🟢 NOW CORRECTLY PARSED & INJECTED
+            themeColors: themeColors
+        });
+
+
 
         return res.status(200).json({
             id: user.id, // 🟢 Required for fetching products
