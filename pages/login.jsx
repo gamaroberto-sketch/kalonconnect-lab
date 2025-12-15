@@ -153,7 +153,7 @@ export default function LoginPage() {
             className="text-4xl md:text-5xl leading-tight mb-2"
             style={{ color: palette.textPrimary }}
           >
-            <span style={{ fontWeight: 300 }}>Bem-vindo(a) ao </span>
+            <span style={{ fontWeight: 300 }}>{t('login.welcomeTo')} </span>
             <span style={{ fontWeight: 900 }}>KalonConnect</span>
           </h1>
 

@@ -103,7 +103,8 @@
     "subtitle": "Sistema de Consciência Integrada"
   },
   "login": {
-    "title": "Bem-vindo ao KalonConnect",
+    "welcomeTo": "Bem-vindo(a) ao",
+    "title": "Login",
     "subtitle": "Entre com suas credenciais",
     "emailPlaceholder": "seu@email.com",
     "passwordPlaceholder": "Sua senha",
