@@ -160,7 +160,11 @@ export const VideoPanelProvider = ({
         processorRef.current = blur;
         console.log("✅ Blur processor applied");
       } else if (config.type === 'image' && config.source) {
-        const virtualBg = VirtualBackground(config.source);
+        const virtualBg = VirtualBackground(config.source, {
+          edgeBlur: 8,              // Suaviza bordas (reduz instabilidade)
+          maskBlur: 5,              // Blur geral da máscara
+          backgroundThreshold: 0.5  // Sensibilidade de detecção
+        });
         await track.setProcessor(virtualBg);
         processorRef.current = virtualBg;
         console.log("✅ Virtual background applied:", config.source);
