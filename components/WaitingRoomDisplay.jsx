@@ -171,6 +171,12 @@ const WaitingRoomDisplay = ({ professional, themeColors = {}, onJoin, isMobile =
                 </div>
             )}
 
+            {/* 🟢 v11.5 VISUAL DEBUGGER */}
+            <div className="fixed bottom-1 right-1 text-[10px] text-white/30 z-[99999] font-mono pointer-events-none flex items-center gap-1">
+                v11.5
+                <div className={`w-2 h-2 rounded-full ${waitingRoom && Object.keys(waitingRoom).length > 0 ? (mediaAssets ? 'bg-green-500' : 'bg-yellow-500') : 'bg-red-500'}`} />
+            </div>
+
         </div>
     );
 };
