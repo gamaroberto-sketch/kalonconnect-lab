@@ -547,14 +547,21 @@ export const VideoPanelProvider = ({
     console.log('✅ Video track encontrado');
 
     if (isCameraPreviewOn) {
-      console.log('🎯 Desligando câmera...');
-      // ✅ FIX: Disable tracks instead of stopping them (so we don't need to ask permission again)
+      console.log('🎯 Desligando câmera preview...');
+      // ✅ FIX: Disable track AND clear video element
       videoTrack.enabled = false;
+
+      // Clear video element to hide the image
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = null;
+        console.log('✅ Video element cleared');
+      }
+
       setIsCameraPreviewOn(false);
       if (isVideoOn) {
         setIsVideoOn(false);
       }
-      console.log('✅ Câmera desligada (track disabled)');
+      console.log('✅ Câmera preview desligada');
     } else {
       console.log('🎯 Ligando câmera...');
       if (!streamRef.current) {
