@@ -80,23 +80,29 @@ export default async function handler(req, res) {
         // Retorna apenas dados públicos seguros, com fallbacks para foto
         const photoUrl = user.photo || user.raw_user_meta_data?.avatar_url || user.raw_user_meta_data?.picture || user.raw_user_meta_data?.photo || null;
 
-        // Parse themeColors from social if exists
-        let themeColors = {};
-        if (user.social && typeof user.social !== 'string') {
-            themeColors = user.social.themeColors || {};
-        } else if (typeof user.social === 'string') {
-            try {
-                const parsed = JSON.parse(user.social);
-                themeColors = parsed.themeColors || {};
-            } catch (e) { }
+        // Parse social JSON safely
+        let socialData = {};
+        if (user.social) {
+            if (typeof user.social === 'string') {
+                try {
+                    socialData = JSON.parse(user.social);
+                } catch (e) {
+                    console.error("Error parsing user.social:", e);
+                }
+            } else {
+                socialData = user.social;
+            }
         }
+
+        const themeColors = socialData.themeColors || {};
+        const waitingRoom = socialData.waitingRoom || {};
 
         return res.status(200).json({
             id: user.id, // 🟢 Required for fetching products
             name: user.name,
             photo: photoUrl,
             specialty: user.specialty,
-            waitingRoom: user.social?.waitingRoom || {},
+            waitingRoom: waitingRoom, // 🟢 NOW CORRECTLY PARSED
             themeColors: themeColors
         });
 
