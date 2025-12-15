@@ -12,7 +12,7 @@ export function readVideoSystemConfig() {
     return {
       defaultSystem: "google-meet",
       options: ["google-meet", "highmesh"],
-      videoQuality: "hd",
+      videoQuality: "sd", // Standard Definition (480p) - optimal for video calls
       recording: {
         autoStart: false,
         storagePath: "/public/user-media/recordings/"

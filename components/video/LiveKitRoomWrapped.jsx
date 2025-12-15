@@ -18,12 +18,12 @@ export default function LiveKitRoomWrapped({ token, serverUrl, roomName, isProfe
       simulcast: true,
       videoCodec: 'h264',
       videoEncoding: {
-        maxBitrate: 1500 * 1000,
+        maxBitrate: 800 * 1000, // Optimized for 480p - better quality with less compression
         maxFramerate: 30,
       }
     },
     videoCaptureDefaults: {
-      resolution: { width: 1280, height: 720 }, // 720p HD capture
+      resolution: { width: 640, height: 480 }, // 480p - optimal quality/performance balance
       deviceId: ""
     },
     ...connectOptions // Allow overrides
