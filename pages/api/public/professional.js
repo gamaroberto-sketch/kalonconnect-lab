@@ -72,6 +72,11 @@ export default async function handler(req, res) {
                 });
 
                 if (matches.length > 0) {
+                    console.log(`🔍 [SmartLookup] Found ${matches.length} users matching slug '${slug}':`);
+                    matches.forEach((m, idx) => {
+                        console.log(`   ${idx + 1}. ${m.name} (ID: ${m.id}, Email: ${m.email})`);
+                    });
+
                     // Prioritize user with Waiting Room Config
                     matches.sort((a, b) => {
                         const hasA = a.social && (typeof a.social === 'string' ? a.social.includes('waitingRoom') : a.social.waitingRoom);
