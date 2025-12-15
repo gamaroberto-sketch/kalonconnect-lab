@@ -73,7 +73,7 @@ export default function ClientRegistration() {
     }));
   };
 
-  const handlePhotoUpload = (e) => {
+  const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
@@ -81,14 +81,16 @@ export default function ClientRegistration() {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      try {
+        const compressedBase64 = await compressImage(file, 200, 0.6);
         setFormData(prev => ({
           ...prev,
-          photo: reader.result
+          photo: compressedBase64
         }));
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        alert('Erro ao processar imagem');
+      }
     }
   };
 
