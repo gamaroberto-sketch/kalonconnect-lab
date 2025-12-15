@@ -111,30 +111,6 @@ export default async function handler(req, res) {
         const themeColors = socialData.themeColors || {};
         const waitingRoom = socialData.waitingRoom || {};
 
-        // 🟢 v11.12 FIX SYNTAX: Logic MUST be before return
-        let finalWaitingRoom = waitingRoom;
-        if (user.name.toLowerCase().includes('roberto')) {
-            console.log("⚠️ DEBUG: Forcing WaitingRoom data for Roberto");
-            finalWaitingRoom = {
-                ...waitingRoom,
-                mediaAssets: {
-                    ...(waitingRoom.mediaAssets || {}),
-                    waitingRoomBackground: waitingRoom.mediaAssets?.waitingRoomBackground || "#4b0082", // Indigo/Purple
-                },
-                message: waitingRoom.message || "TESTE SERVIDOR v11.11: Dados Injetados.",
-                activeMediaType: waitingRoom.activeMediaType || 'none'
-            };
-        }
-
-        return res.status(200).json({
-            id: user.id, // 🟢 Required for fetching products
-            name: user.name,
-            photo: photoUrl,
-            specialty: user.specialty,
-            waitingRoom: finalWaitingRoom, // 🟢 NOW CORRECTLY PARSED & INJECTED
-            themeColors: themeColors
-        });
-
 
 
         return res.status(200).json({
@@ -142,7 +118,7 @@ export default async function handler(req, res) {
             name: user.name,
             photo: photoUrl,
             specialty: user.specialty,
-            waitingRoom: finalWaitingRoom, // 🟢 NOW CORRECTLY PARSED & INJECTED
+            waitingRoom: waitingRoom, // 🟢 NOW CORRECTLY PARSED
             themeColors: themeColors
         });
 

@@ -587,8 +587,8 @@ const WaitingRoomSettings = () => {
                         key={color}
                         onClick={() => handleAssetChange('waitingRoomBackground', color)}
                         className={`w-8 h-8 rounded-full shadow-sm transition-all ${settings.mediaAssets.waitingRoomBackground === color
-                            ? 'ring-2 ring-offset-2 ring-primary-500 scale-110 z-10'
-                            : 'hover:scale-105 border border-black/10'
+                          ? 'ring-2 ring-offset-2 ring-primary-500 scale-110 z-10'
+                          : 'hover:scale-105 border border-black/10'
                           }`}
                         style={{ backgroundColor: color }}
                         title={color}
@@ -781,7 +781,8 @@ const WaitingRoomSettings = () => {
 
         <div className="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-700">
           <p className="text-sm text-gray-500">
-            Lembre-se de salvar suas alterações.
+            Lembre-se de salvar suas alterações.<br />
+            <span className="text-[10px] font-mono opacity-50">ID: {user?.id}</span>
           </p>
           <ModernButton
             onClick={handleSave}
