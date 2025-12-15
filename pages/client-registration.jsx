@@ -294,12 +294,20 @@ export default function ClientRegistration() {
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
                           <div
-                            className="w-12 h-12 rounded-full flex items-center justify-center"
+                            className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden"
                             style={{
-                              backgroundColor: themeColors.primary
+                              backgroundColor: client.photo ? 'transparent' : themeColors.primary
                             }}
                           >
-                            <User className="w-6 h-6 text-white" />
+                            {client.photo ? (
+                              <img
+                                src={client.photo}
+                                alt={client.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <User className="w-6 h-6 text-white" />
+                            )}
                           </div>
                           <div>
                             <h3 className="font-semibold text-gray-800 dark:text-white">
