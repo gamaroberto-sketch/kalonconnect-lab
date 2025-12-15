@@ -18,7 +18,17 @@ export function useClients() {
                 const response = await fetch(`/api/clients?userId=${user.id}`);
                 if (!response.ok) throw new Error('Failed to fetch clients');
                 const data = await response.json();
-                setClients(data || [])
+
+                // Map database fields to frontend fields
+                const normalizedClients = (data || []).map(client => ({
+                    ...client,
+                    photo: client.photo_url || client.photo,
+                    preferredLanguage: client.preferred_language || client.preferredLanguage,
+                    lastSession: client.last_session || client.lastSession || 'Nunca',
+                    registrationDate: client.registration_date || client.registrationDate || client.created_at
+                }));
+
+                setClients(normalizedClients);
             } catch (err) {
                 console.error('Error fetching clients:', err)
                 setError(err.message)
