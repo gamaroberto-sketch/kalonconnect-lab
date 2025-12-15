@@ -16,7 +16,8 @@ import {
   BookOpen,
   Briefcase,
   BarChart3,
-  Info
+  Info,
+  ShoppingBag
 } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import { useRouter } from 'next/router';
@@ -270,35 +271,7 @@ export default function Home() {
 
         {/* Ações Principais */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          {/* 1. Perfil */}
-          <motion.button
-            onClick={handleProfile}
-            className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
-            style={{
-              backgroundColor: themeColors.background || 'white',
-              borderColor: themeColors.border || themeColors.primary + '40',
-              borderWidth: '2px'
-            }}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <div className="text-center">
-              <div
-                className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
-                style={{ backgroundColor: themeColors.primary }}
-              >
-                <Briefcase className="w-8 h-8" style={{ color: 'white' }} />
-              </div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.profile')}</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.profile')}</p>
-              <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
-            </div>
-          </motion.button>
-
-          {/* 2. Pacientes */}
+          {/* 1. Pacientes */}
           <motion.button
             onClick={handleCadastro}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
@@ -479,7 +452,7 @@ export default function Home() {
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
+            transition={{ delay: 1.0 }}
           >
             <div className="text-center">
               <div
@@ -494,7 +467,35 @@ export default function Home() {
             </div>
           </motion.button>
 
-          {/* 9. Sobre */}
+          {/* 9. Meus Produtos */}
+          <motion.button
+            onClick={() => router.push('/products')}
+            className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
+            style={{
+              backgroundColor: themeColors.background || 'white',
+              borderColor: themeColors.border || themeColors.primary + '40',
+              borderWidth: '2px'
+            }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 }}
+          >
+            <div className="text-center">
+              <div
+                className="p-4 rounded-xl w-16 h-16 mx-auto mb-4 flex items-center justify-center"
+                style={{ backgroundColor: themeColors.primary }}
+              >
+                <ShoppingBag className="w-8 h-8" style={{ color: 'white' }} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>Meus Produtos</h3>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>Gerencie seus produtos e serviços</p>
+              <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
+            </div>
+          </motion.button>
+
+          {/* 10. Sobre */}
           <motion.button
             onClick={handleAbout}
             className="p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
