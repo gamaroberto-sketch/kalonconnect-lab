@@ -1236,6 +1236,10 @@
     }
   },
   "documents": {
+    "common": {
+      "usingProfile": "Utilisation du profil de",
+      "editProfileHint": "Pour modifier le logo/données, modifiez votre Profil."
+    },
     "help": {
       "prescription": {
         "title": "Comment utiliser les Ordonnances",
