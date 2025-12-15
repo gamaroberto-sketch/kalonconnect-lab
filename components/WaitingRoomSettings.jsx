@@ -781,8 +781,7 @@ const WaitingRoomSettings = () => {
 
         <div className="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-700">
           <p className="text-sm text-gray-500">
-            {t('waitingRoom.saveReminder')}<br />
-            <span className="text-[10px] font-mono opacity-50">ID: {user?.id}</span>
+            {t('waitingRoom.saveReminder')}
           </p>
           <ModernButton
             onClick={handleSave}
