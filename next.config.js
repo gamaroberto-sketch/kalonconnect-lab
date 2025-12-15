@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: false, // 🟢 Disable Strict Mode to differentiate real double-invokes from dev mode
+    generateBuildId: async () => {
+        return 'v11.22-cache-buster-' + Date.now();
+    },
     headers: async () => {
         return [
             {
