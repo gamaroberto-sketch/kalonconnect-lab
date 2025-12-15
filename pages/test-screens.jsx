@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import { VideoPanelProvider } from '../components/VideoPanelContext';
 import { ThemeProvider } from '../components/ThemeProvider';
-import WaitingRoomDisplay from '../components/WaitingRoomDisplay';
+import ClientLobby from '../components/ClientLobby';
 import ClientExitScreen from '../components/ClientExitScreen';
 import DeviceSimulator from '../components/DeviceSimulator';
 import ConsultationWelcome from '../components/ConsultationWelcome';
@@ -127,7 +127,7 @@ export default function TestScreens() {
                         )}
 
                         {viewMode === 'waiting' && (
-                            <WaitingRoomDisplay
+                            <ClientLobby
                                 professional={mockProfessional}
                                 onJoin={handleJoin}
                                 isLoading={false}

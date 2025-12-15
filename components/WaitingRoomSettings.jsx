@@ -29,7 +29,7 @@ import { useTheme } from "./ThemeProvider";
 import { useTranslation } from "../hooks/useTranslation";
 import { useAuth } from "./AuthContext";
 import { VideoPanelContext } from "./VideoPanelContext";
-import WaitingRoomDisplay from "./WaitingRoomDisplay";
+import ClientLobby from "./ClientLobby";
 import ClientExitScreen from "./ClientExitScreen";
 import DeviceSimulator from "./DeviceSimulator";
 import ConsultationWelcome from "./ConsultationWelcome";
@@ -865,7 +865,7 @@ const WaitingRoomSettings = () => {
                     />
                   )}
                   {simView === 'waiting' && (
-                    <WaitingRoomDisplay
+                    <ClientLobby
                       professional={previewProfessional}
                       onJoin={() => { }}
                       isMobile={simDevice === 'mobile'}

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
-import WaitingRoomDisplay from "../../components/WaitingRoomDisplay";
+import ClientLobby from "../../components/ClientLobby";
 import EndSessionDisplay from "../../components/EndSessionDisplay";
 
 const LiveKitRoomWrapped = dynamic(
@@ -175,7 +175,7 @@ export default function ClientPage() {
   if (!connect) {
     if (professional) {
       return (
-        <WaitingRoomDisplay
+        <ClientLobby
           professional={professional}
           onJoin={() => setConnect(true)}
         />

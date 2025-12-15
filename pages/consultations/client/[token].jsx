@@ -10,7 +10,7 @@ import { VideoPanelProvider, useVideoPanel } from '../../../components/VideoPane
 const LiveKitRoomWrapped = dynamic(() => import('../../../components/video/LiveKitRoomWrapped'), { ssr: false });
 const ThemeProvider = dynamic(() => import('../../../components/ThemeProvider').then(mod => ({ default: mod.ThemeProvider })), { ssr: false });
 const MobileControlsV6 = dynamic(() => import('../../../components/MobileControlsV6'), { ssr: false });
-const WaitingRoomDisplay = dynamic(() => import('../../../components/WaitingRoomDisplay'), { ssr: false });
+const ClientLobby = dynamic(() => import('../../../components/ClientLobby'), { ssr: false });
 const ConsultationWelcome = dynamic(() => import('../../../components/ConsultationWelcome'), { ssr: false });
 
 export async function getServerSideProps(context) {
@@ -69,7 +69,7 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
           isLoading={false}
         />
         <div className="fixed bottom-2 left-0 right-0 text-center text-[10px] text-gray-500 opacity-50 pointer-events-none z-50">
-          v11.20 (Secure)
+          v11.23 (Forced Update)
         </div>
       </>
     );
@@ -79,13 +79,14 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   if (viewState === 'waiting' && !hasJoined) {
     return (
       <>
-        <WaitingRoomDisplay
+        <ClientLobby
           professional={branding.profile}
           themeColors={branding.themeColors || {}}
           onJoin={() => {
             setViewState('connected');
             setHasJoined(true);
           }}
+          isMobile={true} // Default to mobile layout for safety
         />
       </>
     );
