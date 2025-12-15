@@ -548,8 +548,8 @@ export const VideoPanelProvider = ({
 
     if (isCameraPreviewOn) {
       console.log('🎯 Desligando câmera preview...');
-      // ✅ FIX: Disable track AND clear video element
-      videoTrack.enabled = false;
+      // ✅ SOLUÇÃO: Parar track completamente (apaga luz da câmera)
+      videoTrack.stop();
 
       // Clear video element to hide the image
       if (localVideoRef.current) {
