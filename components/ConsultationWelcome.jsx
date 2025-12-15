@@ -16,12 +16,13 @@ export default function ConsultationWelcome({ professional, onEnter, isLoading }
     // Priority:
     // 1. Explicit Background (Modern) -> mediaAssets.waitingRoomBackground
     // 2. Explicit Background (Legacy) -> waitingRoom.background
-    // 3. Main Content Image (Fallback) -> mediaAssets.image (The "Zen Room" logic)
+    // 3. Main Content Image (Fallback) -> mediaAssets.image AND visualPreferences.image (The "Zen Room" logic)
     // 4. Legacy Media -> waitingRoom.mediaSrc (if image)
     const backgroundUrl =
         mediaAssets.waitingRoomBackground ||
         waitingRoom.background ||
         mediaAssets.image ||
+        waitingRoom.visualPreferences?.image ||
         (typeof waitingRoom.mediaSrc === 'string' && waitingRoom.mediaSrc.match(/\.(jpeg|jpg|png|webp)$/i) ? waitingRoom.mediaSrc : null) ||
         null;
 

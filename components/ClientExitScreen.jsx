@@ -16,12 +16,13 @@ export default function ClientExitScreen({ initialProducts = [], isMobile = fals
     // Priority: 
     // 1. New Schema (farewell) -> mediaAssets.farewell
     // 2. Legacy Schema (exitImage) -> waitingRoom.exitImage
-    // 3. Main Content Image (Fallback) -> mediaAssets.image (The "Zen Room" logic)
+    // 3. Main Content Image (Fallback) -> mediaAssets.image AND visualPreferences.image (The "Zen Room" logic)
     // 4. Legacy Media -> waitingRoom.mediaSrc (if image)
     const configuredExitImage =
         safeMediaAssets.farewell ||
         waitingRoom.exitImage ||
         safeMediaAssets.image ||
+        waitingRoom.visualPreferences?.image ||
         (typeof waitingRoom.mediaSrc === 'string' && waitingRoom.mediaSrc.match(/\.(jpeg|jpg|png|webp)$/i) ? waitingRoom.mediaSrc : null);
 
     const placeholder = "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1920";
