@@ -21,6 +21,7 @@ export default function ConsultationWelcome({ professional, onEnter, isLoading }
     const backgroundUrl =
         mediaAssets.waitingRoomBackground ||
         waitingRoom.background ||
+        waitingRoom.backgroundImage || // 🟢 Synced with WaitingRoomSettings.jsx
         mediaAssets.image ||
         waitingRoom.image ||
         waitingRoom.visualPreferences?.image ||
