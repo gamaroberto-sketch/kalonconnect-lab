@@ -781,7 +781,7 @@ const WaitingRoomSettings = () => {
 
         <div className="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-700">
           <p className="text-sm text-gray-500">
-            Lembre-se de salvar suas alterações.<br />
+            {t('waitingRoom.saveReminder')}<br />
             <span className="text-[10px] font-mono opacity-50">ID: {user?.id}</span>
           </p>
           <ModernButton
@@ -802,7 +802,7 @@ const WaitingRoomSettings = () => {
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-gray-700 dark:text-white flex items-center gap-2">
                 <Eye className="w-4 h-4 text-primary-500" />
-                Preview em Tempo Real
+                {t('waitingRoom.preview')}
               </h3>
               <div className="flex bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
                 <button
@@ -827,21 +827,21 @@ const WaitingRoomSettings = () => {
                 className="flex-1 text-xs py-2 rounded-lg transition-colors"
                 style={getToggleStyle('welcome')}
               >
-                Entrada
+                {t('waitingRoom.previewTabs.entrance')}
               </button>
               <button
                 onClick={() => setSimView('waiting')}
                 className="flex-1 text-xs py-2 rounded-lg transition-colors"
                 style={getToggleStyle('waiting')}
               >
-                Sala Espera
+                {t('waitingRoom.previewTabs.waitingRoom')}
               </button>
               <button
                 onClick={() => setSimView('exit')}
                 className="flex-1 text-xs py-2 rounded-lg transition-colors"
                 style={getToggleStyle('exit')}
               >
-                Saída
+                {t('waitingRoom.previewTabs.exit')}
               </button>
             </div>
           </div>

@@ -478,6 +478,13 @@
     "farewellImage": "Imagem de Despedida",
     "imageFile": "Arquivo de Imagem",
     "welcomeMessage": "Mensagem de Boas-vindas",
+    "preview": "Preview em Tempo Real",
+    "previewTabs": {
+      "entrance": "Entrada",
+      "waitingRoom": "Sala Espera",
+      "exit": "Saída"
+    },
+    "saveReminder": "Lembre-se de salvar suas alterações.",
     "video": {
       "title": "Vídeo de boas-vindas",
       "description": "Esse vídeo será reproduzido automaticamente assim que o cliente acessar a sala.",

@@ -481,6 +481,13 @@
     "farewellImage": "Farewell Image",
     "imageFile": "Image File",
     "welcomeMessage": "Welcome Message",
+    "preview": "Real-Time Preview",
+    "previewTabs": {
+      "entrance": "Entrance",
+      "waitingRoom": "Waiting Room",
+      "exit": "Exit"
+    },
+    "saveReminder": "Remember to save your changes.",
     "video": {
       "title": "Welcome video",
       "description": "This video will play automatically when the client enters the room.",
