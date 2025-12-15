@@ -14,8 +14,17 @@ const WaitingRoomDisplay = ({ professional, themeColors = {}, onJoin, isMobile =
         mediaAssets
     } = waitingRoom || {};
 
+    // 🟢 v11.14 Hybrid Support (Legacy + New)
+    // If mediaAssets is missing but we have legacy keys, construct a virtual mediaAssets
+    const safeMediaAssets = mediaAssets || {
+        video: waitingRoom?.mediaSrc,
+        image: waitingRoom?.image || waitingRoom?.visualPreferences?.image,
+        farewell: waitingRoom?.exitImage,
+        waitingRoomBackground: waitingRoom?.background || waitingRoom?.waitingRoomBackground
+    };
+
     // Fallback for background if backgroundImage is just a boolean or undefined, check mediaAssets
-    const finalBackgroundImage = mediaAssets?.waitingRoomBackground || (typeof backgroundImage === 'string' ? backgroundImage : null);
+    const finalBackgroundImage = safeMediaAssets?.waitingRoomBackground || (typeof backgroundImage === 'string' ? backgroundImage : null);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
@@ -112,16 +121,16 @@ const WaitingRoomDisplay = ({ professional, themeColors = {}, onJoin, isMobile =
                         {(() => {
                             const currentType = waitingRoom?.activeMediaType || (videoUrl ? 'video' : 'none');
 
-                            if (currentType === 'video' && (videoUrl || mediaAssets?.video || mediaAssets?.mediaSrc)) {
-                                const src = mediaAssets?.video || videoUrl || mediaAssets?.mediaSrc;
+                            if (currentType === 'video' && (videoUrl || safeMediaAssets?.video)) {
+                                const src = safeMediaAssets?.video || videoUrl;
                                 return (
                                     <video src={src} className="w-full h-full object-cover" controls autoPlay={visualPreferences.autoPlayVideo} muted={visualPreferences.startMuted} playsInline loop />
                                 );
                             }
 
-                            if ((currentType === 'image' || currentType === 'slides') && (mediaAssets?.image || mediaAssets?.slides)) {
+                            if ((currentType === 'image' || currentType === 'slides') && (safeMediaAssets?.image || safeMediaAssets?.slides)) {
                                 return (
-                                    <img src={currentType === 'slides' ? mediaAssets.slides : mediaAssets.image} className="w-full h-full object-cover bg-black" alt="Presentation" />
+                                    <img src={currentType === 'slides' ? safeMediaAssets.slides : safeMediaAssets.image} className="w-full h-full object-cover bg-black" alt="Presentation" />
                                 );
                             }
 
@@ -171,10 +180,10 @@ const WaitingRoomDisplay = ({ professional, themeColors = {}, onJoin, isMobile =
                 </div>
             )}
 
-            {/* 🟢 v11.5 VISUAL DEBUGGER */}
+            {/* 🟢 v11.14 VISUAL DEBUGGER */}
             <div className="fixed bottom-1 right-1 text-[10px] text-white/30 z-[99999] font-mono pointer-events-none flex items-center gap-1">
-                v11.5
-                <div className={`w-2 h-2 rounded-full ${waitingRoom && Object.keys(waitingRoom).length > 0 ? (mediaAssets ? 'bg-green-500' : 'bg-yellow-500') : 'bg-red-500'}`} />
+                v11.14
+                <div className={`w-2 h-2 rounded-full ${waitingRoom && Object.keys(waitingRoom).length > 0 ? ((safeMediaAssets && (safeMediaAssets.video || safeMediaAssets.image || safeMediaAssets.slides)) ? 'bg-green-500' : 'bg-yellow-500') : 'bg-red-500'}`} />
             </div>
 
         </div>

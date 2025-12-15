@@ -73,7 +73,15 @@ export default async function handler(req, res) {
 
       if (fetchError) throw fetchError;
 
-      const currentSocial = currentUser?.social || {};
+      let currentSocial = currentUser?.social || {};
+      if (typeof currentSocial === 'string') {
+        try {
+          currentSocial = JSON.parse(currentSocial);
+        } catch (e) {
+          console.error("Error parsing currentSocial in Save:", e);
+          currentSocial = {};
+        }
+      }
 
       // 2. Update just the waitingRoom part
       const updatedSocial = {
