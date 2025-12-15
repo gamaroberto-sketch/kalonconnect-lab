@@ -62,11 +62,16 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
   // 1. Welcome Screen (Entry)
   if (viewState === 'welcome') {
     return (
-      <ConsultationWelcome
-        professional={branding.profile}
-        onEnter={() => setViewState('waiting')}
-        isLoading={false}
-      />
+      <>
+        <ConsultationWelcome
+          professional={branding.profile}
+          onEnter={() => setViewState('waiting')}
+          isLoading={false}
+        />
+        <div className="fixed bottom-2 left-0 right-0 text-center text-[10px] text-gray-500 opacity-50 pointer-events-none z-50">
+          v11.20 (Secure)
+        </div>
+      </>
     );
   }
 
