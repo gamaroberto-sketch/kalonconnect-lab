@@ -165,7 +165,7 @@ export default function RegisterPage() {
             }}
           >
             {loading ? (
-              { t('register.creating') }
+              t('register.creating')
             ) : (
               <>
                 {t('register.createButton')}
