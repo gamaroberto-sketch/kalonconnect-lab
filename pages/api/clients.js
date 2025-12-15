@@ -39,7 +39,7 @@ export default async function handler(req, res) {
                 name: newClient.name,
                 email: newClient.email,
                 phone: newClient.phone,
-                photo: newClient.photo || null,
+                photo_url: newClient.photo || null,
                 preferred_language: newClient.preferredLanguage || 'pt-BR'
             };
 
