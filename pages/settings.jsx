@@ -46,10 +46,10 @@ const Settings = () => {
   }, [darkMode]);
 
   const tabs = [
-    { id: 'profile', label: 'Minha Identidade', icon: <User size={18} /> },
-    { id: 'waiting_room', label: 'Sala de Espera', icon: <VideoIcon size={18} /> },
-    { id: 'subscription', label: 'Assinatura', icon: <CreditCard size={18} /> },
-    { id: 'advanced', label: 'Avançado', icon: <SettingsIcon size={18} /> },
+    { id: 'profile', label: t('settings.tabs.profile'), icon: <User size={18} /> },
+    { id: 'waiting_room', label: t('settings.tabs.waiting_room'), icon: <VideoIcon size={18} /> },
+    { id: 'subscription', label: t('settings.tabs.signature'), icon: <CreditCard size={18} /> },
+    { id: 'advanced', label: t('settings.tabs.advanced'), icon: <SettingsIcon size={18} /> },
   ];
 
   return (
@@ -86,7 +86,7 @@ const Settings = () => {
 
               {/* Page Title & Version */}
               <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Configurações & Perfil</h1>
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{t('settings.pageTitle')}</h1>
                 <span
                   className="text-xs px-3 py-1 rounded-full text-white shadow-md font-medium"
                   style={{ backgroundColor: themeColors.primary }}

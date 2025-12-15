@@ -316,11 +316,16 @@
     }
   },
   "settings": {
+    "pageTitle": "Configuración y Perfil",
     "title": "Configuración Avanzada",
     "subtitle": "Personalice su experiencia KalonConnect",
     "activeVersion": "Versión activa: {{version}}",
     "restrictedAccess": "Función disponible solo en la versión Normal o Pro.",
     "tabs": {
+      "profile": "Mi Identidad",
+      "waiting_room": "Sala de Espera",
+      "signature": "Firma",
+      "advanced": "Avanzado",
       "general": "General",
       "branding": "Identidad",
       "integrations": "Integraciones",
