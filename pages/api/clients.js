@@ -77,6 +77,18 @@ export default async function handler(req, res) {
                 updated_at: new Date().toISOString()
             };
 
+            // Map photo to photo_url if present
+            if (updates.photo !== undefined) {
+                updateData.photo_url = updates.photo;
+                delete updateData.photo;
+            }
+
+            // Map preferredLanguage to preferred_language if present
+            if (updates.preferredLanguage !== undefined) {
+                updateData.preferred_language = updates.preferredLanguage;
+                delete updateData.preferredLanguage;
+            }
+
             const { data, error } = await supabaseAdmin
                 .from('clients')
                 .update(updateData)
@@ -84,12 +96,18 @@ export default async function handler(req, res) {
                 .select()
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase update error:', error);
+                throw error;
+            }
 
             return res.status(200).json(data);
         } catch (error) {
             console.error('Error updating client:', error);
-            return res.status(500).json({ error: 'Failed to update client' });
+            return res.status(500).json({
+                error: 'Failed to update client',
+                details: error.message
+            });
         }
     }
 
