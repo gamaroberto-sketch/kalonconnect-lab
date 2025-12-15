@@ -153,7 +153,7 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
   });
 
   menuItems.push({
-    name: 'Meus Produtos',
+    name: t('sidebar.products'),
     icon: <ShoppingBag className="w-5 h-5" />,
     path: 'products'
   });
