@@ -40,7 +40,7 @@ export default async function handler(req, res) {
                 email: newClient.email,
                 phone: newClient.phone,
                 photo: newClient.photo || null,
-                preferredLanguage: newClient.preferredLanguage || 'pt-BR'
+                preferred_language: newClient.preferredLanguage || 'pt-BR'
             };
 
             const { data, error } = await supabaseAdmin
