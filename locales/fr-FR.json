@@ -1627,6 +1627,25 @@
       "server": "Erreur de connexion au serveur vidéo"
     }
   },
+  "contact": {
+    "title": "Centre de Contact",
+    "subtitle": "Questions, suggestions ou éloges ? Nous sommes là pour écouter.",
+    "type": "Type de Message",
+    "subject": "Sujet",
+    "subjectPlaceholder": "Résumez la raison du contact",
+    "message": "Message",
+    "messagePlaceholder": "Décrivez en détail ce dont vous avez besoin...",
+    "send": "Envoyer le Message",
+    "sending": "Envoi en cours...",
+    "successTitle": "Message envoyé !",
+    "successMessage": "Nous avons reçu votre message et vous répondrons bientôt.",
+    "categories": {
+      "all": "Tous",
+      "elogio": "Éloge",
+      "sugestao": "Suggestion",
+      "duvida": "Question"
+    }
+  },
   "subscription": {
     "title": "Abonnement",
     "activePlan": "Plan Pro Actif",
