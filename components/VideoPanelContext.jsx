@@ -548,16 +548,13 @@ export const VideoPanelProvider = ({
 
     if (isCameraPreviewOn) {
       console.log('🎯 Desligando câmera...');
-      stream.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-      // setIsConnected(false); // 🟢 Fix: Don't change connection state on local preview toggle
+      // ✅ FIX: Disable tracks instead of stopping them (so we don't need to ask permission again)
+      videoTrack.enabled = false;
       setIsCameraPreviewOn(false);
       if (isVideoOn) {
         setIsVideoOn(false);
       }
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = null;
-      }
+      console.log('✅ Câmera desligada (track disabled)');
     } else {
       console.log('🎯 Ligando câmera...');
       if (!streamRef.current) {
