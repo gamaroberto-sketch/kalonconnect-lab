@@ -118,16 +118,7 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
         )}
       </div>
 
-      {/* 🟢 v11.8 DATA INSPECTOR - MOVED INSIDE CONTEXT */}
-      <div className="fixed bottom-10 left-4 bg-black/90 text-white p-4 rounded z-[99999] text-xs font-mono max-w-[300px] overflow-auto max-h-[200px] opacity-80 pointer-events-none">
-        <strong>DEBUG v11.8</strong><br />
-        ID: {branding?.profile?.id}<br />
-        Name: {branding?.profile?.name}<br />
-        WR Keys: {JSON.stringify(Object.keys(branding?.profile?.waitingRoom || {}))}<br />
-        WR Assets: {JSON.stringify(Object.keys(branding?.profile?.waitingRoom?.mediaAssets || {}))}<br />
-        Social Type: {typeof branding?.profile?.waitingRoom}<br />
-        Config Loaded: {branding?.profile?.waitingRoom ? "YES" : "NO"}
-      </div>
+
     </div>
   );
 };
