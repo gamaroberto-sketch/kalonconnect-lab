@@ -487,7 +487,7 @@ const ProfileEditor = () => {
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Link Personalizado</h2>
                         <div className="w-full">
                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                Defina o nome do seu link personalizado.
+                                {t('profile.customLink.help')}
                             </p>
 
                             <div className="flex items-center gap-2 mb-3">

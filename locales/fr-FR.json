@@ -312,12 +312,16 @@
       "pricePlaceholder": "Valeur ($)"
     },
     "social": {
-      "social": "Réseaux Sociaux",
+      "title": "Réseaux Sociaux",
       "pix": {
         "title_keys": "Mes Clés PIX",
         "label": "Libellé (ex : Mon CPF)",
         "key": "Clé PIX"
       }
+    },
+    "customLink": {
+      "title": "Lien Personnalisé",
+      "help": "Définissez le nom de votre lien personnalisé."
     }
   },
   "settings": {

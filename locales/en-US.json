@@ -312,12 +312,16 @@
       "pricePlaceholder": "Value ($)"
     },
     "social": {
-      "social": "Social Media",
+      "title": "Social Media",
       "pix": {
         "title_keys": "My PIX Keys",
         "label": "Label (e.g., My CPF)",
         "key": "PIX Key"
       }
+    },
+    "customLink": {
+      "title": "Custom Link",
+      "help": "Define the name of your custom link."
     }
   },
   "settings": {

@@ -313,6 +313,10 @@
     },
     "social": {
       "title": "Redes Sociales"
+    },
+    "customLink": {
+      "title": "Enlace Personalizado",
+      "help": "Defina el nombre de su enlace personalizado."
     }
   },
   "settings": {
