@@ -265,6 +265,24 @@
       "cancelled": "Canceladas"
     }
   },
+  "referral": {
+    "title": "Refiere y Gana",
+    "description": "¡Invita colegas y obtén <strong>20% de descuento</strong> en tu mensualidad por cada referido que firme el plan PRO!",
+    "yourLink": "Tu Enlace de Referencia",
+    "copy": "Copiar",
+    "copied": "¡Enlace copiado!",
+    "completedReferrals": "Referencias Realizadas",
+    "table": {
+      "name": "Nombre",
+      "date": "Fecha",
+      "status": "Estado"
+    },
+    "noReferrals": "Aún no hay referencias. ¡Comparte tu enlace para comenzar!",
+    "statusLabels": {
+      "trial": "Prueba / Normal",
+      "pro": "Suscriptor PRO"
+    }
+  },
   "profile": {
     "title": "Perfil Profesional",
     "personalInfo": "Información Personal",

@@ -265,6 +265,24 @@
       "cancelled": "Annulé"
     }
   },
+  "referral": {
+    "title": "Parrainez et Gagnez",
+    "description": "Invitez des collègues et obtenez <strong>20% de réduction</strong> sur votre abonnement mensuel pour chaque parrainage qui s'inscrit au plan PRO!",
+    "yourLink": "Votre Lien de Parrainage",
+    "copy": "Copier",
+    "copied": "Lien copié!",
+    "completedReferrals": "Parrainages Réalisés",
+    "table": {
+      "name": "Nom",
+      "date": "Date",
+      "status": "Statut"
+    },
+    "noReferrals": "Aucun parrainage pour le moment. Partagez votre lien pour commencer!",
+    "statusLabels": {
+      "trial": "Essai / Normal",
+      "pro": "Abonné PRO"
+    }
+  },
   "profile": {
     "title": "Profil Professionnel",
     "personalInfo": "Informations Personnelles",

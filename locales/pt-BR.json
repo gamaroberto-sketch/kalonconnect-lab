@@ -265,6 +265,24 @@
       "cancelled": "Cancelado"
     }
   },
+  "referral": {
+    "title": "Indique e Ganhe",
+    "description": "Convide colegas e ganhe <strong>20% de desconto</strong> na mensalidade para cada indicação que assinar o plano PRO!",
+    "yourLink": "Seu Link de Indicação",
+    "copy": "Copiar",
+    "copied": "Link copiado!",
+    "completedReferrals": "Indicações Realizadas",
+    "table": {
+      "name": "Nome",
+      "date": "Data",
+      "status": "Status"
+    },
+    "noReferrals": "Nenhuma indicação ainda. Compartilhe seu link para começar!",
+    "statusLabels": {
+      "trial": "Trial / Normal",
+      "pro": "Assinante PRO"
+    }
+  },
   "profile": {
     "title": "Perfil do Profissional",
     "personalInfo": "Informações Pessoais",

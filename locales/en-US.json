@@ -265,6 +265,24 @@
       "cancelled": "Cancelled"
     }
   },
+  "referral": {
+    "title": "Refer and Earn",
+    "description": "Invite colleagues and get <strong>20% off</strong> your monthly fee for each referral that signs up for the PRO plan!",
+    "yourLink": "Your Referral Link",
+    "copy": "Copy",
+    "copied": "Link copied!",
+    "completedReferrals": "Completed Referrals",
+    "table": {
+      "name": "Name",
+      "date": "Date",
+      "status": "Status"
+    },
+    "noReferrals": "No referrals yet. Share your link to get started!",
+    "statusLabels": {
+      "trial": "Trial / Normal",
+      "pro": "PRO Subscriber"
+    }
+  },
   "profile": {
     "title": "Professional Profile",
     "personalInfo": "Personal Information",
