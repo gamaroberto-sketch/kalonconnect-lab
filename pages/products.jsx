@@ -90,7 +90,7 @@ const ProductsPage = () => {
             }
         } catch (err) {
             console.error(err);
-            setError("Erro ao carregar produtos.");
+            setError(t('products.messages.loadError'));
         } finally {
             setIsLoading(false);
         }
@@ -130,12 +130,12 @@ const ProductsPage = () => {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.error || "Falha ao salvar no servidor.");
+                throw new Error(errData.error || t('products.messages.saveError'));
             }
 
             setProducts(newProductsList);
             closeModal();
-            setSuccessMessage("Produto salvo com sucesso! 🎉");
+            setSuccessMessage(t('products.messages.saveSuccess'));
         } catch (err) {
             console.error(err);
             setError(err.message);
@@ -146,7 +146,7 @@ const ProductsPage = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm("Tem certeza que deseja excluir este produto?")) return;
+        if (!confirm(t('products.messages.deleteConfirm'))) return;
 
         try {
             const newProductsList = products.filter(p => p.id !== id);
@@ -157,10 +157,10 @@ const ProductsPage = () => {
                 headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
                 body: JSON.stringify({ products: newProductsList })
             });
-            setSuccessMessage("Produto excluído.");
+            setSuccessMessage(t('products.messages.deleteSuccess'));
         } catch (err) {
             fetchProducts();
-            alert("Erro ao excluir.");
+            alert(t('products.messages.deleteError'));
         }
     };
 
@@ -194,7 +194,7 @@ const ProductsPage = () => {
 
         // Check size (Max 3MB to be safe with Vercel 4.5MB Serverless Limit for Payload)
         if (file.size > 3 * 1024 * 1024) {
-            alert("A imagem é muito grande! Por favor, use uma imagem menor que 3MB.");
+            alert(t('products.messages.imageTooLarge'));
             return;
         }
 
@@ -244,7 +244,7 @@ const ProductsPage = () => {
     return (
         <ProtectedRoute>
             <Head>
-                <title>Meus Produtos | KalonConnect</title>
+                <title>{t('products.title')} | KalonConnect</title>
             </Head>
             <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: themeColors.secondary || themeColors.secondaryLight || '#f0f9f9' }}>
                 <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} darkMode={darkMode} setDarkMode={setDarkMode} />
@@ -273,10 +273,10 @@ const ProductsPage = () => {
                                 <div>
                                     <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
                                         <ShoppingBag className="w-8 h-8" style={{ color: themeColors.primary }} />
-                                        Meus Produtos
+                                        {t('products.title')}
                                     </h1>
                                     <p className="text-gray-500 dark:text-gray-400 mt-1">
-                                        Cadastre seus produtos e escolha como quer vender (Link, WhatsApp ou PIX).
+                                        {t('products.description')}
                                     </p>
                                 </div>
                                 <button
@@ -285,7 +285,7 @@ const ProductsPage = () => {
                                     style={{ backgroundColor: themeColors.primary }}
                                 >
                                     <Plus className="w-5 h-5" />
-                                    Novo Produto
+                                    {t('products.newProduct')}
                                 </button>
                             </div>
 
@@ -294,13 +294,13 @@ const ProductsPage = () => {
                             ) : products.length === 0 ? (
                                 <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-dashed border-gray-300 dark:border-gray-700">
                                     <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6"><ShoppingBag className="w-10 h-10 text-gray-400" /></div>
-                                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Sua vitrine está vazia</h3>
+                                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{t('products.emptyTitle')}</h3>
                                     <button
                                         onClick={() => openModal()}
                                         className="px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-colors cursor-pointer"
                                         style={{ borderColor: themeColors.primary, color: themeColors.primary }}
                                     >
-                                        Criar Primeiro Produto
+                                        {t('products.createFirst')}
                                     </button>
                                 </div>
                             ) : (
@@ -323,11 +323,11 @@ const ProductsPage = () => {
 
                                             <div className="p-5 flex-1 flex flex-col">
                                                 <h3 className="text-lg font-bold text-gray-800 dark:text-white line-clamp-1 mb-1">{product.name}</h3>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 min-h-[2.5em] mb-4">{product.description || "Sem descrição."}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 min-h-[2.5em] mb-4">{product.description || t('products.noDescription')}</p>
 
                                                 <div className="mt-auto flex items-center justify-between">
                                                     <div>
-                                                        <span className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Preço</span>
+                                                        <span className="text-xs text-gray-400 uppercase tracking-wider font-semibold">{t('products.price')}</span>
                                                         <div className="text-xl font-bold font-mono" style={{ color: themeColors.primary }}>
                                                             {Number(product.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                         </div>
@@ -341,7 +341,7 @@ const ProductsPage = () => {
                                                                     href={`https://wa.me/55${String(product.actionValue).replace(/[^0-9]/g, '')}`}
                                                                     target="_blank" rel="noopener noreferrer"
                                                                     className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100"
-                                                                    title="Chamar no WhatsApp"
+                                                                    title={t('products.buttons.callWhatsApp')}
                                                                 >
                                                                     <MessageCircle className="w-5 h-5" />
                                                                 </a>
@@ -349,10 +349,10 @@ const ProductsPage = () => {
                                                                 <button
                                                                     onClick={() => {
                                                                         navigator.clipboard.writeText(product.actionValue);
-                                                                        alert('Chave PIX copiada!');
+                                                                        alert(t('products.messages.pixCopied'));
                                                                     }}
                                                                     className="p-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100"
-                                                                    title="Copiar Chave PIX"
+                                                                    title={t('products.buttons.copyPixKey')}
                                                                 >
                                                                     <Copy className="w-5 h-5" />
                                                                 </button>
@@ -361,7 +361,7 @@ const ProductsPage = () => {
                                                                     href={product.actionValue || product.link}
                                                                     target="_blank" rel="noopener noreferrer"
                                                                     className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100"
-                                                                    title="Acessar Link"
+                                                                    title={t('products.buttons.accessLink')}
                                                                 >
                                                                     <ExternalLink className="w-5 h-5" />
                                                                 </a>
@@ -384,7 +384,7 @@ const ProductsPage = () => {
                         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
                         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 animate-in fade-in zoom-in duration-300">
                             <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                                <h2 className="text-xl font-bold text-gray-800 dark:text-white">{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h2>
+                                <h2 className="text-xl font-bold text-gray-800 dark:text-white">{editingProduct ? t('products.editProduct') : t('products.newProduct')}</h2>
                                 <button onClick={closeModal} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-5 h-5 text-gray-500" /></button>
                             </div>
 
@@ -401,46 +401,46 @@ const ProductsPage = () => {
                                         ) : (
                                             <>
                                                 <ImageIcon className="w-10 h-10 text-gray-300 mb-2" />
-                                                <span className="text-xs text-center text-gray-400 px-2">Clique para adicionar<br />Recomendo 1:1<br />(ex: 800x800)</span>
+                                                <span className="text-xs text-center text-gray-400 px-2">{t('products.form.imageUpload')}<br />{t('products.form.imageRecommendation')}<br />{t('products.form.imageExample')}</span>
                                             </>
                                         )}
                                     </div>
-                                    <p className="text-xs text-gray-400 mt-2">Formatos: JPG, PNG, WEBP (Quadrado)</p>
+                                    <p className="text-xs text-gray-400 mt-2">{t('products.form.imageFormats')}</p>
                                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
                                 </div>
 
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Produto</label>
-                                        <input required className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none" placeholder="Ex: E-book Guia da Ansiedade" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('products.form.productName')}</label>
+                                        <input required className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none" placeholder={t('products.form.productNamePlaceholder')} value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preço (R$)</label>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('products.form.priceLabel')}</label>
                                             <div className="relative">
                                                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                                 {/* Formatted Price Input */}
-                                                <input required className="w-full pl-10 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none" placeholder="0,00" value={formData.price} onChange={handlePriceChange} />
+                                                <input required className="w-full pl-10 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none" placeholder={t('products.form.pricePlaceholder')} value={formData.price} onChange={handlePriceChange} />
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo de Ação</label>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('products.form.actionType')}</label>
                                             <select
                                                 className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none"
                                                 value={formData.actionType}
                                                 onChange={e => setFormData({ ...formData, actionType: e.target.value, actionValue: '' })}
                                             >
-                                                <option value="link">Link Externo (Site/Hotmart)</option>
-                                                <option value="whatsapp">WhatsApp (Contato)</option>
-                                                <option value="pix">Chave PIX (Copiar)</option>
+                                                <option value="link">{t('products.form.actionTypes.link')}</option>
+                                                <option value="whatsapp">{t('products.form.actionTypes.whatsapp')}</option>
+                                                <option value="pix">{t('products.form.actionTypes.pix')}</option>
                                             </select>
                                         </div>
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            {formData.actionType === 'link' ? 'Link de Venda' : formData.actionType === 'whatsapp' ? 'Número do WhatsApp' : 'Chave PIX'}
+                                            {formData.actionType === 'link' ? t('products.form.salesLink') : formData.actionType === 'whatsapp' ? t('products.form.whatsappNumber') : t('products.form.pixKey')}
                                         </label>
                                         <div className="relative">
                                             <div className="absolute left-3 top-1/2 -translate-y-1/2">{getActionIcon(formData.actionType)}</div>
@@ -453,13 +453,13 @@ const ProductsPage = () => {
                                             />
                                         </div>
                                         {formData.actionType === 'pix' && (
-                                            <p className="text-xs text-gray-500 mt-1">O cliente poderá copiar esta chave com um clique.</p>
+                                            <p className="text-xs text-gray-500 mt-1">{t('products.form.pixHint')}</p>
                                         )}
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descrição</label>
-                                        <textarea className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none min-h-[100px]" placeholder="Descreva..." value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('products.form.description')}</label>
+                                        <textarea className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none min-h-[100px]" placeholder={t('products.form.descriptionPlaceholder')} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                                     </div>
                                 </div>
 
@@ -469,7 +469,7 @@ const ProductsPage = () => {
                                         onClick={closeModal}
                                         className="px-6 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold"
                                     >
-                                        Cancelar
+                                        {t('products.buttons.cancel')}
                                     </button>
                                     <button
                                         type="submit"
@@ -478,7 +478,7 @@ const ProductsPage = () => {
                                         style={{ backgroundColor: themeColors.primary }}
                                     >
                                         {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                        {isSaving ? 'Salvando...' : 'Salvar Produto'}
+                                        {isSaving ? t('products.buttons.saving') : t('products.buttons.save')}
                                     </button>
                                 </div>
                             </form>

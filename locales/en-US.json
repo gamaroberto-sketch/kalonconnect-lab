@@ -265,6 +265,57 @@
       "cancelled": "Cancelled"
     }
   },
+  "products": {
+    "title": "My Products",
+    "description": "Register your products and choose how you want to sell (Link, WhatsApp or PIX).",
+    "newProduct": "New Product",
+    "editProduct": "Edit Product",
+    "emptyTitle": "Your showcase is empty",
+    "createFirst": "Create First Product",
+    "noDescription": "No description.",
+    "price": "Price",
+    "actions": "Actions",
+    "form": {
+      "productName": "Product Name",
+      "productNamePlaceholder": "Ex: Anxiety Guide E-book",
+      "priceLabel": "Price (R$)",
+      "pricePlaceholder": "0.00",
+      "actionType": "Action Type",
+      "actionTypes": {
+        "link": "External Link (Website/Hotmart)",
+        "whatsapp": "WhatsApp (Contact)",
+        "pix": "PIX Key (Copy)"
+      },
+      "salesLink": "Sales Link",
+      "whatsappNumber": "WhatsApp Number",
+      "pixKey": "PIX Key",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe...",
+      "imageUpload": "Click to add",
+      "imageRecommendation": "Recommend 1:1",
+      "imageExample": "(e.g. 800x800)",
+      "imageFormats": "Formats: JPG, PNG, WEBP (Square)",
+      "pixHint": "The client can copy this key with one click."
+    },
+    "buttons": {
+      "save": "Save Product",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "callWhatsApp": "Call on WhatsApp",
+      "copyPixKey": "Copy PIX Key",
+      "accessLink": "Access Link"
+    },
+    "messages": {
+      "loadError": "Error loading products.",
+      "saveSuccess": "Product saved successfully! 🎉",
+      "deleteConfirm": "Are you sure you want to delete this product?",
+      "deleteSuccess": "Product deleted.",
+      "deleteError": "Error deleting.",
+      "saveError": "Failed to save to server.",
+      "pixCopied": "PIX key copied!",
+      "imageTooLarge": "The image is too large! Please use an image smaller than 3MB."
+    }
+  },
   "referral": {
     "title": "Refer and Earn",
     "description": "Invite colleagues and get <strong>20% off</strong> your monthly fee for each referral that signs up for the PRO plan!",

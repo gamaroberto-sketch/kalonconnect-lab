@@ -265,6 +265,57 @@
       "cancelled": "Canceladas"
     }
   },
+  "products": {
+    "title": "Mis Productos",
+    "description": "Registre sus productos y elija cómo quiere vender (Enlace, WhatsApp o PIX).",
+    "newProduct": "Nuevo Producto",
+    "editProduct": "Editar Producto",
+    "emptyTitle": "Su vitrina está vacía",
+    "createFirst": "Crear Primer Producto",
+    "noDescription": "Sin descripción.",
+    "price": "Precio",
+    "actions": "Acciones",
+    "form": {
+      "productName": "Nombre del Producto",
+      "productNamePlaceholder": "Ej: E-book Guía de la Ansiedad",
+      "priceLabel": "Precio (R$)",
+      "pricePlaceholder": "0,00",
+      "actionType": "Tipo de Acción",
+      "actionTypes": {
+        "link": "Enlace Externo (Sitio/Hotmart)",
+        "whatsapp": "WhatsApp (Contacto)",
+        "pix": "Clave PIX (Copiar)"
+      },
+      "salesLink": "Enlace de Venta",
+      "whatsappNumber": "Número de WhatsApp",
+      "pixKey": "Clave PIX",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describa...",
+      "imageUpload": "Haga clic para agregar",
+      "imageRecommendation": "Recomiendo 1:1",
+      "imageExample": "(ej: 800x800)",
+      "imageFormats": "Formatos: JPG, PNG, WEBP (Cuadrado)",
+      "pixHint": "El cliente puede copiar esta clave con un clic."
+    },
+    "buttons": {
+      "save": "Guardar Producto",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "callWhatsApp": "Llamar en WhatsApp",
+      "copyPixKey": "Copiar Clave PIX",
+      "accessLink": "Acceder al Enlace"
+    },
+    "messages": {
+      "loadError": "Error al cargar productos.",
+      "saveSuccess": "¡Producto guardado con éxito! 🎉",
+      "deleteConfirm": "¿Está seguro de que desea eliminar este producto?",
+      "deleteSuccess": "Producto eliminado.",
+      "deleteError": "Error al eliminar.",
+      "saveError": "Error al guardar en el servidor.",
+      "pixCopied": "¡Clave PIX copiada!",
+      "imageTooLarge": "¡La imagen es demasiado grande! Use una imagen menor de 3MB."
+    }
+  },
   "referral": {
     "title": "Refiere y Gana",
     "description": "¡Invita colegas y obtén <strong>20% de descuento</strong> en tu mensualidad por cada referido que firme el plan PRO!",

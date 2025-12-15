@@ -265,6 +265,57 @@
       "cancelled": "Cancelado"
     }
   },
+  "products": {
+    "title": "Meus Produtos",
+    "description": "Cadastre seus produtos e escolha como quer vender (Link, WhatsApp ou PIX).",
+    "newProduct": "Novo Produto",
+    "editProduct": "Editar Produto",
+    "emptyTitle": "Sua vitrine está vazia",
+    "createFirst": "Criar Primeiro Produto",
+    "noDescription": "Sem descrição.",
+    "price": "Preço",
+    "actions": "Ações",
+    "form": {
+      "productName": "Nome do Produto",
+      "productNamePlaceholder": "Ex: E-book Guia da Ansiedade",
+      "priceLabel": "Preço (R$)",
+      "pricePlaceholder": "0,00",
+      "actionType": "Tipo de Ação",
+      "actionTypes": {
+        "link": "Link Externo (Site/Hotmart)",
+        "whatsapp": "WhatsApp (Contato)",
+        "pix": "Chave PIX (Copiar)"
+      },
+      "salesLink": "Link de Venda",
+      "whatsappNumber": "Número do WhatsApp",
+      "pixKey": "Chave PIX",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Descreva...",
+      "imageUpload": "Clique para adicionar",
+      "imageRecommendation": "Recomendo 1:1",
+      "imageExample": "(ex: 800x800)",
+      "imageFormats": "Formatos: JPG, PNG, WEBP (Quadrado)",
+      "pixHint": "O cliente poderá copiar esta chave com um clique."
+    },
+    "buttons": {
+      "save": "Salvar Produto",
+      "saving": "Salvando...",
+      "cancel": "Cancelar",
+      "callWhatsApp": "Chamar no WhatsApp",
+      "copyPixKey": "Copiar Chave PIX",
+      "accessLink": "Acessar Link"
+    },
+    "messages": {
+      "loadError": "Erro ao carregar produtos.",
+      "saveSuccess": "Produto salvo com sucesso! 🎉",
+      "deleteConfirm": "Tem certeza que deseja excluir este produto?",
+      "deleteSuccess": "Produto excluído.",
+      "deleteError": "Erro ao excluir.",
+      "saveError": "Falha ao salvar no servidor.",
+      "pixCopied": "Chave PIX copiada!",
+      "imageTooLarge": "A imagem é muito grande! Por favor, use uma imagem menor que 3MB."
+    }
+  },
   "referral": {
     "title": "Indique e Ganhe",
     "description": "Convide colegas e ganhe <strong>20% de desconto</strong> na mensalidade para cada indicação que assinar o plano PRO!",

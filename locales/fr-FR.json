@@ -265,6 +265,57 @@
       "cancelled": "Annulé"
     }
   },
+  "products": {
+    "title": "Mes Produits",
+    "description": "Enregistrez vos produits et choisissez comment vous voulez vendre (Lien, WhatsApp ou PIX).",
+    "newProduct": "Nouveau Produit",
+    "editProduct": "Modifier le Produit",
+    "emptyTitle": "Votre vitrine est vide",
+    "createFirst": "Créer le Premier Produit",
+    "noDescription": "Aucune description.",
+    "price": "Prix",
+    "actions": "Actions",
+    "form": {
+      "productName": "Nom du Produit",
+      "productNamePlaceholder": "Ex: E-book Guide de l'Anxiété",
+      "priceLabel": "Prix (R$)",
+      "pricePlaceholder": "0,00",
+      "actionType": "Type d'Action",
+      "actionTypes": {
+        "link": "Lien Externe (Site/Hotmart)",
+        "whatsapp": "WhatsApp (Contact)",
+        "pix": "Clé PIX (Copier)"
+      },
+      "salesLink": "Lien de Vente",
+      "whatsappNumber": "Numéro WhatsApp",
+      "pixKey": "Clé PIX",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrivez...",
+      "imageUpload": "Cliquez pour ajouter",
+      "imageRecommendation": "Recommandé 1:1",
+      "imageExample": "(ex: 800x800)",
+      "imageFormats": "Formats: JPG, PNG, WEBP (Carré)",
+      "pixHint": "Le client peut copier cette clé en un clic."
+    },
+    "buttons": {
+      "save": "Enregistrer le Produit",
+      "saving": "Enregistrement...",
+      "cancel": "Annuler",
+      "callWhatsApp": "Appeler sur WhatsApp",
+      "copyPixKey": "Copier la Clé PIX",
+      "accessLink": "Accéder au Lien"
+    },
+    "messages": {
+      "loadError": "Erreur lors du chargement des produits.",
+      "saveSuccess": "Produit enregistré avec succès! 🎉",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce produit?",
+      "deleteSuccess": "Produit supprimé.",
+      "deleteError": "Erreur lors de la suppression.",
+      "saveError": "Échec de l'enregistrement sur le serveur.",
+      "pixCopied": "Clé PIX copiée!",
+      "imageTooLarge": "L'image est trop grande! Veuillez utiliser une image de moins de 3MB."
+    }
+  },
   "referral": {
     "title": "Parrainez et Gagnez",
     "description": "Invitez des collègues et obtenez <strong>20% de réduction</strong> sur votre abonnement mensuel pour chaque parrainage qui s'inscrit au plan PRO!",
