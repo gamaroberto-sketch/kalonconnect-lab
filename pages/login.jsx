@@ -150,11 +150,12 @@ export default function LoginPage() {
             KalonConnect
           </p>
           <h1
-            className="text-4xl md:text-5xl font-bold leading-tight mb-2"
-            style={{ color: palette.textPrimary, fontWeight: 900 }}
-          >
-            {t('login.title')}
-          </h1>
+  className="text-4xl md:text-5xl leading-tight mb-2"
+  style={{ color: palette.textPrimary }}
+>
+  <span style={{ fontWeight: 300 }}>Bem-vindo(a) ao </span>
+  <span style={{ fontWeight: 900 }}>KalonConnect</span>
+</h1>
 
           <p
             className="text-xl font-light mt-6"
