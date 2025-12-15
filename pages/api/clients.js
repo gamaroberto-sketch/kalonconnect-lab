@@ -40,11 +40,7 @@ export default async function handler(req, res) {
                 email: newClient.email,
                 phone: newClient.phone,
                 photo: newClient.photo || null,
-                preferredLanguage: newClient.preferredLanguage || 'pt-BR',
-                lastSession: newClient.lastSession || 'Nunca',
-                registrationDate: new Date().toISOString(),
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                preferredLanguage: newClient.preferredLanguage || 'pt-BR'
             };
 
             const { data, error } = await supabaseAdmin
@@ -53,12 +49,18 @@ export default async function handler(req, res) {
                 .select()
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase insert error:', error);
+                throw error;
+            }
 
             return res.status(200).json(data);
         } catch (error) {
             console.error('Error adding client:', error);
-            return res.status(500).json({ error: 'Failed to save client' });
+            return res.status(500).json({
+                error: 'Failed to save client',
+                details: error.message
+            });
         }
     }
 
