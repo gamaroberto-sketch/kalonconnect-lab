@@ -1,47 +1,28 @@
-```javascript
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/router';
-import { Heart, Lightbulb, HelpCircle, Send, CheckCircle, MessageSquare, Mail, Phone, MapPin } from 'lucide-react';
+import { Heart, Lightbulb, HelpCircle, Send, CheckCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../components/AuthContext';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
-import ModernButton from '../components/ModernButton';
 
-export default function Contact() {
-    const router = useRouter();
-    const { user, loading } = useAuth();
-    const { getThemeColors } = useTheme(); // Keep getThemeColors for consistency with existing usage
+const Contact = () => {
+    const { user } = useAuth();
+    const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
     const { t } = useTranslation();
 
-    const [mounted, setMounted] = useState(false); // New state
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(false); // New state, though themeColors handles dark mode
     const [selectedCategory, setSelectedCategory] = useState('elogio');
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
-    const [sending, setSending] = useState(false); // Renamed from 'loading' for form submission
+    const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
-
-    // New useEffect for mounted state and dark mode (though themeColors handles dark mode)
-    useEffect(() => {
-        setMounted(true);
-        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-        setDarkMode(savedDarkMode);
-    }, []);
-
-    // New useEffect for redirection
-    useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login');
-        }
-    }, [user, loading, router]);
 
     const categories = [
         { id: 'elogio', name: t('contact.categories.elogio'), icon: Heart, color: '#10b981', emoji: '😍' },
@@ -124,7 +105,7 @@ export default function Contact() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="mb-8 p-6 border-2 rounded-xl flex items-center gap-4"
                                 style={{
-                                    backgroundColor: `${ themeColors.success } 15`,
+                                    backgroundColor: `${themeColors.success}15`,
                                     borderColor: themeColors.success
                                 }}
                             >
@@ -155,14 +136,13 @@ export default function Contact() {
                                                 key={cat.id}
                                                 type="button"
                                                 onClick={() => setSelectedCategory(cat.id)}
-                                                className={`p - 6 rounded - xl border - 2 transition - all flex flex - col items - center justify - center ${
-    selectedCategory === cat.id
-    ? 'shadow-lg scale-105'
-    : 'hover:border-gray-300'
-} `}
+                                                className={`p-6 rounded-xl border-2 transition-all flex flex-col items-center justify-center ${selectedCategory === cat.id
+                                                    ? 'shadow-lg scale-105'
+                                                    : 'hover:border-gray-300'
+                                                    }`}
                                                 style={{
                                                     borderColor: selectedCategory === cat.id ? cat.color : (themeColors.border || '#e5e7eb'),
-                                                    backgroundColor: selectedCategory === cat.id ? `${ cat.color } 15` : 'transparent',
+                                                    backgroundColor: selectedCategory === cat.id ? `${cat.color}15` : 'transparent',
                                                 }}
                                             >
                                                 <cat.icon
