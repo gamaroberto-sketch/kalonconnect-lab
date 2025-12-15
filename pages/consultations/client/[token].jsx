@@ -11,6 +11,7 @@ const LiveKitRoomWrapped = dynamic(() => import('../../../components/video/LiveK
 const ThemeProvider = dynamic(() => import('../../../components/ThemeProvider').then(mod => ({ default: mod.ThemeProvider })), { ssr: false });
 const MobileControlsV6 = dynamic(() => import('../../../components/MobileControlsV6'), { ssr: false });
 const WaitingRoomDisplay = dynamic(() => import('../../../components/WaitingRoomDisplay'), { ssr: false });
+const ConsultationWelcome = dynamic(() => import('../../../components/ConsultationWelcome'), { ssr: false });
 
 export async function getServerSideProps(context) {
   const { token } = context.params;
@@ -25,6 +26,7 @@ export async function getServerSideProps(context) {
 const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, connectionStatus }) => {
   const { branding } = useVideoPanel();
   const [hasJoined, setHasJoined] = useState(false);
+  const [viewState, setViewState] = useState('welcome'); // 'welcome' -> 'waiting' -> 'connected'
   const [timeoutError, setTimeoutError] = useState(false);
 
   useEffect(() => {
@@ -57,14 +59,28 @@ const ClientConsultationContent = ({ token, liveKitToken, liveKitUrl, roomName, 
     );
   }
 
-  // 1. Lobby / Waiting Room
-  if (!hasJoined) {
+  // 1. Welcome Screen (Entry)
+  if (viewState === 'welcome') {
+    return (
+      <ConsultationWelcome
+        professional={branding.profile}
+        onEnter={() => setViewState('waiting')}
+        isLoading={false}
+      />
+    );
+  }
+
+  // 2. Waiting Room (Lobby)
+  if (viewState === 'waiting' && !hasJoined) {
     return (
       <>
         <WaitingRoomDisplay
           professional={branding.profile}
           themeColors={branding.themeColors || {}}
-          onJoin={() => setHasJoined(true)}
+          onJoin={() => {
+            setViewState('connected');
+            setHasJoined(true);
+          }}
         />
       </>
     );
