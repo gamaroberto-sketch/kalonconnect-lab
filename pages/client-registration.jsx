@@ -43,6 +43,7 @@ export default function ClientRegistration() {
     name: '',
     email: '',
     phone: '',
+    photo: '',
     preferredLanguage: 'pt-BR'
   });
 
@@ -78,7 +79,7 @@ export default function ClientRegistration() {
     }
     setShowForm(false);
     setEditingClient(null);
-    setFormData({ name: '', email: '', phone: '', preferredLanguage: 'pt-BR' });
+    setFormData({ name: '', email: '', phone: '', photo: '', preferredLanguage: 'pt-BR' });
   };
 
   const handleEdit = (client) => {
@@ -87,6 +88,7 @@ export default function ClientRegistration() {
       name: client.name,
       email: client.email,
       phone: client.phone,
+      photo: client.photo || '',
       preferredLanguage: client.preferredLanguage
     });
     setShowForm(true);
@@ -295,7 +297,7 @@ export default function ClientRegistration() {
                       onClick={() => {
                         setShowForm(false);
                         setEditingClient(null);
-                        setFormData({ name: '', email: '', phone: '', preferredLanguage: 'pt-BR' });
+                        setFormData({ name: '', email: '', phone: '', photo: '', preferredLanguage: 'pt-BR' });
                       }}
                       variant="outline"
                       size="sm"
@@ -343,6 +345,20 @@ export default function ClientRegistration() {
                         />
                       </div>
 
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Foto do Cliente (opcional)
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.photo}
+                          onChange={(e) => handleInputChange('photo', e.target.value)}
+                          placeholder="URL da foto ou base64"
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Cole a URL da foto ou dados base64</p>
+                      </div>
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           {t('common.preferredLanguage')}
@@ -365,7 +381,7 @@ export default function ClientRegistration() {
                         onClick={() => {
                           setShowForm(false);
                           setEditingClient(null);
-                          setFormData({ name: '', email: '', phone: '', preferredLanguage: 'pt-BR' });
+                          setFormData({ name: '', email: '', phone: '', photo: '', preferredLanguage: 'pt-BR' });
                         }}
                         variant="outline"
                         size="lg"
