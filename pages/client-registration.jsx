@@ -70,16 +70,30 @@ export default function ClientRegistration() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingClient) {
-      // Editar cliente existente
-      await updateClient(editingClient.id, formData);
-    } else {
-      // Adicionar novo cliente
-      await addClient(formData);
+
+    try {
+      let result;
+      if (editingClient) {
+        // Editar cliente existente
+        result = await updateClient(editingClient.id, formData);
+      } else {
+        // Adicionar novo cliente
+        result = await addClient(formData);
+      }
+
+      if (result.error) {
+        console.error('Error saving client:', result.error);
+        alert('Erro ao salvar cliente: ' + result.error.message);
+        return;
+      }
+
+      setShowForm(false);
+      setEditingClient(null);
+      setFormData({ name: '', email: '', phone: '', photo: '', preferredLanguage: 'pt-BR' });
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      alert('Erro inesperado ao salvar cliente');
     }
-    setShowForm(false);
-    setEditingClient(null);
-    setFormData({ name: '', email: '', phone: '', photo: '', preferredLanguage: 'pt-BR' });
   };
 
   const handleEdit = (client) => {
