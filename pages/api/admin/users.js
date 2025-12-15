@@ -197,29 +197,32 @@ export default async function handler(req, res) {
         // Delete user
         try {
             const { userId } = req.body;
-
             if (!userId) {
                 return res.status(400).json({ error: 'ID do usuário é obrigatório' });
             }
-
             // Get user info before deletion for audit log
             const { data: deletedUser } = await supabaseAdmin
                 .from('users')
                 .select('*')
                 .eq('id', userId)
                 .single();
-
-            // Delete from Firebase
-            await adminAuth.deleteUser(userId);
-
+            // Try to delete from Firebase (but don't fail if it doesn't work)
+            let firebaseDeleted = false;
+            try {
+                await adminAuth.deleteUser(userId);
+                firebaseDeleted = true;
+                console.log(`✅ Firebase user ${userId} deleted successfully`);
+            } catch (firebaseError) {
+                console.warn(`⚠️ Could not delete Firebase user ${userId}:`, firebaseError.message);
+                console.warn('Continuing with Supabase deletion...');
+                // Don't throw - continue with Supabase deletion
+            }
             // Delete from Supabase (cascade will handle related data)
             const { error } = await supabaseAdmin
                 .from('users')
                 .delete()
                 .eq('id', userId);
-
             if (error) throw error;
-
             // Log audit action
             await logAuditAction({
                 action: 'DELETE_USER',
@@ -227,12 +230,17 @@ export default async function handler(req, res) {
                 entityId: userId,
                 actorId: userEmail,
                 actorEmail: userEmail,
-                metadata: { deletedUser },
+                metadata: { 
+                    deletedUser,
+                    firebaseDeleted 
+                },
                 ipAddress: getClientIp(req),
                 userAgent: getUserAgent(req),
             });
-
-            return res.status(200).json({ message: 'Usuário removido com sucesso' });
+            return res.status(200).json({ 
+                message: 'Usuário removido com sucesso',
+                firebaseDeleted 
+            });
         } catch (error) {
             console.error('Error deleting user:', error);
             return res.status(500).json({ error: 'Erro ao remover usuário: ' + error.message });
