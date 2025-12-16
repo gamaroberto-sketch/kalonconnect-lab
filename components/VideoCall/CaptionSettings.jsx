@@ -1,6 +1,10 @@
 import { useState } from 'react';
+import { useTheme } from '../ThemeProvider';
 
 export default function CaptionSettings({ onSave, initialSettings = {} }) {
+    const { getThemeColors } = useTheme();
+    const themeColors = getThemeColors();
+
     const [settings, setSettings] = useState({
         enabled: initialSettings.enabled || false,
         myLanguage: initialSettings.myLanguage || 'pt-BR',
@@ -26,11 +30,18 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
     const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
     const isSupported = !!SpeechRecognition;
 
+    // Theme colors
+    const primary = themeColors?.primary || '#3b82f6';
+    const secondary = themeColors?.secondary || '#64748b';
+    const background = themeColors?.background || '#ffffff';
+    const textPrimary = themeColors?.textPrimary || '#111827';
+    const border = themeColors?.border || '#e2e8f0';
+
     return (
         <div className="space-y-4">
             {/* Header with Toggle */}
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: textPrimary }}>
                     <span>🌍</span>
                     <span>Legendas com Tradução</span>
                 </h3>
@@ -41,8 +52,9 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
                         disabled={!isSupported}
                         className="w-5 h-5 rounded"
+                        style={{ accentColor: primary }}
                     />
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-medium" style={{ color: textPrimary }}>
                         {settings.enabled ? 'Ativado' : 'Desativado'}
                     </span>
                 </label>
@@ -50,15 +62,21 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
 
             {/* Browser Support Warning */}
             {!isSupported && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
-                    <p className="text-sm text-yellow-800 font-semibold">
+                <div
+                    className="rounded-lg p-4 space-y-3"
+                    style={{
+                        backgroundColor: `${primary}10`,
+                        border: `1px solid ${primary}40`
+                    }}
+                >
+                    <p className="text-sm font-semibold" style={{ color: primary }}>
                         ⚠️ Navegador não suportado
                     </p>
                     <div>
-                        <p className="text-xs text-yellow-700 font-medium mb-2">
+                        <p className="text-xs font-medium mb-2" style={{ color: textPrimary }}>
                             As legendas com tradução funcionam apenas em:
                         </p>
-                        <ul className="text-xs text-yellow-700 ml-4 space-y-1">
+                        <ul className="text-xs ml-4 space-y-1" style={{ color: secondary }}>
                             <li>✅ <strong>Chrome</strong> (Windows, Mac, Linux, Android)</li>
                             <li>✅ <strong>Edge</strong> (Windows, Mac, Linux)</li>
                             <li>❌ <strong>Safari</strong> (Mac, iPhone, iPad)</li>
@@ -66,17 +84,29 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                             <li>❌ <strong>Qualquer navegador no iPhone/iPad</strong></li>
                         </ul>
                     </div>
-                    <div className="bg-green-50 border border-green-200 rounded p-3">
-                        <p className="text-xs text-green-800">
+                    <div
+                        className="rounded p-3"
+                        style={{
+                            backgroundColor: `${primary}08`,
+                            border: `1px solid ${primary}30`
+                        }}
+                    >
+                        <p className="text-xs" style={{ color: textPrimary }}>
                             ✅ <strong>Importante:</strong> A videochamada funciona perfeitamente em todos os navegadores e dispositivos!
                             Apenas as legendas são limitadas ao Chrome/Edge no computador.
                         </p>
                     </div>
-                    <div className="bg-blue-50 border border-blue-200 rounded p-3">
-                        <p className="text-xs text-blue-800 font-semibold mb-1">
+                    <div
+                        className="rounded p-3"
+                        style={{
+                            backgroundColor: `${primary}15`,
+                            border: `1px solid ${primary}50`
+                        }}
+                    >
+                        <p className="text-xs font-semibold mb-1" style={{ color: primary }}>
                             🚀 Em breve: Legendas para TODOS os dispositivos!
                         </p>
-                        <p className="text-xs text-blue-700">
+                        <p className="text-xs" style={{ color: secondary }}>
                             Estamos trabalhando para trazer legendas com tradução para iPhone, iPad, Safari e todos os navegadores
                             com tecnologia premium de alta qualidade.
                         </p>
@@ -89,13 +119,18 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                 <div className="space-y-4">
                     {/* My Language */}
                     <div>
-                        <label className="block text-sm font-medium mb-2">
+                        <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
                             👨‍⚕️ Meu Idioma
                         </label>
                         <select
                             value={settings.myLanguage}
                             onChange={(e) => setSettings({ ...settings, myLanguage: e.target.value })}
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full px-4 py-2 rounded-lg focus:ring-2 outline-none"
+                            style={{
+                                border: `1px solid ${border}`,
+                                backgroundColor: background,
+                                color: textPrimary
+                            }}
                         >
                             {languages.map(lang => (
                                 <option key={lang.code} value={lang.code}>
@@ -103,20 +138,25 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                 </option>
                             ))}
                         </select>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs mt-1" style={{ color: secondary }}>
                             Idioma que você vai falar durante a consulta
                         </p>
                     </div>
 
                     {/* Client Language */}
                     <div>
-                        <label className="block text-sm font-medium mb-2">
+                        <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
                             👤 Idioma do Cliente
                         </label>
                         <select
                             value={settings.clientLanguage}
                             onChange={(e) => setSettings({ ...settings, clientLanguage: e.target.value })}
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full px-4 py-2 rounded-lg focus:ring-2 outline-none"
+                            style={{
+                                border: `1px solid ${border}`,
+                                backgroundColor: background,
+                                color: textPrimary
+                            }}
                         >
                             {languages.map(lang => (
                                 <option key={lang.code} value={lang.code}>
@@ -124,17 +164,23 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                 </option>
                             ))}
                         </select>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs mt-1" style={{ color: secondary }}>
                             Idioma para traduzir suas palavras
                         </p>
                     </div>
 
                     {/* Info Box */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p className="text-sm text-blue-800 mb-2">
+                    <div
+                        className="rounded-lg p-4"
+                        style={{
+                            backgroundColor: `${primary}10`,
+                            border: `1px solid ${primary}30`
+                        }}
+                    >
+                        <p className="text-sm mb-2" style={{ color: primary }}>
                             💡 <strong>Versão Gratuita (Beta):</strong>
                         </p>
-                        <ul className="text-xs text-blue-700 space-y-1 ml-4 list-disc">
+                        <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: secondary }}>
                             <li>Web Speech API (navegador) para transcrição</li>
                             <li>MyMemory Translation (1000 palavras/dia)</li>
                             <li>Qualidade: 85-90%</li>
@@ -144,11 +190,17 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                     </div>
 
                     {/* Future Premium Box */}
-                    <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
-                        <p className="text-sm text-purple-800 font-semibold mb-2">
+                    <div
+                        className="rounded-lg p-4"
+                        style={{
+                            backgroundColor: `${primary}08`,
+                            border: `1px solid ${primary}40`
+                        }}
+                    >
+                        <p className="text-sm font-semibold mb-2" style={{ color: primary }}>
                             ⭐ Em breve: Versão Premium
                         </p>
-                        <ul className="text-xs text-purple-700 space-y-1 ml-4 list-disc">
+                        <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: secondary }}>
                             <li><strong>Funciona em TODOS os dispositivos</strong> (iPhone, iPad, Safari, etc.)</li>
                             <li>Qualidade superior: 95%+</li>
                             <li>Latência ultra-baixa: 500ms-1s</li>
@@ -159,7 +211,13 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                     {/* Save Button */}
                     <button
                         onClick={handleSave}
-                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        className="w-full py-3 rounded-lg font-semibold transition-colors"
+                        style={{
+                            backgroundColor: primary,
+                            color: '#ffffff'
+                        }}
+                        onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                        onMouseLeave={(e) => e.target.style.opacity = '1'}
                     >
                         Salvar Configurações
                     </button>
@@ -168,11 +226,17 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
 
             {/* Disabled State Info */}
             {!settings.enabled && isSupported && (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <p className="text-sm text-gray-600">
+                <div
+                    className="rounded-lg p-4"
+                    style={{
+                        backgroundColor: `${secondary}10`,
+                        border: `1px solid ${border}`
+                    }}
+                >
+                    <p className="text-sm" style={{ color: textPrimary }}>
                         Ative as legendas para configurar os idiomas e começar a usar tradução em tempo real.
                     </p>
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs mt-2" style={{ color: secondary }}>
                         💡 <strong>Dica:</strong> Use Chrome ou Edge no computador para melhor experiência.
                     </p>
                 </div>
