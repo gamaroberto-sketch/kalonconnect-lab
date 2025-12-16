@@ -1,10 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
+import { useVideoPanel } from '../VideoPanelContext';
 
-export default function CaptionOverlay({
-    myLanguage = 'pt-BR',
-    clientLanguage = 'en-US',
-    enabled = false
-}) {
+export default function CaptionOverlay() {
+    const { captionSettings } = useVideoPanel();
+    const {
+        enabled = false,
+        myLanguage = 'pt-BR',
+        clientLanguage = 'en-US',
+        position = 'bottom',
+        textSize = 'medium',
+        transparency = 0.9
+    } = captionSettings || {};
+
     const [captions, setCaptions] = useState({
         original: '',
         translated: '',
@@ -161,15 +168,34 @@ export default function CaptionOverlay({
 
     if (!enabled || !captions.original) return null;
 
+    // Position classes
+    const positionClasses = {
+        top: 'top-20',
+        middle: 'top-1/2 -translate-y-1/2',
+        bottom: 'bottom-20'
+    };
+
+    // Text size classes
+    const textSizes = {
+        small: { original: 'text-base', translated: 'text-sm' },
+        medium: { original: 'text-lg', translated: 'text-base' },
+        large: { original: 'text-2xl', translated: 'text-xl' }
+    };
+
+    const currentTextSize = textSizes[textSize] || textSizes.medium;
+
     return (
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl z-50 pointer-events-none">
-            <div className="bg-black/80 backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-2xl border border-white/10">
+        <div className={`absolute ${positionClasses[position]} left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl z-50 pointer-events-none`}>
+            <div
+                className="backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-2xl border border-white/10"
+                style={{ backgroundColor: `rgba(0, 0, 0, ${transparency})` }}
+            >
                 {/* Original Text */}
                 <div className="flex items-start gap-2">
                     <span className="text-xs font-bold text-blue-400 flex-shrink-0">
                         {getLanguageFlag(myLanguage)} {getLanguageName(myLanguage)}
                     </span>
-                    <p className="text-white text-lg flex-1 leading-tight">{captions.original}</p>
+                    <p className={`text-white ${currentTextSize.original} flex-1 leading-tight`}>{captions.original}</p>
                     {captions.confidence > 0 && (
                         <span className="text-xs text-gray-400 flex-shrink-0">
                             {Math.round(captions.confidence * 100)}%
@@ -186,10 +212,10 @@ export default function CaptionOverlay({
                         {captions.isTranslating ? (
                             <div className="flex items-center gap-2 flex-1">
                                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <p className="text-white/60 text-base italic">Traduzindo...</p>
+                                <p className={`text-white/60 ${currentTextSize.translated} italic`}>Traduzindo...</p>
                             </div>
                         ) : (
-                            <p className="text-white/90 text-base flex-1 leading-tight">{captions.translated}</p>
+                            <p className={`text-white/90 ${currentTextSize.translated} flex-1 leading-tight`}>{captions.translated}</p>
                         )}
                     </div>
                 )}
