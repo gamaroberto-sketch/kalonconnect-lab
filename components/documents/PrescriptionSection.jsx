@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, HelpCircle, Volume2, Save, Download, Printer, Send } from 'lucide-react';
+import { FileText, HelpCircle, Volume2, Save, Download, Printer, Send, Settings } from 'lucide-react';
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useAuth } from '../AuthContext';
+import TemplatePositionEditor from './TemplatePositionEditor';
 
 const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
@@ -42,6 +43,8 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
     date: new Date().toISOString().split('T')[0]
   });
 
+  const [showPositionEditor, setShowPositionEditor] = useState(false);
+
   const helpText = t('documents.help.prescription.text');
 
   const handleSave = () => {
@@ -53,103 +56,202 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
   };
 
   const handlePrint = () => {
-    const logoHtml = profile?.photo
-      ? `<img src="${profile.photo}" style="height: 80px; width: auto; max-width: 200px; object-fit: contain;" alt="Logo" />`
-      : '';
+    const hasTemplate = profile?.prescription_template_url;
 
-    // Fallback to simple name if no logo
-    const headerHtml = `
-      <div class="header">
-        <div class="logo-area">
-          ${logoHtml}
+    if (hasTemplate) {
+      // Impressão com template personalizado
+      const positions = profile.prescription_template_positions || {};
+      const templateSize = profile.prescription_template_size || 'A4';
+
+      const sizes = {
+        A4: { width: '21cm', height: '29.7cm' },
+        A5: { width: '14.8cm', height: '21cm' }
+      };
+
+      const printContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Receituário</title>
+            <style>
+              @page {
+                size: ${templateSize};
+                margin: 0;
+              }
+              
+              body {
+                margin: 0;
+                padding: 0;
+                width: ${sizes[templateSize].width};
+                height: ${sizes[templateSize].height};
+                position: relative;
+                background-image: url('${profile.prescription_template_url}');
+                background-size: ${sizes[templateSize].width} ${sizes[templateSize].height};
+                background-repeat: no-repeat;
+                background-position: center;
+              }
+              
+              .field {
+                position: absolute;
+                font-family: Arial, sans-serif;
+                color: #000;
+              }
+              
+              .patient-name {
+                top: ${positions.patientName?.top || '8cm'};
+                left: ${positions.patientName?.left || '3cm'};
+                font-size: ${positions.patientName?.fontSize || '14pt'};
+                font-weight: ${positions.patientName?.fontWeight || 'bold'};
+              }
+              
+              .medications {
+                top: ${positions.medications?.top || '12cm'};
+                left: ${positions.medications?.left || '3cm'};
+                font-size: ${positions.medications?.fontSize || '12pt'};
+                font-weight: ${positions.medications?.fontWeight || 'normal'};
+                max-width: ${positions.medications?.maxWidth || '15cm'};
+                white-space: pre-wrap;
+              }
+              
+              .instructions {
+                top: ${positions.instructions?.top || '20cm'};
+                left: ${positions.instructions?.left || '3cm'};
+                font-size: ${positions.instructions?.fontSize || '11pt'};
+                font-weight: ${positions.instructions?.fontWeight || 'normal'};
+                max-width: ${positions.instructions?.maxWidth || '15cm'};
+                white-space: pre-wrap;
+              }
+              
+              .date {
+                top: ${positions.date?.top || '25cm'};
+                left: ${positions.date?.left || '3cm'};
+                font-size: ${positions.date?.fontSize || '12pt'};
+                font-weight: ${positions.date?.fontWeight || 'normal'};
+              }
+              
+              .registry {
+                top: ${positions.registry?.top || '26cm'};
+                left: ${positions.registry?.left || '3cm'};
+                font-size: ${positions.registry?.fontSize || '11pt'};
+                font-weight: ${positions.registry?.fontWeight || 'normal'};
+              }
+            </style>
+          </head>
+          <body>
+            <div class="field patient-name">${data.patientName || ''}</div>
+            <div class="field medications">${data.medications || ''}</div>
+            ${data.instructions ? `<div class="field instructions">${data.instructions}</div>` : ''}
+            <div class="field date">${new Date(data.date).toLocaleDateString('pt-BR')}</div>
+            <div class="field registry">${data.crp || profile.social?.registro || ''}</div>
+          </body>
+        </html>
+      `;
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+      }, 500);
+
+    } else {
+      // Impressão padrão (código original)
+      const logoHtml = profile?.photo
+        ? `<img src="${profile.photo}" style="height: 80px; width: auto; max-width: 200px; object-fit: contain;" alt="Logo" />`
+        : '';
+
+      const headerHtml = `
+        <div class="header">
+          <div class="logo-area">
+            ${logoHtml}
+          </div>
+          <div class="professional-info">
+            <h2>${profile?.name || 'Nome do Profissional'}</h2>
+            <p>${profile?.specialty || 'Especialidade'}</p>
+            <p>${profile?.social?.registro || data.crp || ''}</p>
+          </div>
         </div>
-        <div class="professional-info">
-          <h2>${profile?.name || 'Nome do Profissional'}</h2>
-          <p>${profile?.specialty || 'Especialidade'}</p>
-          <p>${profile?.social?.registro || data.crp || ''}</p>
-        </div>
-      </div>
-    `;
+      `;
 
-    const printContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Receituário Médico</title>
-          <style>
-            body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #333; max-width: 800px; margin: 0 auto; }
-            .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #0f4c4c; padding-bottom: 20px; margin-bottom: 30px; }
-            .professional-info { text-align: right; }
-            .professional-info h2 { margin: 0; color: #0f4c4c; font-size: 24px; }
-            .professional-info p { margin: 5px 0 0; color: #555; }
-            .content { min-height: 400px; }
-            .field { margin-bottom: 25px; }
-            .label { font-weight: bold; color: #0f4c4c; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-            .value { padding: 10px 0; border-bottom: 1px dashed #ccc; font-size: 16px; line-height: 1.5; }
-            .medication-item { white-space: pre-wrap; }
-            .footer { margin-top: 50px; border-top: 1px solid #ddd; padding-top: 20px; text-align: center; font-size: 12px; color: #777; display: flex; justify-content: space-between; }
+      const printContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Receituário Médico</title>
+            <style>
+              body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #333; max-width: 800px; margin: 0 auto; }
+              .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #0f4c4c; padding-bottom: 20px; margin-bottom: 30px; }
+              .professional-info { text-align: right; }
+              .professional-info h2 { margin: 0; color: #0f4c4c; font-size: 24px; }
+              .professional-info p { margin: 5px 0 0; color: #555; }
+              .content { min-height: 400px; }
+              .field { margin-bottom: 25px; }
+              .label { font-weight: bold; color: #0f4c4c; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+              .value { padding: 10px 0; border-bottom: 1px dashed #ccc; font-size: 16px; line-height: 1.5; }
+              .medication-item { white-space: pre-wrap; }
+              .footer { margin-top: 50px; border-top: 1px solid #ddd; padding-top: 20px; text-align: center; font-size: 12px; color: #777; display: flex; justify-content: space-between; }
+              
+              @media print {
+                body { padding: 0; }
+                .no-print { display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            ${headerHtml}
             
-            @media print {
-              body { padding: 0; }
-              .no-print { display: none; }
-            }
-          </style>
-        </head>
-        <body>
-          ${headerHtml}
-          
-          <div class="content">
-            <div class="field">
-              <div class="label">Paciente</div>
-              <div class="value" style="font-weight: 500; font-size: 18px;">${data.patientName || ''}</div>
-            </div>
-            
-            <div class="field">
-              <div class="label">Prescrição</div>
-              <div class="value medication-item">${data.medications ? data.medications.replace(/\n/g, '<br>') : ''}</div>
+            <div class="content">
+              <div class="field">
+                <div class="label">Paciente</div>
+                <div class="value" style="font-weight: 500; font-size: 18px;">${data.patientName || ''}</div>
+              </div>
+              
+              <div class="field">
+                <div class="label">Prescrição</div>
+                <div class="value medication-item">${data.medications ? data.medications.replace(/\n/g, '<br>') : ''}</div>
+              </div>
+
+              ${data.instructions ? `
+              <div class="field">
+                <div class="label">Instruções Adicionais</div>
+                <div class="value">${data.instructions.replace(/\n/g, '<br>')}</div>
+              </div>
+              ` : ''}
             </div>
 
-            ${data.instructions ? `
-            <div class="field">
-              <div class="label">Instruções Adicionais</div>
-              <div class="value">${data.instructions.replace(/\n/g, '<br>')}</div>
+            <div class="field" style="margin-top: 40px; text-align: right;">
+              <div>${profile?.city || 'São Paulo, SP'}, ${new Date(data.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
             </div>
-            ` : ''}
-          </div>
 
-          <div class="field" style="margin-top: 40px; text-align: right;">
-            <div>${profile?.city || 'São Paulo, SP'}, ${new Date(data.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-          </div>
-
-          <div style="margin-top: 60px; display: flex; justify-content: flex-end;">
-            <div style="text-align: center; width: 250px; border-top: 1px solid #333; padding-top: 10px;">
-              <p style="margin: 0; font-weight: bold;">${profile?.name || 'Profissional Responsável'}</p>
-              <p style="margin: 5px 0 0; font-size: 12px;">${profile?.social?.registro || data.crp || ''}</p>
+            <div style="margin-top: 60px; display: flex; justify-content: flex-end;">
+              <div style="text-align: center; width: 250px; border-top: 1px solid #333; padding-top: 10px;">
+                <p style="margin: 0; font-weight: bold;">${profile?.name || 'Profissional Responsável'}</p>
+                <p style="margin: 5px 0 0; font-size: 12px;">${profile?.social?.registro || data.crp || ''}</p>
+              </div>
             </div>
-          </div>
 
-          <div class="footer">
-            <div>
-              ${profile?.social?.site ? `Site: ${profile.social.site[0]}` : ''}<br>
-              ${profile?.social?.instagram ? `Instagram: ${profile.social.instagram[0]}` : ''}
+            <div class="footer">
+              <div>
+                ${profile?.social?.site ? `Site: ${profile.social.site[0]}` : ''}<br>
+                ${profile?.social?.instagram ? `Instagram: ${profile.social.instagram[0]}` : ''}
+              </div>
+              <div>
+                Emitido via KalonConnect
+              </div>
             </div>
-            <div>
-              Emitido via KalonConnect
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
+          </body>
+        </html>
+      `;
 
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    // Use timeout to ensure images load
-    setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-      // printWindow.close(); // Optional, sometimes better to leave open
-    }, 500);
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+      }, 500);
+    }
   };
 
   const handleSend = () => {
@@ -328,7 +430,39 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             {t('documents.actions.send')}
           </ModernButton>
         </div>
+
+        {/* Botão Editor de Posições (só aparece se tem template) */}
+        {profile?.prescription_template_url && (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <ModernButton
+              onClick={() => setShowPositionEditor(true)}
+              icon={<Settings className="w-5 h-5" />}
+              variant="outline"
+              size="md"
+              className="w-full"
+            >
+              ⚙️ Ajustar Posições no Template ({profile.prescription_template_size || 'A4'})
+            </ModernButton>
+          </div>
+        )}
       </div>
+
+      {/* Modal do Editor de Posições */}
+      {showPositionEditor && profile?.prescription_template_url && (
+        <TemplatePositionEditor
+          templateUrl={profile.prescription_template_url}
+          templateSize={profile.prescription_template_size || 'A4'}
+          currentPositions={profile.prescription_template_positions}
+          onSave={(newPositions) => {
+            setProfile(prev => ({
+              ...prev,
+              prescription_template_positions: newPositions
+            }));
+            setShowPositionEditor(false);
+          }}
+          onClose={() => setShowPositionEditor(false)}
+        />
+      )}
     </motion.div>
   );
 };
