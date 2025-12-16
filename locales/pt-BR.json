@@ -413,6 +413,9 @@
     "social": {
       "title": "Redes sociais"
     },
+    "customLink": {
+      "help": "Crie um link personalizado para seus clientes agendarem consultas. Este link pode ser compartilhado em suas redes sociais ou site."
+    },
     "pix": {
       "title_keys": "Chaves PIX",
       "label": "Banco/Descrição",
