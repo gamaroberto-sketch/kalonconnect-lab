@@ -72,8 +72,12 @@ export const VideoPanelProvider = ({
     clientLanguage: 'en-US',
     position: 'bottom', // 'top', 'middle', 'bottom'
     textSize: 'medium', // 'small', 'medium', 'large'
-    transparency: 0.9 // 0.5 to 1.0
+    transparency: 0.9, // 0.5 to 1.0
+    saveToTranscript: true, // Save captions to transcript
+    includeTranslation: true // Include translation in transcript
   });
+  // 📝 Caption Transcript for Recording Integration
+  const [captionTranscript, setCaptionTranscript] = useState([]);
 
   // Fetch Branding (Client Mode)
   useEffect(() => {
@@ -860,14 +864,52 @@ export const VideoPanelProvider = ({
     }
   };
 
-  const toggleHighMesh = () => {
-    setIsHighMeshEnabled((prev) => !prev);
-  };
+  // 📝 Caption Transcript Functions
+  const addCaptionLine = useCallback((line) => {
+    if (!captionSettings.saveToTranscript) return;
 
-  const formatTime = (seconds) => {
+    setCaptionTranscript(prev => [...prev, {
+      timestamp: Date.now(),
+      sessionTime: localSessionTime,
+      speaker: 'professional', // Could be enhanced to detect speaker
+      original: line.original,
+      translated: line.translated || null,
+      language: captionSettings.myLanguage
+    }]);
+  }, [captionSettings.saveToTranscript, captionSettings.myLanguage, localSessionTime]);
+
+  const updateLastCaptionLine = useCallback((updates) => {
+    setCaptionTranscript(prev => {
+      if (prev.length === 0) return prev;
+      const updated = [...prev];
+      updated[updated.length - 1] = { ...updated[updated.length - 1], ...updates };
+      return updated;
+    });
+  }, []);
+
+  const formatTime = useCallback((seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }, []);
+
+  const getCaptionTranscriptText = useCallback(() => {
+    return captionTranscript.map(line => {
+      const time = formatTime(line.sessionTime);
+      const text = line.original;
+      const translated = (captionSettings.includeTranslation && line.translated)
+        ? ` [${line.translated}]`
+        : '';
+      return `[${time}] ${text}${translated}`;
+    }).join('\n');
+  }, [captionTranscript, captionSettings.includeTranslation, formatTime]);
+
+  const clearCaptionTranscript = useCallback(() => {
+    setCaptionTranscript([]);
+  }, []);
+
+  const toggleHighMesh = () => {
+    setIsHighMeshEnabled((prev) => !prev);
   };
 
   // Função para obter token do LiveKit conforme documento
@@ -956,6 +998,12 @@ export const VideoPanelProvider = ({
     endSession,
     handleOpenSettings,
     formatTime,
+    // Caption Transcript Integration
+    captionTranscript,
+    addCaptionLine,
+    updateLastCaptionLine,
+    getCaptionTranscriptText,
+    clearCaptionTranscript,
     // LiveKit integration
     consultationId,
     setConsultationId,

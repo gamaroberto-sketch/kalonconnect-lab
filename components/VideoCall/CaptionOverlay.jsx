@@ -68,8 +68,20 @@ export default function CaptionOverlay() {
 
             // Translate only final results
             if (isFinal && transcript.trim()) {
+                // Add to transcript history
+
+                // Add line with original text
+                addCaptionLine({
+                    original: transcript,
+                    translated: null
+                });
+
                 try {
                     const translated = await translateText(transcript, myLanguage, clientLanguage);
+
+                    // Update last line with translation
+                    updateLastCaptionLine({ translated });
+
                     setCaptions(prev => ({
                         ...prev,
                         translated,
