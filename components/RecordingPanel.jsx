@@ -1503,6 +1503,63 @@ const RecordingPanel = () => {
           )}
         </section>
 
+        {/* Caption Preview Section */}
+        {captionTranscript && captionTranscript.length > 0 && (
+          <section
+            className="rounded-2xl border border-gray-200 p-4 shadow-sm dark:border-gray-700 mb-4"
+            style={{ backgroundColor: panelBackground }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold" style={{ color: accentColor }}>
+                📝 Legendas Capturadas ({captionTranscript.length} linhas)
+              </h4>
+              <button
+                onClick={() => {
+                  const captionText = getCaptionTranscriptText();
+                  if (captionText) {
+                    setTranscription(prev => {
+                      const combined = prev ? `${prev}\n\n--- Legendas Capturadas ---\n${captionText}` : captionText;
+                      return combined;
+                    });
+                    setNotification('Legendas importadas para transcrição!');
+                  }
+                }}
+                className="text-xs px-3 py-1 rounded transition-colors"
+                style={{
+                  backgroundColor: accentColor,
+                  color: '#ffffff'
+                }}
+                onMouseEnter={(e) => e.target.style.opacity = '0.8'}
+                onMouseLeave={(e) => e.target.style.opacity = '1'}
+              >
+                Importar para Transcrição
+              </button>
+            </div>
+            <div
+              className="text-xs max-h-32 overflow-y-auto font-mono p-2 rounded"
+              style={{
+                backgroundColor: `${accentColor}05`,
+                color: textPrimary
+              }}
+            >
+              {captionTranscript.slice(-5).map((line, idx) => (
+                <div key={idx} className="mb-1">
+                  <span style={{ color: accentColor }}>
+                    [{String(Math.floor(line.sessionTime / 60)).padStart(2, '0')}:{String(line.sessionTime % 60).padStart(2, '0')}]
+                  </span>
+                  {' '}{line.original}
+                  {line.translated && <span style={{ color: textSecondary }}> → {line.translated}</span>}
+                </div>
+              ))}
+              {captionTranscript.length > 5 && (
+                <div className="text-center mt-2" style={{ color: textSecondary }}>
+                  ... e mais {captionTranscript.length - 5} linhas
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         <section
           className="rounded-2xl border border-gray-200 p-4 shadow-sm dark:border-gray-700"
           style={{ backgroundColor: panelBackground }}
