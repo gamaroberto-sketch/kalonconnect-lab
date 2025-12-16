@@ -37,20 +37,17 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Falha ao criar usuário' });
     }
 
-    // Calculate trial end date (7 days)
-    const trialEndsAt = new Date();
-    trialEndsAt.setDate(trialEndsAt.getDate() + 7);
-
-    // Insert user profile data
+    // Upsert user profile data (update if exists, insert if not)
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .insert({
+      .upsert({
         id: authData.user.id,
         email,
         name,
         type: 'professional',
-        version: 'NORMAL', // 7-day trial
-        created_at: new Date().toISOString()
+        version: 'NORMAL'
+      }, {
+        onConflict: 'id'
       })
       .select()
       .single();
@@ -60,11 +57,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Falha ao criar perfil do usuário.' });
     }
 
-    console.log(`✅ Novo usuário registrado: ${name} (${email}) - Trial até ${trialEndsAt.toISOString()}`);
+    console.log(`✅ Novo usuário registrado: ${name} (${email})`);
 
     return res.status(201).json({
       ok: true,
-      message: 'Cadastro realizado com sucesso! Aproveite seus 7 dias de acesso Standard grátis.',
+      message: 'Cadastro realizado com sucesso!',
       user: userData
     });
   } catch (error) {
