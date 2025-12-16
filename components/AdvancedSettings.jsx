@@ -560,336 +560,236 @@ const AdvancedSettings = () => {
                 </h2>
               </div>
 
-              <ThemeSelector />
-            </motion.div>
-
-            {/* Logo, Foto e Avatar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="lg:col-span-3 kalon-card p-6"
-            >
-              <div className="flex items-center space-x-2 mb-6">
-                <Image className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  {t('settings.branding.images')}
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Logo */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t('settings.branding.professionalLogo')}
-                  </label>
-                  <label className="block p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload('logo', e.target.files[0])}
-                      className="hidden"
-                    />
-                    <div className="flex flex-col items-center space-y-2">
-                      {professionalLogo ? (
-                        <img src={professionalLogo} alt="Logo" className="w-16 h-16 rounded-lg object-cover" />
-                      ) : (
-                        <>
-                          <FileImage className="w-8 h-8 text-gray-400" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t('settings.branding.uploadLogo')}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </label>
-                </div>
-
-                {/* Foto */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t('settings.branding.professionalPhoto')}
-                  </label>
-                  <label className="block p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload('photo', e.target.files[0])}
-                      className="hidden"
-                    />
-                    <div className="flex flex-col items-center space-y-2">
-                      {professionalPhoto ? (
-                        <img src={professionalPhoto} alt="Foto" className="w-16 h-16 rounded-full object-cover" />
-                      ) : (
-                        <>
-                          <User className="w-8 h-8 text-gray-400" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t('settings.branding.uploadPhoto')}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </label>
-                </div>
-
-                {/* Avatar */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t('settings.branding.avatar')}
-                  </label>
-                  <label className="block p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload('avatar', e.target.files[0])}
-                      className="hidden"
-                    />
-                    <div className="flex flex-col items-center space-y-2">
-                      {professionalAvatar ? (
-                        <img src={professionalAvatar} alt="Avatar" className="w-16 h-16 rounded-full object-cover" />
-                      ) : (
-                        <>
-                          <User className="w-8 h-8 text-gray-400" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t('settings.branding.uploadAvatar')}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </motion.div>
-          </>
+            </>
         )}
 
 
-        {/* TAB INTEGRAÇÕES */}
-        {activeTab === 'integrations' && (
-          <>
-            {/* Google Drive */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="lg:col-span-2 kalon-card p-6"
-            >
-              <div className="flex items-center space-x-2 mb-4">
-                <Cloud className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Google Drive
-                </h2>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-800 dark:text-white">
-                      {t('settings.integrations.googleDrive.status')}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {googleDriveConnected ? t('settings.integrations.googleDrive.connected') : t('settings.integrations.googleDrive.disconnected')}
-                    </p>
+            {/* TAB INTEGRAÇÕES */}
+            {activeTab === 'integrations' && (
+              <>
+                {/* Google Drive */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="lg:col-span-2 kalon-card p-6"
+                >
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Cloud className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                      Google Drive
+                    </h2>
                   </div>
-                  {googleDriveConnected ? (
-                    <ModernButton
-                      onClick={disconnectGoogleDrive}
-                      variant="secondary"
-                      size="sm"
-                    >
-                      {t('settings.integrations.googleDrive.disconnect')}
-                    </ModernButton>
-                  ) : (
-                    <ModernButton
-                      onClick={connectGoogleDrive}
-                      variant="primary"
-                      size="sm"
-                    >
-                      {t('settings.integrations.googleDrive.connect')}
-                    </ModernButton>
-                  )}
-                </div>
 
-                {googleDriveConnected && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        {t('settings.integrations.googleDrive.folderLabel')}
-                      </label>
-                      <input
-                        type="text"
-                        value={googleDriveFolder}
-                        onChange={(e) => setGoogleDriveFolder(e.target.value)}
-                        placeholder={t('settings.integrations.googleDrive.folderPlaceholder')}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 rounded-lg border" style={{
-                        backgroundColor: themeColors.primary,
-                        borderColor: themeColors.primary + '40'
-                      }}>
-                        <FolderOpen className="w-6 h-6 mb-2" style={{ color: 'white' }} />
-                        <p className="font-medium text-white">
-                          {t('settings.integrations.googleDrive.features.clients.title')}
-                        </p>
-                        <p className="text-sm text-white/90">
-                          {t('settings.integrations.googleDrive.features.clients.desc')}
-                        </p>
-                      </div>
-
-                      <div className="p-4 rounded-lg border" style={{
-                        backgroundColor: themeColors.secondaryLight,
-                        borderColor: themeColors.secondary + '40'
-                      }}>
-                        <VideoIcon className="w-6 h-6 mb-2 text-gray-600" />
-                        <p className="font-medium text-gray-800">
-                          {t('settings.integrations.googleDrive.features.videos.title')}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          {t('settings.integrations.googleDrive.features.videos.desc')}
-                        </p>
-                      </div>
-
-                      <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 md:col-span-2">
-                        <FileText className="w-6 h-6 mb-2" style={{ color: themeColors.primary }} />
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div>
                         <p className="font-medium text-gray-800 dark:text-white">
-                          {t('settings.integrations.googleDrive.features.records.title')}
+                          {t('settings.integrations.googleDrive.status')}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {t('settings.integrations.googleDrive.features.records.desc')}
+                          {googleDriveConnected ? t('settings.integrations.googleDrive.connected') : t('settings.integrations.googleDrive.disconnected')}
                         </p>
                       </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </motion.div>
-
-            {/* WhatsApp */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="kalon-card p-6"
-            >
-              <div className="flex items-center space-x-2 mb-4">
-                <Smartphone className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  WhatsApp
-                </h2>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-800 dark:text-white">
-                      {t('settings.integrations.whatsapp.status')}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {whatsappConnected ? t('settings.integrations.whatsapp.connected') : t('settings.integrations.whatsapp.disconnected')}
-                    </p>
-                  </div>
-                  {whatsappConnected ? (
-                    <ModernButton
-                      onClick={disconnectWhatsApp}
-                      variant="secondary"
-                      size="sm"
-                    >
-                      {t('settings.integrations.whatsapp.disconnect')}
-                    </ModernButton>
-                  ) : (
-                    <ModernButton
-                      onClick={connectWhatsApp}
-                      variant="primary"
-                      size="sm"
-                    >
-                      {t('settings.integrations.whatsapp.connect')}
-                    </ModernButton>
-                  )}
-                </div>
-
-                {whatsappConnected && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        {t('settings.integrations.whatsapp.phoneLabel')}
-                      </label>
-                      <input
-                        type="tel"
-                        value={whatsappNumber}
-                        onChange={(e) => setWhatsappNumber(e.target.value)}
-                        placeholder={t('settings.integrations.whatsapp.phonePlaceholder')}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
+                      {googleDriveConnected ? (
+                        <ModernButton
+                          onClick={disconnectGoogleDrive}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          {t('settings.integrations.googleDrive.disconnect')}
+                        </ModernButton>
+                      ) : (
+                        <ModernButton
+                          onClick={connectGoogleDrive}
+                          variant="primary"
+                          size="sm"
+                        >
+                          {t('settings.integrations.googleDrive.connect')}
+                        </ModernButton>
+                      )}
                     </div>
 
-                    <div className="flex items-center space-x-3 p-4 rounded-lg border" style={{
-                      backgroundColor: themeColors.secondaryLight,
-                      borderColor: themeColors.secondary + '40'
-                    }}>
-                      <input
-                        type="checkbox"
-                        id="autoMessage"
-                        checked={autoMessageEnabled}
-                        onChange={(e) => setAutoMessageEnabled(e.target.checked)}
-                        className="w-5 h-5 rounded focus:ring-2"
-                        style={{
-                          accentColor: themeColors.primary,
-                          focusRingColor: themeColors.primary
-                        }}
-                      />
-                      <label htmlFor="autoMessage" className="text-sm font-medium text-gray-800 cursor-pointer">
-                        Ativar envio automático de mensagens de confirmação
-                      </label>
-                    </div>
+                    {googleDriveConnected && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {t('settings.integrations.googleDrive.folderLabel')}
+                          </label>
+                          <input
+                            type="text"
+                            value={googleDriveFolder}
+                            onChange={(e) => setGoogleDriveFolder(e.target.value)}
+                            placeholder={t('settings.integrations.googleDrive.folderPlaceholder')}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
 
-                    {autoMessageEnabled && (
-                      <div className="p-4 rounded-lg border" style={{
-                        backgroundColor: themeColors.primary,
-                        borderColor: themeColors.primary + '40'
-                      }}>
-                        <Phone className="w-6 h-6 mb-2 text-white" />
-                        <p className="font-medium text-white mb-1">
-                          {t('settings.integrations.whatsapp.autoMessage')}
-                        </p>
-                        <p className="text-sm text-white/90">
-                          {t('settings.integrations.whatsapp.autoMessageDesc')}
-                        </p>
-                      </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="p-4 rounded-lg border" style={{
+                            backgroundColor: themeColors.primary,
+                            borderColor: themeColors.primary + '40'
+                          }}>
+                            <FolderOpen className="w-6 h-6 mb-2" style={{ color: 'white' }} />
+                            <p className="font-medium text-white">
+                              {t('settings.integrations.googleDrive.features.clients.title')}
+                            </p>
+                            <p className="text-sm text-white/90">
+                              {t('settings.integrations.googleDrive.features.clients.desc')}
+                            </p>
+                          </div>
+
+                          <div className="p-4 rounded-lg border" style={{
+                            backgroundColor: themeColors.secondaryLight,
+                            borderColor: themeColors.secondary + '40'
+                          }}>
+                            <VideoIcon className="w-6 h-6 mb-2 text-gray-600" />
+                            <p className="font-medium text-gray-800">
+                              {t('settings.integrations.googleDrive.features.videos.title')}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              {t('settings.integrations.googleDrive.features.videos.desc')}
+                            </p>
+                          </div>
+
+                          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 md:col-span-2">
+                            <FileText className="w-6 h-6 mb-2" style={{ color: themeColors.primary }} />
+                            <p className="font-medium text-gray-800 dark:text-white">
+                              {t('settings.integrations.googleDrive.features.records.title')}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {t('settings.integrations.googleDrive.features.records.desc')}
+                            </p>
+                          </div>
+                        </div>
+                      </>
                     )}
-                  </>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
+                  </div>
+                </motion.div>
 
-        {/* TAB CONVITES */}
-        {activeTab === 'invites' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-3"
-          >
-            <ConsultationInviteSettings />
-          </motion.div>
-        )}
+                {/* WhatsApp */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="kalon-card p-6"
+                >
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Smartphone className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                      WhatsApp
+                    </h2>
+                  </div>
 
-        {/* TAB CREDENCIAIS */}
-        {activeTab === 'credentials' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-3"
-          >
-            <CredentialsPanel />
-          </motion.div>
-        )}
-      </div>
-    </div >
-  );
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-800 dark:text-white">
+                          {t('settings.integrations.whatsapp.status')}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {whatsappConnected ? t('settings.integrations.whatsapp.connected') : t('settings.integrations.whatsapp.disconnected')}
+                        </p>
+                      </div>
+                      {whatsappConnected ? (
+                        <ModernButton
+                          onClick={disconnectWhatsApp}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          {t('settings.integrations.whatsapp.disconnect')}
+                        </ModernButton>
+                      ) : (
+                        <ModernButton
+                          onClick={connectWhatsApp}
+                          variant="primary"
+                          size="sm"
+                        >
+                          {t('settings.integrations.whatsapp.connect')}
+                        </ModernButton>
+                      )}
+                    </div>
+
+                    {whatsappConnected && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {t('settings.integrations.whatsapp.phoneLabel')}
+                          </label>
+                          <input
+                            type="tel"
+                            value={whatsappNumber}
+                            onChange={(e) => setWhatsappNumber(e.target.value)}
+                            placeholder={t('settings.integrations.whatsapp.phonePlaceholder')}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-3 p-4 rounded-lg border" style={{
+                          backgroundColor: themeColors.secondaryLight,
+                          borderColor: themeColors.secondary + '40'
+                        }}>
+                          <input
+                            type="checkbox"
+                            id="autoMessage"
+                            checked={autoMessageEnabled}
+                            onChange={(e) => setAutoMessageEnabled(e.target.checked)}
+                            className="w-5 h-5 rounded focus:ring-2"
+                            style={{
+                              accentColor: themeColors.primary,
+                              focusRingColor: themeColors.primary
+                            }}
+                          />
+                          <label htmlFor="autoMessage" className="text-sm font-medium text-gray-800 cursor-pointer">
+                            Ativar envio automático de mensagens de confirmação
+                          </label>
+                        </div>
+
+                        {autoMessageEnabled && (
+                          <div className="p-4 rounded-lg border" style={{
+                            backgroundColor: themeColors.primary,
+                            borderColor: themeColors.primary + '40'
+                          }}>
+                            <Phone className="w-6 h-6 mb-2 text-white" />
+                            <p className="font-medium text-white mb-1">
+                              {t('settings.integrations.whatsapp.autoMessage')}
+                            </p>
+                            <p className="text-sm text-white/90">
+                              {t('settings.integrations.whatsapp.autoMessageDesc')}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              </>
+            )}
+
+            {/* TAB CONVITES */}
+            {activeTab === 'invites' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="lg:col-span-3"
+              >
+                <ConsultationInviteSettings />
+              </motion.div>
+            )}
+
+            {/* TAB CREDENCIAIS */}
+            {activeTab === 'credentials' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="lg:col-span-3"
+              >
+                <CredentialsPanel />
+              </motion.div>
+            )}
+          </div>
+      </div >
+      );
 };
 
-export default AdvancedSettings;
+      export default AdvancedSettings;
 
