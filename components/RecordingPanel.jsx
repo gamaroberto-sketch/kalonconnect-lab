@@ -128,7 +128,10 @@ const RecordingPanel = () => {
     localSessionTime,
     localVideoRef,
     remoteVideoRef,
-    setRecordingState
+    setRecordingState,
+    captionTranscript,
+    getCaptionTranscriptText,
+    clearCaptionTranscript
   } = useVideoPanel();
   const { user, userType } = useAuth();
 
@@ -1829,8 +1832,8 @@ const RecordingPanel = () => {
                     key={item.sessionId}
                     onClick={() => handleSelectHistorySession(item.sessionId)}
                     className={`rounded-xl border px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3 transition cursor-pointer ${isActive
-                        ? "border-primary-500 bg-primary-500/10 dark:border-primary-400"
-                        : "border-gray-200 dark:border-gray-700"
+                      ? "border-primary-500 bg-primary-500/10 dark:border-primary-400"
+                      : "border-gray-200 dark:border-gray-700"
                       }`}
                     style={{ backgroundColor: cardBackground }}
                   >
