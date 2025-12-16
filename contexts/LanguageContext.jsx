@@ -1,4 +1,3 @@
-```javascript
 "use client";
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
@@ -91,20 +90,20 @@ export const LanguageProvider = ({ children }) => {
             if (value && typeof value === 'object') {
                 value = value[k];
             } else {
-                console.warn(`Translation key not found: ${ key } `);
+                console.warn(`Translation key not found: ${key} `);
                 return key;
             }
         }
 
         if (typeof value !== 'string') {
-            console.warn(`Translation value is not a string: ${ key } `);
+            console.warn(`Translation value is not a string: ${key} `);
             return key;
         }
 
         // Interpolate parameters
         let result = value;
         Object.keys(params).forEach(param => {
-            result = result.replace(new RegExp(`{${ param } } `, 'g'), params[param]);
+            result = result.replace(new RegExp(`{${param} } `, 'g'), params[param]);
         });
 
         return result;
