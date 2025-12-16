@@ -2,78 +2,26 @@
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 
-// Import translation files
-import ptBR from '../locales/pt-BR.json';
-import enUS from '../locales/en-US.json';
-import esES from '../locales/es-ES.json';
-import frFR from '../locales/fr-FR.json';
-import './.rebuild-trigger.js'; // Force rebuild
+// Dynamic translation loading to bypass build cache
+const loadTranslations = async () => {
+    try {
+        const [ptBR, enUS, esES, frFR] = await Promise.all([
+            fetch('/locales/pt-BR.json').then(r => r.json()),
+            fetch('/locales/en-US.json').then(r => r.json()),
+            fetch('/locales/es-ES.json').then(r => r.json()),
+            fetch('/locales/fr-FR.json').then(r => r.json())
+        ]);
 
-// Force rebuild: 2025-12-16T15:36:00
-
-// Force refresh v4 - Waiting Room translations fix
-// Fallback translations for Waiting Room (to bypass cache issues)
-const waitingRoomFallback = {
-    'pt-BR': {
-        title: 'Sala de Espera Premium',
-        subtitle: 'Configure o vídeo, música ambiente e experiência do cliente antes da consulta.',
-        saving: 'Salvando...',
-        saveButton: 'Salvar alterações',
-        saveButtonBottom: 'Salvar alterações',
-        success: 'Configurações salvas com sucesso!',
-        fileDisclaimer: 'Arquivos suportados: vídeo (MP4, WebM), imagem (JPG, PNG), áudio (MP3, WAV). Tamanho máximo: 50MB.',
-        video: {
-            title: 'Vídeo de boas-vindas',
-            description: 'Esse vídeo será reproduzido automaticamente assim que o cliente acessar a sala.',
-            mediaType: 'Tipo de mídia',
-            types: { video: 'Vídeo', slides: 'Slides', image: 'Imagem' }
-        },
-        music: {
-            title: 'Música ambiente',
-            description: 'A música permanece tocando em loop enquanto o cliente aguarda.'
-        },
-        message: {
-            title: 'Mensagem ao cliente',
-            placeholder: 'Respire fundo e aguarde. Em breve iniciaremos.',
-            tip: 'Dica: use marcadores simples como {cliente} e {especialidade} para personalizar a mensagem.'
-        },
-        preferences: {
-            title: 'Preferências visuais',
-            animatedMessage: { label: 'Exibir mensagem animada', description: 'A mensagem irá pulsar suavemente durante a espera.' },
-            allowClientPreview: { label: 'Permitir prévia do cliente', description: 'O profissional pode visualizar a câmera do cliente antes de iniciar.' },
-            alertOnClientJoin: { label: 'Alertar quando o cliente entrar', description: 'Reproduz um som discreto e exibe alerta para o profissional.' }
-        },
-        visualPreferences: {
-            title: 'Preferências Visuais',
-            animatedMessage: 'Exibir mensagem animada',
-            animatedMessageDesc: 'A mensagem irá pulsar suavemente durante a espera.',
-            allowClientPreview: 'Permitir prévia do cliente',
-            allowClientPreviewDesc: 'O profissional pode visualizar a câmera do cliente antes de iniciar.',
-            alertOnClientJoin: 'Alertar quando o cliente entrar',
-            alertOnClientJoinDesc: 'Reproduz um som discreto e exibe alerta para o profissional.',
-            multiSpecialty: 'Múltiplas Especialidades',
-            multiSpecialtyDesc: 'Configure mensagens diferentes para cada especialidade.'
-        },
-        errors: {
-            load: 'Erro ao carregar configurações',
-            save: 'Erro ao salvar configurações',
-            uploadGeneric: 'Erro ao fazer upload',
-            saveGeneric: 'Erro ao salvar'
-        },
-        examples: {
-            title: 'Usar Exemplo Pronto',
-            video: 'Vídeo de Exemplo',
-            music: 'Música de Exemplo',
-            message: 'Olá! Seja bem-vindo(a) à nossa sala de espera. Respire fundo e relaxe, em breve iniciaremos nossa sessão. Estou preparando tudo para te atender da melhor forma possível.'
-        }
+        return {
+            'pt-BR': ptBR,
+            'en-US': enUS,
+            'es-ES': esES,
+            'fr-FR': frFR
+        };
+    } catch (error) {
+        console.error('Error loading translations:', error);
+        return null;
     }
-};
-
-const translations = {
-    'pt-BR': { ...ptBR, waitingRoom: { ...ptBR.waitingRoom, ...waitingRoomFallback['pt-BR'] } },
-    'en-US': enUS,
-    'es-ES': esES,
-    'fr-FR': frFR
 };
 
 const LanguageContext = createContext();
@@ -81,9 +29,21 @@ const LanguageContext = createContext();
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('pt-BR');
     const [mounted, setMounted] = useState(false);
+    const [translations, setTranslations] = useState({});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setMounted(true);
+
+        // Load translations dynamically
+        loadTranslations().then(loadedTranslations => {
+            if (loadedTranslations) {
+                setTranslations(loadedTranslations);
+                console.log('✅ Translations loaded dynamically');
+                console.log('Has documents.common:', !!loadedTranslations['pt-BR']?.documents?.common);
+            }
+            setLoading(false);
+        });
 
         // Load language from localStorage
         const loadLanguage = () => {
@@ -91,9 +51,8 @@ export const LanguageProvider = ({ children }) => {
                 const saved = localStorage.getItem('kalonAdvancedSettings');
                 if (saved) {
                     const settings = JSON.parse(saved);
-                    if (settings.language && translations[settings.language]) {
+                    if (settings.language && ['pt-BR', 'en-US', 'es-ES', 'fr-FR'].includes(settings.language)) {
                         console.log('Loaded language:', settings.language);
-                        console.log('Has waitingRoom:', !!translations[settings.language].waitingRoom);
                         setLanguage(settings.language);
                     }
                 }
@@ -165,8 +124,8 @@ export const LanguageProvider = ({ children }) => {
         return result;
     }, [language]);
 
-    // Don't render until mounted to avoid hydration mismatch
-    if (!mounted) {
+    // Don't render until mounted and translations loaded
+    if (!mounted || loading || !translations['pt-BR']) {
         return null;
     }
 
