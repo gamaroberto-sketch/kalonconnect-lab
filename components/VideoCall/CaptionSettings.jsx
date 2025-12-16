@@ -29,6 +29,8 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
         }
     };
 
+    const [showPreview, setShowPreview] = useState(false);
+
     // Check browser support
     const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
     const isSupported = !!SpeechRecognition;
@@ -287,6 +289,25 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         </ul>
                     </div>
 
+                    {/* Test Button */}
+                    <button
+                        onClick={() => setShowPreview(!showPreview)}
+                        className="w-full py-3 rounded-lg font-semibold transition-colors border-2"
+                        style={{
+                            borderColor: primary,
+                            color: primary,
+                            backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = `${primary}10`;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'transparent';
+                        }}
+                    >
+                        {showPreview ? '✅ Fechar Teste' : '🎬 Testar Legendas'}
+                    </button>
+
                     {/* Save Button */}
                     <button
                         onClick={handleSave}
@@ -318,6 +339,78 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                     <p className="text-xs mt-2" style={{ color: primary }}>
                         💡 <strong>Dica:</strong> Use Chrome ou Edge no computador para melhor experiência.
                     </p>
+                </div>
+            )}
+
+            {/* Preview Overlay */}
+            {showPreview && settings.enabled && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="relative w-full max-w-4xl">
+                        {/* Close button */}
+                        <button
+                            onClick={() => setShowPreview(false)}
+                            className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+                        >
+                            ✕ Fechar
+                        </button>
+
+                        {/* Mock video background */}
+                        <div className="bg-gray-900 rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                            <div className="relative w-full h-full flex items-center justify-center">
+                                <div className="text-gray-600 text-center">
+                                    <div className="text-6xl mb-4">🎥</div>
+                                    <p className="text-lg">Área de Vídeo (Exemplo)</p>
+                                </div>
+
+                                {/* Caption Preview */}
+                                <div
+                                    className={`absolute ${settings.position === 'top' ? 'top-20' :
+                                            settings.position === 'middle' ? 'top-1/2 -translate-y-1/2' :
+                                                'bottom-20'
+                                        } left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl`}
+                                >
+                                    <div
+                                        className="backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-2xl border border-white/10"
+                                        style={{ backgroundColor: `rgba(0, 0, 0, ${settings.transparency})` }}
+                                    >
+                                        {/* Original Text */}
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-xs font-bold text-blue-400 flex-shrink-0">
+                                                🇧🇷 PT
+                                            </span>
+                                            <p className={`text-white ${settings.textSize === 'small' ? 'text-base' :
+                                                    settings.textSize === 'large' ? 'text-2xl' :
+                                                        'text-lg'
+                                                } flex-1 leading-tight`}>
+                                                Olá! Esta é uma demonstração das legendas.
+                                            </p>
+                                            <span className="text-xs text-gray-400 flex-shrink-0">
+                                                95%
+                                            </span>
+                                        </div>
+
+                                        {/* Translated Text */}
+                                        <div className="flex items-start gap-2 border-t border-gray-700 pt-2">
+                                            <span className="text-xs font-bold text-green-400 flex-shrink-0">
+                                                🇺🇸 EN
+                                            </span>
+                                            <p className={`text-white/90 ${settings.textSize === 'small' ? 'text-sm' :
+                                                    settings.textSize === 'large' ? 'text-xl' :
+                                                        'text-base'
+                                                } flex-1 leading-tight`}>
+                                                Hello! This is a demonstration of the captions.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Instructions */}
+                        <div className="mt-4 text-center text-white text-sm">
+                            <p>💡 Ajuste a posição, tamanho e transparência acima para ver as mudanças em tempo real!</p>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
