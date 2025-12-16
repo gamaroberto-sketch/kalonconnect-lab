@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
 import ClientLobby from "../../components/ClientLobby";
 import EndSessionDisplay from "../../components/EndSessionDisplay";
+import { VideoPanelProvider } from "../../components/VideoPanelContext";
 
 const LiveKitRoomWrapped = dynamic(
   () => import('../../components/LiveKitRoomWrapped'),
@@ -221,13 +222,15 @@ export default function ClientPage() {
   }
 
   return (
-    <ErrorBoundary>
-      <LiveKitRoomWrapped
-        token={token}
-        wsUrl={wsUrl}
-        connect={connect}
-      // onDisconnected={() => setSessionEnded(true)}
-      />
-    </ErrorBoundary>
+    <VideoPanelProvider>
+      <ErrorBoundary>
+        <LiveKitRoomWrapped
+          token={token}
+          wsUrl={wsUrl}
+          connect={connect}
+        // onDisconnected={() => setSessionEnded(true)}
+        />
+      </ErrorBoundary>
+    </VideoPanelProvider>
   );
 }

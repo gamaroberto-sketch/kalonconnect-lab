@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { LiveKitRoom, useTracks, VideoTrack } from "@livekit/components-react";
 import { Track } from "livekit-client";
+import ClientSessionTimer from "./VideoCall/ClientSessionTimer";
 
 function CustomVideoGrid() {
   const tracks = useTracks(
@@ -72,6 +73,10 @@ function CustomVideoGrid() {
           </div>
         )}
       </div>
+
+      {/* Client Session Timer */}
+      <ClientSessionTimer />
+
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
