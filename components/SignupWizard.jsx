@@ -181,9 +181,20 @@ export default function SignupWizard({ onClose }) {
                     : null
             };
 
-            await signup(userData);
+            // Call signup API
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
 
-            // Redirect to dashboard
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Erro ao criar conta');
+            }
+
+            // Success! Redirect to dashboard
             router.push('/dashboard');
         } catch (err) {
             setError(err.message || 'Erro ao criar conta');
