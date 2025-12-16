@@ -19,6 +19,9 @@ export default function CaptionOverlay() {
         isTranslating: false
     });
 
+    const [isListening, setIsListening] = useState(false);
+    const [showCaption, setShowCaption] = useState(false);
+
     const recognitionRef = useRef(null);
     const translationCacheRef = useRef(new Map());
 
@@ -60,6 +63,9 @@ export default function CaptionOverlay() {
                 isTranslating: isFinal
             }));
 
+            // Show caption with animation
+            if (!showCaption) setShowCaption(true);
+
             // Translate only final results
             if (isFinal && transcript.trim()) {
                 try {
@@ -98,6 +104,7 @@ export default function CaptionOverlay() {
         try {
             recognition.start();
             recognitionRef.current = recognition;
+            setIsListening(true);
             console.log('✅ Speech recognition started for', myLanguage);
         } catch (error) {
             console.error('❌ Could not start speech recognition:', error);
@@ -185,41 +192,88 @@ export default function CaptionOverlay() {
     const currentTextSize = textSizes[textSize] || textSizes.medium;
 
     return (
-        <div className={`absolute ${positionClasses[position]} left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl z-50 pointer-events-none`}>
-            <div
-                className="backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-2xl border border-white/10"
-                style={{ backgroundColor: `rgba(0, 0, 0, ${transparency})` }}
-            >
-                {/* Original Text */}
-                <div className="flex items-start gap-2">
-                    <span className="text-xs font-bold text-blue-400 flex-shrink-0">
-                        {getLanguageFlag(myLanguage)} {getLanguageName(myLanguage)}
-                    </span>
-                    <p className={`text-white ${currentTextSize.original} flex-1 leading-tight`}>{captions.original}</p>
-                    {captions.confidence > 0 && (
-                        <span className="text-xs text-gray-400 flex-shrink-0">
-                            {Math.round(captions.confidence * 100)}%
-                        </span>
-                    )}
-                </div>
+        <>
+            {/* CSS Animations */}
+            <style jsx>{`
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes micPulse {
+                    0%, 100% {
+                        transform: scale(1);
+                        opacity: 0.8;
+                    }
+                    50% {
+                        transform: scale(1.2);
+                        opacity: 1;
+                    }
+                }
+                
+                .caption-enter {
+                    animation: fadeInUp 0.3s ease-out;
+                }
+                
+                .mic-pulse {
+                    animation: micPulse 1.5s ease-in-out infinite;
+                }
+            `}</style>
 
-                {/* Translated Text */}
-                {(captions.translated || captions.isTranslating) && (
-                    <div className="flex items-start gap-2 border-t border-gray-700 pt-2">
-                        <span className="text-xs font-bold text-green-400 flex-shrink-0">
-                            {getLanguageFlag(clientLanguage)} {getLanguageName(clientLanguage)}
+            <div className={`absolute ${positionClasses[position]} left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl z-50 pointer-events-none ${showCaption ? 'caption-enter' : ''}`}>
+                <div
+                    className="backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-2xl border border-white/10"
+                    style={{ backgroundColor: `rgba(0, 0, 0, ${transparency})` }}
+                >
+                    {/* Microphone Indicator */}
+                    {isListening && (
+                        <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
+                            <div className="w-3 h-3 bg-red-500 rounded-full mic-pulse"></div>
+                            <span className="text-xs text-white/60">Ouvindo...</span>
+                        </div>
+                    )}
+
+                    {/* Original Text */}
+                    <div className="flex items-start gap-2">
+                        <span className="text-xs font-bold text-blue-400 flex-shrink-0">
+                            {getLanguageFlag(myLanguage)} {getLanguageName(myLanguage)}
                         </span>
-                        {captions.isTranslating ? (
-                            <div className="flex items-center gap-2 flex-1">
-                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <p className={`text-white/60 ${currentTextSize.translated} italic`}>Traduzindo...</p>
-                            </div>
-                        ) : (
-                            <p className={`text-white/90 ${currentTextSize.translated} flex-1 leading-tight`}>{captions.translated}</p>
+                        <p className={`text-white ${currentTextSize.original} flex-1 leading-tight`}>{captions.original}</p>
+                        {captions.confidence > 0 && (
+                            <span className="text-xs text-gray-400 flex-shrink-0">
+                                {Math.round(captions.confidence * 100)}%
+                            </span>
                         )}
                     </div>
-                )}
+
+                    {/* Translated Text */}
+                    {(captions.translated || captions.isTranslating) && (
+                        <div className="flex items-start gap-2 border-t border-gray-700 pt-2">
+                            <span className="text-xs font-bold text-green-400 flex-shrink-0">
+                                {getLanguageFlag(clientLanguage)} {getLanguageName(clientLanguage)}
+                            </span>
+                            {captions.isTranslating ? (
+                                <div className="flex items-center gap-2 flex-1">
+                                    <div className="flex gap-1">
+                                        <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                        <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                        <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                    </div>
+                                    <p className={`text-white/60 ${currentTextSize.translated} italic`}>Traduzindo...</p>
+                                </div>
+                            ) : (
+                                <p className={`text-white/90 ${currentTextSize.translated} flex-1 leading-tight`}>{captions.translated}</p>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
