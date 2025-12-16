@@ -866,6 +866,7 @@ const WaitingRoomSettings = () => {
                   {simView === 'waiting' && (
                     <ClientLobby
                       professional={previewProfessional}
+                      themeColors={themeColors}
                       onJoin={() => { }}
                       isMobile={simDevice === 'mobile'}
                     />
