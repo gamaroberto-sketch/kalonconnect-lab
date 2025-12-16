@@ -1717,5 +1717,26 @@
       "saved": "¡Configuración guardada!",
       "testGenerated": "Prueba generada: {message}"
     }
+  },
+  "captions": {
+    "title": "Subtítulos con Traducción",
+    "enabled": "Activado",
+    "disabled": "Desactivado",
+    "myLanguage": "Mi Idioma",
+    "clientLanguage": "Idioma del Cliente",
+    "myLanguageHint": "Idioma que hablarás durante la consulta",
+    "clientLanguageHint": "Idioma para traducir tus palabras",
+    "saveSettings": "Guardar Configuración",
+    "browserNotSupported": "Navegador no compatible",
+    "browserNotSupportedMessage": "Los subtítulos solo funcionan en Chrome o Edge.",
+    "freeVersion": "Versión Gratuita:",
+    "freeVersionFeatures": [
+      "Web Speech API (navegador) para transcripción",
+      "MyMemory Translation (1000 palabras/día)",
+      "Calidad: 85-90%",
+      "Latencia: 1-3 segundos"
+    ],
+    "disabledInfo": "Activa los subtítulos para configurar idiomas y comenzar a usar traducción en tiempo real.",
+    "translating": "Traduciendo..."
   }
 }

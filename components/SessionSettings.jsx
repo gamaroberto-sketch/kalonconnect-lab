@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useVideoPanel } from './VideoPanelContext';
+import CaptionSettings from './VideoCall/CaptionSettings';
 
 const SessionSettings = ({
   isOpen,
@@ -540,6 +541,18 @@ const SessionSettings = ({
                   Suporta JPG e PNG. A imagem é processada localmente.
                 </p>
               </div>
+
+              {/* CAPTIONS SECTION */}
+              <div className="h-px w-full" style={{ backgroundColor: border }} />
+
+              <CaptionSettings
+                initialSettings={videoPanel?.captionSettings}
+                onSave={(settings) => {
+                  if (videoPanel?.setCaptionSettings) {
+                    videoPanel.setCaptionSettings(settings);
+                  }
+                }}
+              />
             </div>
           </motion.div>
         </motion.div>

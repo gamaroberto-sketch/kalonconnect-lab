@@ -65,6 +65,12 @@ export const VideoPanelProvider = ({
   const [branding, setBranding] = useState({ profile: null, themeColors: null, isLoading: true });
   // 🟢 Fix: Track active stream for external consumers (like VideoSurface)
   const [currentStream, setCurrentStream] = useState(null);
+  // 🌍 Caption Settings for Real-Time Translation
+  const [captionSettings, setCaptionSettings] = useState({
+    enabled: false,
+    myLanguage: 'pt-BR',
+    clientLanguage: 'en-US'
+  });
 
   // Fetch Branding (Client Mode)
   useEffect(() => {
@@ -957,7 +963,10 @@ export const VideoPanelProvider = ({
     fetchLiveKitToken,
     backgroundConfig,
     setBackgroundConfig,
-    branding
+    branding,
+    // Caption Settings for Real-Time Translation
+    captionSettings,
+    setCaptionSettings
   };
 
   return (

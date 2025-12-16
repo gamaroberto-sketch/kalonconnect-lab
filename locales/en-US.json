@@ -1660,5 +1660,26 @@
       "saved": "Settings saved!",
       "testGenerated": "Test generated: {message}"
     }
+  },
+  "captions": {
+    "title": "Captions with Translation",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "myLanguage": "My Language",
+    "clientLanguage": "Client Language",
+    "myLanguageHint": "Language you will speak during the consultation",
+    "clientLanguageHint": "Language to translate your words to",
+    "saveSettings": "Save Settings",
+    "browserNotSupported": "Browser not supported",
+    "browserNotSupportedMessage": "Captions only work on Chrome or Edge.",
+    "freeVersion": "Free Version:",
+    "freeVersionFeatures": [
+      "Web Speech API (browser) for transcription",
+      "MyMemory Translation (1000 words/day)",
+      "Quality: 85-90%",
+      "Latency: 1-3 seconds"
+    ],
+    "disabledInfo": "Enable captions to configure languages and start using real-time translation.",
+    "translating": "Translating..."
   }
 }
