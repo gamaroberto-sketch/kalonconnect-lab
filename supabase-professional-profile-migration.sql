@@ -50,22 +50,22 @@ CREATE INDEX IF NOT EXISTS idx_glossary_category ON glossary(category);
 -- Enable Row Level Security for glossary
 ALTER TABLE glossary ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies for glossary
+-- RLS Policies for glossary (with type casting)
 CREATE POLICY "Users can view own glossary"
   ON glossary FOR SELECT
-  USING (auth.uid() = professional_id);
+  USING (auth.uid()::text = professional_id);
 
 CREATE POLICY "Users can insert own glossary"
   ON glossary FOR INSERT
-  WITH CHECK (auth.uid() = professional_id);
+  WITH CHECK (auth.uid()::text = professional_id);
 
 CREATE POLICY "Users can update own glossary"
   ON glossary FOR UPDATE
-  USING (auth.uid() = professional_id);
+  USING (auth.uid()::text = professional_id);
 
 CREATE POLICY "Users can delete own glossary"
   ON glossary FOR DELETE
-  USING (auth.uid() = professional_id);
+  USING (auth.uid()::text = professional_id);
 
 -- Add comments for glossary table
 COMMENT ON TABLE glossary IS 'Custom glossary terms for improving caption translations';
