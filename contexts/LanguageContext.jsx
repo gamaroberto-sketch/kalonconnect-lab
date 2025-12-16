@@ -7,6 +7,7 @@ import ptBR from '../locales/pt-BR.json';
 import enUS from '../locales/en-US.json';
 import esES from '../locales/es-ES.json';
 import frFR from '../locales/fr-FR.json';
+import './.rebuild-trigger.js'; // Force rebuild
 
 // Force refresh v4 - Waiting Room translations fix
 // Fallback translations for Waiting Room (to bypass cache issues)
