@@ -2,7 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useVideoPanel } from '../VideoPanelContext';
 
 export default function CaptionOverlay() {
-    const { captionSettings } = useVideoPanel();
+    const {
+        captionSettings,
+        addCaptionLine,
+        updateLastCaptionLine
+    } = useVideoPanel();
     const {
         enabled = false,
         myLanguage = 'pt-BR',
@@ -69,12 +73,6 @@ export default function CaptionOverlay() {
             // Translate only final results
             if (isFinal && transcript.trim()) {
                 // Add to transcript history
-
-                // Add line with original text
-                addCaptionLine({
-                    original: transcript,
-                    translated: null
-                });
 
                 try {
                     const translated = await translateText(transcript, myLanguage, clientLanguage);
