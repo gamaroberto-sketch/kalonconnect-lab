@@ -23,6 +23,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
     console.log('✅ [LoginPage] Componente montado completamente');
@@ -297,9 +298,24 @@ export default function LoginPage() {
             }}
           >
             <User className="w-5 h-5" />
-            {loading ? t('common.loading') + "..." : t('login.loginButton')}
-            <ChevronRight className="w-5 h-5" />
+            {loading ? t('common.loading') : t('login.loginButton')}
+            <ChevronRight className="w-4 h-4 ml-2" />
           </button>
+
+          {/* Signup Link */}
+          <div className="mt-4 text-center">
+            <p style={{ color: `${palette.textPrimary}cc` }} className="text-sm">
+              Não tem uma conta?{' '}
+              <button
+                onClick={() => router.push('/register')}
+                className="font-semibold hover:underline transition-all"
+                style={{ color: palette.primary }}
+                type="button"
+              >
+                Criar Conta
+              </button>
+            </p>
+          </div>
         </form>
 
       </div>
