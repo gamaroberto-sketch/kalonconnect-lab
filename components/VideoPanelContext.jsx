@@ -69,7 +69,10 @@ export const VideoPanelProvider = ({
   const [captionSettings, setCaptionSettings] = useState({
     enabled: false,
     myLanguage: 'pt-BR',
-    clientLanguage: 'en-US'
+    clientLanguage: 'en-US',
+    position: 'bottom', // 'top', 'middle', 'bottom'
+    textSize: 'medium', // 'small', 'medium', 'large'
+    transparency: 0.9 // 0.5 to 1.0
   });
 
   // Fetch Branding (Client Mode)

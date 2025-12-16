@@ -9,6 +9,9 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
         enabled: initialSettings.enabled || false,
         myLanguage: initialSettings.myLanguage || 'pt-BR',
         clientLanguage: initialSettings.clientLanguage || 'en-US',
+        position: initialSettings.position || 'bottom',
+        textSize: initialSettings.textSize || 'medium',
+        transparency: initialSettings.transparency || 0.9,
     });
 
     const languages = [
@@ -166,6 +169,82 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         </select>
                         <p className="text-xs mt-1" style={{ color: primary }}>
                             Idioma para traduzir suas palavras
+                        </p>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px w-full" style={{ backgroundColor: border }} />
+
+                    {/* Position */}
+                    <div>
+                        <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
+                            📍 Posição das Legendas
+                        </label>
+                        <select
+                            value={settings.position}
+                            onChange={(e) => setSettings({ ...settings, position: e.target.value })}
+                            className="w-full px-4 py-2 rounded-lg focus:ring-2 outline-none"
+                            style={{
+                                border: `1px solid ${border}`,
+                                backgroundColor: background,
+                                color: textPrimary
+                            }}
+                        >
+                            <option value="top">Topo</option>
+                            <option value="middle">Meio</option>
+                            <option value="bottom">Fundo</option>
+                        </select>
+                        <p className="text-xs mt-1" style={{ color: primary }}>
+                            Onde as legendas aparecerão na tela
+                        </p>
+                    </div>
+
+                    {/* Text Size */}
+                    <div>
+                        <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
+                            📏 Tamanho do Texto
+                        </label>
+                        <select
+                            value={settings.textSize}
+                            onChange={(e) => setSettings({ ...settings, textSize: e.target.value })}
+                            className="w-full px-4 py-2 rounded-lg focus:ring-2 outline-none"
+                            style={{
+                                border: `1px solid ${border}`,
+                                backgroundColor: background,
+                                color: textPrimary
+                            }}
+                        >
+                            <option value="small">Pequeno</option>
+                            <option value="medium">Médio</option>
+                            <option value="large">Grande</option>
+                        </select>
+                        <p className="text-xs mt-1" style={{ color: primary }}>
+                            Tamanho da fonte das legendas
+                        </p>
+                    </div>
+
+                    {/* Transparency */}
+                    <div>
+                        <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
+                            🎨 Transparência do Fundo
+                        </label>
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="range"
+                                min="0.5"
+                                max="1"
+                                step="0.1"
+                                value={settings.transparency}
+                                onChange={(e) => setSettings({ ...settings, transparency: parseFloat(e.target.value) })}
+                                className="flex-1"
+                                style={{ accentColor: primary }}
+                            />
+                            <span className="text-sm font-medium" style={{ color: textPrimary }}>
+                                {Math.round(settings.transparency * 100)}%
+                            </span>
+                        </div>
+                        <p className="text-xs mt-1" style={{ color: primary }}>
+                            Opacidade do fundo das legendas
                         </p>
                     </div>
 
