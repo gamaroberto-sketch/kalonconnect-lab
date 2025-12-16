@@ -29,7 +29,7 @@ const ClientLobby = ({ professional, themeColors = {}, onJoin, isMobile = false 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
 
-    const primaryColor = themeColors.primary || '#0ea5e9'; // Default sky-500
+    const primaryColor = themeColors.primary || '#0f4c4c'; // Theme primary color
 
     return (
         // 🟢 v5.40 Refactor: Mobile First Layout (Full Height, Sticky Footer)
