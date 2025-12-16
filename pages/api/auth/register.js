@@ -1,65 +1,76 @@
-import fs from "fs";
-import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { createClient } from '@supabase/supabase-js';
 
-const USERS_FILE = path.join(process.cwd(), "data", "test-users.json");
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-const loadUsers = () => {
-  if (!fs.existsSync(USERS_FILE)) return [];
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método não permitido' });
+  }
+
   try {
-    const raw = fs.readFileSync(USERS_FILE, "utf8");
-    const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : (data.users || []);
+    // Create Supabase client
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    const { name, email, password, referredBy } = req.body;
+
+    // Validate required fields
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+    }
+
+    // Create user in Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    if (authError) {
+      console.error('Auth signup error:', authError);
+      if (authError.message.includes('already registered')) {
+        return res.status(409).json({ error: 'Email já cadastrado.' });
+      }
+      return res.status(400).json({ error: authError.message });
+    }
+
+    if (!authData.user) {
+      return res.status(500).json({ error: 'Falha ao criar usuário' });
+    }
+
+    // Calculate trial end date (7 days)
+    const trialEndsAt = new Date();
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
+    // Insert user profile data
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .insert({
+        id: authData.user.id,
+        email,
+        name,
+        type: 'professional',
+        version: 'NORMAL', // 7-day trial
+        referred_by: referredBy || null,
+        trial_ends_at: trialEndsAt.toISOString(),
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (userError) {
+      console.error('User profile creation error:', userError);
+      return res.status(500).json({ error: 'Falha ao criar perfil do usuário.' });
+    }
+
+    console.log(`✅ Novo usuário registrado: ${name} (${email}) - Trial até ${trialEndsAt.toISOString()}`);
+
+    return res.status(201).json({
+      ok: true,
+      message: 'Cadastro realizado com sucesso! Aproveite seus 7 dias de acesso Standard grátis.',
+      user: userData
+    });
   } catch (error) {
-    return [];
+    console.error('Register error:', error);
+    return res.status(500).json({ error: 'Erro interno do servidor' });
   }
-};
-
-const saveUsers = (users) => {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-};
-
-export default function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método não permitido" });
-  }
-
-  const { name, email, password, referredBy } = req.body;
-
-  if (!email || !password || !name) {
-    return res.status(400).json({ error: "Todos os campos são obrigatórios." });
-  }
-
-  const users = loadUsers();
-
-  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-    return res.status(409).json({ error: "Email já cadastrado." });
-  }
-
-  // 7 Days Trial Logic
-  const trialDays = 7;
-  const trialEndsAt = new Date();
-  trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
-
-  const newUser = {
-    id: uuidv4(),
-    name,
-    email,
-    password, // Storing plaintext as per existing pattern for MVP
-    type: "professional",
-    version: "normal", // Start with NORMAL trial
-    referredBy: referredBy || null,
-    trialEndsAt: trialEndsAt.toISOString(),
-    createdAt: new Date().toISOString()
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-
-  console.log(`✅ Novo usuário registrado: ${name} (${email}) - Trial até ${trialEndsAt.toISOString()}`);
-
-  return res.status(201).json({
-    ok: true,
-    message: "Cadastro realizado com sucesso! Aproveite seus 7 dias de acesso Standard grátis."
-  });
 }
