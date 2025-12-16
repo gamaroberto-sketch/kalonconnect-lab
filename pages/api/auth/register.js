@@ -50,8 +50,6 @@ export default async function handler(req, res) {
         name,
         type: 'professional',
         version: 'NORMAL', // 7-day trial
-        referred_by: referredBy || null,
-        trial_ends_at: trialEndsAt.toISOString(),
         created_at: new Date().toISOString()
       })
       .select()
