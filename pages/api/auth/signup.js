@@ -63,9 +63,7 @@ export default async function handler(req, res) {
 
         if (userError) {
             console.error('User profile creation error:', userError);
-            // Try to clean up auth user if profile creation fails
-            await supabase.auth.admin.deleteUser(authData.user.id);
-            return res.status(500).json({ error: 'Failed to create user profile' });
+            return res.status(500).json({ error: 'Failed to create user profile. Please try again.' });
         }
 
         return res.status(201).json({

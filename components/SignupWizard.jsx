@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from './AuthContext';
 import { useTheme } from './ThemeProvider';
 import { ChevronLeft, ChevronRight, Upload, Check } from 'lucide-react';
 
@@ -29,7 +28,6 @@ const BRAZILIAN_STATES = [
 
 export default function SignupWizard({ onClose }) {
     const router = useRouter();
-    const { signup } = useAuth();
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
 
