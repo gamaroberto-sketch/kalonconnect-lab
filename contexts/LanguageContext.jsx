@@ -1,49 +1,36 @@
+```javascript
 "use client";
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 
-// Dynamic translation loading to bypass build cache
-const loadTranslations = async () => {
-    try {
-        const [ptBR, enUS, esES, frFR] = await Promise.all([
-            fetch('/locales/pt-BR.json').then(r => r.json()),
-            fetch('/locales/en-US.json').then(r => r.json()),
-            fetch('/locales/es-ES.json').then(r => r.json()),
-            fetch('/locales/fr-FR.json').then(r => r.json())
-        ]);
+// Import translation files - static imports required by Next.js
+import ptBR from '../locales/pt-BR.json';
+import enUS from '../locales/en-US.json';
+import esES from '../locales/es-ES.json';
+import frFR from '../locales/fr-FR.json';
 
-        return {
-            'pt-BR': ptBR,
-            'en-US': enUS,
-            'es-ES': esES,
-            'fr-FR': frFR
-        };
-    } catch (error) {
-        console.error('Error loading translations:', error);
-        return null;
-    }
+// Translations object
+const translations = {
+    'pt-BR': ptBR,
+    'en-US': enUS,
+    'es-ES': esES,
+    'fr-FR': frFR
 };
+
+// Log to verify documents.common is loaded
+console.log('🔍 Translation Check:');
+console.log('documents.common exists:', !!ptBR?.documents?.common);
+console.log('documents.common.usingProfile:', ptBR?.documents?.common?.usingProfile);
+console.log('documents.common.editProfileHint:', ptBR?.documents?.common?.editProfileHint);
 
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('pt-BR');
     const [mounted, setMounted] = useState(false);
-    const [translations, setTranslations] = useState({});
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setMounted(true);
-
-        // Load translations dynamically
-        loadTranslations().then(loadedTranslations => {
-            if (loadedTranslations) {
-                setTranslations(loadedTranslations);
-                console.log('✅ Translations loaded dynamically');
-                console.log('Has documents.common:', !!loadedTranslations['pt-BR']?.documents?.common);
-            }
-            setLoading(false);
-        });
 
         // Load language from localStorage
         const loadLanguage = () => {
@@ -51,8 +38,7 @@ export const LanguageProvider = ({ children }) => {
                 const saved = localStorage.getItem('kalonAdvancedSettings');
                 if (saved) {
                     const settings = JSON.parse(saved);
-                    if (settings.language && ['pt-BR', 'en-US', 'es-ES', 'fr-FR'].includes(settings.language)) {
-                        console.log('Loaded language:', settings.language);
+                    if (settings.language && translations[settings.language]) {
                         setLanguage(settings.language);
                     }
                 }
@@ -105,27 +91,27 @@ export const LanguageProvider = ({ children }) => {
             if (value && typeof value === 'object') {
                 value = value[k];
             } else {
-                console.warn(`Translation key not found: ${key}`);
+                console.warn(`Translation key not found: ${ key } `);
                 return key;
             }
         }
 
         if (typeof value !== 'string') {
-            console.warn(`Translation value is not a string: ${key}`);
+            console.warn(`Translation value is not a string: ${ key } `);
             return key;
         }
 
         // Interpolate parameters
         let result = value;
         Object.keys(params).forEach(param => {
-            result = result.replace(new RegExp(`{${param}}`, 'g'), params[param]);
+            result = result.replace(new RegExp(`{${ param } } `, 'g'), params[param]);
         });
 
         return result;
     }, [language]);
 
-    // Don't render until mounted and translations loaded
-    if (!mounted || loading || !translations['pt-BR']) {
+    // Don't render until mounted to avoid hydration mismatch
+    if (!mounted) {
         return null;
     }
 
