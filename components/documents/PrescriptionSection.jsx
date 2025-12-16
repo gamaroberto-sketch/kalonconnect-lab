@@ -177,9 +177,9 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
           <div className="text-right text-xs text-gray-500">
             <div className="flex items-center gap-2 justify-end">
               {profile.photo && <img src={profile.photo} className="w-8 h-8 rounded-full object-cover" alt="Perfil" />}
-              <span>{t('documents.common.usingProfile')}: <strong>{profile.name}</strong></span>
+              <span>Usando perfil: <strong>{profile.name}</strong></span>
             </div>
-            <div className="mt-1">{t('documents.common.editProfileHint')}</div>
+            <div className="mt-1">Edite seu perfil em Configurações para atualizar seus dados profissionais</div>
           </div>
         )}
       </div>
