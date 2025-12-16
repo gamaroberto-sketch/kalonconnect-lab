@@ -566,7 +566,7 @@
     "saving": "Salvando...",
     "saveButton": "Salvar Configurações",
     "saveButtonBottom": "Salvar alterações",
-    "preview": "Visualizar Sala",
+    "previewRoom": "Visualizar Sala",
     "success": "Configurações salvas com sucesso!",
     "fileDisclaimer": "Arquivos suportados: vídeo (MP4, WebM), imagem (JPG, PNG), áudio (MP3, WAV). Tamanho máximo: 50MB.",
     "roomVisual": "Visual da Sala",
@@ -580,7 +580,7 @@
     "farewellImage": "Imagem de Despedida",
     "imageFile": "Arquivo de Imagem",
     "welcomeMessage": "Mensagem de Boas-vindas",
-    "preview": "Preview em Tempo Real",
+    "previewRealTime": "Preview em Tempo Real",
     "previewTabs": {
       "entrance": "Entrada",
       "waitingRoom": "Sala Espera",
