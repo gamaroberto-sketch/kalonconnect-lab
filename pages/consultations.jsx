@@ -842,11 +842,12 @@ const Consultations = () => {
                           className="relative w-full"
                           style={{ height: '45vw', maxHeight: '600px' }}
                         >
-                          <div className="h-full w-full rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl bg-slate-950/90 overflow-hidden">
+                          <div className="h-full w-full rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl bg-slate-950/90 overflow-hidden relative">
                             <VideoSurface
                               key={roomName}
                               roomId={roomName}
                             />
+                            <CaptionOverlay />
                           </div>
                           <div className="text-xs text-gray-400 font-mono mt-2 text-center opacity-70">
                             Room ID: {roomName}
