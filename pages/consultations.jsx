@@ -16,6 +16,7 @@ import Sidebar from '../components/Sidebar';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { VideoPanelProvider } from '../components/VideoPanelContext';
 import VideoSurface from '../components/VideoSurface';
+import CaptionOverlay from '../components/VideoCall/CaptionOverlay';
 import VideoControls from '../components/VideoControls';
 import ChatPanel from '../components/ChatPanel';
 import NotesPanel from '../components/NotesPanel';
