@@ -143,7 +143,7 @@ const ConsultationInviteSettings = () => {
       {/* Canais de Envio */}
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center space-x-2">
-          <MessageSquare className="w-5 h-5" />
+          <MessageSquare className="w-5 h-5" style={{ color: themeColors.primary }} />
           <span>{t('invites.channels.title')}</span>
         </h3>
         <div className="flex flex-wrap gap-4">
@@ -194,7 +194,7 @@ const ConsultationInviteSettings = () => {
       {/* Opções de Envio */}
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center space-x-2">
-          <Clock className="w-5 h-5" />
+          <Clock className="w-5 h-5" style={{ color: themeColors.primary }} />
           <span>{t('invites.timing.title')}</span>
         </h3>
 
@@ -268,7 +268,7 @@ const ConsultationInviteSettings = () => {
       {/* Mensagem Customizada */}
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center space-x-2">
-          <MessageSquare className="w-5 h-5" />
+          <MessageSquare className="w-5 h-5" style={{ color: themeColors.primary }} />
           <span>{t('invites.message.title')}</span>
         </h3>
         <textarea
@@ -320,7 +320,7 @@ const ConsultationInviteSettings = () => {
       {sendHistory.length > 0 && (
         <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
           <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center space-x-2">
-            <Clock className="w-5 h-5" />
+            <Clock className="w-5 h-5" style={{ color: themeColors.primary }} />
             <span>{t('invites.history.title')}</span>
           </h3>
           <div className="space-y-2 max-h-48 overflow-y-auto">
