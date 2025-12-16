@@ -27,10 +27,19 @@ export default async function handler(req, res) {
 
     if (authError) {
       console.error('Auth signup error:', authError);
-      if (authError.message.includes('already registered')) {
+
+      // Handle specific error cases
+      if (authError.message.includes('already registered') ||
+        authError.message.includes('User already registered')) {
         return res.status(409).json({ error: 'Email já cadastrado.' });
       }
-      return res.status(400).json({ error: authError.message });
+
+      if (authError.message.includes('invalid') ||
+        authError.message.includes('Invalid')) {
+        return res.status(400).json({ error: 'Email ou senha inválidos.' });
+      }
+
+      return res.status(400).json({ error: authError.message || 'Erro ao criar conta.' });
     }
 
     if (!authData.user) {
