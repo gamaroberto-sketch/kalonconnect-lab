@@ -23,13 +23,15 @@ import {
     Filter,
     ChevronLeft,
     ChevronRight,
-    Download
+    Download,
+    Eye
 } from 'lucide-react';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import { useAuth } from '../../components/AuthContext';
 import { useTheme } from '../../components/ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
 import { loadAdminSession, clearAdminSession } from '../../utils/adminSession';
+import UserDetailsModal from '../../components/UserDetailsModal';
 
 const AdminUsersPage = () => {
     const router = useRouter();
@@ -59,6 +61,7 @@ const AdminUsersPage = () => {
     const [saving, setSaving] = useState(false);
     const [newCredentials, setNewCredentials] = useState(null);
     const [copiedField, setCopiedField] = useState('');
+    const [selectedUserDetails, setSelectedUserDetails] = useState(null);
 
     // Search, Filter and Pagination State
     const [searchTerm, setSearchTerm] = useState('');
@@ -701,6 +704,13 @@ const AdminUsersPage = () => {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center justify-end gap-2">
                                                         <button
+                                                            onClick={() => setSelectedUserDetails(userData)}
+                                                            className="p-2 rounded-lg text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors"
+                                                            title="Ver Detalhes"
+                                                        >
+                                                            <Eye className="w-4 h-4" />
+                                                        </button>
+                                                        <button
                                                             onClick={() => initiateResendCredentials(userData)}
                                                             className="p-2 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
                                                             title="Reenviar Credenciais (Resetar Senha)"
@@ -1189,6 +1199,17 @@ const AdminUsersPage = () => {
                             </div>
                         </motion.div>
                     </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* User Details Modal */}
+            <AnimatePresence>
+                {selectedUserDetails && (
+                    <UserDetailsModal
+                        user={selectedUserDetails}
+                        onClose={() => setSelectedUserDetails(null)}
+                        themeColors={themeColors}
+                    />
                 )}
             </AnimatePresence>
         </ProtectedRoute>
