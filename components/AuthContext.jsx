@@ -1,13 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { auth } from '../lib/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from 'firebase/auth';
 import { supabase } from '../lib/supabase';
 import { trackActivity } from '../lib/userActivity';
 
@@ -29,87 +22,102 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('🔵 AuthContext: useEffect iniciado');
+    console.log('🔵 AuthContext: useEffect iniciado (Supabase)');
     if (typeof window === "undefined") {
       console.log('🔵 AuthContext: window undefined, setando loading=false');
       setLoading(false);
       return;
     }
 
-    console.log('🔵 AuthContext: Registrando onAuthStateChanged');
-    // Listen to Firebase auth state changes
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('🔵 AuthContext: onAuthStateChanged disparado, user:', firebaseUser?.email || 'null');
-      if (firebaseUser) {
+    console.log('🔵 AuthContext: Registrando onAuthStateChange (Supabase)');
+
+    // Listen to Supabase auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('🔵 AuthContext: onAuthStateChange disparado, event:', event, 'user:', session?.user?.email || 'null');
+
+      if (session?.user) {
         try {
           console.log('🔵 AuthContext: Chamando /api/auth/sync...');
-          // Call API to sync user with Supabase (bypassing RLS)
+          // Call API to sync user with database
           const response = await fetch('/api/auth/sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              name: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL
+              userId: session.user.id,
+              email: session.user.email,
+              name: session.user.user_metadata?.name || session.user.email?.split('@')[0]
             })
           });
 
           const data = await response.json();
-          console.log('🔵 AuthContext: Resposta do sync:', response.ok, data);
+          console.log('🔵 AuthContext: Resposta do sync:', data.success, data.user);
 
-          if (response.ok && data.user) {
+          if (data.success && data.user) {
             setUser(normalizeUser(data.user));
           } else {
-            console.error('Sync failed:', data.error);
-            // Fallback: use Firebase data temporarily
+            // Fallback: use Supabase user data
             setUser(normalizeUser({
-              id: firebaseUser.uid,
-              email: firebaseUser.email,
-              name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+              id: session.user.id,
+              email: session.user.email,
+              name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
               version: DEFAULT_VERSION,
               type: 'professional'
             }));
           }
         } catch (error) {
-          console.error('Error syncing user:', error);
+          console.error('🔴 AuthContext: Erro no sync:', error);
+          // Fallback: use Supabase user data
           setUser(normalizeUser({
-            id: firebaseUser.uid,
-            email: firebaseUser.email,
-            name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
             version: DEFAULT_VERSION,
             type: 'professional'
           }));
         }
       } else {
-        console.log('🔵 AuthContext: Sem usuário Firebase');
+        console.log('🔵 AuthContext: Sem usuário Supabase');
         setUser(null);
       }
       console.log('🔵 AuthContext: Setando loading=false');
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        console.log('🔵 AuthContext: Sessão existente encontrada');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const loginUser = async (email, password) => {
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
 
       // Track login activity
-      if (result.user) {
+      if (data.user) {
         try {
           await trackActivity({
-            userId: result.user.uid,
+            userId: data.user.id,
             activityType: 'LOGIN',
-            metadata: { email: result.user.email },
+            metadata: { email: data.user.email },
           });
         } catch (err) {
           console.error('Failed to track login activity:', err);
         }
       }
 
-      return { success: true, user: result.user };
+      return { success: true, user: data.user };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: error.message };
@@ -118,22 +126,42 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (email, password, userData = {}) => {
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: userData.name || email.split('@')[0]
+          }
+        }
+      });
 
-      // Create user in Supabase
-      const newUser = {
-        id: result.user.uid,
-        email: result.user.email,
-        ...userData,
-        version: userData.version || DEFAULT_VERSION,
-        type: userData.type || 'professional'
-      };
+      if (error) throw error;
 
-      await supabase
-        .from('users')
-        .insert([newUser]);
+      // Create user profile in database
+      if (data.user) {
+        try {
+          const { error: profileError } = await supabase
+            .from('users')
+            .upsert({
+              id: data.user.id,
+              email,
+              name: userData.name || email.split('@')[0],
+              type: userData.type || 'professional',
+              version: userData.version || 'NORMAL'
+            }, {
+              onConflict: 'id'
+            });
 
-      return { success: true, user: result.user };
+          if (profileError) {
+            console.error('Profile creation error:', profileError);
+          }
+        } catch (err) {
+          console.error('Failed to create user profile:', err);
+        }
+      }
+
+      return { success: true, user: data.user };
     } catch (error) {
       console.error('Register error:', error);
       return { success: false, error: error.message };
@@ -142,95 +170,45 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Track logout before signing out
-      if (user?.id) {
+      // Track logout activity before signing out
+      if (user) {
         try {
           await trackActivity({
             userId: user.id,
             activityType: 'LOGOUT',
+            metadata: { email: user.email },
           });
         } catch (err) {
           console.error('Failed to track logout activity:', err);
         }
       }
 
-      await signOut(auth);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
       setUser(null);
-      // Clear any localStorage data
-      localStorage.removeItem("user");
-      localStorage.removeItem("kalon_user");
-      localStorage.removeItem("token");
+      return { success: true };
     } catch (error) {
       console.error('Logout error:', error);
+      return { success: false, error: error.message };
     }
   };
 
-  const updateProfile = async (updates) => {
-    if (!user) return;
-
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', user.id);
-
-      if (!error) {
-        const updatedUser = normalizeUser({ ...user, ...updates });
-        setUser(updatedUser);
-      }
-    } catch (error) {
-      console.error('Update profile error:', error);
-    }
+  const value = {
+    user,
+    loading,
+    loginUser,
+    registerUser,
+    logout,
   };
 
-  const refreshUser = async () => {
-    if (!auth.currentUser) return;
-
-    try {
-      // Force reload user data from Supabase
-      const response = await fetch('/api/auth/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          uid: auth.currentUser.uid,
-          email: auth.currentUser.email,
-          name: auth.currentUser.displayName,
-          photoURL: auth.currentUser.photoURL
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.user) {
-        setUser(normalizeUser(data.user));
-      }
-    } catch (error) {
-      console.error('Error refreshing user:', error);
-    }
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        loginUser,
-        registerUser,
-        logout,
-        updateProfile,
-        refreshUser,
-        userType: user?.type || "professional"
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth deve ser usado dentro de AuthProvider");
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
