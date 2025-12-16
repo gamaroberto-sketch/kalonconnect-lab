@@ -36,38 +36,42 @@ const SubscriptionPanel = () => {
 
     const isPro = user?.version === 'PRO';
     const isNormal = user?.version === 'NORMAL';
-    const isPremium = isPro; // Alias for backward compatibility if needed, or purely for UI display logic that grouped them.
+    const isPremium = user?.version === 'PREMIUM';
 
-    console.log('🔵 SubscriptionPanel - user.version:', user?.version, 'isPro:', isPro, 'isNormal:', isNormal);
+    console.log('🔵 SubscriptionPanel - user.version:', user?.version, 'isPro:', isPro, 'isNormal:', isNormal, 'isPremium:', isPremium);
 
     // Multi-currency Pricing Configuration
     const PRICING_CONFIG = {
         BRL: {
             symbol: 'R$',
             plans: {
-                normal: { price: '99', priceId: 'price_1Sax43RwUd9zUTs47aQAqyRK' },
-                pro: { price: '199', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' }
+                normal: { price: '49', priceId: 'price_1Sax43RwUd9zUTs47aQAqyRK' },
+                pro: { price: '99', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' },
+                premium: { price: '149', priceId: 'price_BRL_Premium_Placeholder_REPLACE_ME' }
             }
         },
         USD: {
             symbol: '$',
             plans: {
-                normal: { price: '19', priceId: 'price_USD_Normal_Placeholder_REPLACE_ME' },
-                pro: { price: '39', priceId: 'price_USD_Pro_Placeholder_REPLACE_ME' }
+                normal: { price: '9', priceId: 'price_USD_Normal_Placeholder_REPLACE_ME' },
+                pro: { price: '19', priceId: 'price_USD_Pro_Placeholder_REPLACE_ME' },
+                premium: { price: '29', priceId: 'price_USD_Premium_Placeholder_REPLACE_ME' }
             }
         },
         EUR: {
             symbol: '€',
             plans: {
-                normal: { price: '19', priceId: 'price_EUR_Normal_Placeholder_REPLACE_ME' },
-                pro: { price: '39', priceId: 'price_EUR_Pro_Placeholder_REPLACE_ME' }
+                normal: { price: '9', priceId: 'price_EUR_Normal_Placeholder_REPLACE_ME' },
+                pro: { price: '19', priceId: 'price_EUR_Pro_Placeholder_REPLACE_ME' },
+                premium: { price: '29', priceId: 'price_EUR_Premium_Placeholder_REPLACE_ME' }
             }
         },
         GBP: {
             symbol: '£',
             plans: {
-                normal: { price: '15', priceId: 'price_GBP_Normal_Placeholder_REPLACE_ME' },
-                pro: { price: '35', priceId: 'price_GBP_Pro_Placeholder_REPLACE_ME' }
+                normal: { price: '8', priceId: 'price_GBP_Normal_Placeholder_REPLACE_ME' },
+                pro: { price: '18', priceId: 'price_GBP_Pro_Placeholder_REPLACE_ME' },
+                premium: { price: '28', priceId: 'price_GBP_Premium_Placeholder_REPLACE_ME' }
             }
         }
     };
@@ -122,7 +126,7 @@ const SubscriptionPanel = () => {
                 t('subscription.plans.normal.features.1'),
                 t('subscription.plans.normal.features.2'),
             ],
-            current: isNormal, // Free users don't have Normal plan
+            current: isNormal,
         },
         {
             name: t('subscription.plans.pro.name'),
@@ -135,8 +139,23 @@ const SubscriptionPanel = () => {
                 t('subscription.plans.pro.features.2'),
                 t('subscription.plans.pro.features.3'),
             ],
-            current: isPro, // Premium users have Pro plan
+            current: isPro,
             recommended: true,
+        },
+        {
+            name: 'Premium',
+            price: `${currentConfig.symbol} ${currentConfig.plans.premium.price}`,
+            period: '/mês',
+            priceId: currentConfig.plans.premium.priceId,
+            features: [
+                'Tudo do Pro +',
+                '🎯 Sistema de Créditos (100/mês)',
+                'IA para transcrição automática',
+                'API de integração',
+                'White-label personalizado',
+            ],
+            current: isPremium,
+            premium: true,
         },
     ];
 
@@ -155,7 +174,7 @@ const SubscriptionPanel = () => {
                 )}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
                 {plans.map((plan) => (
                     <div
                         key={plan.name}
