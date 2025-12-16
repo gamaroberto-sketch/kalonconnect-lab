@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '../ThemeProvider';
+import GlossaryManager from './GlossaryManager';
 
 export default function CaptionSettings({ onSave, initialSettings = {} }) {
     const { getThemeColors } = useTheme();
@@ -30,6 +31,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
     };
 
     const [showPreview, setShowPreview] = useState(false);
+    const [showGlossary, setShowGlossary] = useState(false);
 
     // Check browser support
     const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -289,6 +291,25 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         </ul>
                     </div>
 
+                    {/* Glossary Button */}
+                    <button
+                        onClick={() => setShowGlossary(true)}
+                        className="w-full py-3 rounded-lg font-semibold transition-colors border-2"
+                        style={{
+                            borderColor: primary,
+                            color: primary,
+                            backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = `${primary}10`;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'transparent';
+                        }}
+                    >
+                        🔤 Gerenciar Glossário
+                    </button>
+
                     {/* Test Button */}
                     <button
                         onClick={() => setShowPreview(!showPreview)}
@@ -365,8 +386,8 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                 {/* Caption Preview */}
                                 <div
                                     className={`absolute ${settings.position === 'top' ? 'top-20' :
-                                            settings.position === 'middle' ? 'top-1/2 -translate-y-1/2' :
-                                                'bottom-20'
+                                        settings.position === 'middle' ? 'top-1/2 -translate-y-1/2' :
+                                            'bottom-20'
                                         } left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl`}
                                 >
                                     <div
@@ -379,8 +400,8 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                                 🇧🇷 PT
                                             </span>
                                             <p className={`text-white ${settings.textSize === 'small' ? 'text-base' :
-                                                    settings.textSize === 'large' ? 'text-2xl' :
-                                                        'text-lg'
+                                                settings.textSize === 'large' ? 'text-2xl' :
+                                                    'text-lg'
                                                 } flex-1 leading-tight`}>
                                                 Olá! Esta é uma demonstração das legendas.
                                             </p>
@@ -395,8 +416,8 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                                 🇺🇸 EN
                                             </span>
                                             <p className={`text-white/90 ${settings.textSize === 'small' ? 'text-sm' :
-                                                    settings.textSize === 'large' ? 'text-xl' :
-                                                        'text-base'
+                                                settings.textSize === 'large' ? 'text-xl' :
+                                                    'text-base'
                                                 } flex-1 leading-tight`}>
                                                 Hello! This is a demonstration of the captions.
                                             </p>
@@ -412,6 +433,11 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Glossary Manager Modal */}
+            {showGlossary && (
+                <GlossaryManager onClose={() => setShowGlossary(false)} />
             )}
         </div>
     );
