@@ -9,6 +9,8 @@ import esES from '../locales/es-ES.json';
 import frFR from '../locales/fr-FR.json';
 import './.rebuild-trigger.js'; // Force rebuild
 
+// Force rebuild: 2025-12-16T15:36:00
+
 // Force refresh v4 - Waiting Room translations fix
 // Fallback translations for Waiting Room (to bypass cache issues)
 const waitingRoomFallback = {
