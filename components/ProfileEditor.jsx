@@ -29,6 +29,8 @@ const EMPTY_PROFILE = {
     photo: "",
     specialty: "",
     name: "",
+    phone: "",
+    bio: "",
     signaturePad: "",
     signatureText: "",
     services: [],
@@ -36,10 +38,17 @@ const EMPTY_PROFILE = {
         instagram: [],
         whatsapp: [],
         site: [],
+        linkedin: [],
         tiktok: [],
         youtube: [],
         facebook: [],
         registro: ""
+    },
+    address: {
+        street: "",
+        city: "",
+        state: "",
+        zipCode: ""
     },
     city: "",
     pixKeys: [],
@@ -679,11 +688,76 @@ const ProfileEditor = () => {
                         )}
                     </section>
 
+                    {/* Contact Info Section */}
+                    <section className="space-y-6">
+                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Informações de Contato</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Telefone</label>
+                                <input
+                                    type="tel"
+                                    value={profile.phone || ""}
+                                    onChange={(e) => updateProfile("phone", e.target.value)}
+                                    placeholder="(11) 99999-9999"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Biografia Profissional</label>
+                            <textarea
+                                value={profile.bio || ""}
+                                onChange={(e) => updateProfile("bio", e.target.value)}
+                                placeholder="Conte um pouco sobre você e sua experiência profissional..."
+                                rows="4"
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                            />
+                        </div>
+                    </section>
+
+                    {/* Address Section */}
+                    <section className="space-y-6">
+                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Endereço</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2">
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Rua</label>
+                                <input
+                                    type="text"
+                                    value={profile.address?.street || ""}
+                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, street: e.target.value } }))}
+                                    placeholder="Rua, número, complemento"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Estado</label>
+                                <input
+                                    type="text"
+                                    value={profile.address?.state || ""}
+                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, state: e.target.value } }))}
+                                    placeholder="SP"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">CEP</label>
+                                <input
+                                    type="text"
+                                    value={profile.address?.zipCode || ""}
+                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, zipCode: e.target.value } }))}
+                                    placeholder="00000-000"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                        </div>
+                    </section>
+
                     {/* Social Section */}
                     <section className="space-y-6">
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{t('profile.social.title')}</h2>
                         <div className="grid grid-cols-1 gap-6">
                             {renderSocialInputs("instagram", <Instagram />, "Instagram")}
+                            {renderSocialInputs("linkedin", <Globe />, "LinkedIn")}
                             {renderSocialInputs("whatsapp", <MessageCircle />, "WhatsApp")}
                             {renderSocialInputs("site", <Globe />, "Site")}
                         </div>
