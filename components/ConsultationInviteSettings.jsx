@@ -128,7 +128,7 @@ const ConsultationInviteSettings = () => {
     <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <div className="flex items-center space-x-3 mb-6">
         <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primaryLight }}>
-          <Send className="w-8 h-8" style={{ color: themeColors.primary }} />
+          <Send className="w-8 h-8 text-white" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">

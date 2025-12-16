@@ -70,8 +70,7 @@ const CredentialsPanel = () => {
           style={{ backgroundColor: themeColors.primaryLight }}
         >
           <User
-            className="w-5 h-5"
-            style={{ color: themeColors.primary }}
+            className="w-5 h-5 text-white"
           />
         </div>
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
