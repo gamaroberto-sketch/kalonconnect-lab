@@ -920,6 +920,10 @@
         "replied": "Respondidos",
         "archived": "Arquivados"
       }
+    },
+    "common": {
+      "usingProfile": "Usando perfil",
+      "editProfileHint": "Edite seu perfil em Configurações para atualizar seus dados profissionais"
     }
   },
   "movements": {
@@ -1755,11 +1759,5 @@
     ],
     "disabledInfo": "Ative as legendas para configurar os idiomas e começar a usar tradução em tempo real.",
     "translating": "Traduzindo..."
-  },
-  "documents": {
-    "common": {
-      "usingProfile": "Usando perfil",
-      "editProfileHint": "Edite seu perfil em Configurações para atualizar seus dados profissionais"
-    }
   }
 }
