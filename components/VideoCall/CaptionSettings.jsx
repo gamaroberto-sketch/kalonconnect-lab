@@ -76,7 +76,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         <p className="text-xs font-medium mb-2" style={{ color: textPrimary }}>
                             As legendas com tradução funcionam apenas em:
                         </p>
-                        <ul className="text-xs ml-4 space-y-1" style={{ color: secondary }}>
+                        <ul className="text-xs ml-4 space-y-1" style={{ color: primary }}>
                             <li>✅ <strong>Chrome</strong> (Windows, Mac, Linux, Android)</li>
                             <li>✅ <strong>Edge</strong> (Windows, Mac, Linux)</li>
                             <li>❌ <strong>Safari</strong> (Mac, iPhone, iPad)</li>
@@ -106,7 +106,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         <p className="text-xs font-semibold mb-1" style={{ color: primary }}>
                             🚀 Em breve: Legendas para TODOS os dispositivos!
                         </p>
-                        <p className="text-xs" style={{ color: secondary }}>
+                        <p className="text-xs" style={{ color: primary }}>
                             Estamos trabalhando para trazer legendas com tradução para iPhone, iPad, Safari e todos os navegadores
                             com tecnologia premium de alta qualidade.
                         </p>
