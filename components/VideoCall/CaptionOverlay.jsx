@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useVideoPanel } from '../VideoPanelContext';
+import { useGlossary } from '../../hooks/useGlossary';
 
 export default function CaptionOverlay() {
     const {
@@ -79,7 +80,9 @@ export default function CaptionOverlay() {
                 });
 
                 try {
-                    const translated = await translateText(transcript, myLanguage, clientLanguage);
+                    // Apply glossary before translation
+                    const textWithGlossary = applyGlossary(transcript, myLanguage, clientLanguage);
+                    const translated = await translateText(textWithGlossary, myLanguage, clientLanguage);
 
                     // Update last line with translation
                     updateLastCaptionLine({ translated });
