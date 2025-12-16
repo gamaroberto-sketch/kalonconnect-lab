@@ -138,7 +138,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                 </option>
                             ))}
                         </select>
-                        <p className="text-xs mt-1" style={{ color: secondary }}>
+                        <p className="text-xs mt-1" style={{ color: primary }}>
                             Idioma que você vai falar durante a consulta
                         </p>
                     </div>
@@ -164,7 +164,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                 </option>
                             ))}
                         </select>
-                        <p className="text-xs mt-1" style={{ color: secondary }}>
+                        <p className="text-xs mt-1" style={{ color: primary }}>
                             Idioma para traduzir suas palavras
                         </p>
                     </div>
@@ -180,7 +180,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         <p className="text-sm mb-2" style={{ color: primary }}>
                             💡 <strong>Versão Gratuita (Beta):</strong>
                         </p>
-                        <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: secondary }}>
+                        <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: primary }}>
                             <li>Web Speech API (navegador) para transcrição</li>
                             <li>MyMemory Translation (1000 palavras/dia)</li>
                             <li>Qualidade: 85-90%</li>
@@ -200,7 +200,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         <p className="text-sm font-semibold mb-2" style={{ color: primary }}>
                             ⭐ Em breve: Versão Premium
                         </p>
-                        <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: secondary }}>
+                        <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: primary }}>
                             <li><strong>Funciona em TODOS os dispositivos</strong> (iPhone, iPad, Safari, etc.)</li>
                             <li>Qualidade superior: 95%+</li>
                             <li>Latência ultra-baixa: 500ms-1s</li>
@@ -236,7 +236,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                     <p className="text-sm" style={{ color: textPrimary }}>
                         Ative as legendas para configurar os idiomas e começar a usar tradução em tempo real.
                     </p>
-                    <p className="text-xs mt-2" style={{ color: secondary }}>
+                    <p className="text-xs mt-2" style={{ color: primary }}>
                         💡 <strong>Dica:</strong> Use Chrome ou Edge no computador para melhor experiência.
                     </p>
                 </div>
