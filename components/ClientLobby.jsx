@@ -149,12 +149,7 @@ const ClientLobby = ({ professional, themeColors = {}, onJoin, isMobile = false 
             <div className={`fixed bottom-0 left-0 right-0 z-50 p-4 border-t border-white/10 backdrop-blur-xl ${isMobile ? 'bg-black/80' : 'hidden'}`}>
                 <button
                     onClick={onJoin}
-                    className="w-full py-4 text-lg font-bold rounded-xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
-                    style={{
-                        backgroundColor: primaryColor,
-                        color: '#ffffff',
-                        boxShadow: `0 0 20px ${primaryColor}40`
-                    }}
+                    className="w-full py-4 text-lg font-bold rounded-xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/10"
                 >
                     <Play className="w-5 h-5 fill-current" />
                     Entrar na Sala
@@ -166,12 +161,7 @@ const ClientLobby = ({ professional, themeColors = {}, onJoin, isMobile = false 
                 <div className="absolute bottom-8 left-0 right-0 z-50 flex justify-center pointer-events-none">
                     <button
                         onClick={onJoin}
-                        className="pointer-events-auto px-12 py-4 text-xl font-bold rounded-full shadow-2xl hover:scale-105 transition-all flex items-center gap-3 backdrop-blur-md"
-                        style={{
-                            backgroundColor: primaryColor,
-                            color: '#ffffff',
-                            boxShadow: `0 0 40px ${primaryColor}60`
-                        }}
+                        className="pointer-events-auto px-12 py-4 text-xl font-bold rounded-full shadow-2xl hover:scale-105 transition-all flex items-center gap-3 backdrop-blur-md bg-white/5 border border-white/10 text-white hover:bg-white/10"
                     >
                         <Play className="w-6 h-6 fill-current" />
                         Entrar na Sala
