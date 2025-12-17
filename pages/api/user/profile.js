@@ -26,6 +26,8 @@ const normalizeProfile = (data = {}) => {
     address: data.address || {}, // Add address field
     signaturePad: String((data.signature_pad || data.signaturePad) ?? ""),
     signatureText: String((data.signature_text || data.signatureText) ?? ""),
+    prescription_template_url: String(data.prescription_template_url ?? ""), // Add template URL
+    prescription_template_size: String(data.prescription_template_size || "A4"), // Add template size
     services,
     // 🟢 v5.58 Fix: Prioritize 'social.slug' (User Edited) over 'raw_user_meta_data' (Auth System)
     // This prevents stale/empty Auth metadata from hiding the saved slug.
