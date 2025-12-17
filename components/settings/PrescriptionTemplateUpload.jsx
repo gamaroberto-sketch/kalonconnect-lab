@@ -64,11 +64,13 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
                 .getPublicUrl(filePath);
 
             // Update user profile
-            const response = await fetch('/api/user/profile', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': user.id
+                },
                 body: JSON.stringify({
-                    userId: user.id,
                     prescription_template_url: publicUrl,
                     prescription_template_size: size
                 })
@@ -93,11 +95,13 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
         if (!confirm('Remover template de receituário?')) return;
 
         try {
-            const response = await fetch('/api/user/profile', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': user.id
+                },
                 body: JSON.stringify({
-                    userId: user.id,
                     prescription_template_url: null,
                     prescription_template_size: 'A4'
                 })
