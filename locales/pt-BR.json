@@ -1730,13 +1730,20 @@
     "roomVisualDesc": "Personalize a aparência da sala de espera",
     "backgroundVideo": "Vídeo de Fundo",
     "backgroundVideoPlaceholder": "Link do vídeo (YouTube, Vimeo, etc)",
+    "staticImage": "Imagem Estática",
+    "slidesText": "Slides/Texto",
+    "backgroundCustomization": "Personalização de Fundo",
+    "backgroundImageUpload": "Upload de Imagem de Fundo",
     "audioFile": "Arquivo de Áudio",
     "audioFilePlaceholder": "Link do arquivo de áudio (MP3, OGG)",
+    "imageFile": "Arquivo de Imagem",
+    "welcomeMessage": "Mensagem de Boas-vindas",
+    "saveReminder": "Lembre-se de salvar suas alterações",
     "preview": "Pré-visualização",
     "previewTabs": {
       "entrance": "Entrada",
-      "waiting": "Aguardando",
-      "farewell": "Despedida"
+      "waitingRoom": "Aguardando",
+      "exit": "Despedida"
     },
     "errors": {
       "load": "Erro ao carregar configurações.",
