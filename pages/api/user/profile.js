@@ -21,6 +21,9 @@ const normalizeProfile = (data = {}) => {
     photo: String(data.photo_url || data.photo || ""),
     specialty: String(data.specialty ?? ""),
     name: String(data.name ?? ""),
+    phone: String(data.phone ?? ""), // Add phone field
+    bio: String(data.bio ?? ""), // Add bio field
+    address: data.address || {}, // Add address field
     signaturePad: String((data.signature_pad || data.signaturePad) ?? ""),
     signatureText: String((data.signature_text || data.signatureText) ?? ""),
     services,
