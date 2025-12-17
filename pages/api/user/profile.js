@@ -147,6 +147,7 @@ export default async function handler(req, res) {
         social: socialData,
         signature_pad: body.signaturePad,
         signature_text: body.signatureText,
+        address: body.address, // Add address field
         updated_at: new Date().toISOString()
       };
 
