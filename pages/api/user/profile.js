@@ -23,7 +23,6 @@ const normalizeProfile = (data = {}) => {
     name: String(data.name ?? ""),
     signaturePad: String((data.signature_pad || data.signaturePad) ?? ""),
     signatureText: String((data.signature_text || data.signatureText) ?? ""),
-    signatureText: String((data.signature_text || data.signatureText) ?? ""),
     services,
     // 🟢 v5.58 Fix: Prioritize 'social.slug' (User Edited) over 'raw_user_meta_data' (Auth System)
     // This prevents stale/empty Auth metadata from hiding the saved slug.
