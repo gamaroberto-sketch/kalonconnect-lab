@@ -177,23 +177,23 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
                         Faça upload da imagem do seu receituário ({size})
                     </p>
                     <input
+                        ref={(input) => { if (input) input.fileInputRef = input; }}
                         type="file"
                         id="template-upload"
                         accept="image/jpeg,image/png,image/jpg,application/pdf"
                         onChange={handleFileChange}
-                        className="hidden"
+                        style={{ display: 'none' }}
                         disabled={uploading}
                     />
-                    <label htmlFor="template-upload">
-                        <ModernButton
-                            as="span"
-                            icon={<Upload className="w-5 h-5" />}
-                            variant="primary"
-                            disabled={uploading}
-                        >
-                            {uploading ? 'Enviando...' : 'Selecionar Arquivo'}
-                        </ModernButton>
-                    </label>
+                    <ModernButton
+                        onClick={() => document.getElementById('template-upload')?.click()}
+                        icon={<Upload className="w-5 h-5" />}
+                        variant="primary"
+                        disabled={uploading}
+                        type="button"
+                    >
+                        {uploading ? 'Enviando...' : 'Selecionar Arquivo'}
+                    </ModernButton>
                     <p className="text-xs text-gray-500 mt-3">
                         JPG, PNG ou PDF • Máximo 5MB • Resolução recomendada: 300dpi
                     </p>
