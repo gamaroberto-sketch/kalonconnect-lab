@@ -399,7 +399,7 @@ const ProfileEditor = () => {
                 ...profile,
                 services: profile.services.map((service) => ({
                     name: service.name,
-                    price: Number(String(service.price).replace(/[^0-9.,]/g, "").replace(",", ".")) || 0
+                    price: String(service.price || "0,00") // Keep as formatted string
                 }))
             };
             const response = await fetch(`${USER_PROFILE_ENDPOINT}?userId=${user.id}`, {
