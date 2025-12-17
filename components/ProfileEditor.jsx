@@ -539,6 +539,34 @@ const ProfileEditor = () => {
                                     >
                                         <Copy className="w-4 h-4" style={{ color: themeColors.primary }} />
                                     </button>
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            try {
+                                                const response = await fetch(`${USER_PROFILE_ENDPOINT}?userId=${user.id}`, {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                        "x-user-id": user.id
+                                                    },
+                                                    body: JSON.stringify({ ...profile, slug: profile.slug })
+                                                });
+                                                if (!response.ok) throw new Error("Erro ao salvar");
+                                                setSuccessMessage("Link salvo!");
+                                                setTimeout(() => setSuccessMessage(""), 2000);
+                                            } catch (error) {
+                                                setError("Erro ao salvar link");
+                                            }
+                                        }}
+                                        className="px-3 py-1.5 text-xs font-medium rounded-md transition-colors"
+                                        style={{
+                                            backgroundColor: themeColors.primary,
+                                            color: 'white'
+                                        }}
+                                        title="Salvar Link"
+                                    >
+                                        <Save className="w-4 h-4" />
+                                    </button>
                                 </div>
                             )}
                         </div>
