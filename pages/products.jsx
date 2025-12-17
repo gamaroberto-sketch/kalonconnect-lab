@@ -394,6 +394,18 @@ const ProductsPage = () => {
                                     <div
                                         className="w-48 aspect-square bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center cursor-pointer hover:border-primary-400 transition-colors overflow-hidden group relative"
                                         onClick={() => fileInputRef.current?.click()}
+                                        onDragOver={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}
+                                        onDrop={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            const file = e.dataTransfer.files?.[0];
+                                            if (file && file.type.startsWith('image/')) {
+                                                handleImageUpload({ target: { files: [file] } });
+                                            }
+                                        }}
                                         style={{ borderColor: formData.image ? 'transparent' : undefined }}
                                     >
                                         {formData.image ? (
