@@ -47,6 +47,10 @@ const Consultations = () => {
   const themeColors = getThemeColors();
   const { user } = useAuth();
   const { t } = useTranslation();
+
+  // Read clientId from URL parameter
+  const { clientId } = router.query;
+
   const usageTracker = useUsageTracker({
     user,
     sessionType: 'consultation',
@@ -97,10 +101,10 @@ const Consultations = () => {
       icon: User,
       title: t('consultations.panels.clientRecord.title'),
       render: ({ close }) => (
-        <ClientRecordPanel isOpen clientId="1" onClose={close} floating />
+        <ClientRecordPanel isOpen clientId={clientId || "1"} onClose={close} floating />
       )
     }
-  ], [t]);
+  ], [t, clientId]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
