@@ -176,7 +176,7 @@ const ProfileEditor = () => {
                     variant="ghost"
                     type="button"
                     onClick={() => addSocial(network)}
-                    className="w-full border-dashed border-2 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="w-full border-dashed border-2"
                     style={{ borderColor: themeColors.border || '#e5e7eb' }}
                 >
                     {t('common.add')} {placeholder}
