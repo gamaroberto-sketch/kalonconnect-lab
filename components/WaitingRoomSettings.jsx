@@ -160,6 +160,29 @@ const AssetLibraryModal = ({ isOpen, onClose, onSelect, type }) => {
                     >
                       <CheckCircle className="w-4 h-4" />
                     </button>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!confirm(`Excluir "${asset.name}"?`)) return;
+                        try {
+                          const res = await fetch('/api/user/assets', {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ path: asset.path })
+                          });
+                          if (res.ok) {
+                            setAssets(prev => prev.filter(a => a.path !== asset.path));
+                            if (previewAsset?.path === asset.path) setPreviewAsset(null);
+                          }
+                        } catch (err) {
+                          alert('Erro ao excluir arquivo');
+                        }
+                      }}
+                      className="p-1.5 bg-red-500 text-white rounded-md hover:bg-red-600 shadow-sm"
+                      title="Excluir"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               ))
