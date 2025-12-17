@@ -90,6 +90,7 @@ const AdvancedSettings = () => {
   // Estado para feedback
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
   const [lowPowerMode, setLowPowerMode] = useState(false);
 

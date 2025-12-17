@@ -47,7 +47,8 @@
         "recharts": "^2.12.7",
         "resend": "^6.5.2",
         "simple-peer": "^9.11.1",
-        "stripe": "^20.0.0"
+        "stripe": "^20.0.0",
+        "twilio": "^5.10.7"
     },
     "devDependencies": {
         "@tailwindcss/postcss": "^4",
