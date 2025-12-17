@@ -34,11 +34,13 @@ import CustomSelect from './CustomSelect';
 import WaitingRoomSettings from './WaitingRoomSettings';
 import { useTheme } from './ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
+import { useAuth } from './AuthContext';
 
 const AdvancedSettings = () => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
   const { t, changeLanguage } = useTranslation();
+  const { user } = useAuth();
 
   // Estados para temas de fundo de tela
   const [screenBackground, setScreenBackground] = useState({
@@ -278,17 +280,75 @@ const AdvancedSettings = () => {
     saveSettings(true);
   };
 
-  const connectWhatsApp = () => {
-    // Simulação de conexão
-    setWhatsappConnected(true);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+  const connectWhatsApp = async () => {
+    // Validate phone number
+    if (!whatsappNumber) {
+      alert('Por favor, insira um número de WhatsApp válido');
+      return;
+    }
+
+    // Validate format (only digits, 10-15 characters)
+    const cleanNumber = whatsappNumber.replace(/\D/g, '');
+    if (cleanNumber.length < 10 || cleanNumber.length > 15) {
+      alert('Número inválido. Use formato: 5511999999999 (com DDI e DDD)');
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+
+      // Test connection with Twilio
+      const testResponse = await fetch('/api/whatsapp/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ number: cleanNumber })
+      });
+
+      const testData = await testResponse.json();
+
+      if (!testResponse.ok) {
+        throw new Error(testData.message || testData.error || 'Erro ao conectar WhatsApp');
+      }
+
+      // Save configuration
+      const configResponse = await fetch(`/api/whatsapp/config?userId=${user?.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phoneNumber: cleanNumber,
+          autoMessageEnabled
+        })
+      });
+
+      if (!configResponse.ok) {
+        throw new Error('Erro ao salvar configuração');
+      }
+
+      setWhatsappConnected(true);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+
+      alert('✅ WhatsApp conectado! Verifique seu WhatsApp para confirmar o recebimento da mensagem de teste.');
+    } catch (error) {
+      console.error('WhatsApp connection error:', error);
+      alert(`❌ Erro ao conectar WhatsApp:\n\n${error.message}\n\nVerifique:\n1. Se as credenciais Twilio estão configuradas\n2. Se o número está autorizado no Sandbox\n3. Se o formato está correto (ex: 5511999999999)`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const disconnectWhatsApp = () => {
-    setWhatsappConnected(false);
-    setAutoMessageEnabled(false);
-    saveSettings(true);
+  const disconnectWhatsApp = async () => {
+    try {
+      await fetch(`/api/whatsapp/config?userId=${user?.id}`, {
+        method: 'DELETE'
+      });
+
+      setWhatsappConnected(false);
+      setAutoMessageEnabled(false);
+      saveSettings(true);
+    } catch (error) {
+      console.error('Error disconnecting WhatsApp:', error);
+    }
   };
 
   useEffect(() => {
