@@ -30,7 +30,8 @@ export default async function handler(req, res) {
             name: name || email.split('@')[0],
             photo_url: photoURL || null,
             specialty: 'Terapeuta', // Valor padrão
-            version: 'PRO',
+            version: 'premium', // Changed to lowercase
+            type: 'professional',
             created_at: new Date().toISOString()
         };
 
