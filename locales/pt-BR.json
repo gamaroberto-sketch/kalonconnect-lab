@@ -1726,6 +1726,18 @@
     "saveButton": "Salvar Alterações",
     "saveButtonBottom": "Salvar Todas as Configurações",
     "success": "Configurações salvas com sucesso!",
+    "roomVisual": "Visual da Sala",
+    "roomVisualDesc": "Personalize a aparência da sala de espera",
+    "backgroundVideo": "Vídeo de Fundo",
+    "backgroundVideoPlaceholder": "Link do vídeo (YouTube, Vimeo, etc)",
+    "audioFile": "Arquivo de Áudio",
+    "audioFilePlaceholder": "Link do arquivo de áudio (MP3, OGG)",
+    "preview": "Pré-visualização",
+    "previewTabs": {
+      "entrance": "Entrada",
+      "waiting": "Aguardando",
+      "farewell": "Despedida"
+    },
     "errors": {
       "load": "Erro ao carregar configurações.",
       "upload": "Erro no upload.",
