@@ -145,7 +145,8 @@ export default function ClientRegistration() {
   };
 
   const handleConsultation = (client) => {
-    window.location.href = '/consultations';
+    // Pass client ID as URL parameter
+    window.location.href = `/consultations?clientId=${client.id}`;
   };
 
   // Filter and sort clients
