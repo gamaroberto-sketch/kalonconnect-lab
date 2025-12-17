@@ -4,7 +4,7 @@ const normalizeProfile = (data = {}) => {
   const services = Array.isArray(data.services)
     ? data.services.map((service) => ({
       name: String(service?.name ?? ""),
-      price: Number(service?.price ?? 0)
+      price: String(service?.price ?? "0,00") // Keep as string to preserve formatting
     }))
     : [];
 
