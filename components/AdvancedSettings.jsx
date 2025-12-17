@@ -772,21 +772,23 @@ const AdvancedSettings = () => {
                   )}
                 </div>
 
+                {/* Phone Number Input - ALWAYS VISIBLE */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t('settings.integrations.whatsapp.phoneLabel')}
+                  </label>
+                  <input
+                    type="tel"
+                    value={whatsappNumber}
+                    onChange={(e) => setWhatsappNumber(e.target.value)}
+                    placeholder={t('settings.integrations.whatsapp.phonePlaceholder')}
+                    disabled={whatsappConnected}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+
                 {whatsappConnected && (
                   <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        {t('settings.integrations.whatsapp.phoneLabel')}
-                      </label>
-                      <input
-                        type="tel"
-                        value={whatsappNumber}
-                        onChange={(e) => setWhatsappNumber(e.target.value)}
-                        placeholder={t('settings.integrations.whatsapp.phonePlaceholder')}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
-                    </div>
-
                     <div className="flex items-center space-x-3 p-4 rounded-lg border" style={{
                       backgroundColor: themeColors.secondaryLight,
                       borderColor: themeColors.secondary + '40'
