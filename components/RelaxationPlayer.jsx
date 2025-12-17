@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactPlayer from 'react-player';
-import { 
-  Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  Volume2, 
-  VolumeX, 
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  VolumeX,
   Maximize2,
   Minimize2,
   Music,
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
-const RelaxationPlayer = ({ 
+const RelaxationPlayer = ({
   isFloating = false,
   onClose,
   autoMute = true,
@@ -252,16 +252,16 @@ const RelaxationPlayer = ({
 
           {/* Barra de Progresso */}
           <div>
-            <div 
+            <div
               className="w-full rounded-full h-2 cursor-pointer"
               style={{
                 backgroundColor: surfaceMuted
               }}
               onClick={handleSeek}
             >
-              <div 
+              <div
                 className="h-2 rounded-full transition-all duration-300"
-                style={{ 
+                style={{
                   width: `${progress * 100}%`,
                   backgroundColor: themeColors.primary
                 }}
@@ -338,23 +338,21 @@ const RelaxationPlayer = ({
             <button
               onClick={openDriveFolder}
               className="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors"
-              style={{ 
-                backgroundColor: themeColors.primaryLight,
-                color: themeColors.primary
+              style={{
+                backgroundColor: themeColors.primary,
+                color: 'white'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = themeColors.primary;
-                e.target.style.color = 'white';
+                e.target.style.backgroundColor = themeColors.primaryDark;
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = themeColors.primaryLight;
-                e.target.style.color = themeColors.primary;
+                e.target.style.backgroundColor = themeColors.primary;
               }}
             >
               <FolderOpen className="w-4 h-4" />
               <span className="text-sm font-medium">Abrir Drive</span>
             </button>
-            
+
             <button
               onClick={() => setShowInstructions(!showInstructions)}
               className="p-2 rounded transition-colors"
