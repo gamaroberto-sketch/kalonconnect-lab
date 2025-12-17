@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import { Upload, X, FileImage, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../AuthContext';
+import { useTheme } from '../ThemeContext';
 import ModernButton from '../ModernButton';
 
 const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpload }) => {
     const { user } = useAuth();
+    const { themeColors } = useTheme();
     const [uploading, setUploading] = useState(false);
     const [preview, setPreview] = useState(currentTemplate);
     const [size, setSize] = useState(currentSize);
@@ -123,23 +125,27 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
                 <div className="flex gap-3">
                     <button
                         onClick={() => setSize('A4')}
-                        className={`flex-1 py-2 px-4 rounded-lg border-2 transition-all ${size === 'A4'
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                                : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                            }`}
+                        className="flex-1 py-2 px-4 rounded-lg border-2 transition-all"
+                        style={{
+                            borderColor: size === 'A4' ? themeColors.primary : undefined,
+                            backgroundColor: size === 'A4' ? `${themeColors.primary}15` : undefined,
+                            color: size === 'A4' ? themeColors.primary : undefined
+                        }}
                     >
                         <div className="font-semibold">A4</div>
-                        <div className="text-xs text-gray-500">21 × 29.7 cm</div>
+                        <div className="text-xs" style={{ color: size === 'A4' ? themeColors.primary : '#6b7280' }}>21 × 29.7 cm</div>
                     </button>
                     <button
                         onClick={() => setSize('A5')}
-                        className={`flex-1 py-2 px-4 rounded-lg border-2 transition-all ${size === 'A5'
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                                : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                            }`}
+                        className="flex-1 py-2 px-4 rounded-lg border-2 transition-all"
+                        style={{
+                            borderColor: size === 'A5' ? themeColors.primary : undefined,
+                            backgroundColor: size === 'A5' ? `${themeColors.primary}15` : undefined,
+                            color: size === 'A5' ? themeColors.primary : undefined
+                        }}
                     >
                         <div className="font-semibold">A5</div>
-                        <div className="text-xs text-gray-500">14.8 × 21 cm</div>
+                        <div className="text-xs" style={{ color: size === 'A5' ? themeColors.primary : '#6b7280' }}>14.8 × 21 cm</div>
                     </button>
                 </div>
             </div>
@@ -209,11 +215,17 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
             )}
 
             {/* Instruções */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+            <div
+                className="rounded-lg border p-4"
+                style={{
+                    backgroundColor: `${themeColors.primary}10`,
+                    borderColor: `${themeColors.primary}40`
+                }}
+            >
+                <h4 className="font-semibold mb-2" style={{ color: themeColors.primary }}>
                     💡 Dicas para melhor resultado:
                 </h4>
-                <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                <ul className="text-sm space-y-1" style={{ color: themeColors.primary }}>
                     <li>• Use imagem de alta qualidade (300dpi)</li>
                     <li>• Certifique-se que o template está no tamanho correto ({size})</li>
                     <li>• Deixe espaços em branco onde os dados serão impressos</li>

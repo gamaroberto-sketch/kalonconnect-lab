@@ -704,8 +704,17 @@ const ProfileEditor = () => {
                                         />
                                         <input
                                             value={service.price}
-                                            onChange={(e) => updateService(index, "price", e.target.value)}
-                                            placeholder={t('profile.services.pricePlaceholder')}
+                                            onChange={(e) => {
+                                                // Format as currency
+                                                let value = e.target.value.replace(/\D/g, '');
+                                                if (value) {
+                                                    value = (parseInt(value) / 100).toFixed(2);
+                                                    value = value.replace('.', ',');
+                                                    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                                }
+                                                updateService(index, "price", value);
+                                            }}
+                                            placeholder="0,00"
                                             className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900"
                                         />
                                         <ModernButton icon={<Trash2 className="w-4 h-4" />} variant="outline" type="button" onClick={() => removeService(index)}>
