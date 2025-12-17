@@ -811,8 +811,8 @@ const ProfileEditor = () => {
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{t('profile.social.title')}</h2>
                         <div className="grid grid-cols-1 gap-6">
                             {renderSocialInputs("instagram", <Instagram />, "Instagram")}
+                            {renderSocialInputs("facebook", <Facebook />, "Facebook")}
                             {renderSocialInputs("linkedin", <Globe />, "LinkedIn")}
-                            {renderSocialInputs("whatsapp", <MessageCircle />, "WhatsApp")}
                             {renderSocialInputs("site", <Globe />, "Site")}
                         </div>
                     </section>
