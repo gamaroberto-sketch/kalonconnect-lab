@@ -162,7 +162,7 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
                         // PDF Preview
                         <div className="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-800">
                             <div className="flex items-center gap-4 mb-4">
-                                <FileImage className="w-12 h-12 text-blue-500" />
+                                <FileImage className="w-12 h-12" style={{ color: themeColors.primary }} />
                                 <div className="flex-1">
                                     <p className="font-semibold text-gray-800 dark:text-white">Template de Receituário (PDF)</p>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">Tamanho: <strong>{size}</strong></p>
@@ -173,7 +173,10 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
                                     href={preview}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-center"
+                                    className="flex-1 px-4 py-2 text-white rounded-lg transition-colors text-center"
+                                    style={{ backgroundColor: themeColors.primary }}
+                                    onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                                    onMouseLeave={(e) => e.target.style.opacity = '1'}
                                 >
                                     📄 Visualizar PDF
                                 </a>
