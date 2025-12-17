@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Upload, X, FileImage, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../AuthContext';
-import { useTheme } from '../ThemeContext';
+import { useTheme } from '../ThemeProvider';
 import ModernButton from '../ModernButton';
 
 const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpload }) => {
