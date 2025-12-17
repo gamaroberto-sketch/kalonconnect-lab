@@ -8,7 +8,15 @@ const ThemeContext = createContext();
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    // Return default theme instead of throwing error
+    return {
+      currentTheme: 'verde',
+      themeColors: { primary: '#10b981', secondary: '#059669', primaryDark: '#047857' },
+      changeTheme: () => { },
+      getThemeColors: () => ({ primary: '#10b981', secondary: '#059669', primaryDark: '#047857' }),
+      themes: [],
+      isInitialized: true
+    };
   }
   return context;
 };
@@ -23,12 +31,12 @@ export const ThemeProvider = ({ children }) => {
       setIsInitialized(true);
       return;
     }
-    
+
     // Timeout de segurança: garantir que sempre inicialize
     const timeout = setTimeout(() => {
       setIsInitialized(true);
     }, 500);
-    
+
     try {
       // Inicializar imediatamente se DOM está pronto
       const theme = initializeTheme();
@@ -46,7 +54,7 @@ export const ThemeProvider = ({ children }) => {
     // Aplica o tema sempre que currentTheme muda
     if (!isInitialized) return;
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
-    
+
     try {
       applyTheme(currentTheme);
     } catch (error) {
@@ -68,7 +76,7 @@ export const ThemeProvider = ({ children }) => {
   }, [currentTheme]);
 
   // 🔴 CORREÇÃO: Memoizar themes array para evitar re-criação a cada render
-  const themesList = useMemo(() => 
+  const themesList = useMemo(() =>
     Object.keys(themes).map(key => ({
       key,
       name: themes[key].name,
@@ -83,6 +91,7 @@ export const ThemeProvider = ({ children }) => {
     currentTheme,
     changeTheme,
     getThemeColors,
+    themeColors: themes[currentTheme], // Add themeColors directly
     themes: themesList,
     isInitialized
   }), [currentTheme, changeTheme, getThemeColors, themesList, isInitialized]);
