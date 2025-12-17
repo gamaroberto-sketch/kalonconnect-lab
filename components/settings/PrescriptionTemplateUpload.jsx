@@ -158,21 +158,54 @@ const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpl
             {/* Preview ou Upload */}
             {preview ? (
                 <div className="relative">
-                    <img
-                        src={preview}
-                        alt="Template de Receituário"
-                        className="w-full max-w-md border-2 border-gray-300 dark:border-gray-600 rounded-lg"
-                    />
-                    <button
-                        onClick={handleRemove}
-                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                        title="Remover template"
-                    >
-                        <X className="w-4 h-4" />
-                    </button>
-                    <div className="mt-2 text-sm text-gray-500">
-                        Tamanho: <strong>{size}</strong>
-                    </div>
+                    {preview.toLowerCase().endsWith('.pdf') ? (
+                        // PDF Preview
+                        <div className="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-800">
+                            <div className="flex items-center gap-4 mb-4">
+                                <FileImage className="w-12 h-12 text-blue-500" />
+                                <div className="flex-1">
+                                    <p className="font-semibold text-gray-800 dark:text-white">Template de Receituário (PDF)</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Tamanho: <strong>{size}</strong></p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <a
+                                    href={preview}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-center"
+                                >
+                                    📄 Visualizar PDF
+                                </a>
+                                <button
+                                    onClick={handleRemove}
+                                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                    title="Remover template"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        // Image Preview
+                        <>
+                            <img
+                                src={preview}
+                                alt="Template Preview"
+                                className="w-full max-w-md border-2 border-gray-300 dark:border-gray-600 rounded-lg"
+                            />
+                            <button
+                                onClick={handleRemove}
+                                className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                title="Remover template"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                            <div className="mt-2 text-sm text-gray-500">
+                                Tamanho: <strong>{size}</strong>
+                            </div>
+                        </>
+                    )}
                 </div>
             ) : (
                 <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
