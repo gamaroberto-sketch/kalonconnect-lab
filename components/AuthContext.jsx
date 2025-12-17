@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              userId: session.user.id,
+              uid: session.user.id, // Changed from userId to uid
               email: session.user.email,
               name: session.user.user_metadata?.name || session.user.email?.split('@')[0]
             })
