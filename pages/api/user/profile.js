@@ -147,9 +147,16 @@ export default async function handler(req, res) {
         social: socialData,
         signature_pad: body.signaturePad,
         signature_text: body.signatureText,
-        address: body.address, // Add address field
         updated_at: new Date().toISOString()
       };
+
+      // Add optional fields if they exist
+      if (body.address !== undefined) updateData.address = body.address;
+      if (body.phone !== undefined) updateData.phone = body.phone;
+      if (body.consultationPrice !== undefined) updateData.consultation_price = body.consultationPrice;
+      if (body.prescription_template_url !== undefined) updateData.prescription_template_url = body.prescription_template_url;
+      if (body.prescription_template_size !== undefined) updateData.prescription_template_size = body.prescription_template_size;
+      if (body.prescription_template_positions !== undefined) updateData.prescription_template_positions = body.prescription_template_positions;
 
       console.log('Update data:', JSON.stringify(updateData, null, 2));
 
