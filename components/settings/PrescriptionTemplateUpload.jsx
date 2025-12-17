@@ -8,7 +8,8 @@ import ModernButton from '../ModernButton';
 
 const PrescriptionTemplateUpload = ({ currentTemplate, currentSize = 'A4', onUpload }) => {
     const { user } = useAuth();
-    const { themeColors } = useTheme();
+    const theme = useTheme();
+    const themeColors = theme?.themeColors || { primary: '#3b82f6' }; // Fallback to blue
     const [uploading, setUploading] = useState(false);
     const [preview, setPreview] = useState(currentTemplate);
     const [size, setSize] = useState(currentSize);
