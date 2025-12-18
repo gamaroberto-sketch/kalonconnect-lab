@@ -1,0 +1,5 @@
+# Force Vercel Rebuild
+
+This file forces Vercel to rebuild and clear cache.
+
+Timestamp: 2025-12-18 14:48:12
