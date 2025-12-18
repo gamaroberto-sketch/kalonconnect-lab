@@ -162,10 +162,14 @@ const SubscriptionPanel = () => {
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <CreditCard className="w-6 h-6" style={{ color: themeColors.primary }} />
-                    {t('subscription.title')}
-                </h2>
+                <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+                        <CreditCard className="w-6 h-6" style={{ color: 'white' }} />
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                        {t('subscription.title')}
+                    </h2>
+                </div>
                 {isPremium && (
                     <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
                         <Crown className="w-3.5 h-3.5" />

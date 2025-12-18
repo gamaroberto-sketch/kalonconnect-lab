@@ -66,11 +66,12 @@ const CredentialsPanel = () => {
     >
       <div className="flex items-center space-x-3 mb-6">
         <div
-          className="p-2 rounded-lg"
-          style={{ backgroundColor: themeColors.primaryLight }}
+          className="p-3 rounded-xl"
+          style={{ backgroundColor: themeColors.primary }}
         >
           <User
-            className="w-5 h-5 text-white"
+            className="w-6 h-6"
+            style={{ color: 'white' }}
           />
         </div>
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white">

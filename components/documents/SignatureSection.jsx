@@ -6,34 +6,145 @@ import { PenTool, HelpCircle, Volume2, Upload, Download, X } from 'lucide-react'
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useAuth } from '../AuthContext';
 
 const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-
   const { t } = useTranslation();
+  const { user } = useAuth();
 
+  const [profile, setProfile] = useState(null);
   const [signatureImage, setSignatureImage] = useState(null);
+  const [stampImage, setStampImage] = useState(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const helpText = t('documents.help.signature.text');
+  // Load profile data
+  React.useEffect(() => {
+    const loadProfile = async () => {
+      if (user?.id) {
+        try {
+          const response = await fetch(`/api/user/profile?userId=${user.id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setProfile(data);
+            // Load existing signature and stamp
+            if (data.signature_image_url) setSignatureImage(data.signature_image_url);
+            if (data.stamp_image_url) setStampImage(data.stamp_image_url);
+          }
+        } catch (error) {
+          console.error("Failed to load profile", error);
+        }
+      }
+    };
+    loadProfile();
+  }, [user]);
 
-  const handleImageUpload = (e) => {
+  const uploadToSupabase = async (file, folder) => {
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+    const filePath = `${user.id}/${folder}/${fileName}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('prescription-templates')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('prescription-templates')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSignatureImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const publicUrl = await uploadToSupabase(file, 'signature');
+
+      // Save to profile
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({
+          signature_image_url: publicUrl
+        })
+      });
+
+      if (!response.ok) throw new Error('Erro ao salvar assinatura');
+
+      setSignatureImage(publicUrl);
+      alert('Assinatura salva com sucesso!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Erro ao fazer upload da assinatura');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleStampUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    console.log('Uploading stamp:', file.name, file.type, file.size);
+
+    setUploading(true);
+    try {
+      console.log('Starting Supabase upload...');
+      const publicUrl = await uploadToSupabase(file, 'stamp');
+      console.log('Upload successful, URL:', publicUrl);
+
+      // Save to profile
+      console.log('Saving to profile...');
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({
+          stamp_image_url: publicUrl
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error:', errorText);
+        throw new Error('Erro ao salvar carimbo: ' + errorText);
+      }
+
+      console.log('Stamp saved successfully!');
+      setStampImage(publicUrl);
+      alert('Carimbo salvo com sucesso!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Erro ao fazer upload do carimbo: ' + error.message);
+    } finally {
+      setUploading(false);
     }
   };
 
   const handleSave = () => {
-    if (signatureImage) {
-      localStorage.setItem('professionalSignature', signatureImage);
-      alert(t('documents.signature.success'));
-    }
+    // Deprecated - now saves automatically on upload
+    alert('Assinatura já está salva!');
   };
 
   const handleDownload = () => {
@@ -45,8 +156,54 @@ const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, curre
     }
   };
 
-  const handleClear = () => {
-    setSignatureImage(null);
+  const handleClear = async () => {
+    if (!confirm('Deseja remover a assinatura?')) return;
+
+    try {
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({
+          signature_image_url: null
+        })
+      });
+
+      if (!response.ok) throw new Error('Erro ao remover assinatura');
+
+      setSignatureImage(null);
+      alert('Assinatura removida!');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Erro ao remover assinatura');
+    }
+  };
+
+  const handleStampClear = async () => {
+    if (!confirm('Deseja remover o carimbo?')) return;
+
+    try {
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({
+          stamp_image_url: null
+        })
+      });
+
+      if (!response.ok) throw new Error('Erro ao remover carimbo');
+
+      setStampImage(null);
+      alert('Carimbo removido!');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Erro ao remover carimbo');
+    }
   };
 
   return (
@@ -150,6 +307,92 @@ const SignatureSection = ({ highContrast, fontSize, onReadHelp, isReading, curre
             </div>
           </div>
         )}
+
+        {/* Divisor */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">ou</span>
+          </div>
+        </div>
+
+        {/* Upload de Carimbo */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            🏛️ Carimbo Profissional (PNG)
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Faça upload do seu carimbo em formato PNG com fundo transparente
+          </p>
+
+          <input
+            type="file"
+            accept="image/png"
+            onChange={handleStampUpload}
+            className="hidden"
+            id="stamp-upload"
+            aria-label="Upload de carimbo"
+          />
+          <label
+            htmlFor="stamp-upload"
+            className="w-full px-4 py-2 text-base rounded-lg font-medium transition-transform transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] border-2 border-dashed"
+            style={{
+              backgroundColor: themeColors.secondaryLight,
+              color: themeColors.primary,
+              borderColor: themeColors.primary
+            }}
+          >
+            <Upload className="w-5 h-5" />
+            <span>Upload Carimbo (PNG)</span>
+          </label>
+
+          {/* Preview do Carimbo */}
+          {stampImage && (
+            <div className={`p-4 border-2 rounded-lg ${highContrast ? 'border-black' : 'border-gray-300 dark:border-gray-600'}`}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="font-medium">Preview do Carimbo:</p>
+                <ModernButton
+                  onClick={handleStampClear}
+                  icon={<X className="w-5 h-5" />}
+                  variant="outline"
+                  size="sm"
+                />
+              </div>
+              <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                <img src={stampImage} alt="Carimbo" className="max-h-32 mx-auto object-contain" />
+              </div>
+              <div className="flex gap-2 mt-3">
+                <ModernButton
+                  onClick={() => {
+                    localStorage.setItem('professionalStamp', stampImage);
+                    alert('Carimbo salvo com sucesso!');
+                  }}
+                  variant="primary"
+                  size="md"
+                  className="flex-1"
+                >
+                  Salvar Carimbo
+                </ModernButton>
+                <ModernButton
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.download = 'carimbo.png';
+                    link.href = stampImage;
+                    link.click();
+                  }}
+                  icon={<Download className="w-4 h-4" />}
+                  variant="secondary"
+                  size="md"
+                  className="flex-1"
+                >
+                  Download
+                </ModernButton>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Modal de Desenho de Assinatura */}
         {showTutorial && (

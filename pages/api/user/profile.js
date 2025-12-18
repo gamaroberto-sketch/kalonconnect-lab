@@ -26,8 +26,26 @@ const normalizeProfile = (data = {}) => {
     address: data.address || {}, // Add address field
     signaturePad: String((data.signature_pad || data.signaturePad) ?? ""),
     signatureText: String((data.signature_text || data.signatureText) ?? ""),
+    signature_image_url: String(data.signature_image_url ?? ""),
+    stamp_image_url: String(data.stamp_image_url ?? ""),
     prescription_template_url: String(data.prescription_template_url ?? ""), // Add template URL
     prescription_template_size: String(data.prescription_template_size || "A4"), // Add template size
+    prescription_template_positions: data.prescription_template_positions || {},
+    consent_template_url: String(data.consent_template_url ?? ""),
+    consent_template_size: String(data.consent_template_size || "A4"),
+    consent_template_positions: data.consent_template_positions || {},
+    receipt_template_url: String(data.receipt_template_url ?? ""),
+    receipt_template_size: String(data.receipt_template_size || "A4"),
+    receipt_template_positions: data.receipt_template_positions || {},
+    report_template_url: String(data.report_template_url ?? ""),
+    report_template_size: String(data.report_template_size || "A4"),
+    report_template_positions: data.report_template_positions || {},
+    certificate_template_url: String(data.certificate_template_url ?? ""),
+    certificate_template_size: String(data.certificate_template_size || "A4"),
+    certificate_template_positions: data.certificate_template_positions || {},
+    opinion_template_url: String(data.opinion_template_url ?? ""),
+    opinion_template_size: String(data.opinion_template_size || "A4"),
+    opinion_template_positions: data.opinion_template_positions || {},
     services,
     // 🟢 v5.58 Fix: Prioritize 'social.slug' (User Edited) over 'raw_user_meta_data' (Auth System)
     // This prevents stale/empty Auth metadata from hiding the saved slug.
@@ -159,9 +177,26 @@ export default async function handler(req, res) {
       if (body.address !== undefined) updateData.address = body.address;
       if (body.phone !== undefined) updateData.phone = body.phone;
       if (body.consultationPrice !== undefined) updateData.consultation_price = body.consultationPrice;
+      if (body.signature_image_url !== undefined) updateData.signature_image_url = body.signature_image_url;
+      if (body.stamp_image_url !== undefined) updateData.stamp_image_url = body.stamp_image_url;
       if (body.prescription_template_url !== undefined) updateData.prescription_template_url = body.prescription_template_url;
       if (body.prescription_template_size !== undefined) updateData.prescription_template_size = body.prescription_template_size;
       if (body.prescription_template_positions !== undefined) updateData.prescription_template_positions = body.prescription_template_positions;
+      if (body.consent_template_url !== undefined) updateData.consent_template_url = body.consent_template_url;
+      if (body.consent_template_size !== undefined) updateData.consent_template_size = body.consent_template_size;
+      if (body.consent_template_positions !== undefined) updateData.consent_template_positions = body.consent_template_positions;
+      if (body.receipt_template_url !== undefined) updateData.receipt_template_url = body.receipt_template_url;
+      if (body.receipt_template_size !== undefined) updateData.receipt_template_size = body.receipt_template_size;
+      if (body.receipt_template_positions !== undefined) updateData.receipt_template_positions = body.receipt_template_positions;
+      if (body.report_template_url !== undefined) updateData.report_template_url = body.report_template_url;
+      if (body.report_template_size !== undefined) updateData.report_template_size = body.report_template_size;
+      if (body.report_template_positions !== undefined) updateData.report_template_positions = body.report_template_positions;
+      if (body.certificate_template_url !== undefined) updateData.certificate_template_url = body.certificate_template_url;
+      if (body.certificate_template_size !== undefined) updateData.certificate_template_size = body.certificate_template_size;
+      if (body.certificate_template_positions !== undefined) updateData.certificate_template_positions = body.certificate_template_positions;
+      if (body.opinion_template_url !== undefined) updateData.opinion_template_url = body.opinion_template_url;
+      if (body.opinion_template_size !== undefined) updateData.opinion_template_size = body.opinion_template_size;
+      if (body.opinion_template_positions !== undefined) updateData.opinion_template_positions = body.opinion_template_positions;
 
       console.log('Update data:', JSON.stringify(updateData, null, 2));
 

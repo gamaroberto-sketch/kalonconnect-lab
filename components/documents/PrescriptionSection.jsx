@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, HelpCircle, Volume2, Save, Download, Printer, Send, Settings } from 'lucide-react';
+import { FileText, HelpCircle, Volume2, Save, Download, Printer, Send, Settings, Eye } from 'lucide-react';
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useAuth } from '../AuthContext';
 import TemplatePositionEditor from './TemplatePositionEditor';
+import DocumentPreviewModal from './DocumentPreviewModal';
 
 const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
@@ -44,6 +45,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
   });
 
   const [showPositionEditor, setShowPositionEditor] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const helpText = t('documents.help.prescription.text');
 
@@ -391,6 +393,20 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
           </div>
         </div>
 
+
+        {/* Botão de Visualização */}
+        <div className="flex justify-center pt-4">
+          <ModernButton
+            onClick={() => setShowPreview(true)}
+            icon={<Eye className="w-5 h-5" />}
+            variant="primary"
+            size="lg"
+            className="min-w-[250px]"
+          >
+            👁️ Visualizar Documento
+          </ModernButton>
+        </div>
+
         {/* Botões de Ação */}
         <div className="flex flex-wrap gap-3 pt-4">
           <ModernButton
@@ -463,6 +479,18 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
           onClose={() => setShowPositionEditor(false)}
         />
       )}
+
+      {/* Modal de Preview */}
+      <DocumentPreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        documentData={data}
+        profile={profile}
+        documentType="prescription"
+        onPrint={handlePrint}
+        onSave={handleSave}
+        onSend={handleSend}
+      />
     </motion.div>
   );
 };

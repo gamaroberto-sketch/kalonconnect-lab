@@ -36,7 +36,7 @@ import { useTheme } from './ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from './AuthContext';
 
-const AdvancedSettings = () => {
+const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
   const { t, changeLanguage } = useTranslation();
@@ -91,7 +91,7 @@ const AdvancedSettings = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [lowPowerMode, setLowPowerMode] = useState(false);
 
   const tabs = [
@@ -384,48 +384,52 @@ const AdvancedSettings = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
-              <Settings className="w-8 h-8" style={{ color: 'white' }} />
+      {!hideTabsBar && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+                <Settings className="w-8 h-8" style={{ color: 'white' }} />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+                  {t('settings.title')}
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {t('settings.subtitle')}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                {t('settings.title')}
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('settings.subtitle')}
-              </p>
-            </div>
-          </div>
 
-        </div>
-      </motion.div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Tabs */}
-      <div className="mb-6">
-        <div className="flex space-x-2 overflow-x-auto">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                ? 'text-white shadow-lg'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              style={activeTab === tab.id ? { backgroundColor: themeColors.primary } : {}}
-            >
-              {tab.icon}
-              <span>{tab.name}</span>
-            </button>
-          ))}
+      {!hideTabsBar && (
+        <div className="mb-6">
+          <div className="flex space-x-2 overflow-x-auto">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === tab.id
+                  ? 'text-white shadow-lg'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                style={activeTab === tab.id ? { backgroundColor: themeColors.primary } : {}}
+              >
+                {tab.icon}
+                <span>{tab.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Mensagens de Feedback */}
       {/* Região para anúncios de leitores de tela */}
