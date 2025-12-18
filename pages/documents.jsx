@@ -237,15 +237,6 @@ const DocumentsNew = () => {
                                             Gerencie seus templates personalizados e assinatura digital
                                         </p>
                                     </div>
-                                    <span
-                                        className="px-4 py-2 rounded-full text-sm font-semibold"
-                                        style={{
-                                            backgroundColor: themeColors.primaryLight,
-                                            color: themeColors.primary
-                                        }}
-                                    >
-                                        TESTE
-                                    </span>
                                 </div>
                             </div>
                         </div>
