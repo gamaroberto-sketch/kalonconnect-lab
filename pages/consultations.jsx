@@ -36,6 +36,9 @@ import { useAccessControl } from '../hooks/useAccessControl';
 import { useRouter } from 'next/router';
 import { slugifyName } from '../utils/slugifyName';
 import { useTranslation } from '../hooks/useTranslation';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 
 const MIN_PANEL_SIZE = { width: 240, height: 220 };
 
@@ -110,6 +113,7 @@ const Consultations = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [showSessionSettings, setShowSessionSettings] = useState(false);
   const [showGoogleDriveModal, setShowGoogleDriveModal] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(() => {
     if (typeof window === 'undefined') return 60;
     const saved = localStorage.getItem('sessionDuration');
@@ -1046,6 +1050,16 @@ const Consultations = () => {
           />
 
           <FeedbackSystem />
+
+          {/* Help Button */}
+          <HelpButton onClick={() => setShowHelp(true)} />
+
+          {/* Help Modal */}
+          <HelpModal
+            isOpen={showHelp}
+            onClose={() => setShowHelp(false)}
+            section={helpSections.inicio}
+          />
         </div>
       </UsageTrackerProvider>
     </ProtectedRoute>

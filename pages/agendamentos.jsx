@@ -30,6 +30,9 @@ import ModernButton from '../components/ModernButton';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAppointments } from '../hooks/useAppointments';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 
 const Agendamentos = () => {
   const { user, userType } = useAuth();
@@ -46,6 +49,7 @@ const Agendamentos = () => {
   const [viewMode, setViewMode] = useState('calendar'); // 'calendar', 'list'
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showHelp, setShowHelp] = useState(false);
 
   // Dados mockados para demonstração
   const mockAppointments = [
@@ -482,6 +486,15 @@ const Agendamentos = () => {
           professionals={mockProfessionals}
         />
       </div>
+      {/* Help Button */}
+      <HelpButton onClick={() => setShowHelp(true)} />
+
+      {/* Help Modal */}
+      <HelpModal
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+        section={helpSections.agendamentos}
+      />
     </ProtectedRoute>
   );
 };

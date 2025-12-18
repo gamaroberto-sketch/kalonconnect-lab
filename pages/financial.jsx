@@ -10,6 +10,9 @@ import { useAuth } from '../components/AuthContext';
 import { useAccessControl } from '../hooks/useAccessControl';
 
 import { useTranslation } from '../hooks/useTranslation';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 
 const Financial = () => {
   const { getThemeColors } = useTheme();
@@ -20,6 +23,7 @@ const Financial = () => {
   const canViewFinancial = canAccessPage("/financial") || user?.type === 'admin' || user?.email === 'bobgama@uol.com.br';
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   React.useEffect(() => {
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -68,6 +72,16 @@ const Financial = () => {
             </div>
           )}
         </div>
+
+        {/* Help Button */}
+        <HelpButton onClick={() => setShowHelp(true)} />
+
+        {/* Help Modal */}
+        <HelpModal
+          isOpen={showHelp}
+          onClose={() => setShowHelp(false)}
+          section={helpSections.financeiro}
+        />
       </div>
     </ProtectedRoute>
   );

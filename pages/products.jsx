@@ -27,6 +27,9 @@ import { useAuth } from '../components/AuthContext';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
 import ModernButton from '../components/ModernButton';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 
 const PRODUCTS_API = "/api/user/products";
 
@@ -38,6 +41,7 @@ const ProductsPage = () => {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
+    const [showHelp, setShowHelp] = useState(false);
 
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -497,6 +501,16 @@ const ProductsPage = () => {
                         </div>
                     </div>
                 )}
+
+                {/* Help Button */}
+                <HelpButton onClick={() => setShowHelp(true)} />
+
+                {/* Help Modal */}
+                <HelpModal
+                    isOpen={showHelp}
+                    onClose={() => setShowHelp(false)}
+                    section={helpSections.inicio}
+                />
             </div>
         </ProtectedRoute>
     );

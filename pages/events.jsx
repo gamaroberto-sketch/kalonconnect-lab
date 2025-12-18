@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, X, Upload, Calendar, Clock, Users, Globe, Lock, FileText } from 'lucide-react';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -15,6 +18,7 @@ import { useTranslation } from '../hooks/useTranslation';
 const Events = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showMarketingModal, setShowMarketingModal] = useState(false);
   const [marketingEvent, setMarketingEvent] = useState(null);
