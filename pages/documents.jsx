@@ -16,6 +16,9 @@ import { useAuth } from '../components/AuthContext';
 import {
     FileText, PenTool, Receipt, FileCheck, Award, ClipboardList, Plus, MoreVertical, Edit, Trash2, Copy
 } from 'lucide-react';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 
 const DocumentsNew = () => {
     const { getThemeColors } = useTheme();
@@ -32,6 +35,7 @@ const DocumentsNew = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingDocument, setEditingDocument] = useState(null);
+    const [showHelp, setShowHelp] = useState(false);
 
     // Load dark mode from localStorage
     React.useEffect(() => {
@@ -453,6 +457,16 @@ const DocumentsNew = () => {
                     }}
                     onSave={editingDocument ? handleUpdateDocument : handleCreateDocument}
                     editingDocument={editingDocument}
+                />
+
+                {/* Help Button */}
+                <HelpButton onClick={() => setShowHelp(true)} />
+
+                {/* Help Modal */}
+                <HelpModal
+                    isOpen={showHelp}
+                    onClose={() => setShowHelp(false)}
+                    section={helpSections.documentos}
                 />
             </div>
         </ProtectedRoute>

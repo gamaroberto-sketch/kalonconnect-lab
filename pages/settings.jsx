@@ -18,6 +18,9 @@ import {
     User, Palette, Cloud, Send, Key, Languages,
     Video as VideoIcon, PenTool
 } from 'lucide-react';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 
 const ProfileNew = () => {
     const { getThemeColors } = useTheme();
@@ -26,6 +29,7 @@ const ProfileNew = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
     const { user } = useAuth();
+    const [showHelp, setShowHelp] = useState(false);
 
     // Tab State - 8 tabs total
     const [activeTab, setActiveTab] = useState('profile');
@@ -206,6 +210,16 @@ const ProfileNew = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Help Button */}
+                <HelpButton onClick={() => setShowHelp(true)} />
+
+                {/* Help Modal */}
+                <HelpModal
+                    isOpen={showHelp}
+                    onClose={() => setShowHelp(false)}
+                    section={helpSections.perfil}
+                />
             </div>
         </ProtectedRoute>
     );
