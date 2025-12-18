@@ -58,15 +58,18 @@ export default function GuiaInstalacao() {
     // Tentar carregar do public primeiro, depois da API
     const loadGuia = async () => {
       try {
+        // Adicionar timestamp para forçar atualização de cache
+        const timestamp = new Date().getTime();
+
         // Primeiro tenta buscar diretamente do public
-        let response = await fetch('/GUIA_INSTALACAO_USO.md', {
+        let response = await fetch(`/GUIA_INSTALACAO_USO.md?v=${timestamp}`, {
           cache: 'no-cache'
         });
 
         // Se falhar, tenta a API
         if (!response.ok) {
           console.log('Tentando via API...');
-          response = await fetch('/api/guia', {
+          response = await fetch(`/api/guia?v=${timestamp}`, {
             cache: 'no-cache'
           });
         }
@@ -594,8 +597,8 @@ echo ""
                       <button
                         onClick={() => setSistemaOperacional('windows')}
                         className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${sistemaOperacional === 'windows'
-                            ? 'text-white'
-                            : 'text-gray-700 dark:text-gray-300'
+                          ? 'text-white'
+                          : 'text-gray-700 dark:text-gray-300'
                           }`}
                         style={{
                           backgroundColor: sistemaOperacional === 'windows' ? themeColors.primary : 'transparent',
@@ -607,8 +610,8 @@ echo ""
                       <button
                         onClick={() => setSistemaOperacional('mac')}
                         className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${sistemaOperacional === 'mac'
-                            ? 'text-white'
-                            : 'text-gray-700 dark:text-gray-300'
+                          ? 'text-white'
+                          : 'text-gray-700 dark:text-gray-300'
                           }`}
                         style={{
                           backgroundColor: sistemaOperacional === 'mac' ? themeColors.primary : 'transparent',
@@ -620,8 +623,8 @@ echo ""
                       <button
                         onClick={() => setSistemaOperacional('linux')}
                         className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${sistemaOperacional === 'linux'
-                            ? 'text-white'
-                            : 'text-gray-700 dark:text-gray-300'
+                          ? 'text-white'
+                          : 'text-gray-700 dark:text-gray-300'
                           }`}
                         style={{
                           backgroundColor: sistemaOperacional === 'linux' ? themeColors.primary : 'transparent',
