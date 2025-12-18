@@ -93,9 +93,6 @@ const ProfileNew = () => {
                             <div className="flex items-center justify-between">
                                 <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
                                     Configurações & Perfil
-                                    <span className="ml-3 text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-800">
-                                        TESTE
-                                    </span>
                                 </h1>
                                 <span
                                     className="text-xs px-3 py-1 rounded-full text-white shadow-md font-medium"
