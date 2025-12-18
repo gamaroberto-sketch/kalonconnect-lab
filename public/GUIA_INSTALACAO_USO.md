@@ -365,27 +365,33 @@ Data: {{data_inicio}}
 
 ## 💰 PLANOS E ASSINATURAS
 
-### Plano Gratuito
-- ✅ 5 clientes
-- ✅ 10 consultas/mês
+### Plano Normal (R$ 49/mês)
+- ✅ 50 clientes
+- ✅ 50 consultas/mês
 - ✅ Documentos básicos
-- ✅ 1 evento/mês
+- ✅ 5 eventos/mês
+- ✅ Armazenamento: 5GB
+- ✅ Suporte por email
 
-### Plano Profissional (R$ 97/mês)
+### Plano Pro (R$ 99/mês)
 - ✅ Clientes ilimitados
 - ✅ Consultas ilimitadas
 - ✅ Todos os documentos
-- ✅ 10 eventos/mês
+- ✅ 20 eventos/mês
 - ✅ Gravação de consultas
+- ✅ Armazenamento: 50GB
 - ✅ Suporte prioritário
+- ✅ Relatórios avançados
 
-### Plano Premium (R$ 197/mês)
-- ✅ Tudo do Profissional
+### Plano Premium (R$ 149/mês)
+- ✅ Tudo do Pro
 - ✅ Eventos ilimitados
 - ✅ Marketing automation
 - ✅ API completa
 - ✅ White label
+- ✅ Armazenamento: 200GB
 - ✅ Suporte 24/7
+- ✅ Consultoria mensal
 
 ---
 
