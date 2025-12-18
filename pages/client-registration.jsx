@@ -22,6 +22,9 @@ import {
   Image,
   Search
 } from 'lucide-react';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
+import { helpSections } from '../lib/helpContent';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -40,6 +43,7 @@ export default function ClientRegistration() {
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const { clients, loading, addClient, updateClient, deleteClient } = useClients();
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
@@ -538,6 +542,16 @@ export default function ClientRegistration() {
             </div>
           </div>
         </div>
+
+        {/* Help Button */}
+        <HelpButton onClick={() => setShowHelp(true)} />
+
+        {/* Help Modal */}
+        <HelpModal
+          isOpen={showHelp}
+          onClose={() => setShowHelp(false)}
+          section={helpSections.inicio}
+        />
       </div>
     </ProtectedRoute>
   );
