@@ -1,420 +1,633 @@
-# 🚀 GUIA DE INSTALAÇÃO E USO - KALON OS
-**Versão**: Visual Padronizada  
-**Data**: Outubro 2025
+# 🎯 GUIA DE INSTALAÇÃO E USO - KALONCONNECT
+
+**Versão:** Visual Padronizada  
+**Data:** Dezembro 2025
 
 ---
 
 ## 📋 PRÉ-REQUISITOS
 
-### **Sistema Operacional:**
+### Sistema Operacional:
 - ✅ Windows 10/11
 - ✅ macOS 10.15+
-- ✅ Linux (Ubuntu 18.04+)
+- ✅ Linux (Ubuntu 20.04+)
 
-### **Software Necessário:**
-- ✅ **Node.js** 16.0 ou superior
-- ✅ **npm** 8.0 ou superior
-- ✅ **Git** (para controle de versão)
+### Navegador Recomendado:
+- ✅ Google Chrome (versão 100+)
+- ✅ Microsoft Edge (versão 100+)
+- ✅ Firefox (versão 100+)
+- ✅ Safari (versão 15+)
+
+### Conexão de Internet:
+- **Mínima:** 5 Mbps (download) / 2 Mbps (upload)
+- **Recomendada:** 10 Mbps (download) / 5 Mbps (upload)
+- **Para videochamadas HD:** 15 Mbps (download) / 10 Mbps (upload)
+
+### Equipamentos:
+- 🎥 **Webcam** (720p mínimo, 1080p recomendado)
+- 🎤 **Microfone** (headset recomendado para melhor qualidade)
+- 🔊 **Alto-falantes ou fones de ouvido**
 
 ---
 
-## 📦 PREPARAÇÃO PRÉVIA (RECOMENDADO)
+## 🚀 PRIMEIROS PASSOS
 
-> **💡 Importante**: Organizar tudo antes de começar garantirá uma experiência completa e fluida desde o primeiro uso do sistema!
+### 1. Acesso à Plataforma
 
-Antes de iniciar a instalação e configuração do Kalon OS, recomendamos que você prepare sua estrutura de arquivos e contas. Isso permitirá que você tenha uma experiência completa desde o primeiro uso.
+1. Acesse: **https://kalonconnect-lab.vercel.app**
+2. Clique em "Criar Conta" ou "Registrar"
+3. Preencha seus dados profissionais:
+   - Nome completo
+   - Email profissional
+   - Senha segura (mínimo 8 caracteres)
+   - Especialidade/Profissão
+   - Registro profissional (CRM, CRP, etc)
+
+### 2. Configuração Inicial do Perfil
+
+Após o primeiro login, configure seu perfil:
+
+1. **Dados Profissionais:**
+   - Foto de perfil
+   - Especialidade
+   - Registro profissional
+   - Telefone de contato
+
+2. **Personalização:**
+   - Escolha seu tema de cores (10+ opções)
+   - Ative modo escuro (se preferir)
+   - Selecione idioma (PT-BR, EN, ES, FR)
+
+3. **Assinatura Digital:**
+   - Desenhe sua assinatura
+   - Ou faça upload de imagem
+   - Configure carimbo (opcional)
+
+---
+
+## 📁 ESTRUTURA DE PASTAS (OPCIONAL)
+
+> **⚠️ IMPORTANTE:** A estrutura de pastas é **OPCIONAL**. O KalonConnect usa armazenamento em nuvem (Supabase) automaticamente. Esta estrutura é apenas para **organização pessoal** dos seus arquivos locais.
 
 ### **1. Estrutura de Pastas na Nuvem**
 
-Crie uma pasta principal no seu serviço de nuvem preferido (**Google Drive**, **Dropbox**, **OneDrive** ou similar) com o seguinte nome:
-
-**Pasta Principal:** `Kalon OS - [Seu Nome]`
-
-Dentro desta pasta, crie as seguintes subpastas seguindo exatamente esta estrutura:
+Se você deseja manter uma cópia local organizada dos seus arquivos, use esta estrutura:
 
 ```
-Kalon OS - [Seu Nome]/
+KalonConnect - [Seu Nome]/
+├── 01_CLIENTES/
+│   ├── Cliente_001_Exemplo/
+│   │   ├── Fichas/
+│   │   ├── Consultas/
+│   │   ├── Documentos/
+│   │   ├── Gravações/
+│   │   └── Arquivos_Compartilhados/
+│   └── [Outros clientes...]
 │
-├── 📁 01_CLIENTES/
-│   ├── 📁 Cliente_001_[Nome do Cliente]/
-│   │   ├── 📁 Fichas/
-│   │   ├── 📁 Consultas/
-│   │   ├── 📁 Documentos/
-│   │   ├── 📁 Gravações/
-│   │   └── 📁 Arquivos_Compartilhados/
-│   ├── 📁 Cliente_002_[Nome do Cliente]/
-│   └── ... (uma pasta para cada cliente)
+├── 02_MATERIAIS_CONSULTA/
+│   ├── Músicas_Relaxamento/
+│   ├── Frequências/
+│   ├── Vídeos_Terapêuticos/
+│   ├── Áudios_Guia/
+│   └── Meditações/
 │
-├── 📁 02_MATERIAIS_CONSULTA/
-│   ├── 📁 Músicas_Relaxamento/
-│   ├── 📁 Frequências/
-│   ├── 📁 Vídeos_Terapêuticos/
-│   ├── 📁 Áudios_Guia/
-│   └── 📁 Meditações/
+├── 03_DOCUMENTOS_LEGAIS/
+│   ├── Receituários/
+│   ├── Recibos/
+│   ├── Termos_Consentimento/
+│   └── Contratos/
 │
-├── 📁 03_DOCUMENTOS_LEGAIS/
-│   ├── 📁 Receituários/
-│   ├── 📁 Recibos/
-│   ├── 📁 Termos_Consentimento/
-│   └── 📁 Contratos/
+├── 04_ARQUIVOS_SISTEMA/
+│   ├── Logos/
+│   ├── Fotos_Profissional/
+│   ├── Backgrounds/
+│   └── Templates/
 │
-├── 📁 04_ARQUIVOS_SISTEMA/
-│   ├── 📁 Logos/
-│   ├── 📁 Fotos_Profissional/
-│   ├── 📁 Backgrounds/
-│   └── 📁 Templates/
+├── 05_FINANCEIRO/
+│   ├── Comprovantes_Pagamento/
+│   ├── Relatórios/
+│   └── Declarações/
 │
-├── 📁 05_FINANCEIRO/
-│   ├── 📁 Comprovantes_Pagamento/
-│   ├── 📁 Relatórios/
-│   └── 📁 Declarações/
-│
-└── 📁 06_BACKUP/
-    └── (para cópias de segurança)
+└── 06_BACKUP/
 ```
 
-#### **📋 Explicação das Pastas:**
+### **2. Criação Automática de Pastas**
 
-- **01_CLIENTES/**: Cada cliente terá sua própria pasta numerada com nome completo. Dentro dela, 5 subpastas para organizar todo o conteúdo relacionado.
-- **02_MATERIAIS_CONSULTA/**: Materiais que você usará durante as sessões (músicas, frequências, vídeos).
-- **03_DOCUMENTOS_LEGAIS/**: Documentos gerados pelo sistema (receituários, recibos, termos).
-- **04_ARQUIVOS_SISTEMA/**: Imagens e arquivos para personalização do sistema (logos, fotos, backgrounds).
-- **05_FINANCEIRO/**: Documentos financeiros e comprovantes.
-- **06_BACKUP/**: Cópias de segurança periódicas.
+Para criar esta estrutura automaticamente:
 
-#### **✅ Dica Importante:**
-- O sistema pode ser configurado para conectar automaticamente à pasta `02_MATERIAIS_CONSULTA/Músicas_Relaxamento/` para carregar músicas no Player
-- Os documentos gerados serão salvos automaticamente nas pastas correspondentes
-- As gravações das sessões serão organizadas automaticamente nas pastas dos clientes
+1. Acesse: **Ajuda** → **Guia de Instalação**
+2. Clique no botão **"Criar Pastas Automaticamente"**
+3. Digite seu nome profissional
+4. Escolha seu sistema operacional
+5. Baixe o script (.bat para Windows ou .sh para Mac/Linux)
+6. Execute o script
+7. As pastas serão criadas em **Documentos**
 
 ---
 
-### **2. Conta de Videoconferência (Opcional - Pode Fazer Depois)**
+## 🎓 FUNCIONALIDADES PRINCIPAIS
 
-O Kalon OS funciona com plataformas de videoconferência para as consultas online. Você pode criar sua conta antes ou depois da instalação.
+### 1. 👥 Cadastro de Clientes
 
-#### **Opção A: Whereby (Recomendado para iniciantes)**
-- 🌐 **Site**: [whereby.com/signup](https://whereby.com/signup)
-- ✅ **Gratuito** até 4 participantes por sala
-- ✅ Interface simples e intuitiva
-- ✅ Não precisa instalar nada
-- ✅ Funciona direto no navegador
+**Como cadastrar um novo cliente:**
 
-**Como fazer:**
-1. Acesse [whereby.com/signup](https://whereby.com/signup)
-2. Crie sua conta (gratuita)
-3. Escolha um nome para sua sala (ex: `seu-nome-consulta`)
-4. Copie o link da sua sala (ex: `https://whereby.com/seu-nome-consulta`)
-5. Você usará este link nas configurações do Kalon OS
+1. Acesse **Clientes** no menu lateral
+2. Clique em **"+ Novo Cliente"**
+3. Preencha os dados:
+   - Nome completo
+   - Email
+   - Telefone
+   - Foto (opcional - arraste ou clique)
+   - Idioma preferido
+4. Clique em **"Cadastrar"**
 
-#### **Opção B: Jitsi Meet (Totalmente gratuito)**
-- 🌐 **Site**: [jitsi.org/get-started/](https://jitsi.org/get-started/)
-- ✅ **100% gratuito** e ilimitado
-- ✅ Código aberto
-- ✅ Você pode hospedar seu próprio servidor
-- ⚠️ Requer mais configuração inicial
-
-**Como fazer:**
-1. Acesse [jitsi.org/get-started/](https://jitsi.org/get-started/)
-2. Siga as instruções para criar sua sala
-3. Ou use o serviço público: [meet.jit.si](https://meet.jit.si)
-4. Copie o link da sua sala
-5. Você usará este link nas configurações do Kalon OS
-
-#### **💡 Quando Configurar:**
-- ✅ **Agora**: Se quiser ter tudo pronto antes de começar
-- ✅ **Depois**: O sistema funciona sem o link, você só não poderá iniciar videoconferências até configurar
+**Recursos:**
+- ✅ Busca rápida por nome, email ou telefone
+- ✅ Edição de dados
+- ✅ Acesso direto para consulta
+- ✅ Histórico completo
 
 ---
 
-### **📝 Checklist de Preparação:**
+### 2. 🎥 Consultas Online
 
-Antes de começar a instalação, verifique:
+**Como iniciar uma consulta:**
 
-- [ ] Pasta principal "Kalon OS - [Seu Nome]" criada na nuvem
-- [ ] Todas as 6 pastas principais criadas (01 a 06)
-- [ ] Subpastas dentro de cada pasta principal criadas
-- [ ] Permissões da pasta configuradas (se compartilhar)
-- [ ] Conta Whereby ou Jitsi criada (ou marcado para fazer depois)
-- [ ] Link da sala de videoconferência copiado (se já criou)
+1. Acesse **Consultas** no menu
+2. Selecione o cliente
+3. Clique em **"Ir para Consulta"**
+4. Aguarde o cliente entrar na sala
+5. Inicie o atendimento
 
-**⏱️ Tempo estimado:** 15-20 minutos para organizar tudo
+**Recursos Durante a Consulta:**
 
----
+#### 🎥 Vídeo e Áudio
+- Ligar/desligar câmera
+- Mutar/desmutar microfone
+- Compartilhar tela
+- Modo tela cheia
+- Ajuste de qualidade automático
 
-## 🔧 INSTALAÇÃO
+#### 💬 Chat
+- Mensagens de texto
+- Compartilhar links
+- Histórico salvo automaticamente
 
-### **1. Clone do Repositório**
-```bash
-git clone https://github.com/seu-usuario/kalon-os.git
-cd kalon-os
-```
+#### 📝 Anotações
+- Faça anotações durante a sessão
+- Salvamento automático
+- Acesso posterior no histórico
 
-### **2. Instalação de Dependências**
-```bash
-npm install
-```
+#### 📁 Compartilhamento de Arquivos
+- Envie documentos
+- Compartilhe imagens/PDFs
+- Cliente pode fazer download
 
-### **3. Configuração do Ambiente**
-```bash
-# Copiar arquivo de configuração
-cp .env.example .env.local
+#### 🎵 Relaxamento
+- Músicas relaxantes
+- Sons da natureza
+- Frequências terapêuticas (432Hz, 528Hz, etc)
 
-# Editar variáveis de ambiente (se necessário)
-nano .env.local
-```
-
-### **4. Executar o Projeto**
-```bash
-# Modo desenvolvimento
-npm run dev
-
-# Modo produção
-npm run build
-npm start
-```
-
-### **5. Acessar a Aplicação**
-- 🌐 **URL**: http://localhost:3000
-- 🔐 **Login**: Use suas credenciais
+#### ⏱️ Temporizador
+- Defina duração da sessão
+- Alerta 5 minutos antes do fim
+- Controle de tempo total
 
 ---
 
-## 🎨 SISTEMA DE TEMAS
+### 3. 📅 Agendamentos
 
-### **Temas Disponíveis:**
-1. **Verde** (padrão) - Cores naturais e relaxantes
-2. **Azul** - Cores profissionais e confiáveis  
-3. **Caramelo** - Cores quentes e acolhedoras
+**Como criar um agendamento:**
 
-### **Como Alterar o Tema:**
-1. Acesse **Configurações** → **Identidade**
-2. Selecione o tema desejado
-3. O sistema aplicará automaticamente
+1. Acesse **Agendamentos**
+2. Clique em **"Nova Consulta"**
+3. Selecione o cliente
+4. Escolha data e horário
+5. Defina duração
+6. Adicione observações (opcional)
+7. Clique em **"Salvar"**
 
-### **Persistência:**
-- ✅ Tema salvo no navegador
-- ✅ Mantido entre sessões
-- ✅ Aplicado em todas as páginas
+**Tipos de Consulta:**
+- 🌐 **Online:** Videochamada pela plataforma
+- 🏥 **Presencial:** No consultório
+- 🔄 **Retorno:** Consulta de acompanhamento
+
+**Lembretes Automáticos:**
+- 📧 Email
+- 📱 WhatsApp
+- 📲 SMS
 
 ---
 
-## 🖥️ NAVEGAÇÃO DO SISTEMA
+### 4. 📄 Documentos Customizados
 
-### **Páginas Principais:**
+**Sistema de Documentos Inteligente:**
 
-#### **🏠 INÍCIO**
-- Dashboard principal
-- Acesso rápido a todas as funcionalidades
-- Logo personalizado com tema
+#### Passo 1: Upload de Template Word
 
-#### **👤 CADASTRO**
-- Gerenciamento de clientes
-- Formulários padronizados
+1. Acesse **Documentos** → **Novo Documento**
+2. Faça upload do arquivo `.docx`
+3. Sistema detecta automaticamente marcadores `{{campo}}`
+4. Extrai cláusulas do documento
+
+**Exemplo de Marcadores:**
+```
+O paciente {{nome_paciente}}, CPF {{cpf}},
+receberá o tratamento de {{tipo_tratamento}}
+pelo período de {{duracao}} dias.
+
+Valor: R$ {{valor_tratamento}}
+Data: {{data_inicio}}
+```
+
+#### Passo 2: Editor de Cláusulas
+
+- ✏️ Adicione novas cláusulas
+- 📝 Edite cláusulas existentes
+- 🗑️ Remova cláusulas desnecessárias
+- ⬆️⬇️ Reordene com botões
+
+#### Passo 3: Formulário Dinâmico
+
+- Sistema gera formulário automaticamente
+- Preencha os campos detectados
 - Validação automática
+- Progress bar mostra % preenchido
 
-#### **📹 CONSULTAS**
-- Sessões de vídeo online
-- Janelas draggable organizadas
-- Controles de gravação
+#### Passo 4: Gerar Documento Final
 
-#### **📅 AGENDAMENTOS**
-- Calendário interativo
-- Criação de sessões
-- Gestão de horários
-
-#### **📄 DOCUMENTOS**
-- Receituários digitais
-- Termos e contratos
-- Assinatura eletrônica
-
-#### **💰 FINANCEIRO**
-- Controle de pagamentos
-- Relatórios financeiros
-- Integração com bancos
-
-#### **⚙️ CONFIGURAÇÕES**
-- Personalização do sistema
-- Configurações avançadas
-- Gerenciamento de usuários
+- 👁️ Visualize preview com valores preenchidos
+- 📄 Gere documento Word final
+- ✍️ Adicione assinatura digital
+- 📧 Envie por email ou WhatsApp
 
 ---
 
-## 🎯 FUNCIONALIDADES PRINCIPAIS
+### 5. 🎪 Eventos e Webinars
 
-### **1. Sistema de Temas Dinâmico**
-- **Aplicação automática** em todos os componentes
-- **Contraste otimizado** para acessibilidade
-- **Persistência** entre sessões
+**Como criar um evento:**
 
-### **2. Interface Responsiva**
-- **Adaptação automática** a diferentes telas
-- **Navegação fluida** entre páginas
-- **Componentes otimizados** para mobile
+1. Acesse **Eventos**
+2. Clique em **"+ Novo Evento"**
+3. Preencha informações:
+   - Nome do evento
+   - Descrição
+   - Tipo (Curso, Palestra, Workshop, Webinar)
+   - Data e horário
+   - Link da sala (opcional)
+4. Faça upload do banner (opcional)
+5. Defina formato (Aberto ou Fechado)
+6. Clique em **"Criar Evento"**
 
-### **3. Janelas Draggable**
-- **Posicionamento inteligente** para evitar sobreposição
-- **Redimensionamento** com limites
-- **Persistência** de posições
+**Marketing Automation:**
+- 📧 Emails de lembrete automáticos
+- 📱 Mensagens WhatsApp
+- 📊 Relatórios de engajamento
+- 🎯 Segmentação de público
 
-### **4. Sistema de Contraste**
-- **Cores escuras**: Texto branco + negrito
-- **Cores claras**: Texto cor primária + negrito
-- **Visibilidade máxima** em todos os elementos
-
----
-
-## 🔧 CONFIGURAÇÕES AVANÇADAS
-
-### **Acessibilidade:**
-- **Alto contraste** disponível
-- **Tamanhos de fonte** ajustáveis
-- **Navegação por teclado** suportada
-
-### **Personalização:**
-- **Temas personalizados** (desenvolvedores)
-- **Cores customizadas** (configuração avançada)
-- **Layout adaptável** (preferências do usuário)
-
-### **Performance:**
-- **Carregamento otimizado** de temas
-- **Cache inteligente** de componentes
-- **Lazy loading** de páginas
+**Durante o Evento:**
+- Compartilhe tela para apresentações
+- Use chat para interação
+- Grave a sessão (se configurado)
+- Gere certificados
 
 ---
 
-## 🐛 SOLUÇÃO DE PROBLEMAS
+### 6. 🛍️ Catálogo de Produtos
 
-### **Problemas Comuns:**
+**Como adicionar um produto:**
 
-#### **Tema não aplica:**
-```bash
-# Limpar cache do navegador
-Ctrl + F5 (Windows/Linux)
-Cmd + Shift + R (macOS)
-```
+1. Acesse **Meus Produtos**
+2. Clique em **"+ Novo Produto"**
+3. Adicione imagem (arraste ou clique)
+4. Preencha:
+   - Nome do produto
+   - Descrição
+   - Preço (formato: 1.000,00)
+5. Escolha tipo de ação:
+   - **Link:** URL de venda (Hotmart, Eduzz, etc)
+   - **WhatsApp:** Número para contato
+   - **PIX:** Chave PIX para pagamento
+6. Clique em **"Salvar"**
 
-#### **Ícones não aparecem:**
-- Verificar conexão com internet
-- Limpar cache do navegador
-- Reiniciar aplicação
-
-#### **Janelas não abrem:**
-- Verificar JavaScript habilitado
-- Limpar localStorage: `localStorage.clear()`
-- Recarregar página
-
-#### **Cores não atualizam:**
-- Verificar se tema foi salvo
-- Limpar cache do navegador
-- Reiniciar aplicação
-
-### **Logs de Debug:**
-```bash
-# Modo debug
-npm run dev -- --debug
-
-# Verificar console do navegador
-F12 → Console
-```
+**Dicas:**
+- 📸 Use imagens quadradas (1:1)
+- 💰 Preço formatado automaticamente em R$
+- 📱 Teste os links antes de publicar
+- ✨ Descrições claras aumentam conversão
 
 ---
 
-## 📱 COMPATIBILIDADE
+### 7. ⚙️ Configurações
 
-### **Navegadores Suportados:**
-- ✅ **Chrome** 90+
-- ✅ **Firefox** 88+
-- ✅ **Safari** 14+
-- ✅ **Edge** 90+
+#### 📋 Aba Geral
+- Dados pessoais
+- Informações profissionais
+- Endereço do consultório
+- Horário de atendimento
 
-### **Dispositivos:**
-- ✅ **Desktop** (Windows, macOS, Linux)
-- ✅ **Tablet** (iPad, Android)
-- ✅ **Mobile** (iOS, Android)
+#### 🎨 Aba Aparência
+- Escolha entre 10+ temas
+- Modo claro/escuro
+- Preview em tempo real
+- Logo personalizado
+
+#### ✍️ Aba Assinatura
+- Desenhe com mouse/touch
+- Upload de imagem
+- Ajuste tamanho e posição
+- Configurar carimbo
+
+#### 🔐 Aba Segurança
+- Alterar senha
+- Autenticação em dois fatores (2FA)
+- Sessões ativas
+- Log de atividades
+
+#### 🔔 Aba Notificações
+- Email para agendamentos
+- WhatsApp para lembretes
+- Push para mensagens
+- Frequência de resumos
+
+#### 🔗 Aba Integrações
+- Google Calendar
+- WhatsApp Business
+- Stripe/PagSeguro
+- Google Drive (backup)
+
+#### ⚙️ Aba Avançado
+- Sala de espera personalizada
+- API e Webhooks
+- Configurações técnicas
 
 ---
 
-## 🔒 SEGURANÇA
+## 💰 PLANOS E ASSINATURAS
 
-### **Autenticação:**
-- **Login seguro** com validação
-- **Sessões protegidas** com timeout
-- **Logout automático** por inatividade
+### Plano Gratuito
+- ✅ 5 clientes
+- ✅ 10 consultas/mês
+- ✅ Documentos básicos
+- ✅ 1 evento/mês
 
-### **Dados:**
-- **Criptografia** de informações sensíveis
-- **Backup automático** de configurações
-- **Privacidade** respeitada
+### Plano Profissional (R$ 97/mês)
+- ✅ Clientes ilimitados
+- ✅ Consultas ilimitadas
+- ✅ Todos os documentos
+- ✅ 10 eventos/mês
+- ✅ Gravação de consultas
+- ✅ Suporte prioritário
+
+### Plano Premium (R$ 197/mês)
+- ✅ Tudo do Profissional
+- ✅ Eventos ilimitados
+- ✅ Marketing automation
+- ✅ API completa
+- ✅ White label
+- ✅ Suporte 24/7
+
+---
+
+## 🆘 SISTEMA DE AJUDA
+
+### Ajuda Contextual
+
+Em **TODAS** as páginas, você encontra o botão **?** (flutuante no canto inferior direito).
+
+**Ao clicar:**
+- 📖 Conteúdo específico da página
+- 🎬 Vídeos tutoriais (em breve)
+- 💡 Dicas e truques
+- ❓ FAQ
+
+**Páginas com Ajuda:**
+1. Documentos
+2. Perfil
+3. Configurações
+4. Agendamentos
+5. Consultas
+6. Eventos
+7. Financeiro
+8. Produtos
+9. Clientes
+10. Guia Completo
+
+### Guia Completo
+
+Acesse: **Ajuda** → **Guia de Utilização**
+
+- 🔍 Busca inteligente
+- 📚 Todas as funcionalidades
+- 🎯 Navegação por seções
+- 📥 Download em PDF
+
+---
+
+## 🔧 SOLUÇÃO DE PROBLEMAS
+
+### Problemas com Vídeo/Áudio
+
+**Câmera não funciona:**
+1. Verifique permissões do navegador
+2. Feche outros aplicativos usando a câmera
+3. Teste em outro navegador
+4. Reinicie o computador
+
+**Microfone não funciona:**
+1. Verifique permissões do navegador
+2. Teste o microfone nas configurações do sistema
+3. Verifique se não está mutado
+4. Tente outro dispositivo de áudio
+
+**Vídeo travando:**
+1. Verifique sua conexão de internet
+2. Feche abas desnecessárias
+3. Reduza qualidade do vídeo
+4. Reinicie o navegador
+
+### Problemas com Documentos
+
+**Upload falha:**
+1. Verifique tamanho do arquivo (máx 10MB)
+2. Certifique-se que é .docx
+3. Tente outro arquivo
+4. Limpe cache do navegador
+
+**Marcadores não detectados:**
+1. Use formato correto: `{{nome_campo}}`
+2. Não use espaços: `{{nome campo}}` ❌
+3. Use underscore: `{{nome_campo}}` ✅
+4. Verifique se está no Word (.docx)
+
+### Problemas de Conexão
+
+**Desconectado frequentemente:**
+1. Teste velocidade da internet
+2. Use cabo ethernet (se possível)
+3. Aproxime-se do roteador WiFi
+4. Reinicie o roteador
 
 ---
 
 ## 📞 SUPORTE
 
-### **Documentação:**
-- 📖 **README.md** - Informações básicas
-- 📊 **RELATORIO_MELHORIAS_VISUAIS.md** - Detalhes técnicos
-- 🎯 **Este guia** - Instalação e uso
+### Canais de Atendimento
 
-### **Contato:**
-- 📧 **Email**: suporte@kalon-os.com
-- 💬 **Chat**: Sistema integrado
-- 🐛 **Bugs**: GitHub Issues
+- 📧 **Email:** suporte@kalonconnect.com
+- 💬 **Chat:** Disponível na plataforma
+- 📱 **WhatsApp:** (11) 99999-9999
+- 🎫 **Tickets:** Sistema interno
 
----
+### Horários
 
-## 🚀 PRÓXIMAS VERSÕES
+- **Segunda a Sexta:** 9h às 18h
+- **Sábado:** 9h às 13h
+- **Domingo:** Fechado
 
-### **Melhorias Planejadas:**
-- 🎨 **Novos temas** personalizados
-- 📱 **App mobile** nativo
-- 🔄 **Sincronização** em tempo real
-- 🤖 **IA integrada** para sugestões
-- 📊 **Analytics** avançados
+### Tempo de Resposta
+
+- **Plano Gratuito:** Até 48h
+- **Plano Profissional:** Até 24h
+- **Plano Premium:** Até 4h
 
 ---
 
-## ✅ CHECKLIST DE INSTALAÇÃO
+## 🔒 SEGURANÇA E PRIVACIDADE
 
-### **Preparação Prévia:**
-- [ ] Pasta principal "Kalon OS - [Seu Nome]" criada na nuvem
-- [ ] Todas as 6 pastas principais criadas (01 a 06)
-- [ ] Subpastas dentro de cada pasta principal criadas
-- [ ] Conta Whereby ou Jitsi criada (ou marcado para fazer depois)
-- [ ] Link da sala de videoconferência copiado (se já criou)
+### Proteção de Dados
 
-### **Instalação Técnica:**
-- [ ] Node.js instalado (16.0+)
-- [ ] npm instalado (8.0+)
-- [ ] Repositório clonado
-- [ ] Dependências instaladas (`npm install`)
-- [ ] Aplicação executando (`npm run dev`)
-- [ ] Acesso local funcionando (localhost:3000)
+- 🔐 Criptografia end-to-end
+- 🛡️ Conformidade com LGPD
+- 🔒 Certificado SSL
+- 💾 Backup automático diário
 
-### **Configuração Inicial:**
-- [ ] Login realizado com sucesso
-- [ ] Tema aplicado corretamente
-- [ ] Navegação funcionando
-- [ ] Todas as páginas carregando
-- [ ] Link de videoconferência configurado (nas Configurações)
-- [ ] Pasta Google Drive conectada (nas Configurações)
+### Privacidade
+
+- ✅ Dados armazenados no Brasil
+- ✅ Não compartilhamos informações
+- ✅ Você controla seus dados
+- ✅ Exclusão permanente disponível
 
 ---
 
-## 🎉 CONCLUSÃO
+## 📱 ACESSO MOBILE
 
-O **Kalon OS** está pronto para uso com:
+### Navegador Mobile
 
-- ✅ **Interface moderna** e profissional
-- ✅ **Sistema de temas** dinâmico
-- ✅ **Contraste otimizado** para acessibilidade
-- ✅ **Navegação intuitiva** e fluida
-- ✅ **Funcionalidades completas** para gestão terapêutica
+Acesse pelo navegador do celular:
+- **Android:** Chrome, Firefox
+- **iOS:** Safari, Chrome
 
-**Bem-vindo ao futuro da gestão terapêutica digital!** 🌟
+**Funcionalidades Mobile:**
+- ✅ Consultas online
+- ✅ Chat e anotações
+- ✅ Agendamentos
+- ✅ Documentos
+- ✅ Notificações push
+
+### App Nativo (Em Breve)
+
+- 📱 Android (Google Play)
+- 🍎 iOS (App Store)
 
 ---
 
-*Guia atualizado em Outubro 2025*  
-*Kalon OS - Sistema de Consciência Integrada*
+## 🎯 DICAS DE USO
 
+### Para Melhor Experiência
+
+1. **Use fones de ouvido** durante consultas (evita eco)
+2. **Ilumine bem** o ambiente (melhora qualidade do vídeo)
+3. **Fundo neutro** (mais profissional)
+4. **Teste antes** de cada consulta
+5. **Feche programas** desnecessários
+6. **Mantenha navegador** atualizado
+
+### Organização
+
+1. **Cadastre clientes** antes da primeira consulta
+2. **Configure lembretes** automáticos
+3. **Faça backup** regular dos documentos
+4. **Revise configurações** mensalmente
+5. **Atualize perfil** quando necessário
+
+---
+
+## 📚 RECURSOS ADICIONAIS
+
+### Tutoriais em Vídeo (Em Breve)
+
+- 🎬 Canal YouTube
+- 📺 Webinars semanais
+- 🎓 Cursos completos
+
+### Comunidade
+
+- 👥 Grupo Facebook
+- 💬 Fórum de discussão
+- 📰 Newsletter mensal
+
+### Blog
+
+- 📝 Artigos técnicos
+- 💡 Dicas de uso
+- 🆕 Novidades e atualizações
+
+---
+
+## 🔄 ATUALIZAÇÕES
+
+### Versão Atual: 2.0
+
+**Novidades:**
+- ✨ Sistema de ajuda contextual
+- 📄 Documentos customizados
+- 🎪 Eventos e webinars
+- 🛍️ Catálogo de produtos
+- 🎨 Novos temas
+- 🌍 Suporte multilíngue
+
+### Próximas Atualizações
+
+- 📱 App mobile nativo
+- 🤖 IA para transcrição automática
+- 📊 Relatórios avançados
+- 🔗 Mais integrações
+- 🎥 Gravação em nuvem
+
+---
+
+## ✅ CHECKLIST DE INÍCIO
+
+Use este checklist para garantir que está tudo configurado:
+
+- [ ] Conta criada e email confirmado
+- [ ] Perfil profissional completo
+- [ ] Foto de perfil adicionada
+- [ ] Tema personalizado escolhido
+- [ ] Assinatura digital configurada
+- [ ] Primeiro cliente cadastrado
+- [ ] Teste de vídeo/áudio realizado
+- [ ] Primeiro agendamento criado
+- [ ] Template de documento configurado
+- [ ] Notificações ativadas
+
+---
+
+## 📞 PRECISA DE AJUDA?
+
+**Não conseguiu encontrar o que procura?**
+
+1. 🔍 Use a **busca** no Guia Completo
+2. ❓ Clique no botão **?** em qualquer página
+3. 💬 Acesse o **Chat de Suporte**
+4. 📧 Envie email para **suporte@kalonconnect.com**
+
+---
+
+**🎉 Bem-vindo ao KalonConnect!**
+
+Estamos aqui para tornar seu atendimento online mais profissional, organizado e eficiente.
+
+**Bons atendimentos!** 💙
