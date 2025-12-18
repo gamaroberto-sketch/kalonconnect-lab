@@ -1,7 +1,8 @@
 # 🎯 GUIA DE INSTALAÇÃO E USO - KALONCONNECT
 
 **Versão:** Visual Padronizada  
-**Data:** Dezembro 2025
+**Data:** 18 de Dezembro de 2025  
+**Última Atualização:** 14:36
 
 ---
 
