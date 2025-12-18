@@ -74,13 +74,29 @@ const HelpModal = ({ isOpen, onClose, section }) => {
                                     {section.subsections.map((sub, index) => (
                                         <div
                                             key={index}
-                                            className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+                                            onClick={() => {
+                                                if (sub.videoUrl) {
+                                                    // Se tiver vídeo, abre em nova aba
+                                                    window.open(sub.videoUrl, '_blank');
+                                                } else {
+                                                    // Se não tiver vídeo, mostra mensagem
+                                                    alert(`📹 Vídeo "${sub.title}" em breve!\n\nEstamos gravando os vídeos tutoriais. Por enquanto, use o conteúdo textual acima.`);
+                                                }
+                                            }}
+                                            className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer group"
                                         >
-                                            <div className="flex items-center gap-2">
-                                                <Play className="w-4 h-4" style={{ color: themeColors.primary }} />
-                                                <span className="font-medium text-gray-900 dark:text-white">
-                                                    {sub.title}
-                                                </span>
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Play className="w-4 h-4 group-hover:scale-110 transition-transform" style={{ color: themeColors.primary }} />
+                                                    <span className="font-medium text-gray-900 dark:text-white">
+                                                        {sub.title}
+                                                    </span>
+                                                </div>
+                                                {!sub.videoUrl && (
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                                        Em breve
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
