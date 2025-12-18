@@ -218,7 +218,7 @@ const ProfileNew = () => {
                 <HelpModal
                     isOpen={showHelp}
                     onClose={() => setShowHelp(false)}
-                    section={helpSections.perfil}
+                    section={helpSections.configuracoes}
                 />
             </div>
         </ProtectedRoute>

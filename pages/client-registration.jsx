@@ -550,7 +550,7 @@ export default function ClientRegistration() {
         <HelpModal
           isOpen={showHelp}
           onClose={() => setShowHelp(false)}
-          section={helpSections.inicio}
+          section={helpSections.clientes}
         />
       </div>
     </ProtectedRoute>

@@ -1058,7 +1058,7 @@ const Consultations = () => {
           <HelpModal
             isOpen={showHelp}
             onClose={() => setShowHelp(false)}
-            section={helpSections.inicio}
+            section={helpSections.consultas}
           />
         </div>
       </UsageTrackerProvider>

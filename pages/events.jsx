@@ -507,6 +507,16 @@ const Events = () => {
             </motion.div>
           </div>
         )}
+
+        {/* Help Button */}
+        <HelpButton onClick={() => setShowHelp(true)} />
+
+        {/* Help Modal */}
+        <HelpModal
+          isOpen={showHelp}
+          onClose={() => setShowHelp(false)}
+          section={helpSections.eventos}
+        />
       </div>
     </ProtectedRoute>
   );

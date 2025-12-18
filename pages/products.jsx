@@ -509,7 +509,7 @@ const ProductsPage = () => {
                 <HelpModal
                     isOpen={showHelp}
                     onClose={() => setShowHelp(false)}
-                    section={helpSections.inicio}
+                    section={helpSections.produtos}
                 />
             </div>
         </ProtectedRoute>
