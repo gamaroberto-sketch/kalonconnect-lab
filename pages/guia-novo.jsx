@@ -70,7 +70,8 @@ const GuiaNovoPage = () => {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="Buscar no guia... (ex: upload word, assinatura, agenda)"
-                                        className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors"
+                                        style={{ borderColor: searchQuery ? themeColors.primary : undefined }}
+                                        className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none transition-colors"
                                     />
                                 </div>
 
@@ -121,7 +122,7 @@ const GuiaNovoPage = () => {
                                         onClick={() => handleSectionClick(section)}
                                         className="group cursor-pointer"
                                     >
-                                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-all hover:shadow-lg">
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-lg" style={{ borderColor: undefined }} onMouseEnter={(e) => e.currentTarget.style.borderColor = themeColors.primary} onMouseLeave={(e) => e.currentTarget.style.borderColor = ''}>
                                             {/* Icon */}
                                             <div className="mb-4 p-3 rounded-lg w-fit" style={{ backgroundColor: `${themeColors.primary}20` }}>
                                                 <div style={{ color: themeColors.primary }}>
@@ -130,7 +131,7 @@ const GuiaNovoPage = () => {
                                             </div>
 
                                             {/* Title */}
-                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 transition-colors">
                                                 {section.title}
                                             </h3>
 
@@ -141,7 +142,7 @@ const GuiaNovoPage = () => {
 
                                             {/* Video Badge */}
                                             {section.videoUrl && (
-                                                <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                                                <div className="flex items-center gap-2 text-sm" style={{ color: themeColors.primary }}>
                                                     <Play className="w-4 h-4" />
                                                     <span>Vídeo tutorial disponível</span>
                                                 </div>
@@ -155,7 +156,7 @@ const GuiaNovoPage = () => {
                                             )}
 
                                             {/* Arrow */}
-                                            <div className="mt-4 flex items-center text-blue-600 dark:text-blue-400 font-medium text-sm group-hover:translate-x-1 transition-transform">
+                                            <div className="mt-4 flex items-center font-medium text-sm group-hover:translate-x-1 transition-transform" style={{ color: themeColors.primary }}>
                                                 Ver guia
                                                 <ChevronRight className="w-4 h-4 ml-1" />
                                             </div>
@@ -165,13 +166,13 @@ const GuiaNovoPage = () => {
                             </div>
 
                             {/* Quick Tips */}
-                            <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 border border-blue-200 dark:border-gray-600">
+                            <div className="mt-12 rounded-xl p-6 border" style={{ backgroundColor: `${themeColors.primary}10`, borderColor: `${themeColors.primary}40` }}>
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                                     💡 Dicas Rápidas
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="flex items-start gap-3">
-                                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                        <div className="p-2 rounded-lg" style={{ backgroundColor: `${themeColors.primary}20` }}>
                                             <span className="text-2xl">⌨️</span>
                                         </div>
                                         <div>
@@ -184,7 +185,7 @@ const GuiaNovoPage = () => {
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                        <div className="p-2 rounded-lg" style={{ backgroundColor: `${themeColors.primary}20` }}>
                                             <span className="text-2xl">🎥</span>
                                         </div>
                                         <div>
