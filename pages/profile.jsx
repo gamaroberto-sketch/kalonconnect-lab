@@ -1,348 +1,217 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import { useAuth } from "../components/AuthContext";
-import { User, Mail, Phone, FileText, MapPin, Instagram, Linkedin, Globe, Camera, Save, ArrowLeft } from "lucide-react";
+import React, { useState } from 'react';
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
+import ProtectedRoute from '../components/ProtectedRoute';
+import AdvancedSettings from '../components/AdvancedSettings';
+import WaitingRoomSettings from '../components/WaitingRoomSettings';
+import ConsultationInviteSettings from '../components/ConsultationInviteSettings';
+import CredentialsPanel from '../components/CredentialsPanel';
+import IntegrationsOnly from '../components/IntegrationsOnly';
+import SubscriptionPanel from '../components/SubscriptionPanel';
+import ReferralPanel from '../components/ReferralPanel';
+import { useTranslation } from '../hooks/useTranslation';
+import { useTheme } from '../components/ThemeProvider';
+import { useAuth } from '../components/AuthContext';
+import {
+    User, Palette, Cloud, Send, Key, Languages,
+    Video as VideoIcon, PenTool
+} from 'lucide-react';
 
-export default function ProfilePage() {
-    const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
-    const [loading, setLoading] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
+const ProfileNew = () => {
+    const { getThemeColors } = useTheme();
+    const themeColors = getThemeColors();
+    const { t } = useTranslation();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
+    const { user } = useAuth();
 
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        specialty: '',
-        professional_registration: '',
-        phone: '',
-        bio: '',
-        photo_url: '',
-        address: {
-            street: '',
-            city: '',
-            state: '',
-            zipCode: ''
-        },
-        social_media: {
-            instagram: '',
-            linkedin: '',
-            website: ''
+    // Tab State - 8 tabs total
+    const [activeTab, setActiveTab] = useState('profile');
+
+    const ProfileEditor = require('../components/ProfileEditor').default;
+
+    // Load dark mode from localStorage
+    React.useEffect(() => {
+        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+        setDarkMode(savedDarkMode);
+    }, []);
+
+    React.useEffect(() => {
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
-    });
+    }, [darkMode]);
 
-    useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/login');
-            return;
-        }
-
-        if (user) {
-            setFormData({
-                name: user.name || '',
-                email: user.email || '',
-                specialty: user.specialty || '',
-                professional_registration: user.professional_registration || '',
-                phone: user.phone || '',
-                bio: user.bio || '',
-                photo_url: user.photo_url || '',
-                address: user.address || { street: '', city: '', state: '', zipCode: '' },
-                social_media: user.social_media || { instagram: '', linkedin: '', website: '' }
-            });
-        }
-    }, [user, authLoading, router]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleAddressChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            address: { ...prev.address, [name]: value }
-        }));
-    };
-
-    const handleSocialChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            social_media: { ...prev.social_media, [name]: value }
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSaving(true);
-        setMessage({ type: '', text: '' });
-
-        try {
-            const response = await fetch('/api/profile/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Erro ao atualizar perfil');
-            }
-
-            setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' });
-
-            // Refresh page after 2 seconds
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        } catch (error) {
-            setMessage({ type: 'error', text: error.message });
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    if (authLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-lg">Carregando...</div>
-            </div>
-        );
-    }
+    const tabs = [
+        { id: 'profile', label: 'Perfil', icon: <User size={18} /> },
+        { id: 'branding', label: 'Temas', icon: <Palette size={18} /> },
+        { id: 'integrations', label: 'Integrações', icon: <Cloud size={18} /> },
+        { id: 'invites', label: 'Convites', icon: <Send size={18} /> },
+        { id: 'credentials', label: 'Credenciais', icon: <Key size={18} /> },
+        { id: 'language', label: 'Idioma', icon: <Languages size={18} /> },
+        { id: 'waiting_room', label: 'Sala de Espera', icon: <VideoIcon size={18} /> },
+        { id: 'signature', label: 'Assinatura', icon: <PenTool size={18} /> },
+    ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 py-8 px-4">
-            <div className="max-w-4xl mx-auto">
+        <ProtectedRoute>
+            <div
+                className="min-h-screen transition-colors duration-300"
+                style={{
+                    backgroundColor: themeColors.secondary || themeColors.secondaryLight || '#f0f9f9'
+                }}
+            >
                 {/* Header */}
-                <div className="mb-8">
-                    <button
-                        onClick={() => router.push('/dashboard')}
-                        className="flex items-center gap-2 text-teal-700 hover:text-teal-900 mb-4"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                        Voltar ao Dashboard
-                    </button>
-                    <h1 className="text-3xl font-bold text-gray-800">Meu Perfil</h1>
-                    <p className="text-gray-600 mt-2">Gerencie suas informações profissionais</p>
+                <Header
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                />
+
+                {/* Sidebar */}
+                <Sidebar
+                    activeSection="settings"
+                    setActiveSection={() => { }}
+                    sidebarOpen={sidebarOpen}
+                    darkMode={darkMode}
+                />
+
+                {/* Main Content */}
+                <div
+                    className={`relative z-10 transition-all duration-300 pt-28 ${sidebarOpen ? 'lg:ml-64' : ''
+                        }`}
+                >
+                    <div className="p-6">
+                        <div className="max-w-5xl mx-auto space-y-6">
+
+                            {/* Page Title & Version */}
+                            <div className="flex items-center justify-between">
+                                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+                                    Configurações & Perfil
+                                    <span className="ml-3 text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-800">
+                                        TESTE
+                                    </span>
+                                </h1>
+                                <span
+                                    className="text-xs px-3 py-1 rounded-full text-white shadow-md font-medium"
+                                    style={{ backgroundColor: themeColors.primary }}
+                                >
+                                    {user?.version || 'DEMO'}
+                                </span>
+                            </div>
+
+                            {/* Tabs Header */}
+                            <div className="flex flex-wrap gap-3 mb-6">
+                                {tabs.map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all whitespace-nowrap ${activeTab === tab.id
+                                            ? 'text-white shadow-md'
+                                            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                                            }`}
+                                        style={activeTab === tab.id ? {
+                                            backgroundColor: themeColors.primary
+                                        } : {}}
+                                    >
+                                        {tab.icon}
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Tab Content */}
+                            <div className="mt-4">
+                                {activeTab === 'profile' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <ProfileEditor />
+                                    </div>
+                                )}
+
+                                {activeTab === 'branding' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+                                                    <Palette className="w-6 h-6" style={{ color: 'white' }} />
+                                                </div>
+                                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                                                    Temas
+                                                </h2>
+                                            </div>
+                                            <AdvancedSettings initialTab="branding" hideTabsBar={true} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'integrations' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+                                                    <Cloud className="w-6 h-6" style={{ color: 'white' }} />
+                                                </div>
+                                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                                                    Integrações
+                                                </h2>
+                                            </div>
+                                            <AdvancedSettings initialTab="integrations" hideTabsBar={true} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'invites' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <ConsultationInviteSettings />
+                                    </div>
+                                )}
+
+                                {activeTab === 'credentials' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <CredentialsPanel />
+                                    </div>
+                                )}
+
+                                {activeTab === 'language' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+                                                    <Languages className="w-6 h-6" style={{ color: 'white' }} />
+                                                </div>
+                                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                                                    Idioma & Região
+                                                </h2>
+                                            </div>
+                                            <AdvancedSettings initialTab="general" hideTabsBar={true} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'waiting_room' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <WaitingRoomSettings />
+                                    </div>
+                                )}
+
+                                {activeTab === 'signature' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-8">
+                                        <SubscriptionPanel />
+                                        <ReferralPanel />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                {/* Message */}
-                {message.text && (
-                    <div className={`mb-6 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                        {message.text}
-                    </div>
-                )}
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8 space-y-8">
-                    {/* Dados Pessoais */}
-                    <div>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <User className="w-5 h-5" />
-                            Dados Pessoais
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
-                                    disabled
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Dados Profissionais */}
-                    <div>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <FileText className="w-5 h-5" />
-                            Dados Profissionais
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Especialidade</label>
-                                <input
-                                    type="text"
-                                    name="specialty"
-                                    value={formData.specialty}
-                                    onChange={handleChange}
-                                    placeholder="Ex: Psicólogo Clínico"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Registro Profissional</label>
-                                <input
-                                    type="text"
-                                    name="professional_registration"
-                                    value={formData.professional_registration}
-                                    onChange={handleChange}
-                                    placeholder="Ex: CRP 12345/SP"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    placeholder="(11) 99999-9999"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                        <div className="mt-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Biografia</label>
-                            <textarea
-                                name="bio"
-                                value={formData.bio}
-                                onChange={handleChange}
-                                rows="4"
-                                placeholder="Conte um pouco sobre você e sua experiência profissional..."
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Endereço */}
-                    <div>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <MapPin className="w-5 h-5" />
-                            Endereço
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Rua</label>
-                                <input
-                                    type="text"
-                                    name="street"
-                                    value={formData.address.street}
-                                    onChange={handleAddressChange}
-                                    placeholder="Rua, número, complemento"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Cidade</label>
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={formData.address.city}
-                                    onChange={handleAddressChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-                                <input
-                                    type="text"
-                                    name="state"
-                                    value={formData.address.state}
-                                    onChange={handleAddressChange}
-                                    placeholder="SP"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">CEP</label>
-                                <input
-                                    type="text"
-                                    name="zipCode"
-                                    value={formData.address.zipCode}
-                                    onChange={handleAddressChange}
-                                    placeholder="00000-000"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Redes Sociais */}
-                    <div>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <Globe className="w-5 h-5" />
-                            Redes Sociais
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                                    <Instagram className="w-4 h-4" />
-                                    Instagram
-                                </label>
-                                <input
-                                    type="text"
-                                    name="instagram"
-                                    value={formData.social_media.instagram}
-                                    onChange={handleSocialChange}
-                                    placeholder="@seu_usuario"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                                    <Linkedin className="w-4 h-4" />
-                                    LinkedIn
-                                </label>
-                                <input
-                                    type="text"
-                                    name="linkedin"
-                                    value={formData.social_media.linkedin}
-                                    onChange={handleSocialChange}
-                                    placeholder="linkedin.com/in/seu-perfil"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                                    <Globe className="w-4 h-4" />
-                                    Website
-                                </label>
-                                <input
-                                    type="url"
-                                    name="website"
-                                    value={formData.social_media.website}
-                                    onChange={handleSocialChange}
-                                    placeholder="https://seusite.com.br"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="flex justify-end pt-6 border-t">
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            className="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold"
-                        >
-                            <Save className="w-5 h-5" />
-                            {saving ? 'Salvando...' : 'Salvar Alterações'}
-                        </button>
-                    </div>
-                </form>
             </div>
-        </div>
+        </ProtectedRoute>
     );
-}
+};
+
+export default ProfileNew;
