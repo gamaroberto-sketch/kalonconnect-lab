@@ -19,10 +19,13 @@ import {
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useUsageTrackerContext } from './UsageTrackerContext';
+import { useVideoPanel } from './VideoPanelContext';
 
 const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { remoteVideoRef } = useVideoPanel();
+  const { trackAction: trackUsageAction } = useUsageTrackerContext();
   const shellBackground =
     themeColors.secondary || themeColors.secondaryDark || '#c5c6b7';
   const surfaceMuted = themeColors.backgroundSecondary || '#f8fafc';
@@ -66,19 +69,24 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
         const response = await fetch(`/api/clients/${clientId}`);
         if (response.ok) {
           const data = await response.json();
+          // Load photo from localStorage if exists
+          const savedPhoto = localStorage.getItem(`client_photo_${clientId}`);
           setClientData({
             id: data.id || clientId,
             name: data.name || 'Cliente',
             email: data.email || '',
             phone: data.phone || '',
             birthDate: data.birthDate || '',
-            photo: data.photo || capturedImage || null,
+            photo: savedPhoto || data.photo || null,
             notes: data.notes || '',
             medications: data.medications || '',
             allergies: data.allergies || '',
             emergencyContact: data.emergencyContact || '',
             previousConsultations: data.previousConsultations || []
           });
+          if (savedPhoto) {
+            setCapturedImage(savedPhoto);
+          }
         }
       } catch (error) {
         console.error('Erro ao carregar dados do cliente:', error);
@@ -245,11 +253,20 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
       canvas.height = video.videoHeight;
 
       const ctx = canvas.getContext('2d');
+      // Mirror the image back to normal
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0);
 
       const dataURL = canvas.toDataURL('image/png');
       setCapturedImage(dataURL);
       setClientData({ ...clientData, photo: dataURL });
+
+      // Save to localStorage
+      if (clientId || clientData.id) {
+        localStorage.setItem(`client_photo_${clientId || clientData.id}`, dataURL);
+        console.log('📸 Foto salva no localStorage');
+      }
 
       stopCamera();
       setShowCamera(false);
@@ -262,6 +279,54 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
       announcement.textContent = 'Foto capturada e salva com sucesso!';
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
+    }
+  };
+
+  // Deletar foto
+  const deletePhoto = () => {
+    setCapturedImage(null);
+    setClientData({ ...clientData, photo: null });
+    if (clientId || clientData.id) {
+      localStorage.removeItem(`client_photo_${clientId || clientData.id}`);
+      console.log('🗑️ Foto removida do localStorage');
+    }
+  };
+
+  // Capturar foto do vídeo remoto (cliente em teleconsulta)
+  const captureRemotePhoto = () => {
+    if (remoteVideoRef?.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = remoteVideoRef.current;
+
+      // Check if video has valid dimensions
+      if (video.videoWidth === 0 || video.videoHeight === 0) {
+        alert('Vídeo do cliente não disponível. Certifique-se de que está em uma videochamada.');
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+
+      const dataURL = canvas.toDataURL('image/png');
+      setCapturedImage(dataURL);
+      setClientData({ ...clientData, photo: dataURL });
+
+      // Save to localStorage
+      if (clientId || clientData.id) {
+        localStorage.setItem(`client_photo_${clientId || clientData.id}`, dataURL);
+        console.log('📸 Foto do cliente capturada e salva!');
+      }
+
+      trackUsageAction({
+        type: 'capturePhoto',
+        panel: 'ClientRecord',
+        metadata: { source: 'remote', clientId: clientData.id }
+      });
+    } else {
+      alert('Vídeo do cliente não disponível. Certifique-se de que está em uma videochamada.');
     }
   };
 
