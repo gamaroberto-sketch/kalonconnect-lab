@@ -420,11 +420,21 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
           }}
         >
           {clientData.photo ? (
-            <img
-              src={clientData.photo}
-              alt={`Foto de ${clientData.name}`}
-              className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
-            />
+            <div className="relative">
+              <img
+                src={clientData.photo}
+                alt={`Foto de ${clientData.name || 'Cliente'}`}
+                className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
+              />
+              <button
+                onClick={deletePhoto}
+                className="absolute -top-1 -right-1 p-1.5 rounded-full bg-red-500 text-white shadow-lg hover:bg-red-600 transition-colors"
+                title="Remover foto"
+                aria-label="Remover foto do cliente"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
             <div
               className="w-32 h-32 rounded-full flex items-center justify-center border-4 border-white shadow-lg"
