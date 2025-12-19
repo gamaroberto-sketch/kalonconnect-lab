@@ -435,17 +435,40 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
               <User className="w-16 h-16 text-white" />
             </div>
           )}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 justify-center">
             <button
-              onClick={startCamera}
+              onClick={captureRemotePhoto}
               className="px-4 py-2 text-white rounded-lg font-medium flex items-center space-x-2 transition-colors"
               style={{ backgroundColor: themeColors.primary }}
               onMouseEnter={(e) => e.target.style.backgroundColor = themeColors.primaryDark}
               onMouseLeave={(e) => e.target.style.backgroundColor = themeColors.primary}
-              aria-label="Tirar foto com a webcam"
+              aria-label="Capturar foto do vídeo do cliente"
+              title="Captura do vídeo em teleconsulta"
             >
               <Camera className="w-5 h-5" />
-              <span>Tirar Foto</span>
+              <span>Foto do Cliente</span>
+            </button>
+            <button
+              onClick={startCamera}
+              className="px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+              style={{
+                backgroundColor: 'transparent',
+                border: `2px solid ${themeColors.primary}`,
+                color: themeColors.primary
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = themeColors.primary;
+                e.target.style.color = 'white';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.color = themeColors.primary;
+              }}
+              aria-label="Tirar foto com câmera local"
+              title="Câmera local para consulta presencial"
+            >
+              <Camera className="w-5 h-5" />
+              <span>Foto Local</span>
             </button>
             <label className="px-4 py-2 text-white rounded-lg font-medium flex items-center space-x-2 transition-colors cursor-pointer"
               style={{ backgroundColor: themeColors.primary }}
@@ -464,7 +487,7 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
             </label>
           </div>
           <p className="text-xs text-center text-gray-600 dark:text-gray-400">
-            Permite foto via webcam ou celular, ou envie da galeria
+            <strong>Foto do Cliente:</strong> captura do vídeo em teleconsulta • <strong>Foto Local:</strong> câmera presencial
           </p>
         </div>
 
