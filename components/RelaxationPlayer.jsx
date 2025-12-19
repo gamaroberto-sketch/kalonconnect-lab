@@ -376,53 +376,33 @@ const RelaxationPlayer = ({
             </div>
           </div>
 
-          {/* Botões de Adicionar Arquivos */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={openDriveFolder}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors"
-                style={{
-                  backgroundColor: themeColors.primary,
-                  color: 'white'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = themeColors.primaryDark;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = themeColors.primary;
-                }}
-              >
-                <FolderOpen className="w-4 h-4" />
-                <span className="text-sm font-medium">Abrir Drive</span>
-              </button>
+          {/* Botão de Adicionar Arquivo */}
+          <div className="flex items-center gap-2">
+            <label
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
+              style={{
+                backgroundColor: `${themeColors.secondary}`,
+                color: 'white'
+              }}
+            >
+              <Upload className="w-4 h-4" />
+              <span className="text-sm font-medium">Arquivo Local</span>
+              <input
+                type="file"
+                accept="audio/*,video/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </label>
 
-              <label
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-                style={{
-                  backgroundColor: `${themeColors.secondary}`,
-                  color: 'white'
-                }}
-              >
-                <Upload className="w-4 h-4" />
-                <span className="text-sm font-medium">Arquivo Local</span>
-                <input
-                  type="file"
-                  accept="audio/*,video/*"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
-
-              <button
-                onClick={() => setShowInstructions(!showInstructions)}
-                className="p-2 rounded transition-colors"
-                style={{ color: textSecondary }}
-                title="Orientações"
-              >
-                <Info className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              onClick={() => setShowInstructions(!showInstructions)}
+              className="p-2 rounded transition-colors"
+              style={{ color: textSecondary }}
+              title="Orientações"
+            >
+              <Info className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Orientações para o Profissional */}
