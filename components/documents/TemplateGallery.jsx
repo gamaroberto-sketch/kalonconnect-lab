@@ -216,12 +216,56 @@ const TemplateCard = ({
 
             {/* Template Info */}
             <div className="p-3">
-                <h4 className="font-semibold text-gray-800 dark:text-white truncate">
-                    {template.name}
-                </h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {template.size || 'A4'} • {new Date(template.created_at).toLocaleDateString('pt-BR')}
-                </p>
+                {isEditing ? (
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <input
+                            type="text"
+                            value={editingName}
+                            onChange={(e) => onEditName(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') onSaveRename();
+                                if (e.key === 'Escape') onCancelRename();
+                            }}
+                            className="flex-1 px-2 py-1 text-sm border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                            autoFocus
+                        />
+                        <button
+                            onClick={onSaveRename}
+                            className="p-1 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded"
+                            title="Salvar"
+                        >
+                            <Check className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={onCancelRename}
+                            className="p-1 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                            title="Cancelar"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-gray-800 dark:text-white truncate">
+                                {template.name}
+                            </h4>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {template.size || 'A4'}
+                            </p>
+                        </div>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onStartRename();
+                            }}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Renomear"
+                        >
+                            <Edit2 className="w-4 h-4" />
+                        </button>
+                    </div>
+                )}
             </div>
         </motion.div>
     );
