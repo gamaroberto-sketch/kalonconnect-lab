@@ -113,19 +113,38 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
                 margin: 0;
               }
               
+              * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
+              
               body {
                 margin: 0;
                 padding: 0;
                 width: ${sizes[templateSize].width};
                 height: ${sizes[templateSize].height};
                 position: relative;
-                background-image: url('${selectedTemplate.url}');
-                background-size: ${sizes[templateSize].width} ${sizes[templateSize].height};
-                background-repeat: no-repeat;
-                background-position: center;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
+                overflow: hidden;
+              }
+              
+              .template-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: 0;
+              }
+              
+              .content-layer {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
               }
               
               .field {
@@ -199,14 +218,20 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             </style>
           </head>
           <body>
-            <div class="field patient-name">${data.patientName || ''}</div>
-            <div class="field medications">${data.medications || ''}</div>
-            ${data.instructions ? `<div class="field instructions">${data.instructions}</div>` : ''}
-            <div class="field date">${new Date(data.date).toLocaleDateString('pt-BR')}</div>
-            <div class="field registry">${data.crp || profile.social?.registro || ''}</div>
-            ${profile?.signaturePad ? `<img src="${profile.signaturePad}" class="signature" alt="Assinatura" />` : ''}
-            ${profile?.signature_image_url ? `<img src="${profile.signature_image_url}" class="signature-image" alt="Assinatura PNG" />` : ''}
-            ${profile?.stamp_image_url ? `<img src="${profile.stamp_image_url}" class="stamp" alt="Carimbo" />` : ''}
+            <!-- Template as image background -->
+            <img src="${selectedTemplate.url}" class="template-bg" alt="Template" />
+            
+            <!-- Content layer with fields -->
+            <div class="content-layer">
+              <div class="field patient-name">${data.patientName || ''}</div>
+              <div class="field medications">${data.medications || ''}</div>
+              ${data.instructions ? `<div class="field instructions">${data.instructions}</div>` : ''}
+              <div class="field date">${new Date(data.date).toLocaleDateString('pt-BR')}</div>
+              <div class="field registry">${data.crp || profile.social?.registro || ''}</div>
+              ${profile?.signaturePad ? `<img src="${profile.signaturePad}" class="signature" alt="Assinatura" />` : ''}
+              ${profile?.signature_image_url ? `<img src="${profile.signature_image_url}" class="signature-image" alt="Assinatura PNG" />` : ''}
+              ${profile?.stamp_image_url ? `<img src="${profile.stamp_image_url}" class="stamp" alt="Carimbo" />` : ''}
+            </div>
           </body>
         </html>
       `;
