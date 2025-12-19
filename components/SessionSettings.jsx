@@ -426,7 +426,13 @@ const SessionSettings = ({
                     <input
                       type="text"
                       placeholder="Cole um link (https://...)"
-                      className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none"
+                      className="flex-1 px-3 py-2 text-sm rounded-lg border focus:ring-2 outline-none"
+                      style={{
+                        borderColor: border,
+                        backgroundColor: background,
+                        color: textPrimary,
+                        '--tw-ring-color': `${primary}40`
+                      }}
                       value={effectiveBackground?.type === 'image' && effectiveBackground?.source?.startsWith('http') ? effectiveBackground.source : ''}
                       onChange={(e) => handleBackgroundChange && handleBackgroundChange({ type: 'image', source: e.target.value })}
                     />
@@ -440,7 +446,11 @@ const SessionSettings = ({
                         }
                       }}
                       disabled={!effectiveBackground?.source?.startsWith('http') || storedBackgrounds.includes(effectiveBackground?.source)}
-                      className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-slate-600 dark:text-slate-300"
+                      className="p-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      style={{
+                        backgroundColor: `${secondary}20`,
+                        color: textPrimary
+                      }}
                       title="Salvar em Minhas Fotos"
                     >
                       <Save className="w-4 h-4" />
@@ -471,7 +481,7 @@ const SessionSettings = ({
 
                       <div className="grid grid-cols-3 gap-2">
                         {storedBackgrounds.map((bg, idx) => (
-                          <div key={idx} className="group relative aspect-video rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                          <div key={idx} className="group relative aspect-video rounded-lg overflow-hidden border" style={{ borderColor: border }}>
                             <img src={bg} className="w-full h-full object-cover" alt={`Custom ${idx}`} />
 
                             {/* Select Action */}
@@ -506,9 +516,16 @@ const SessionSettings = ({
                   )}
 
                   {/* File Upload */}
-                  <label className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors border border-dashed border-slate-300 dark:border-slate-500">
-                    <Upload className="w-4 h-4 text-slate-500 dark:text-slate-300" />
-                    <span className="text-sm text-slate-600 dark:text-slate-200 font-medium">Carregar Nova Foto</span>
+                  <label
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg cursor-pointer transition-all border border-dashed"
+                    style={{
+                      backgroundColor: `${primary}10`,
+                      borderColor: `${primary}40`,
+                      color: textPrimary
+                    }}
+                  >
+                    <Upload className="w-4 h-4" style={{ color: primary }} />
+                    <span className="text-sm font-medium">Carregar Nova Foto</span>
                     <input
                       type="file"
                       accept="image/*"
