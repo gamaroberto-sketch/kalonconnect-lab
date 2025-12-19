@@ -186,19 +186,32 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
 
   const startCamera = async () => {
     try {
+      console.log('🎥 Iniciando câmera...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user' }
       });
+      console.log('✅ Stream obtido:', stream);
+      console.log('📹 Tracks:', stream.getVideoTracks());
+
       streamRef.current = stream;
       if (videoRef.current) {
+        console.log('📺 Conectando stream ao elemento video...');
         videoRef.current.srcObject = stream;
         // Force video to play
-        videoRef.current.play().catch(err => console.error('Error playing video:', err));
+        try {
+          await videoRef.current.play();
+          console.log('▶️ Vídeo tocando!');
+        } catch (playError) {
+          console.error('❌ Erro ao tocar vídeo:', playError);
+        }
+      } else {
+        console.error('❌ videoRef.current é null!');
       }
       setIsRecording(true);
       setShowCamera(true);
+      console.log('✅ Câmera iniciada com sucesso!');
     } catch (error) {
-      console.error('Erro ao acessar câmera:', error);
+      console.error('❌ Erro ao acessar câmera:', error);
       alert('Não foi possível acessar a câmera. Verifique as permissões.');
     }
   };
