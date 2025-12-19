@@ -269,10 +269,12 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.patientName?.top || positions.patientName?.top || '8cm',
                                                     left: localPositions.patientName?.left || positions.patientName?.left || '3cm',
-                                                    fontSize: positions.patientName?.fontSize || '14pt',
-                                                    fontWeight: positions.patientName?.fontWeight || 'bold',
+                                                    fontSize: fontSize,
+                                                    fontWeight: fontWeight,
+                                                    fontStyle: fontStyle,
+                                                    textDecoration: textDecoration,
+                                                    color: textColor,
                                                     fontFamily: 'Arial, sans-serif',
-                                                    color: '#000',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
                                             >
@@ -294,11 +296,14 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.medications?.top || positions.medications?.top || '12cm',
                                                     left: localPositions.medications?.left || positions.medications?.left || '3cm',
-                                                    fontSize: positions.medications?.fontSize || '12pt',
+                                                    fontSize: fontSize,
+                                                    fontWeight: fontWeight,
+                                                    fontStyle: fontStyle,
+                                                    textDecoration: textDecoration,
+                                                    color: textColor,
                                                     maxWidth: positions.medications?.maxWidth || '15cm',
                                                     whiteSpace: 'pre-wrap',
                                                     fontFamily: 'Arial, sans-serif',
-                                                    color: '#000',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
                                             >
@@ -320,11 +325,14 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.instructions?.top || positions.instructions?.top || '20cm',
                                                     left: localPositions.instructions?.left || positions.instructions?.left || '3cm',
-                                                    fontSize: positions.instructions?.fontSize || '11pt',
+                                                    fontSize: fontSize,
+                                                    fontWeight: fontWeight,
+                                                    fontStyle: fontStyle,
+                                                    textDecoration: textDecoration,
+                                                    color: textColor,
                                                     maxWidth: positions.instructions?.maxWidth || '15cm',
                                                     whiteSpace: 'pre-wrap',
                                                     fontFamily: 'Arial, sans-serif',
-                                                    color: '#000',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
                                             >
@@ -346,9 +354,12 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.date?.top || positions.date?.top || '25cm',
                                                     left: localPositions.date?.left || positions.date?.left || '3cm',
-                                                    fontSize: positions.date?.fontSize || '12pt',
+                                                    fontSize: fontSize,
+                                                    fontWeight: fontWeight,
+                                                    fontStyle: fontStyle,
+                                                    textDecoration: textDecoration,
+                                                    color: textColor,
                                                     fontFamily: 'Arial, sans-serif',
-                                                    color: '#000',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
                                             >
@@ -469,9 +480,12 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.registry?.top || positions.registry?.top || '26cm',
                                                     left: localPositions.registry?.left || positions.registry?.left || '3cm',
-                                                    fontSize: positions.registry?.fontSize || '12pt',
+                                                    fontSize: fontSize,
+                                                    fontWeight: fontWeight,
+                                                    fontStyle: fontStyle,
+                                                    textDecoration: textDecoration,
+                                                    color: textColor,
                                                     fontFamily: 'Arial, sans-serif',
-                                                    color: '#000',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
                                             >
