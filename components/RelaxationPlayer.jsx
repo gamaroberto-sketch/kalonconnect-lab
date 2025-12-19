@@ -10,8 +10,9 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
-  Maximize2,
   Minimize2,
+  ChevronDown,
+  ChevronUp,
   Music,
   Clock,
   RotateCcw,
@@ -146,8 +147,9 @@ const RelaxationPlayer = ({
   };
 
   const openDriveFolder = () => {
-    // Disparar evento para abrir o modal do Google Drive
-    window.dispatchEvent(new CustomEvent('openGoogleDrive'));
+    // Abrir pasta do Google Drive do profissional
+    const driveUrl = 'https://drive.google.com/drive/my-drive';
+    window.open(driveUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Auto-mute na inicialização
@@ -211,8 +213,9 @@ const RelaxationPlayer = ({
               onClick={toggleExpanded}
               className="p-1 rounded transition-colors"
               style={{ color: textSecondary }}
+              title={isExpanded ? "Recolher biblioteca" : "Expandir biblioteca"}
             >
-              {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
             <button
               onClick={toggleMinimized}
