@@ -452,6 +452,32 @@ const DocumentPreviewModal = ({
                                                 />
                                             </div>
                                         )}
+
+                                        {/* Registry Field */}
+                                        {showRegistry && profile?.social?.registro && (
+                                            <div
+                                                className={`absolute ${editMode ? 'cursor-move border-2 border-dashed border-blue-500 bg-blue-50/20 hover:bg-blue-100/30' : ''}`}
+                                                draggable={editMode}
+                                                onDragStart={(e) => {
+                                                    setDragging('registry');
+                                                    const img = new Image();
+                                                    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                                                    e.dataTransfer.setDragImage(img, 0, 0);
+                                                }}
+                                                onDrag={(e) => handleDrag('registry', e)}
+                                                onDragEnd={() => setDragging(null)}
+                                                style={{
+                                                    top: localPositions.registry?.top || positions.registry?.top || '26cm',
+                                                    left: localPositions.registry?.left || positions.registry?.left || '3cm',
+                                                    fontSize: positions.registry?.fontSize || '12pt',
+                                                    fontFamily: 'Arial, sans-serif',
+                                                    color: '#000',
+                                                    padding: editMode ? '4px 8px' : '0'
+                                                }}
+                                            >
+                                                {profile.social.registro}
+                                            </div>
+                                        )}
                                     </>
                                 ) : (
                                     /* Layout padrão sem template */
