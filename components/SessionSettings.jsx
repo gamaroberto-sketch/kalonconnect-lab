@@ -269,7 +269,7 @@ const SessionSettings = ({
                       </button>
                       <button
                         onClick={handleSave}
-                        className="flex-1 py-2.5 rounded-lg font-medium shadow-md shadow-blue-900/10 transition-all hover:brightness-110 flex items-center justify-center space-x-2 text-white"
+                        className="flex-1 py-2.5 rounded-lg font-medium shadow-md transition-all hover:brightness-110 flex items-center justify-center space-x-2 text-white"
                         style={{
                           backgroundColor: primary
                         }}
@@ -346,11 +346,11 @@ const SessionSettings = ({
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-medium flex items-center space-x-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: primary }} />
                     <span>Fundo da Câmera (Virtual)</span>
                   </h3>
                 </div>
-                <p className="text-xs text-slate-500 mb-3 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-100 dark:border-blue-800">
+                <p className="text-xs mb-3 p-2 rounded-lg border" style={{ backgroundColor: `${primary}10`, borderColor: `${primary}40`, color: textPrimary }}>
                   💡 <strong>Dica:</strong> O <strong>Desfoque</strong> é mais estável que imagens virtuais (bordas mais suaves).
                 </p>
 
@@ -383,8 +383,8 @@ const SessionSettings = ({
                           />
                         ) : bg.type === 'blur' ? (
                           <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-                            <div className="w-12 h-12 rounded-full bg-blue-500/30 blur-xl flex items-center justify-center">
-                              <span className="w-6 h-6 bg-blue-500 rounded-full blur-sm" />
+                            <div className="w-12 h-12 rounded-full blur-xl flex items-center justify-center" style={{ backgroundColor: `${primary}30` }}>
+                              <span className="w-6 h-6 rounded-full blur-sm" style={{ backgroundColor: primary }} />
                             </div>
                             <span className="absolute bottom-6 text-[10px] font-semibold text-slate-500">Desfoque</span>
                           </div>
