@@ -649,16 +649,19 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
         </div>
 
         {/* Botão Editor de Posições (só aparece se tem template) */}
-        {profile?.prescription_template_url && (
+        {selectedTemplate?.url && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <ModernButton
-              onClick={() => setShowPositionEditor(true)}
+              onClick={() => {
+                setEditingTemplate(selectedTemplate);
+                setShowPositionEditor(true);
+              }}
               icon={<Settings className="w-5 h-5" />}
               variant="outline"
               size="md"
               className="w-full"
             >
-              ⚙️ Ajustar Posições no Template ({profile.prescription_template_size || 'A4'})
+              ⚙️ Ajustar Posições no Template ({selectedTemplate.size || 'A4'})
             </ModernButton>
           </div>
         )}
@@ -685,6 +688,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
         documentData={data}
         profile={profile}
         documentType="prescription"
+        template={selectedTemplate}
         onPrint={handlePrint}
         onSave={handleSave}
         onSend={handleSend}

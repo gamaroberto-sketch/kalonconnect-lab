@@ -12,6 +12,7 @@ const DocumentPreviewModal = ({
     documentData,
     profile,
     documentType = 'prescription',
+    template,
     onPrint,
     onSave,
     onSend
@@ -82,9 +83,9 @@ const DocumentPreviewModal = ({
 
     if (!isOpen) return null;
 
-    const hasTemplate = profile?.[`${documentType}_template_url`];
-    const templateSize = profile?.[`${documentType}_template_size`] || 'A4';
-    const positions = profile?.[`${documentType}_template_positions`] || {};
+    const hasTemplate = template?.url || profile?.[`${documentType}_template_url`];
+    const templateSize = template?.size || profile?.[`${documentType}_template_size`] || 'A4';
+    const positions = template?.positions || profile?.[`${documentType}_template_positions`] || {};
 
     const sizes = {
         A4: { width: '21cm', height: '29.7cm' },
@@ -195,7 +196,7 @@ const DocumentPreviewModal = ({
                                     width: sizes[templateSize].width,
                                     minHeight: sizes[templateSize].height,
                                     position: 'relative',
-                                    backgroundImage: hasTemplate ? `url('${profile[`${documentType}_template_url`]}')` : 'none',
+                                    backgroundImage: hasTemplate ? `url('${template?.url || profile[`${documentType}_template_url`]}')` : 'none',
                                     backgroundSize: `${sizes[templateSize].width} ${sizes[templateSize].height}`,
                                     backgroundRepeat: 'no-repeat',
                                     backgroundPosition: 'center'
