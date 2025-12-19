@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Eye, Trash2, Star, Settings, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Upload, Eye, Trash2, X, ZoomIn, ZoomOut, Edit2, Check } from 'lucide-react';
 import { useTheme } from '../ThemeProvider';
 
 const TemplateGallery = ({
@@ -12,12 +12,15 @@ const TemplateGallery = ({
     onDelete,
     onSetDefault,
     onEditPositions,
-    onSelect
+    onSelect,
+    onRename
 }) => {
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
     const [previewTemplate, setPreviewTemplate] = useState(null);
     const [zoom, setZoom] = useState(1);
+    const [editingId, setEditingId] = useState(null);
+    const [editingName, setEditingName] = useState('');
 
     const typeLabels = {
         prescription: 'Receituário',
@@ -69,6 +72,20 @@ const TemplateGallery = ({
                             onSetDefault={() => onSetDefault(template.id)}
                             onEditPositions={() => onEditPositions(template)}
                             onSelect={() => onSelect(template)}
+                            editingId={editingId}
+                            editingName={editingName}
+                            onStartRename={() => {
+                                setEditingId(template.id);
+                                setEditingName(template.name || 'Template');
+                            }}
+                            onSaveRename={() => {
+                                if (editingName.trim() && onRename) {
+                                    onRename(template.id, editingName.trim());
+                                }
+                                setEditingId(null);
+                            }}
+                            onCancelRename={() => setEditingId(null)}
+                            onEditName={(name) => setEditingName(name)}
                         />
                     ))}
                 </div>
@@ -98,12 +115,17 @@ const TemplateCard = ({
     themeColors,
     onPreview,
     onDelete,
-    onSetDefault,
-    onEditPositions,
-    onSelect
+    onSelect,
+    editingId,
+    editingName,
+    onStartRename,
+    onSaveRename,
+    onCancelRename,
+    onEditName
 }) => {
     const [showActions, setShowActions] = useState(false);
     const [imageError, setImageError] = useState(false);
+    const isEditing = editingId === template.id;
 
     return (
         <motion.div
