@@ -2,16 +2,16 @@
 
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Upload, 
-  File, 
-  FileText, 
-  Image, 
-  Video, 
-  Music, 
-  Download, 
-  Trash2, 
-  Eye, 
+import {
+  Upload,
+  File,
+  FileText,
+  Image,
+  Video,
+  Music,
+  Download,
+  Trash2,
+  Eye,
   Search,
   FolderOpen,
   Plus
@@ -181,23 +181,6 @@ const FilesPanel = () => {
             >
               <File className="w-4 h-4" />
             </button>
-            <button
-              onClick={handleGoogleDriveOpen}
-              className="p-2 rounded-lg transition-colors"
-              style={{ 
-                color: themeColors.primary,
-                backgroundColor: 'transparent'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = themeColors.primaryLight;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
-              title="Abrir Google Drive"
-            >
-              <FolderOpen className="w-4 h-4" />
-            </button>
           </div>
         </div>
 
@@ -220,7 +203,7 @@ const FilesPanel = () => {
               }}
             />
           </div>
-          
+
           <button
             onClick={() => fileInputRef.current?.click()}
             className="p-2 text-white rounded-lg transition-colors"
@@ -231,7 +214,7 @@ const FilesPanel = () => {
           >
             <Upload className="w-4 h-4" />
           </button>
-          
+
           <input
             ref={fileInputRef}
             type="file"
@@ -298,7 +281,7 @@ const FilesPanel = () => {
                   <div className="flex-shrink-0">
                     {getFileIcon(file.type)}
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <h4
                       className="font-medium text-sm truncate"
@@ -313,7 +296,7 @@ const FilesPanel = () => {
                       {file.size} • {file.uploadedAt}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center space-x-1">
                     <button
                       onClick={(e) => {
@@ -326,7 +309,7 @@ const FilesPanel = () => {
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                    
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -339,7 +322,7 @@ const FilesPanel = () => {
                     >
                       <Download className="w-4 h-4" />
                     </button>
-                    
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -360,12 +343,12 @@ const FilesPanel = () => {
       </div>
 
       {/* File Viewer Modal */}
-        <FileViewerWindow
-          isOpen={showFileViewer}
-          onClose={() => setShowFileViewer(false)}
-          file={currentFile}
-          files={filteredFiles}
-        />
+      <FileViewerWindow
+        isOpen={showFileViewer}
+        onClose={() => setShowFileViewer(false)}
+        file={currentFile}
+        files={filteredFiles}
+      />
     </div>
   );
 };
