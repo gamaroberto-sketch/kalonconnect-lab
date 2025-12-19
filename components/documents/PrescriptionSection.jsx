@@ -324,7 +324,11 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
         created_at: new Date().toISOString()
       };
 
+      console.log('📸 Novo template criado:', newTemplate);
+      console.log('📚 Templates existentes:', templates);
+
       const updatedTemplates = [...templates, newTemplate];
+      console.log('📚 Templates atualizados:', updatedTemplates);
 
       const response = await fetch(`/api/user/profile?userId=${user.id}`, {
         method: 'POST',
@@ -332,7 +336,14 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
         body: JSON.stringify({ prescription_templates: updatedTemplates })
       });
 
-      if (!response.ok) throw new Error('Erro ao salvar template');
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('❌ Erro ao salvar:', errorData);
+        throw new Error('Erro ao salvar template: ' + errorData);
+      }
+
+      const responseData = await response.json();
+      console.log('✅ Resposta do servidor:', responseData);
 
       setTemplates(updatedTemplates);
       setProfile({ ...profile, prescription_templates: updatedTemplates });
@@ -341,6 +352,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
       alert('Template adicionado!');
       setShowGallery(true);
     } catch (error) {
+      console.error('❌ Erro completo:', error);
       alert('Erro: ' + error.message);
     } finally {
       setUploading(false);
