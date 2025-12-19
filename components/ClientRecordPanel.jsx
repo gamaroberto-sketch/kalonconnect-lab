@@ -703,9 +703,9 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
             <button
               onClick={handleSave}
               className="px-6 py-3 text-white rounded-lg font-medium flex items-center space-x-2 transition-colors"
-              style={{ backgroundColor: themeColors.success }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = themeColors.success + 'dd'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = themeColors.success}
+              style={{ backgroundColor: themeColors.primary }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = themeColors.primaryDark}
+              onMouseLeave={(e) => e.target.style.backgroundColor = themeColors.primary}
               aria-label="Salvar alterações"
             >
               <Save className="w-5 h-5" />
