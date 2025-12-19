@@ -9,6 +9,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { useAuth } from '../AuthContext';
 import TemplatePositionEditor from './TemplatePositionEditor';
 import DocumentPreviewModal from './DocumentPreviewModal';
+import TemplateGallery from './TemplateGallery';
 
 const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
@@ -47,6 +48,36 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
   const [showPositionEditor, setShowPositionEditor] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [editingTemplate, setEditingTemplate] = useState(null);
+
+  // Migrate old single template to new array format
+  const migrateTemplates = (profile) => {
+    if (profile?.prescription_template_url && !profile?.prescription_templates) {
+      return [{
+        id: crypto.randomUUID(),
+        name: 'Template Principal',
+        url: profile.prescription_template_url,
+        size: profile.prescription_template_size || 'A4',
+        positions: profile.prescription_template_positions || {},
+        is_default: true,
+        created_at: new Date().toISOString()
+      }];
+    }
+    return profile?.prescription_templates || [];
+  };
+
+  // Load templates when profile changes
+  React.useEffect(() => {
+    if (profile) {
+      const migratedTemplates = migrateTemplates(profile);
+      setTemplates(migratedTemplates);
+      const defaultTemplate = migratedTemplates.find(t => t.is_default) || migratedTemplates[0];
+      setSelectedTemplate(defaultTemplate);
+    }
+  }, [profile]);
 
   const helpText = t('documents.help.prescription.text');
 
@@ -59,12 +90,12 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
   };
 
   const handlePrint = () => {
-    const hasTemplate = profile?.prescription_template_url;
+    const hasTemplate = selectedTemplate?.url;
 
     if (hasTemplate) {
       // Impressão com template personalizado
-      const positions = profile.prescription_template_positions || {};
-      const templateSize = profile.prescription_template_size || 'A4';
+      const positions = selectedTemplate.positions || {};
+      const templateSize = selectedTemplate.size || 'A4';
 
       const sizes = {
         A4: { width: '21cm', height: '29.7cm' },
@@ -88,7 +119,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
                 width: ${sizes[templateSize].width};
                 height: ${sizes[templateSize].height};
                 position: relative;
-                background-image: url('${profile.prescription_template_url}');
+                background-image: url('${selectedTemplate.url}');
                 background-size: ${sizes[templateSize].width} ${sizes[templateSize].height};
                 background-repeat: no-repeat;
                 background-position: center;
@@ -273,12 +304,9 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `${user.id}/prescription/${fileName}`;
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('prescription-templates')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
+        .upload(filePath, file, { cacheControl: '3600', upsert: true });
 
       if (uploadError) throw uploadError;
 
@@ -286,55 +314,113 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
         .from('prescription-templates')
         .getPublicUrl(filePath);
 
-      // Save to profile
+      const newTemplate = {
+        id: crypto.randomUUID(),
+        name: `Template ${templates.length + 1}`,
+        url: publicUrl,
+        size: 'A4',
+        positions: {},
+        is_default: templates.length === 0,
+        created_at: new Date().toISOString()
+      };
+
+      const updatedTemplates = [...templates, newTemplate];
+
       const response = await fetch(`/api/user/profile?userId=${user.id}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id
-        },
-        body: JSON.stringify({
-          prescription_template_url: publicUrl,
-          prescription_template_size: 'A4'
-        })
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ prescription_templates: updatedTemplates })
       });
 
       if (!response.ok) throw new Error('Erro ao salvar template');
 
-      setProfile({ ...profile, prescription_template_url: publicUrl, prescription_template_size: 'A4' });
-      alert('Template salvo! Agora você pode ajustar as posições dos campos.');
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, prescription_templates: updatedTemplates });
+      if (templates.length === 0) setSelectedTemplate(newTemplate);
+
+      alert('Template adicionado!');
+      setShowGallery(true);
     } catch (error) {
-      console.error('Upload error:', error);
-      alert('Erro ao fazer upload do template: ' + error.message);
+      alert('Erro: ' + error.message);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleRemoveTemplate = async () => {
-    if (!confirm('Deseja remover o template personalizado?')) return;
-
+  const handleDeleteTemplate = async (templateId) => {
     try {
-      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+      const updatedTemplates = templates.filter(t => t.id !== templateId);
+
+      // If deleting the default, make the first remaining one default
+      if (updatedTemplates.length > 0) {
+        const wasDefault = templates.find(t => t.id === templateId)?.is_default;
+        if (wasDefault) {
+          updatedTemplates[0].is_default = true;
+        }
+      }
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id
-        },
-        body: JSON.stringify({
-          prescription_template_url: null,
-          prescription_template_positions: null,
-          prescription_template_size: null
-        })
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ prescription_templates: updatedTemplates })
       });
 
-      if (!response.ok) throw new Error('Erro ao remover template');
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, prescription_templates: updatedTemplates });
 
-      setProfile({ ...profile, prescription_template_url: null, prescription_template_positions: null, prescription_template_size: null });
-      alert('Template removido!');
+      // Update selected template if needed
+      if (selectedTemplate?.id === templateId) {
+        setSelectedTemplate(updatedTemplates[0] || null);
+      }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Erro ao remover template');
+      alert('Erro ao deletar template');
+    }
+  };
+
+  const handleSetDefault = async (templateId) => {
+    try {
+      const updatedTemplates = templates.map(t => ({
+        ...t,
+        is_default: t.id === templateId
+      }));
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ prescription_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, prescription_templates: updatedTemplates });
+      setSelectedTemplate(updatedTemplates.find(t => t.id === templateId));
+    } catch (error) {
+      alert('Erro ao definir template padrão');
+    }
+  };
+
+  const handleEditPositions = (template) => {
+    setEditingTemplate(template);
+    setShowPositionEditor(true);
+  };
+
+  const handleSavePositions = async (newPositions) => {
+    try {
+      const updatedTemplates = templates.map(t =>
+        t.id === editingTemplate.id ? { ...t, positions: newPositions } : t
+      );
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ prescription_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, prescription_templates: updatedTemplates });
+      setShowPositionEditor(false);
+      setEditingTemplate(null);
+    } catch (error) {
+      alert('Erro ao salvar posições');
     }
   };
 
@@ -372,49 +458,26 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
 
       {/* Campos do receituário */}
       <div className="space-y-4">
-        {/* Template Upload Section */}
-        {!profile?.prescription_template_url ? (
-          <div className="mb-6 p-4 border-2 border-dashed rounded-xl" style={{ borderColor: themeColors.primary + '40', backgroundColor: themeColors.primary + '05' }}>
-            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-              <Upload className="w-5 h-5" />
-              Upload de Template Personalizado
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              Faça upload do seu receituário em PDF ou imagem (PNG/JPG). Depois você poderá posicionar os campos.
-            </p>
-            <input
-              type="file"
-              accept="image/*,.pdf"
-              onChange={handleTemplateUpload}
-              className="hidden"
-              id="prescription-template-upload"
-              disabled={uploading}
-            />
-            <label
-              htmlFor="prescription-template-upload"
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              style={{ backgroundColor: themeColors.primary, color: 'white' }}
-            >
-              <Upload className="w-5 h-5" />
-              {uploading ? 'Enviando...' : 'Escolher Arquivo'}
-            </label>
-          </div>
-        ) : (
-          <div className="mb-6 p-4 border rounded-xl bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
-                <span className="font-medium text-green-700 dark:text-green-300">Template configurado ({profile.prescription_template_size || 'A4'})</span>
-              </div>
-              <button
-                onClick={handleRemoveTemplate}
-                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors"
-              >
-                Remover template
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Template Gallery */}
+        <TemplateGallery
+          templates={templates}
+          type="prescription"
+          onAdd={() => document.getElementById('prescription-template-upload').click()}
+          onDelete={handleDeleteTemplate}
+          onSetDefault={handleSetDefault}
+          onEditPositions={handleEditPositions}
+          onSelect={setSelectedTemplate}
+        />
+
+        {/* Hidden file input */}
+        <input
+          type="file"
+          accept="image/*,.pdf"
+          onChange={handleTemplateUpload}
+          className="hidden"
+          id="prescription-template-upload"
+          disabled={uploading}
+        />
 
         {/* Nome do Paciente */}
         <div>
@@ -590,19 +653,16 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
       </div>
 
       {/* Modal do Editor de Posições */}
-      {showPositionEditor && profile?.prescription_template_url && (
+      {showPositionEditor && editingTemplate?.url && (
         <TemplatePositionEditor
-          templateUrl={profile.prescription_template_url}
-          templateSize={profile.prescription_template_size || 'A4'}
-          currentPositions={profile.prescription_template_positions}
-          onSave={(newPositions) => {
-            setProfile(prev => ({
-              ...prev,
-              prescription_template_positions: newPositions
-            }));
+          templateUrl={editingTemplate.url}
+          templateSize={editingTemplate.size || 'A4'}
+          currentPositions={editingTemplate.positions}
+          onSave={handleSavePositions}
+          onClose={() => {
             setShowPositionEditor(false);
+            setEditingTemplate(null);
           }}
-          onClose={() => setShowPositionEditor(false)}
         />
       )}
 
