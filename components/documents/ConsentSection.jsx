@@ -336,6 +336,7 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
         <TemplateGallery
           templates={templates}
           type="consent"
+          selectedTemplate={selectedTemplate}
           onAdd={() => document.getElementById('consent-template-upload').click()}
           onDelete={handleDeleteTemplate}
           onRename={handleRenameTemplate}

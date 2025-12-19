@@ -356,6 +356,7 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
         <TemplateGallery
           templates={templates}
           type="receipt"
+          selectedTemplate={selectedTemplate}
           onAdd={() => document.getElementById('receipt-template-upload').click()}
           onDelete={handleDeleteTemplate}
           onRename={handleRenameTemplate}
