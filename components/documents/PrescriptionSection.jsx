@@ -123,6 +123,9 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
                 background-size: ${sizes[templateSize].width} ${sizes[templateSize].height};
                 background-repeat: no-repeat;
                 background-position: center;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
               }
               
               .field {
