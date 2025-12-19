@@ -20,7 +20,7 @@ const DocumentPreviewModal = ({
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
 
-    const [editMode, setEditMode] = React.useState(false);
+    const editMode = true; // Always in edit mode
     const [showSignature, setShowSignature] = React.useState(true);
     const [showSignatureImage, setShowSignatureImage] = React.useState(true);
     const [showStamp, setShowStamp] = React.useState(true);
@@ -126,18 +126,9 @@ const DocumentPreviewModal = ({
                                     👁️ Visualização do Documento
                                 </h2>
                                 <div className="flex items-center gap-4 mt-2">
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={editMode}
-                                            onChange={(e) => setEditMode(e.target.checked)}
-                                            className="w-4 h-4 rounded"
-                                            style={{ accentColor: themeColors.primary }}
-                                        />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                                            ✏️ Modo de Edição
-                                        </span>
-                                    </label>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                        💡 <strong>Dica:</strong> Arraste os campos para ajustar as posições
+                                    </div>
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="checkbox"
@@ -174,20 +165,6 @@ const DocumentPreviewModal = ({
                                             🏛️ Carimbo
                                         </span>
                                     </label>
-                                    {editMode && (
-                                        <button
-                                            onClick={handleSavePositions}
-                                            disabled={saving}
-                                            className="ml-4 px-4 py-2 rounded-lg font-semibold text-sm transition-all flex items-center gap-2"
-                                            style={{
-                                                backgroundColor: saveSuccess ? '#10b981' : themeColors.primary,
-                                                color: 'white',
-                                                opacity: saving ? 0.7 : 1
-                                            }}
-                                        >
-                                            {saving ? '⏳ Salvando...' : saveSuccess ? '✅ Salvo!' : '💾 Salvar Posições'}
-                                        </button>
-                                    )}
                                 </div>
                             </div>
                             <button
@@ -493,7 +470,17 @@ const DocumentPreviewModal = ({
                                 Salvar
                             </ModernButton>
                             <ModernButton
-                                onClick={onPrint}
+                                onClick={() => {
+                                    // Pass current local positions to print
+                                    if (onPrint) {
+                                        // Create temporary template with current positions
+                                        const tempTemplate = {
+                                            ...template,
+                                            positions: localPositions
+                                        };
+                                        onPrint(tempTemplate);
+                                    }
+                                }}
                                 icon={<Printer className="w-5 h-5" />}
                                 variant="secondary"
                                 size="lg"

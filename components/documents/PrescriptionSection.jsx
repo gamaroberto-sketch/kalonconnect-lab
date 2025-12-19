@@ -89,13 +89,14 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
     alert(t('documents.prescription.successPDF'));
   };
 
-  const handlePrint = () => {
-    const hasTemplate = selectedTemplate?.url;
+  const handlePrint = (customTemplate = null) => {
+    const templateToUse = customTemplate || selectedTemplate;
+    const hasTemplate = templateToUse?.url;
 
     if (hasTemplate) {
       // Impressão com template personalizado
-      const positions = selectedTemplate.positions || {};
-      const templateSize = selectedTemplate.size || 'A4';
+      const positions = templateToUse.positions || {};
+      const templateSize = templateToUse.size || 'A4';
 
       const sizes = {
         A4: { width: '21cm', height: '29.7cm' },
@@ -219,7 +220,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
           </head>
           <body>
             <!-- Template as image background -->
-            <img src="${selectedTemplate.url}" class="template-bg" alt="Template" />
+            <img src="${templateToUse.url}" class="template-bg" alt="Template" />
             
             <!-- Content layer with fields -->
             <div class="content-layer">
