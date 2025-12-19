@@ -601,12 +601,17 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
               className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center p-4"
             >
               <div className="w-full max-w-2xl">
+                <p className="text-white text-center mb-4 text-sm">
+                  Posicione seu rosto no centro da moldura
+                </p>
                 <video
                   ref={videoRef}
                   autoPlay
-                  muted
                   playsInline
-                  className="w-full rounded-lg border-4 border-white shadow-2xl"
+                  muted
+                  webkit-playsinline
+                  style={{ transform: 'scaleX(-1)' }}
+                  className="w-full rounded-lg border-4 border-white shadow-2xl bg-black"
                 />
                 <canvas ref={canvasRef} className="hidden" />
                 <div className="mt-6 flex justify-center space-x-4">
