@@ -1,10 +1,22 @@
 "use client";
 
 import React from 'react';
-import { X, Printer, Download, Send, Save } from 'lucide-react';
+import { X, Printer, Download, Save, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
+
+// Helper function to get field labels in Portuguese
+const getFieldLabel = (fieldName) => {
+    const labels = {
+        patientName: 'Nome do Paciente',
+        medications: 'Medicamentos',
+        instructions: 'Instruções',
+        date: 'Data',
+        registry: 'Registro Profissional'
+    };
+    return labels[fieldName] || fieldName;
+};
 
 const DocumentPreviewModal = ({
     isOpen,
@@ -32,7 +44,7 @@ const DocumentPreviewModal = ({
     const [saveSuccess, setSaveSuccess] = React.useState(false);
 
     // Field selection and editing
-    const [selectedField, setSelectedField] = React.useState(null);
+    const [selectedField, setSelectedField] = React.useState('patientName'); // Auto-select first field
     const [editingField, setEditingField] = React.useState(null);
     const [editingText, setEditingText] = React.useState('');
 
@@ -198,7 +210,7 @@ const DocumentPreviewModal = ({
                                 {/* Formatting Toolbar */}
                                 <div className="flex items-center gap-3 mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                                     <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
-                                        {selectedField ? `Formatando: ${selectedField}` : 'Selecione um campo'}
+                                        {selectedField ? `✏️ ${getFieldLabel(selectedField)}` : '👆 Clique em um campo'}
                                     </span>
                                     <select
                                         value={selectedField ? fieldFormatting[selectedField]?.fontSize : '12pt'}
