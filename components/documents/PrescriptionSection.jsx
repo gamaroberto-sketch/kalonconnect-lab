@@ -529,10 +529,6 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
     }
   };
 
-  const handleSend = () => {
-    alert(t('documents.prescription.successSend'));
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
