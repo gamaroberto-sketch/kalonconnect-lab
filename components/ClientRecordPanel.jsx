@@ -48,7 +48,7 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
   // Dados do cliente - buscar do banco de dados
   const [clientData, setClientData] = useState({
     id: clientId || '1',
-    name: 'Carregando...',
+    name: '',
     email: '',
     phone: '',
     birthDate: '',
@@ -394,7 +394,7 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">Ficha do Cliente</h2>
-            <p className="text-sm text-white/80">{clientData.name}</p>
+            <p className="text-sm text-white/80">{clientData.name || 'Cliente'}</p>
           </div>
         </div>
         <button
