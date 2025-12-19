@@ -591,13 +591,14 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
       <div className="space-y-4">
         {/* Template Gallery */}
         <TemplateGallery
-          templates={templates}
+          templates={prescriptionTemplates}
           type="prescription"
-          onAdd={() => document.getElementById('prescription-template-upload').click()}
+          onAdd={handleAddTemplate}
           onDelete={handleDeleteTemplate}
-          onSetDefault={handleSetDefault}
+          onRename={handleRenameTemplate}
+          onSetDefault={handleSetDefaultTemplate}
           onEditPositions={handleEditPositions}
-          onSelect={setSelectedTemplate}
+          onSelect={handleSelectTemplate}
         />
 
         {/* Hidden file input */}
