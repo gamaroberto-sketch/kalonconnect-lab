@@ -17,9 +17,12 @@ import {
   Clock,
   RotateCcw,
   FolderOpen,
-  Info
+  Info,
+  Upload,
+  AlertCircle
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import GoogleDriveModal from './GoogleDriveModal';
 
 const RelaxationPlayer = ({
   isFloating = false,
@@ -45,6 +48,12 @@ const RelaxationPlayer = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showDriveModal, setShowDriveModal] = useState(false);
+  const [customLibrary, setCustomLibrary] = useState(() => {
+    if (typeof window === 'undefined') return [];
+    const saved = localStorage.getItem('kalon_custom_media');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const playerRef = useRef(null);
 
@@ -88,7 +97,7 @@ const RelaxationPlayer = ({
     }
   ];
 
-  const combinedLibrary = [...defaultLibrary, ...externalMediaLibrary];
+  const combinedLibrary = [...defaultLibrary, ...customLibrary, ...externalMediaLibrary];
 
   const currentMedia = combinedLibrary[currentTrack];
 
@@ -147,9 +156,47 @@ const RelaxationPlayer = ({
   };
 
   const openDriveFolder = () => {
-    // Abrir pasta do Google Drive do profissional
-    const driveUrl = 'https://drive.google.com/drive/my-drive';
-    window.open(driveUrl, '_blank', 'noopener,noreferrer');
+    setShowDriveModal(true);
+  };
+
+  const handleDriveFilesSelected = (files) => {
+    // Converter arquivos do Drive para formato da biblioteca
+    const newMedia = files.map(file => ({
+      id: Date.now() + Math.random(),
+      title: file.name.replace(/\.[^/.]+$/, ''),
+      type: file.type === 'audio' || file.type === 'video' ? file.type : 'audio',
+      url: file.url || '#', // URL do arquivo do Drive
+      duration: 0,
+      category: 'Google Drive',
+      description: 'Importado do Drive'
+    }));
+
+    const updated = [...customLibrary, ...newMedia];
+    setCustomLibrary(updated);
+    localStorage.setItem('kalon_custom_media', JSON.stringify(updated));
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const newMedia = {
+        id: Date.now(),
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        type: file.type.startsWith('video') ? 'video' : 'audio',
+        url: ev.target.result,
+        duration: 0,
+        category: 'Meus Arquivos',
+        description: 'Arquivo local'
+      };
+
+      const updated = [...customLibrary, newMedia];
+      setCustomLibrary(updated);
+      localStorage.setItem('kalon_custom_media', JSON.stringify(updated));
+    };
+    reader.readAsDataURL(file);
   };
 
   // Auto-mute na inicialização
@@ -329,34 +376,53 @@ const RelaxationPlayer = ({
             </div>
           </div>
 
-          {/* Botão do Drive e Orientações */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={openDriveFolder}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors"
-              style={{
-                backgroundColor: themeColors.primary,
-                color: 'white'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = themeColors.primaryDark;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = themeColors.primary;
-              }}
-            >
-              <FolderOpen className="w-4 h-4" />
-              <span className="text-sm font-medium">Abrir Drive</span>
-            </button>
+          {/* Botões de Adicionar Arquivos */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={openDriveFolder}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors"
+                style={{
+                  backgroundColor: themeColors.primary,
+                  color: 'white'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = themeColors.primaryDark;
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = themeColors.primary;
+                }}
+              >
+                <FolderOpen className="w-4 h-4" />
+                <span className="text-sm font-medium">Abrir Drive</span>
+              </button>
 
-            <button
-              onClick={() => setShowInstructions(!showInstructions)}
-              className="p-2 rounded transition-colors"
-              style={{ color: textSecondary }}
-              title="Orientações"
-            >
-              <Info className="w-4 h-4" />
-            </button>
+              <label
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
+                style={{
+                  backgroundColor: `${themeColors.secondary}`,
+                  color: 'white'
+                }}
+              >
+                <Upload className="w-4 h-4" />
+                <span className="text-sm font-medium">Arquivo Local</span>
+                <input
+                  type="file"
+                  accept="audio/*,video/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
+
+              <button
+                onClick={() => setShowInstructions(!showInstructions)}
+                className="p-2 rounded transition-colors"
+                style={{ color: textSecondary }}
+                title="Orientações"
+              >
+                <Info className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Orientações para o Profissional */}
@@ -439,6 +505,13 @@ const RelaxationPlayer = ({
           />
         </div>
       </div>
+
+      {/* Google Drive Modal */}
+      <GoogleDriveModal
+        isOpen={showDriveModal}
+        onClose={() => setShowDriveModal(false)}
+        onFilesSelected={handleDriveFilesSelected}
+      />
     </motion.div>
   );
 };
