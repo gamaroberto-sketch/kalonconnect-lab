@@ -24,10 +24,19 @@ const DocumentPreviewModal = ({
     const [showSignature, setShowSignature] = React.useState(true);
     const [showSignatureImage, setShowSignatureImage] = React.useState(true);
     const [showStamp, setShowStamp] = React.useState(true);
+    const [showRegistry, setShowRegistry] = React.useState(true);
+    const [zoom, setZoom] = React.useState(1);
     const [localPositions, setLocalPositions] = React.useState({});
     const [dragging, setDragging] = React.useState(null);
     const [saving, setSaving] = React.useState(false);
     const [saveSuccess, setSaveSuccess] = React.useState(false);
+
+    // Formatting states
+    const [fontSize, setFontSize] = React.useState('12pt');
+    const [fontWeight, setFontWeight] = React.useState('normal');
+    const [fontStyle, setFontStyle] = React.useState('normal');
+    const [textDecoration, setTextDecoration] = React.useState('none');
+    const [textColor, setTextColor] = React.useState('#000000');
 
     React.useEffect(() => {
         if (profile?.[`${documentType}_template_positions`]) {
@@ -165,6 +174,59 @@ const DocumentPreviewModal = ({
                                             🏛️ Carimbo
                                         </span>
                                     </label>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={showRegistry}
+                                            onChange={(e) => setShowRegistry(e.target.checked)}
+                                            className="w-4 h-4 rounded"
+                                            style={{ accentColor: themeColors.primary }}
+                                        />
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                                            📋 Registro Profissional
+                                        </span>
+                                    </label>
+                                </div>
+
+                                {/* Formatting Toolbar */}
+                                <div className="flex items-center gap-3 mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">Formatação:</span>
+                                    <select
+                                        value={fontSize}
+                                        onChange={(e) => setFontSize(e.target.value)}
+                                        className="px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+                                    >
+                                        <option value="10pt">10pt</option>
+                                        <option value="12pt">12pt</option>
+                                        <option value="14pt">14pt</option>
+                                        <option value="16pt">16pt</option>
+                                        <option value="18pt">18pt</option>
+                                    </select>
+                                    <button
+                                        onClick={() => setFontWeight(fontWeight === 'bold' ? 'normal' : 'bold')}
+                                        className={`px-3 py-1 text-sm font-bold rounded border ${fontWeight === 'bold' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'}`}
+                                    >
+                                        B
+                                    </button>
+                                    <button
+                                        onClick={() => setFontStyle(fontStyle === 'italic' ? 'normal' : 'italic')}
+                                        className={`px-3 py-1 text-sm italic rounded border ${fontStyle === 'italic' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'}`}
+                                    >
+                                        I
+                                    </button>
+                                    <button
+                                        onClick={() => setTextDecoration(textDecoration === 'underline' ? 'none' : 'underline')}
+                                        className={`px-3 py-1 text-sm underline rounded border ${textDecoration === 'underline' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'}`}
+                                    >
+                                        U
+                                    </button>
+                                    <input
+                                        type="color"
+                                        value={textColor}
+                                        onChange={(e) => setTextColor(e.target.value)}
+                                        className="w-10 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                                        title="Cor do texto"
+                                    />
                                 </div>
                             </div>
                             <button
