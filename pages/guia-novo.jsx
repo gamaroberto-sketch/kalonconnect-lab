@@ -15,6 +15,7 @@ const GuiaNovoPage = () => {
     const themeColors = getThemeColors();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [selectedSection, setSelectedSection] = useState(null);
@@ -40,8 +41,17 @@ const GuiaNovoPage = () => {
     return (
         <ProtectedRoute>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-                <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                <Header
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                />
+                <Sidebar
+                    activeSection="ajuda"
+                    sidebarOpen={sidebarOpen}
+                    darkMode={darkMode}
+                />
 
                 <div className={`relative z-10 transition-all duration-300 pt-28 ${sidebarOpen ? 'lg:ml-64' : ''}`}>
                     <div className="p-6">
