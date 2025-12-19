@@ -523,8 +523,9 @@ const DocumentPreviewModal = ({
                                         {/* Registry Field */}
                                         {showRegistry && profile?.social?.registro && (
                                             <div
-                                                className={`absolute ${editMode ? 'cursor-move border-2 border-dashed border-blue-500 bg-blue-50/20 hover:bg-blue-100/30' : ''}`}
+                                                className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'registry' ? 'border-green-500 bg-green-50/30' : 'border-gray-500 bg-gray-50/20'} hover:bg-gray-100/30` : ''}`}
                                                 draggable={editMode}
+                                                onClick={() => setSelectedField('registry')}
                                                 onDragStart={(e) => {
                                                     setDragging('registry');
                                                     const img = new Image();
@@ -536,11 +537,11 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.registry?.top || positions.registry?.top || '26cm',
                                                     left: localPositions.registry?.left || positions.registry?.left || '3cm',
-                                                    fontSize: fontSize,
-                                                    fontWeight: fontWeight,
-                                                    fontStyle: fontStyle,
-                                                    textDecoration: textDecoration,
-                                                    color: textColor,
+                                                    fontSize: fieldFormatting.registry?.fontSize || '11pt',
+                                                    fontWeight: fieldFormatting.registry?.fontWeight || 'normal',
+                                                    fontStyle: fieldFormatting.registry?.fontStyle || 'normal',
+                                                    textDecoration: fieldFormatting.registry?.textDecoration || 'none',
+                                                    color: fieldFormatting.registry?.color || '#000',
                                                     fontFamily: 'Arial, sans-serif',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
