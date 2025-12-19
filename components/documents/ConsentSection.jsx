@@ -8,6 +8,7 @@ import { useTheme } from '../ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
 
 import { useAuth } from '../AuthContext';
+import TemplateGallery from './TemplateGallery';
 
 const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
@@ -17,6 +18,27 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
 
+  // Template management states
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  // Migrate old single template to new array format
+  const migrateTemplates = (profile) => {
+    if (profile?.consent_template_url && !profile?.consent_templates) {
+      return [{
+        id: crypto.randomUUID(),
+        name: 'Template Principal',
+        url: profile.consent_template_url,
+        size: profile.consent_template_size || 'A4',
+        positions: {},
+        is_default: true,
+        created_at: new Date().toISOString()
+      }];
+    }
+    return profile?.consent_templates || [];
+  };
+
   React.useEffect(() => {
     const loadProfile = async () => {
       if (user?.id) {
@@ -25,6 +47,11 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
           if (response.ok) {
             const data = await response.json();
             setProfile(data);
+
+            // Migrate and set templates
+            const migratedTemplates = migrateTemplates(data);
+            setTemplates(migratedTemplates);
+            setSelectedTemplate(migratedTemplates.find(t => t.is_default) || migratedTemplates[0] || null);
           }
         } catch (error) {
           console.error("Failed to load profile for consent branding", error);
@@ -39,7 +66,6 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
     procedure: '',
     date: new Date().toISOString().split('T')[0]
   });
-  const [uploading, setUploading] = useState(false);
 
   const helpText = t('documents.help.consent.text');
 
@@ -160,18 +186,28 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `${user.id}/consent/${fileName}`;
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('prescription-templates')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
+      const { error: uploadError } = await supabase.storage
+        .from('consent-templates')
+        .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('prescription-templates')
+        .from('consent-templates')
         .getPublicUrl(filePath);
+
+      // Create new template object
+      const newTemplate = {
+        id: crypto.randomUUID(),
+        name: `Template ${templates.length + 1}`,
+        url: publicUrl,
+        size: 'A4',
+        positions: {},
+        is_default: templates.length === 0,
+        created_at: new Date().toISOString()
+      };
+
+      const updatedTemplates = [...templates, newTemplate];
 
       const response = await fetch(`/api/user/profile?userId=${user.id}`, {
         method: 'POST',
@@ -180,46 +216,93 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
           'x-user-id': user.id
         },
         body: JSON.stringify({
-          consent_template_url: publicUrl,
-          consent_template_size: 'A4'
+          consent_templates: updatedTemplates
         })
       });
 
-      if (!response.ok) throw new Error('Erro ao salvar template');
-
-      setProfile({ ...profile, consent_template_url: publicUrl, consent_template_size: 'A4' });
-      alert('Template de termo de consentimento salvo!');
+      if (response.ok) {
+        setTemplates(updatedTemplates);
+        setProfile({ ...profile, consent_templates: updatedTemplates });
+        if (templates.length === 0) setSelectedTemplate(newTemplate);
+        alert('Template adicionado!');
+      }
     } catch (error) {
-      console.error('Upload error:', error);
-      alert('Erro ao fazer upload do template: ' + error.message);
+      console.error('Error uploading template:', error);
+      alert('Erro ao fazer upload do template');
     } finally {
       setUploading(false);
     }
   };
 
-  const handleRemoveTemplate = async () => {
-    if (!confirm('Deseja remover o template personalizado?')) return;
-
+  const handleDeleteTemplate = async (templateId) => {
     try {
-      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+      const updatedTemplates = templates.filter(t => t.id !== templateId);
+
+      // If deleting the default, make the first remaining one default
+      if (updatedTemplates.length > 0) {
+        const wasDefault = templates.find(t => t.id === templateId)?.is_default;
+        if (wasDefault) {
+          updatedTemplates[0].is_default = true;
+        }
+      }
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id
-        },
-        body: JSON.stringify({
-          consent_template_url: null,
-          consent_template_size: null
-        })
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ consent_templates: updatedTemplates })
       });
 
-      if (!response.ok) throw new Error('Erro ao remover template');
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, consent_templates: updatedTemplates });
 
-      setProfile({ ...profile, consent_template_url: null, consent_template_size: null });
-      alert('Template removido!');
+      // Update selected template if needed
+      if (selectedTemplate?.id === templateId) {
+        setSelectedTemplate(updatedTemplates[0] || null);
+      }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Erro ao remover template');
+      alert('Erro ao deletar template');
+    }
+  };
+
+  const handleRenameTemplate = async (templateId, newName) => {
+    try {
+      const updatedTemplates = templates.map(t =>
+        t.id === templateId ? { ...t, name: newName } : t
+      );
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ consent_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, consent_templates: updatedTemplates });
+      alert(`✅ Template renomeado para "${newName}"!`);
+    } catch (error) {
+      console.error('Error renaming template:', error);
+      alert('❌ Erro ao renomear template');
+    }
+  };
+
+  const handleSetDefault = async (templateId) => {
+    try {
+      const updatedTemplates = templates.map(t => ({
+        ...t,
+        is_default: t.id === templateId
+      }));
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ consent_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, consent_templates: updatedTemplates });
+      setSelectedTemplate(updatedTemplates.find(t => t.id === templateId));
+    } catch (error) {
+      alert('Erro ao definir template padrão');
     }
   };
 
@@ -249,50 +332,26 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
       </div>
 
       <div className="space-y-4">
-        {/* Template Upload Section */}
-        {!profile?.consent_template_url ? (
-          <div className="mb-6 p-4 border-2 border-dashed rounded-xl" style={{ borderColor: themeColors.primary + '40', backgroundColor: themeColors.primary + '05' }}>
-            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-              <Upload className="w-5 h-5" />
-              Upload de Template Personalizado
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              Faça upload do seu termo de consentimento em PDF ou imagem.
-            </p>
-            <input
-              type="file"
-              accept="image/*,.pdf"
-              onChange={handleTemplateUpload}
-              className="hidden"
-              id="consent-template-upload"
-              disabled={uploading}
-            />
-            <label
-              htmlFor="consent-template-upload"
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              style={{ backgroundColor: themeColors.primary, color: 'white' }}
-            >
-              <Upload className="w-5 h-5" />
-              {uploading ? 'Enviando...' : 'Escolher Arquivo'}
-            </label>
-          </div>
-        ) : (
-          <div className="mb-6 p-4 border rounded-xl bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
-                <span className="font-medium text-green-700 dark:text-green-300">Template configurado ({profile.consent_template_size || 'A4'})</span>
-              </div>
-              <button
-                onClick={handleRemoveTemplate}
-                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors"
-              >
-                Remover template
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Template Gallery */}
+        <TemplateGallery
+          templates={templates}
+          type="consent"
+          onAdd={() => document.getElementById('consent-template-upload').click()}
+          onDelete={handleDeleteTemplate}
+          onRename={handleRenameTemplate}
+          onSetDefault={handleSetDefault}
+          onSelect={setSelectedTemplate}
+        />
 
+        {/* Hidden file input */}
+        <input
+          type="file"
+          accept="image/*,.pdf"
+          onChange={handleTemplateUpload}
+          className="hidden"
+          id="consent-template-upload"
+          disabled={uploading}
+        />
         <input
           type="text"
           value={data.clientName}
