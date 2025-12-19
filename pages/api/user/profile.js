@@ -31,6 +31,7 @@ const normalizeProfile = (data = {}) => {
     prescription_template_url: String(data.prescription_template_url ?? ""), // Add template URL
     prescription_template_size: String(data.prescription_template_size || "A4"), // Add template size
     prescription_template_positions: data.prescription_template_positions || {},
+    prescription_templates: Array.isArray(data.prescription_templates) ? data.prescription_templates : [],
     consent_template_url: String(data.consent_template_url ?? ""),
     consent_template_size: String(data.consent_template_size || "A4"),
     consent_template_positions: data.consent_template_positions || {},
@@ -182,6 +183,7 @@ export default async function handler(req, res) {
       if (body.prescription_template_url !== undefined) updateData.prescription_template_url = body.prescription_template_url;
       if (body.prescription_template_size !== undefined) updateData.prescription_template_size = body.prescription_template_size;
       if (body.prescription_template_positions !== undefined) updateData.prescription_template_positions = body.prescription_template_positions;
+      if (body.prescription_templates !== undefined) updateData.prescription_templates = body.prescription_templates;
       if (body.consent_template_url !== undefined) updateData.consent_template_url = body.consent_template_url;
       if (body.consent_template_size !== undefined) updateData.consent_template_size = body.consent_template_size;
       if (body.consent_template_positions !== undefined) updateData.consent_template_positions = body.consent_template_positions;
