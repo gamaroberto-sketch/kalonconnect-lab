@@ -609,7 +609,6 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
                   autoPlay
                   playsInline
                   muted
-                  webkit-playsinline
                   style={{ transform: 'scaleX(-1)' }}
                   className="w-full rounded-lg border-4 border-white shadow-2xl bg-black"
                 />
