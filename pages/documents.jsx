@@ -234,8 +234,9 @@ const DocumentsNew = () => {
                             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                                            📋 Documentos Profissionais
+                                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+                                            <FileText className="w-8 h-8" style={{ color: themeColors.primary }} />
+                                            Documentos Profissionais
                                         </h1>
                                         <p className="text-gray-600 dark:text-gray-400">
                                             Gerencie seus templates personalizados e assinatura digital

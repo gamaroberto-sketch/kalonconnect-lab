@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, HelpCircle, Volume2, Save, Download, Printer, Send, Settings, Eye } from 'lucide-react';
+import { FileText, HelpCircle, Volume2, Save, Download, Printer, Send, Settings, Eye, Upload, FileCheck } from 'lucide-react';
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -46,6 +46,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
 
   const [showPositionEditor, setShowPositionEditor] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const helpText = t('documents.help.prescription.text');
 
@@ -256,6 +257,87 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
     }
   };
 
+  const handleTemplateUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      );
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/prescription/${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('prescription-templates')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('prescription-templates')
+        .getPublicUrl(filePath);
+
+      // Save to profile
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({
+          prescription_template_url: publicUrl,
+          prescription_template_size: 'A4'
+        })
+      });
+
+      if (!response.ok) throw new Error('Erro ao salvar template');
+
+      setProfile({ ...profile, prescription_template_url: publicUrl, prescription_template_size: 'A4' });
+      alert('Template salvo! Agora você pode ajustar as posições dos campos.');
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Erro ao fazer upload do template: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveTemplate = async () => {
+    if (!confirm('Deseja remover o template personalizado?')) return;
+
+    try {
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({
+          prescription_template_url: null,
+          prescription_template_positions: null,
+          prescription_template_size: null
+        })
+      });
+
+      if (!response.ok) throw new Error('Erro ao remover template');
+
+      setProfile({ ...profile, prescription_template_url: null, prescription_template_positions: null, prescription_template_size: null });
+      alert('Template removido!');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Erro ao remover template');
+    }
+  };
+
   const handleSend = () => {
     alert(t('documents.prescription.successSend'));
   };
@@ -290,6 +372,50 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
 
       {/* Campos do receituário */}
       <div className="space-y-4">
+        {/* Template Upload Section */}
+        {!profile?.prescription_template_url ? (
+          <div className="mb-6 p-4 border-2 border-dashed rounded-xl" style={{ borderColor: themeColors.primary + '40', backgroundColor: themeColors.primary + '05' }}>
+            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+              <Upload className="w-5 h-5" />
+              Upload de Template Personalizado
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              Faça upload do seu receituário em PDF ou imagem (PNG/JPG). Depois você poderá posicionar os campos.
+            </p>
+            <input
+              type="file"
+              accept="image/*,.pdf"
+              onChange={handleTemplateUpload}
+              className="hidden"
+              id="prescription-template-upload"
+              disabled={uploading}
+            />
+            <label
+              htmlFor="prescription-template-upload"
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              style={{ backgroundColor: themeColors.primary, color: 'white' }}
+            >
+              <Upload className="w-5 h-5" />
+              {uploading ? 'Enviando...' : 'Escolher Arquivo'}
+            </label>
+          </div>
+        ) : (
+          <div className="mb-6 p-4 border rounded-xl bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <span className="font-medium text-green-700 dark:text-green-300">Template configurado ({profile.prescription_template_size || 'A4'})</span>
+              </div>
+              <button
+                onClick={handleRemoveTemplate}
+                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors"
+              >
+                Remover template
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Nome do Paciente */}
         <div>
           <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
