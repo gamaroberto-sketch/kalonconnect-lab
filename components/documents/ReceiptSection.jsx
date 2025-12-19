@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Receipt, HelpCircle, Volume2, Save, Download, Printer, Send } from 'lucide-react';
+import { Receipt, HelpCircle, Volume2, Save, Download, Printer, Send, Upload, FileCheck } from 'lucide-react';
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -42,6 +42,7 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
     service: '',
     date: new Date().toISOString().split('T')[0]
   });
+  const [uploading, setUploading] = useState(false);
 
   const helpText = t('documents.help.receipt.text');
 
@@ -161,6 +162,41 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
     alert(t('documents.receipt.success'));
   };
 
+  const handleTemplateUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/receipt/${fileName}`;
+      const { error: uploadError } = await supabase.storage.from('prescription-templates').upload(filePath, file, { cacheControl: '3600', upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('prescription-templates').getPublicUrl(filePath);
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user-id': user.id }, body: JSON.stringify({ receipt_template_url: publicUrl, receipt_template_size: 'A4' }) });
+      if (!response.ok) throw new Error('Erro ao salvar template');
+      setProfile({ ...profile, receipt_template_url: publicUrl, receipt_template_size: 'A4' });
+      alert('Template de recibo salvo!');
+    } catch (error) {
+      alert('Erro: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveTemplate = async () => {
+    if (!confirm('Remover template?')) return;
+    try {
+      await fetch(`/api/user/profile?userId=${user.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user-id': user.id }, body: JSON.stringify({ receipt_template_url: null, receipt_template_size: null }) });
+      setProfile({ ...profile, receipt_template_url: null, receipt_template_size: null });
+      alert('Template removido!');
+    } catch (error) {
+      alert('Erro: ' + error.message);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -192,6 +228,23 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
 
       {/* Campos */}
       <div className="space-y-4">
+        {!profile?.receipt_template_url ? (
+          <div className="mb-6 p-4 border-2 border-dashed rounded-xl" style={{ borderColor: themeColors.primary + '40', backgroundColor: themeColors.primary + '05' }}>
+            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2"><Upload className="w-5 h-5" />Upload de Template</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Faça upload do seu recibo em PDF ou imagem.</p>
+            <input type="file" accept="image/*,.pdf" onChange={handleTemplateUpload} className="hidden" id="receipt-template-upload" disabled={uploading} />
+            <label htmlFor="receipt-template-upload" className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${uploading ? 'opacity-50' : ''}`} style={{ backgroundColor: themeColors.primary, color: 'white' }}>
+              <Upload className="w-5 h-5" />{uploading ? 'Enviando...' : 'Escolher Arquivo'}
+            </label>
+          </div>
+        ) : (
+          <div className="mb-6 p-4 border rounded-xl bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2"><FileCheck className="w-5 h-5 text-green-600 dark:text-green-400" /><span className="font-medium text-green-700 dark:text-green-300">Template configurado</span></div>
+              <button onClick={handleRemoveTemplate} className="text-red-600 hover:text-red-700 text-sm font-medium">Remover</button>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
