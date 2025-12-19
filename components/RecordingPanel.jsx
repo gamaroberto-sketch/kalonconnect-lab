@@ -1443,7 +1443,13 @@ const RecordingPanel = () => {
                     key="start"
                     type="button"
                     onClick={startRecording}
-                    className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-red-200 bg-red-500 text-white shadow-lg transition hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
+                    className="flex h-16 w-16 items-center justify-center rounded-full border-4 text-white shadow-lg transition focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{
+                      borderColor: `${themeColors?.error || "#ef4444"}40`,
+                      backgroundColor: themeColors?.error || "#ef4444"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = themeColors?.errorDark || "#dc2626"}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = themeColors?.error || "#ef4444"}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -1646,7 +1652,14 @@ const RecordingPanel = () => {
                 type="button"
                 onClick={regenerateSummary}
                 disabled={!transcription || isGeneratingSummary || !allowSummaryFeature}
-                className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-600/40 dark:text-emerald-300"
+                className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  borderColor: themeColors?.primary || "#0f172a",
+                  backgroundColor: `${themeColors?.primary || "#0f172a"}15`,
+                  color: themeColors?.primary || "#0f172a"
+                }}
+                onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = `${themeColors?.primary || "#0f172a"}25`)}
+                onMouseLeave={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = `${themeColors?.primary || "#0f172a"}15`)}
                 title={allowSummaryFeature ? undefined : "Disponível apenas na versão Pro"}
               >
                 <Wand2 className="h-3.5 w-3.5" />
@@ -1671,7 +1684,14 @@ const RecordingPanel = () => {
               <button
                 type="button"
                 onClick={handleSaveObservations}
-                className="inline-flex items-center gap-1 rounded-full border-2 border-emerald-300 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-500/20 dark:border-emerald-500/60 dark:text-emerald-300"
+                className="inline-flex items-center gap-1 rounded-full border-2 px-3 py-1 text-xs font-semibold transition"
+                style={{
+                  borderColor: themeColors?.primary || "#0f172a",
+                  backgroundColor: `${themeColors?.primary || "#0f172a"}15`,
+                  color: themeColors?.primary || "#0f172a"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${themeColors?.primary || "#0f172a"}25`}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${themeColors?.primary || "#0f172a"}15`}
               >
                 <Save className="h-3.5 w-3.5" />
                 Salvar observações
@@ -1679,7 +1699,14 @@ const RecordingPanel = () => {
               <button
                 type="button"
                 onClick={handleAttachToClientRecord}
-                className="inline-flex items-center gap-1 rounded-full border-2 border-blue-300 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-600 transition hover:bg-blue-500/20 dark:border-blue-500/60 dark:text-blue-300"
+                className="inline-flex items-center gap-1 rounded-full border-2 px-3 py-1 text-xs font-semibold transition"
+                style={{
+                  borderColor: themeColors?.secondary || "#6b7280",
+                  backgroundColor: `${themeColors?.secondary || "#6b7280"}15`,
+                  color: themeColors?.secondary || "#6b7280"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${themeColors?.secondary || "#6b7280"}25`}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${themeColors?.secondary || "#6b7280"}15`}
               >
                 <FileText className="h-3.5 w-3.5" />
                 Anexar à ficha
