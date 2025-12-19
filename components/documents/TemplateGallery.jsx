@@ -119,15 +119,31 @@ const TemplateCard = ({
             {/* Template Preview */}
             <div className="aspect-[3/4] bg-gray-100 dark:bg-gray-700 relative overflow-hidden flex items-center justify-center">
                 {!imageError ? (
-                    <img
-                        src={template.url}
-                        alt={template.name}
-                        className="w-full h-full object-contain"
-                        onError={() => {
-                            console.error('❌ Erro ao carregar imagem:', template.url);
-                            setImageError(true);
-                        }}
-                    />
+                    template.url.toLowerCase().endsWith('.pdf') ? (
+                        // PDF Preview
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+                            <div className="text-center p-4">
+                                <div className="text-6xl mb-3">📄</div>
+                                <p className="text-sm font-semibold text-red-700 dark:text-red-400">
+                                    PDF Template
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                    Clique para visualizar
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        // Image Preview
+                        <img
+                            src={template.url}
+                            alt={template.name}
+                            className="w-full h-full object-contain"
+                            onError={() => {
+                                console.error('❌ Erro ao carregar imagem:', template.url);
+                                setImageError(true);
+                            }}
+                        />
+                    )
                 ) : (
                     <div className="text-center p-4">
                         <div className="text-4xl mb-2">📄</div>
@@ -275,12 +291,20 @@ const TemplatePreviewModal = ({ template, zoom, onZoomIn, onZoomOut, onClose }) 
                 {/* Preview */}
                 <div className="overflow-auto max-h-[calc(90vh-80px)] bg-gray-100 dark:bg-gray-900 p-8">
                     <div className="flex justify-center">
-                        <img
-                            src={template.url}
-                            alt={template.name}
-                            className="shadow-2xl transition-transform"
-                            style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
-                        />
+                        {template.url.toLowerCase().endsWith('.pdf') ? (
+                            <embed
+                                src={template.url}
+                                type="application/pdf"
+                                className="w-full h-[70vh] shadow-2xl"
+                            />
+                        ) : (
+                            <img
+                                src={template.url}
+                                alt={template.name}
+                                className="shadow-2xl transition-transform"
+                                style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
+                            />
+                        )}
                     </div>
                 </div>
             </motion.div>
