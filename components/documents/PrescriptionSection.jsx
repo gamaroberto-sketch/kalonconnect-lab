@@ -169,6 +169,30 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
                 font-size: ${positions.registry?.fontSize || '11pt'};
                 font-weight: ${positions.registry?.fontWeight || 'normal'};
               }
+              
+              .signature {
+                position: absolute;
+                top: ${positions.signature?.top || '26cm'};
+                left: ${positions.signature?.left || '12cm'};
+                max-height: 3cm;
+                max-width: 6cm;
+              }
+              
+              .signature-image {
+                position: absolute;
+                top: ${positions.signatureImage?.top || '24cm'};
+                left: ${positions.signatureImage?.left || '3cm'};
+                max-height: 3cm;
+                max-width: 6cm;
+              }
+              
+              .stamp {
+                position: absolute;
+                top: ${positions.stamp?.top || '24cm'};
+                left: ${positions.stamp?.left || '14cm'};
+                max-height: 4cm;
+                max-width: 4cm;
+              }
             </style>
           </head>
           <body>
@@ -177,6 +201,9 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             ${data.instructions ? `<div class="field instructions">${data.instructions}</div>` : ''}
             <div class="field date">${new Date(data.date).toLocaleDateString('pt-BR')}</div>
             <div class="field registry">${data.crp || profile.social?.registro || ''}</div>
+            ${profile?.signaturePad ? `<img src="${profile.signaturePad}" class="signature" alt="Assinatura" />` : ''}
+            ${profile?.signature_image_url ? `<img src="${profile.signature_image_url}" class="signature-image" alt="Assinatura PNG" />` : ''}
+            ${profile?.stamp_image_url ? `<img src="${profile.stamp_image_url}" class="stamp" alt="Carimbo" />` : ''}
           </body>
         </html>
       `;
