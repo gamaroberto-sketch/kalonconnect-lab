@@ -184,7 +184,6 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
     };
   }, [clientData.id, clientId, isOpen]);
 
-  // Capturar foto da webcam
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -193,6 +192,8 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        // Force video to play
+        videoRef.current.play().catch(err => console.error('Error playing video:', err));
       }
       setIsRecording(true);
       setShowCamera(true);
@@ -482,8 +483,8 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
                     type="button"
                     onClick={() => setSelectedSummary(item)}
                     className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${active
-                        ? 'border-primary-500 bg-primary-500/10 text-primary-700 dark:border-primary-400 dark:text-primary-200'
-                        : 'border-gray-300 text-gray-600 hover:border-primary-300 hover:text-primary-600 dark:border-gray-600 dark:text-gray-300'
+                      ? 'border-primary-500 bg-primary-500/10 text-primary-700 dark:border-primary-400 dark:text-primary-200'
+                      : 'border-gray-300 text-gray-600 hover:border-primary-300 hover:text-primary-600 dark:border-gray-600 dark:text-gray-300'
                       }`}
                   >
                     Sessão {item.sessionId}
