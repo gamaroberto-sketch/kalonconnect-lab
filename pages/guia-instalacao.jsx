@@ -8,7 +8,7 @@ import Sidebar from '../components/Sidebar';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
-import { getHelpContent, helpSections, searchContent } from '../lib/helpContentTranslations';
+import { getHelpContent, helpSections, searchContent, uiTranslations } from '../lib/helpContentTranslations';
 
 export default function GuiaInstalacao() {
   const { t, language, changeLanguage } = useTranslation();
@@ -19,6 +19,9 @@ export default function GuiaInstalacao() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedSection, setSelectedSection] = useState(null);
+
+  // Get UI translations for current language
+  const ui = uiTranslations[language] || uiTranslations['pt-BR'];
 
   // Search functionality
   useEffect(() => {
@@ -102,7 +105,7 @@ export default function GuiaInstalacao() {
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
-                    placeholder="Buscar na ajuda..."
+                    placeholder={ui.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-12 pr-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-white"
@@ -131,7 +134,7 @@ export default function GuiaInstalacao() {
                       className="mt-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 max-h-96 overflow-y-auto"
                     >
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                        {searchResults.length} {searchResults.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
+                        {searchResults.length} {searchResults.length === 1 ? ui.resultFound : ui.resultsFound}
                       </p>
                       {searchResults.map((result, index) => (
                         <button
@@ -171,7 +174,7 @@ export default function GuiaInstalacao() {
                     className="mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
                     <ChevronRight className="w-5 h-5 rotate-180" />
-                    Voltar para todas as seções
+                    {ui.backToSections}
                   </button>
 
                   <div className="flex items-center gap-4 mb-6">
