@@ -42,6 +42,7 @@ const DocumentPreviewModal = ({
     const [dragging, setDragging] = React.useState(null);
     const [saving, setSaving] = React.useState(false);
     const [saveSuccess, setSaveSuccess] = React.useState(false);
+    const [isDraggingField, setIsDraggingField] = React.useState(false); // Track if actively dragging
 
     // Field selection and editing
     const [selectedField, setSelectedField] = React.useState('patientName'); // Auto-select first field
