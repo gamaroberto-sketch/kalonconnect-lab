@@ -6,8 +6,8 @@ import { Receipt, HelpCircle, Volume2, Save, Download, Printer, Send, Upload, Fi
 import ModernButton from '../ModernButton';
 import { useTheme } from '../ThemeProvider';
 import { useTranslation } from '../../hooks/useTranslation';
-
 import { useAuth } from '../AuthContext';
+import TemplateGallery from './TemplateGallery';
 
 const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, currentSection, onShowHelp }) => {
   const { getThemeColors } = useTheme();
@@ -17,6 +17,27 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
 
+  // Template management states
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  // Migrate old single template to new array format
+  const migrateTemplates = (profile) => {
+    if (profile?.receipt_template_url && !profile?.receipt_templates) {
+      return [{
+        id: crypto.randomUUID(),
+        name: 'Template Principal',
+        url: profile.receipt_template_url,
+        size: profile.receipt_template_size || 'A4',
+        positions: {},
+        is_default: true,
+        created_at: new Date().toISOString()
+      }];
+    }
+    return profile?.receipt_templates || [];
+  };
+
   React.useEffect(() => {
     const loadProfile = async () => {
       if (user?.id) {
@@ -25,6 +46,11 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
           if (response.ok) {
             const data = await response.json();
             setProfile(data);
+
+            // Migrate and set templates
+            const migratedTemplates = migrateTemplates(data);
+            setTemplates(migratedTemplates);
+            setSelectedTemplate(migratedTemplates.find(t => t.is_default) || migratedTemplates[0] || null);
           }
         } catch (error) {
           console.error("Failed to load profile for receipt branding", error);
@@ -42,7 +68,6 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
     service: '',
     date: new Date().toISOString().split('T')[0]
   });
-  const [uploading, setUploading] = useState(false);
 
   const helpText = t('documents.help.receipt.text');
 
@@ -165,35 +190,134 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
   const handleTemplateUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     setUploading(true);
     try {
       const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      );
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `${user.id}/receipt/${fileName}`;
-      const { error: uploadError } = await supabase.storage.from('prescription-templates').upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+      const { error: uploadError } = await supabase.storage
+        .from('receipt-templates')
+        .upload(filePath, file);
+
       if (uploadError) throw uploadError;
-      const { data: { publicUrl } } = supabase.storage.from('prescription-templates').getPublicUrl(filePath);
-      const response = await fetch(`/api/user/profile?userId=${user.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user-id': user.id }, body: JSON.stringify({ receipt_template_url: publicUrl, receipt_template_size: 'A4' }) });
-      if (!response.ok) throw new Error('Erro ao salvar template');
-      setProfile({ ...profile, receipt_template_url: publicUrl, receipt_template_size: 'A4' });
-      alert('Template de recibo salvo!');
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('receipt-templates')
+        .getPublicUrl(filePath);
+
+      // Create new template object
+      const newTemplate = {
+        id: crypto.randomUUID(),
+        name: `Template ${templates.length + 1}`,
+        url: publicUrl,
+        size: 'A4',
+        positions: {},
+        is_default: templates.length === 0,
+        created_at: new Date().toISOString()
+      };
+
+      const updatedTemplates = [...templates, newTemplate];
+
+      const response = await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({
+          receipt_templates: updatedTemplates
+        })
+      });
+
+      if (response.ok) {
+        setTemplates(updatedTemplates);
+        setProfile({ ...profile, receipt_templates: updatedTemplates });
+        if (templates.length === 0) setSelectedTemplate(newTemplate);
+        alert('Template adicionado!');
+      }
     } catch (error) {
-      alert('Erro: ' + error.message);
+      console.error('Error uploading template:', error);
+      alert('Erro ao fazer upload do template');
     } finally {
       setUploading(false);
     }
   };
 
-  const handleRemoveTemplate = async () => {
-    if (!confirm('Remover template?')) return;
+  const handleDeleteTemplate = async (templateId) => {
     try {
-      await fetch(`/api/user/profile?userId=${user.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user-id': user.id }, body: JSON.stringify({ receipt_template_url: null, receipt_template_size: null }) });
-      setProfile({ ...profile, receipt_template_url: null, receipt_template_size: null });
-      alert('Template removido!');
+      const updatedTemplates = templates.filter(t => t.id !== templateId);
+
+      if (updatedTemplates.length > 0) {
+        const wasDefault = templates.find(t => t.id === templateId)?.is_default;
+        if (wasDefault) {
+          updatedTemplates[0].is_default = true;
+        }
+      }
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ receipt_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, receipt_templates: updatedTemplates });
+
+      if (selectedTemplate?.id === templateId) {
+        setSelectedTemplate(updatedTemplates[0] || null);
+      }
     } catch (error) {
-      alert('Erro: ' + error.message);
+      alert('Erro ao deletar template');
+    }
+  };
+
+  const handleRenameTemplate = async (templateId, newName) => {
+    try {
+      const updatedTemplates = templates.map(t =>
+        t.id === templateId ? { ...t, name: newName } : t
+      );
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ receipt_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, receipt_templates: updatedTemplates });
+      alert(`✅ Template renomeado para "${newName}"!`);
+    } catch (error) {
+      console.error('Error renaming template:', error);
+      alert('❌ Erro ao renomear template');
+    }
+  };
+
+  const handleSetDefault = async (templateId) => {
+    try {
+      const updatedTemplates = templates.map(t => ({
+        ...t,
+        is_default: t.id === templateId
+      }));
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ receipt_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, receipt_templates: updatedTemplates });
+      setSelectedTemplate(updatedTemplates.find(t => t.id === templateId));
+    } catch (error) {
+      alert('Erro ao definir template padrão');
     }
   };
 
@@ -228,23 +352,26 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
 
       {/* Campos */}
       <div className="space-y-4">
-        {!profile?.receipt_template_url ? (
-          <div className="mb-6 p-4 border-2 border-dashed rounded-xl" style={{ borderColor: themeColors.primary + '40', backgroundColor: themeColors.primary + '05' }}>
-            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2"><Upload className="w-5 h-5" />Upload de Template</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Faça upload do seu recibo em PDF ou imagem.</p>
-            <input type="file" accept="image/*,.pdf" onChange={handleTemplateUpload} className="hidden" id="receipt-template-upload" disabled={uploading} />
-            <label htmlFor="receipt-template-upload" className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${uploading ? 'opacity-50' : ''}`} style={{ backgroundColor: themeColors.primary, color: 'white' }}>
-              <Upload className="w-5 h-5" />{uploading ? 'Enviando...' : 'Escolher Arquivo'}
-            </label>
-          </div>
-        ) : (
-          <div className="mb-6 p-4 border rounded-xl bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><FileCheck className="w-5 h-5 text-green-600 dark:text-green-400" /><span className="font-medium text-green-700 dark:text-green-300">Template configurado</span></div>
-              <button onClick={handleRemoveTemplate} className="text-red-600 hover:text-red-700 text-sm font-medium">Remover</button>
-            </div>
-          </div>
-        )}
+        {/* Template Gallery */}
+        <TemplateGallery
+          templates={templates}
+          type="receipt"
+          onAdd={() => document.getElementById('receipt-template-upload').click()}
+          onDelete={handleDeleteTemplate}
+          onRename={handleRenameTemplate}
+          onSetDefault={handleSetDefault}
+          onSelect={setSelectedTemplate}
+        />
+
+        {/* Hidden file input */}
+        <input
+          type="file"
+          accept="image/*,.pdf"
+          onChange={handleTemplateUpload}
+          className="hidden"
+          id="receipt-template-upload"
+          disabled={uploading}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
