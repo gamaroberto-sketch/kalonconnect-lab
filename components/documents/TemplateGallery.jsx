@@ -103,6 +103,7 @@ const TemplateCard = ({
     onSelect
 }) => {
     const [showActions, setShowActions] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     return (
         <motion.div
@@ -116,12 +117,28 @@ const TemplateCard = ({
             onClick={onSelect}
         >
             {/* Template Preview */}
-            <div className="aspect-[3/4] bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-                <img
-                    src={template.url}
-                    alt={template.name}
-                    className="w-full h-full object-contain"
-                />
+            <div className="aspect-[3/4] bg-gray-100 dark:bg-gray-700 relative overflow-hidden flex items-center justify-center">
+                {!imageError ? (
+                    <img
+                        src={template.url}
+                        alt={template.name}
+                        className="w-full h-full object-contain"
+                        onError={() => {
+                            console.error('❌ Erro ao carregar imagem:', template.url);
+                            setImageError(true);
+                        }}
+                    />
+                ) : (
+                    <div className="text-center p-4">
+                        <div className="text-4xl mb-2">📄</div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                            {template.name}
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                            Imagem não disponível
+                        </p>
+                    </div>
+                )}
 
                 {/* Default Badge */}
                 {template.is_default && (
