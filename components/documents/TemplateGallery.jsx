@@ -178,17 +178,6 @@ const TemplateCard = ({
                     </div>
                 )}
 
-                {/* Default Badge */}
-                {template.is_default && (
-                    <div
-                        className="absolute top-2 right-2 px-3 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1"
-                        style={{ backgroundColor: themeColors.primary }}
-                    >
-                        <Star className="w-3 h-3 fill-current" />
-                        Padrão
-                    </div>
-                )}
-
                 {/* Hover Actions */}
                 <AnimatePresence>
                     {showActions && (
