@@ -200,39 +200,15 @@ const TemplateCard = ({
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onEditPositions();
+                                    if (confirm('Deseja deletar este template?')) {
+                                        onDelete();
+                                    }
                                 }}
-                                className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
-                                title="Ajustar Posições"
+                                className="p-2 bg-white rounded-lg hover:bg-red-50 transition-colors"
+                                title="Deletar"
                             >
-                                <Settings className="w-5 h-5 text-gray-700" />
+                                <Trash2 className="w-5 h-5 text-red-600" />
                             </button>
-                            {!template.is_default && (
-                                <>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onSetDefault();
-                                        }}
-                                        className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
-                                        title="Definir como Padrão"
-                                    >
-                                        <Star className="w-5 h-5 text-yellow-500" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (confirm('Deseja deletar este template?')) {
-                                                onDelete();
-                                            }
-                                        }}
-                                        className="p-2 bg-white rounded-lg hover:bg-red-50 transition-colors"
-                                        title="Deletar"
-                                    >
-                                        <Trash2 className="w-5 h-5 text-red-600" />
-                                    </button>
-                                </>
-                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>
