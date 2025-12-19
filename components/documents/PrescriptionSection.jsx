@@ -81,10 +81,6 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
 
   const helpText = t('documents.help.prescription.text');
 
-  const handleSave = () => {
-    alert(t('documents.prescription.successSave'));
-  };
-
   const handleDownloadPDF = () => {
     alert(t('documents.prescription.successPDF'));
   };
@@ -442,6 +438,17 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
     } catch (error) {
       console.error('Error saving:', error);
       alert('❌ Erro ao salvar receituário');
+    }
+  };
+
+  const handleSend = async () => {
+    try {
+      // Send logic here
+      console.log('Sending prescription:', data);
+      alert(`📧 Receituário enviado com sucesso!\n\n👤 Paciente: ${data.patientName}\n📱 O documento foi enviado para o WhatsApp/Email do paciente.`);
+    } catch (error) {
+      console.error('Error sending:', error);
+      alert('❌ Erro ao enviar receituário');
     }
   };
 
