@@ -308,8 +308,9 @@ const DocumentPreviewModal = ({
                                     <>
                                         {documentData.patientName && (
                                             <div
-                                                className={`absolute ${editMode ? 'cursor-move border-2 border-dashed border-blue-500 bg-blue-50/20 hover:bg-blue-100/30' : ''}`}
+                                                className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'patientName' ? 'border-green-500 bg-green-50/30' : 'border-blue-500 bg-blue-50/20'} hover:bg-blue-100/30` : ''}`}
                                                 draggable={editMode}
+                                                onClick={() => setSelectedField('patientName')}
                                                 onDragStart={(e) => {
                                                     setDragging('patientName');
                                                     const img = new Image();
@@ -321,11 +322,11 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.patientName?.top || positions.patientName?.top || '8cm',
                                                     left: localPositions.patientName?.left || positions.patientName?.left || '3cm',
-                                                    fontSize: fontSize,
-                                                    fontWeight: fontWeight,
-                                                    fontStyle: fontStyle,
-                                                    textDecoration: textDecoration,
-                                                    color: textColor,
+                                                    fontSize: fieldFormatting.patientName?.fontSize || '14pt',
+                                                    fontWeight: fieldFormatting.patientName?.fontWeight || 'bold',
+                                                    fontStyle: fieldFormatting.patientName?.fontStyle || 'normal',
+                                                    textDecoration: fieldFormatting.patientName?.textDecoration || 'none',
+                                                    color: fieldFormatting.patientName?.color || '#000',
                                                     fontFamily: 'Arial, sans-serif',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
