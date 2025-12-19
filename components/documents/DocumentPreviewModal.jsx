@@ -63,20 +63,36 @@ const DocumentPreviewModal = ({
         }
     }, [profile, documentType]);
 
-    const handleDrag = (fieldName, e) => {
-        if (e.clientX === 0 && e.clientY === 0) return;
-        const rect = e.currentTarget.parentElement.getBoundingClientRect();
+    const handleDrag = (field, e) => {
+        if (e.clientX === 0 && e.clientY === 0) return; // Ignore ghost drag events
+
+        setIsDraggingField(true); // Mark that we're actually dragging
+
+        const previewArea = e.currentTarget.parentElement;
+        const rect = previewArea.getBoundingClientRect();
+
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
+        // Convert to cm for A4
+        const xCm = (x / rect.width) * 21;
+        const yCm = (y / rect.height) * 29.7;
+
         setLocalPositions(prev => ({
             ...prev,
-            [fieldName]: {
-                ...prev[fieldName],
-                left: `${(x / rect.width) * 100}%`,
-                top: `${(y / rect.height) * 100}%`
+            [field]: {
+                top: `${yCm}cm`,
+                left: `${xCm}cm`
             }
         }));
+    };
+
+    const handleFieldClick = (fieldName) => {
+        // Only select if we didn't just drag
+        if (!isDraggingField) {
+            setSelectedField(fieldName);
+        }
+        setIsDraggingField(false);
     };
 
     const handleSavePositions = async () => {
@@ -322,7 +338,7 @@ const DocumentPreviewModal = ({
                                             <div
                                                 className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'patientName' ? 'border-green-500 bg-green-50/30' : 'border-blue-500 bg-blue-50/20'} hover:bg-blue-100/30` : ''}`}
                                                 draggable={editMode}
-                                                onClick={() => setSelectedField('patientName')}
+                                                onClick={() => handleFieldClick('patientName')}
                                                 onDragStart={(e) => {
                                                     setDragging('patientName');
                                                     const img = new Image();
@@ -350,7 +366,7 @@ const DocumentPreviewModal = ({
                                             <div
                                                 className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'medications' ? 'border-green-500 bg-green-50/30' : 'border-purple-500 bg-purple-50/20'} hover:bg-purple-100/30` : ''}`}
                                                 draggable={editMode}
-                                                onClick={() => setSelectedField('medications')}
+                                                onClick={() => handleFieldClick('medications')}
                                                 onDragStart={(e) => {
                                                     setDragging('medications');
                                                     const img = new Image();
@@ -380,7 +396,7 @@ const DocumentPreviewModal = ({
                                             <div
                                                 className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'instructions' ? 'border-green-500 bg-green-50/30' : 'border-yellow-500 bg-yellow-50/20'} hover:bg-yellow-100/30` : ''}`}
                                                 draggable={editMode}
-                                                onClick={() => setSelectedField('instructions')}
+                                                onClick={() => handleFieldClick('instructions')}
                                                 onDragStart={(e) => {
                                                     setDragging('instructions');
                                                     const img = new Image();
@@ -410,7 +426,7 @@ const DocumentPreviewModal = ({
                                             <div
                                                 className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'date' ? 'border-green-500 bg-green-50/30' : 'border-orange-500 bg-orange-50/20'} hover:bg-orange-100/30` : ''}`}
                                                 draggable={editMode}
-                                                onClick={() => setSelectedField('date')}
+                                                onClick={() => handleFieldClick('date')}
                                                 onDragStart={(e) => {
                                                     setDragging('date');
                                                     const img = new Image();
@@ -537,7 +553,7 @@ const DocumentPreviewModal = ({
                                             <div
                                                 className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'registry' ? 'border-green-500 bg-green-50/30' : 'border-gray-500 bg-gray-50/20'} hover:bg-gray-100/30` : ''}`}
                                                 draggable={editMode}
-                                                onClick={() => setSelectedField('registry')}
+                                                onClick={() => handleFieldClick('registry')}
                                                 onDragStart={(e) => {
                                                     setDragging('registry');
                                                     const img = new Image();
