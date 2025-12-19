@@ -217,13 +217,6 @@ const RelaxationPlayer = ({
             >
               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
-            <button
-              onClick={toggleMinimized}
-              className="p-1 rounded transition-colors"
-              style={{ color: textSecondary }}
-            >
-              <Minimize2 className="w-4 h-4" />
-            </button>
             {onClose && (
               <button
                 onClick={onClose}
