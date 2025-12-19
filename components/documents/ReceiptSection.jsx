@@ -376,7 +376,7 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
           <div>
             <label className={`block text-sm font-medium mb-2 ${highContrast ? 'text-black' : 'text-gray-700 dark:text-gray-300'
               }`}>
-              {t('common.professional')} *
+              Profissional *
             </label>
             <input
               type="text"
@@ -387,8 +387,8 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white'
                 }`}
               style={{ fontSize: `${fontSize}px` }}
-              placeholder={t('common.professional')}
-              aria-label={t('common.professional')}
+              placeholder="Profissional"
+              aria-label="Profissional"
               required
             />
           </div>
