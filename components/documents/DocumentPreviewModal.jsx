@@ -89,9 +89,13 @@ const DocumentPreviewModal = ({
     };
 
     const handleFieldClick = (fieldName) => {
+        console.log('🔵 Field clicked:', fieldName, 'isDragging:', isDraggingField);
         // Only select if we didn't just drag
         if (!isDraggingField) {
+            console.log('✅ Selecting field:', fieldName);
             setSelectedField(fieldName);
+        } else {
+            console.log('❌ Ignoring click (was dragging)');
         }
         setIsDraggingField(false);
     };
