@@ -185,36 +185,47 @@ const ClientRecordPanel = ({ isOpen, onClose, clientId, floating = false }) => {
   }, [clientData.id, clientId, isOpen]);
 
   const startCamera = async () => {
-    try {
-      console.log('🎥 Iniciando câmera...');
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user' }
-      });
-      console.log('✅ Stream obtido:', stream);
-      console.log('📹 Tracks:', stream.getVideoTracks());
-
-      streamRef.current = stream;
-      if (videoRef.current) {
-        console.log('📺 Conectando stream ao elemento video...');
-        videoRef.current.srcObject = stream;
-        // Force video to play
-        try {
-          await videoRef.current.play();
-          console.log('▶️ Vídeo tocando!');
-        } catch (playError) {
-          console.error('❌ Erro ao tocar vídeo:', playError);
-        }
-      } else {
-        console.error('❌ videoRef.current é null!');
-      }
-      setIsRecording(true);
-      setShowCamera(true);
-      console.log('✅ Câmera iniciada com sucesso!');
-    } catch (error) {
-      console.error('❌ Erro ao acessar câmera:', error);
-      alert('Não foi possível acessar a câmera. Verifique as permissões.');
-    }
+    console.log('🎥 Iniciando câmera...');
+    setShowCamera(true); // Show modal first
+    setIsRecording(true);
   };
+
+  // Connect stream after video element is rendered
+  useEffect(() => {
+    if (!showCamera || !videoRef.current) return;
+
+    const initCamera = async () => {
+      try {
+        console.log('📺 Video element ready, requesting camera...');
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' }
+        });
+        console.log('✅ Stream obtido:', stream);
+        console.log('📹 Tracks:', stream.getVideoTracks());
+
+        streamRef.current = stream;
+        if (videoRef.current) {
+          console.log('📺 Conectando stream ao elemento video...');
+          videoRef.current.srcObject = stream;
+          // Force video to play
+          try {
+            await videoRef.current.play();
+            console.log('▶️ Vídeo tocando!');
+          } catch (playError) {
+            console.error('❌ Erro ao tocar vídeo:', playError);
+          }
+        }
+        console.log('✅ Câmera iniciada com sucesso!');
+      } catch (error) {
+        console.error('❌ Erro ao acessar câmera:', error);
+        alert('Não foi possível acessar a câmera. Verifique as permissões.');
+        setShowCamera(false);
+        setIsRecording(false);
+      }
+    };
+
+    initCamera();
+  }, [showCamera]);
 
   // Parar câmera
   const stopCamera = () => {
