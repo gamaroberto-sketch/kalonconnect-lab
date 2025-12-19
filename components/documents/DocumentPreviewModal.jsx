@@ -489,18 +489,6 @@ const DocumentPreviewModal = ({
                                 Imprimir
                             </ModernButton>
                             <ModernButton
-                                onClick={() => {
-                                    // Download PDF
-                                    alert('Download em desenvolvimento');
-                                }}
-                                icon={<Download className="w-5 h-5" />}
-                                variant="secondary"
-                                size="lg"
-                                className="flex-1"
-                            >
-                                PDF
-                            </ModernButton>
-                            <ModernButton
                                 onClick={onSend}
                                 icon={<Send className="w-5 h-5" />}
                                 variant="secondary"
