@@ -47,7 +47,12 @@ export default function GuiaInstalacao() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      <div
+        className="min-h-screen transition-colors duration-200"
+        style={{
+          background: `linear-gradient(135deg, ${themeColors.backgroundSecondary}, ${themeColors.secondaryLight})`
+        }}
+      >
         <Header
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
@@ -68,8 +73,8 @@ export default function GuiaInstalacao() {
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-3 rounded-xl" style={{ backgroundColor: `${themeColors.primary}20` }}>
-                      <Globe className="w-8 h-8" style={{ color: themeColors.primary }} />
+                    <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+                      <Globe className="w-8 h-8" style={{ color: 'white' }} />
                     </div>
                     <div>
                       <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -131,7 +136,8 @@ export default function GuiaInstalacao() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mt-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 max-h-96 overflow-y-auto"
+                      className="mt-4 rounded-xl shadow-lg p-4 max-h-96 overflow-y-auto"
+                      style={{ backgroundColor: themeColors.background || 'white' }}
                     >
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                         {searchResults.length} {searchResults.length === 1 ? ui.resultFound : ui.resultsFound}
@@ -167,7 +173,8 @@ export default function GuiaInstalacao() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
+                  className="rounded-xl shadow-lg p-8"
+                  style={{ backgroundColor: themeColors.background || 'white' }}
                 >
                   <button
                     onClick={() => setSelectedSection(null)}
@@ -178,7 +185,7 @@ export default function GuiaInstalacao() {
                   </button>
 
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="p-3 rounded-xl" style={{ backgroundColor: `${themeColors.primary}20` }}>
+                    <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
                       <div style={{ color: themeColors.primary }}>
                         {selectedSection.icon}
                       </div>
@@ -209,11 +216,15 @@ export default function GuiaInstalacao() {
                       transition={{ delay: index * 0.1 }}
                       whileHover={{ scale: 1.02, y: -4 }}
                       whileTap={{ scale: 0.98 }}
-                      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-left transition-all hover:shadow-xl"
+                      className="rounded-xl shadow-lg p-6 text-left transition-all hover:shadow-xl border-2"
+                      style={{
+                        backgroundColor: themeColors.background || 'white',
+                        borderColor: themeColors.border || themeColors.primary + '40'
+                      }}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="p-3 rounded-xl flex-shrink-0" style={{ backgroundColor: `${themeColors.primary}20` }}>
-                          <div style={{ color: themeColors.primary }}>
+                        <div className="p-3 rounded-xl flex-shrink-0" style={{ backgroundColor: themeColors.primary }}>
+                          <div style={{ color: 'white' }}>
                             {section.icon}
                           </div>
                         </div>
