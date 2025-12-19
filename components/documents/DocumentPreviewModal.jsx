@@ -336,8 +336,9 @@ const DocumentPreviewModal = ({
                                         )}
                                         {documentData.medications && (
                                             <div
-                                                className={`absolute ${editMode ? 'cursor-move border-2 border-dashed border-green-500 bg-green-50/20 hover:bg-green-100/30' : ''}`}
+                                                className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'medications' ? 'border-green-500 bg-green-50/30' : 'border-purple-500 bg-purple-50/20'} hover:bg-purple-100/30` : ''}`}
                                                 draggable={editMode}
+                                                onClick={() => setSelectedField('medications')}
                                                 onDragStart={(e) => {
                                                     setDragging('medications');
                                                     const img = new Image();
@@ -349,11 +350,11 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.medications?.top || positions.medications?.top || '12cm',
                                                     left: localPositions.medications?.left || positions.medications?.left || '3cm',
-                                                    fontSize: fontSize,
-                                                    fontWeight: fontWeight,
-                                                    fontStyle: fontStyle,
-                                                    textDecoration: textDecoration,
-                                                    color: textColor,
+                                                    fontSize: fieldFormatting.medications?.fontSize || '12pt',
+                                                    fontWeight: fieldFormatting.medications?.fontWeight || 'normal',
+                                                    fontStyle: fieldFormatting.medications?.fontStyle || 'normal',
+                                                    textDecoration: fieldFormatting.medications?.textDecoration || 'none',
+                                                    color: fieldFormatting.medications?.color || '#000',
                                                     maxWidth: positions.medications?.maxWidth || '15cm',
                                                     whiteSpace: 'pre-wrap',
                                                     fontFamily: 'Arial, sans-serif',
