@@ -533,6 +533,27 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
     }
   };
 
+  const handleRenameTemplate = async (templateId, newName) => {
+    try {
+      const updatedTemplates = templates.map(t =>
+        t.id === templateId ? { ...t, name: newName } : t
+      );
+
+      await fetch(`/api/user/profile?userId=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+        body: JSON.stringify({ prescription_templates: updatedTemplates })
+      });
+
+      setTemplates(updatedTemplates);
+      setProfile({ ...profile, prescription_templates: updatedTemplates });
+      alert(`✅ Template renomeado para "${newName}"!`);
+    } catch (error) {
+      console.error('Error renaming template:', error);
+      alert('❌ Erro ao renomear template');
+    }
+  };
+
   const handleEditPositions = (template) => {
     setEditingTemplate(template);
     setShowPositionEditor(true);
