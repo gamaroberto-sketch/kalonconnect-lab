@@ -31,12 +31,19 @@ const DocumentPreviewModal = ({
     const [saving, setSaving] = React.useState(false);
     const [saveSuccess, setSaveSuccess] = React.useState(false);
 
-    // Formatting states
-    const [fontSize, setFontSize] = React.useState('12pt');
-    const [fontWeight, setFontWeight] = React.useState('normal');
-    const [fontStyle, setFontStyle] = React.useState('normal');
-    const [textDecoration, setTextDecoration] = React.useState('none');
-    const [textColor, setTextColor] = React.useState('#000000');
+    // Field selection and editing
+    const [selectedField, setSelectedField] = React.useState(null);
+    const [editingField, setEditingField] = React.useState(null);
+    const [editingText, setEditingText] = React.useState('');
+
+    // Per-field formatting states
+    const [fieldFormatting, setFieldFormatting] = React.useState({
+        patientName: { fontSize: '14pt', fontWeight: 'bold', fontStyle: 'normal', textDecoration: 'none', color: '#000000' },
+        medications: { fontSize: '12pt', fontWeight: 'normal', fontStyle: 'normal', textDecoration: 'none', color: '#000000' },
+        instructions: { fontSize: '11pt', fontWeight: 'normal', fontStyle: 'normal', textDecoration: 'none', color: '#000000' },
+        date: { fontSize: '12pt', fontWeight: 'normal', fontStyle: 'normal', textDecoration: 'none', color: '#000000' },
+        registry: { fontSize: '11pt', fontWeight: 'normal', fontStyle: 'normal', textDecoration: 'none', color: '#000000' }
+    });
 
     React.useEffect(() => {
         if (profile?.[`${documentType}_template_positions`]) {
@@ -190,11 +197,21 @@ const DocumentPreviewModal = ({
 
                                 {/* Formatting Toolbar */}
                                 <div className="flex items-center gap-3 mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">Formatação:</span>
+                                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
+                                        {selectedField ? `Formatando: ${selectedField}` : 'Selecione um campo'}
+                                    </span>
                                     <select
-                                        value={fontSize}
-                                        onChange={(e) => setFontSize(e.target.value)}
-                                        className="px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+                                        value={selectedField ? fieldFormatting[selectedField]?.fontSize : '12pt'}
+                                        onChange={(e) => {
+                                            if (selectedField) {
+                                                setFieldFormatting({
+                                                    ...fieldFormatting,
+                                                    [selectedField]: { ...fieldFormatting[selectedField], fontSize: e.target.value }
+                                                });
+                                            }
+                                        }}
+                                        disabled={!selectedField}
+                                        className="px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 disabled:opacity-50"
                                     >
                                         <option value="10pt">10pt</option>
                                         <option value="12pt">12pt</option>
@@ -203,28 +220,63 @@ const DocumentPreviewModal = ({
                                         <option value="18pt">18pt</option>
                                     </select>
                                     <button
-                                        onClick={() => setFontWeight(fontWeight === 'bold' ? 'normal' : 'bold')}
-                                        className={`px-3 py-1 text-sm font-bold rounded border ${fontWeight === 'bold' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'}`}
+                                        onClick={() => {
+                                            if (selectedField) {
+                                                const current = fieldFormatting[selectedField]?.fontWeight || 'normal';
+                                                setFieldFormatting({
+                                                    ...fieldFormatting,
+                                                    [selectedField]: { ...fieldFormatting[selectedField], fontWeight: current === 'bold' ? 'normal' : 'bold' }
+                                                });
+                                            }
+                                        }}
+                                        disabled={!selectedField}
+                                        className={`px-3 py-1 text-sm font-bold rounded border ${selectedField && fieldFormatting[selectedField]?.fontWeight === 'bold' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'} disabled:opacity-50`}
                                     >
                                         B
                                     </button>
                                     <button
-                                        onClick={() => setFontStyle(fontStyle === 'italic' ? 'normal' : 'italic')}
-                                        className={`px-3 py-1 text-sm italic rounded border ${fontStyle === 'italic' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'}`}
+                                        onClick={() => {
+                                            if (selectedField) {
+                                                const current = fieldFormatting[selectedField]?.fontStyle || 'normal';
+                                                setFieldFormatting({
+                                                    ...fieldFormatting,
+                                                    [selectedField]: { ...fieldFormatting[selectedField], fontStyle: current === 'italic' ? 'normal' : 'italic' }
+                                                });
+                                            }
+                                        }}
+                                        disabled={!selectedField}
+                                        className={`px-3 py-1 text-sm italic rounded border ${selectedField && fieldFormatting[selectedField]?.fontStyle === 'italic' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'} disabled:opacity-50`}
                                     >
                                         I
                                     </button>
                                     <button
-                                        onClick={() => setTextDecoration(textDecoration === 'underline' ? 'none' : 'underline')}
-                                        className={`px-3 py-1 text-sm underline rounded border ${textDecoration === 'underline' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'}`}
+                                        onClick={() => {
+                                            if (selectedField) {
+                                                const current = fieldFormatting[selectedField]?.textDecoration || 'none';
+                                                setFieldFormatting({
+                                                    ...fieldFormatting,
+                                                    [selectedField]: { ...fieldFormatting[selectedField], textDecoration: current === 'underline' ? 'none' : 'underline' }
+                                                });
+                                            }
+                                        }}
+                                        disabled={!selectedField}
+                                        className={`px-3 py-1 text-sm underline rounded border ${selectedField && fieldFormatting[selectedField]?.textDecoration === 'underline' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'} disabled:opacity-50`}
                                     >
                                         U
                                     </button>
                                     <input
                                         type="color"
-                                        value={textColor}
-                                        onChange={(e) => setTextColor(e.target.value)}
-                                        className="w-10 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                                        value={selectedField ? fieldFormatting[selectedField]?.color : '#000000'}
+                                        onChange={(e) => {
+                                            if (selectedField) {
+                                                setFieldFormatting({
+                                                    ...fieldFormatting,
+                                                    [selectedField]: { ...fieldFormatting[selectedField], color: e.target.value }
+                                                });
+                                            }
+                                        }}
+                                        disabled={!selectedField}
+                                        className="w-10 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer disabled:opacity-50"
                                         title="Cor do texto"
                                     />
                                 </div>
