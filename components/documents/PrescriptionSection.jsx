@@ -614,6 +614,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
         <TemplateGallery
           templates={templates}
           type="prescription"
+          selectedTemplate={selectedTemplate}
           onAdd={() => document.getElementById('prescription-template-upload').click()}
           onDelete={handleDeleteTemplate}
           onRename={handleRenameTemplate}

@@ -13,7 +13,8 @@ const TemplateGallery = ({
     onSetDefault,
     onEditPositions,
     onSelect,
-    onRename
+    onRename,
+    selectedTemplate
 }) => {
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
@@ -67,6 +68,7 @@ const TemplateGallery = ({
                             key={template.id}
                             template={template}
                             themeColors={themeColors}
+                            isSelected={selectedTemplate?.id === template.id}
                             onPreview={() => setPreviewTemplate(template)}
                             onDelete={() => onDelete(template.id)}
                             onSetDefault={() => onSetDefault(template.id)}
@@ -113,8 +115,11 @@ const TemplateGallery = ({
 const TemplateCard = ({
     template,
     themeColors,
+    isSelected,
     onPreview,
     onDelete,
+    onSetDefault,
+    onEditPositions,
     onSelect,
     editingId,
     editingName,
@@ -133,7 +138,7 @@ const TemplateCard = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             className="relative group border-2 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-xl transition-all cursor-pointer"
-            style={{ borderColor: template.is_default ? themeColors.primary : 'transparent' }}
+            style={{ borderColor: isSelected ? themeColors.primary : 'transparent' }}
             onMouseEnter={() => setShowActions(true)}
             onMouseLeave={() => setShowActions(false)}
             onClick={onSelect}
