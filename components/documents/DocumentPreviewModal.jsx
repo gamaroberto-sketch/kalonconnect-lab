@@ -366,8 +366,9 @@ const DocumentPreviewModal = ({
                                         )}
                                         {documentData.instructions && (
                                             <div
-                                                className={`absolute ${editMode ? 'cursor-move border-2 border-dashed border-purple-500 bg-purple-50/20 hover:bg-purple-100/30' : ''}`}
+                                                className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'instructions' ? 'border-green-500 bg-green-50/30' : 'border-yellow-500 bg-yellow-50/20'} hover:bg-yellow-100/30` : ''}`}
                                                 draggable={editMode}
+                                                onClick={() => setSelectedField('instructions')}
                                                 onDragStart={(e) => {
                                                     setDragging('instructions');
                                                     const img = new Image();
@@ -379,11 +380,11 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.instructions?.top || positions.instructions?.top || '20cm',
                                                     left: localPositions.instructions?.left || positions.instructions?.left || '3cm',
-                                                    fontSize: fontSize,
-                                                    fontWeight: fontWeight,
-                                                    fontStyle: fontStyle,
-                                                    textDecoration: textDecoration,
-                                                    color: textColor,
+                                                    fontSize: fieldFormatting.instructions?.fontSize || '11pt',
+                                                    fontWeight: fieldFormatting.instructions?.fontWeight || 'normal',
+                                                    fontStyle: fieldFormatting.instructions?.fontStyle || 'normal',
+                                                    textDecoration: fieldFormatting.instructions?.textDecoration || 'none',
+                                                    color: fieldFormatting.instructions?.color || '#000',
                                                     maxWidth: positions.instructions?.maxWidth || '15cm',
                                                     whiteSpace: 'pre-wrap',
                                                     fontFamily: 'Arial, sans-serif',
@@ -395,8 +396,9 @@ const DocumentPreviewModal = ({
                                         )}
                                         {documentData.date && (
                                             <div
-                                                className={`absolute ${editMode ? 'cursor-move border-2 border-dashed border-orange-500 bg-orange-50/20 hover:bg-orange-100/30' : ''}`}
+                                                className={`absolute ${editMode ? `cursor-move border-2 border-dashed ${selectedField === 'date' ? 'border-green-500 bg-green-50/30' : 'border-orange-500 bg-orange-50/20'} hover:bg-orange-100/30` : ''}`}
                                                 draggable={editMode}
+                                                onClick={() => setSelectedField('date')}
                                                 onDragStart={(e) => {
                                                     setDragging('date');
                                                     const img = new Image();
@@ -408,11 +410,11 @@ const DocumentPreviewModal = ({
                                                 style={{
                                                     top: localPositions.date?.top || positions.date?.top || '25cm',
                                                     left: localPositions.date?.left || positions.date?.left || '3cm',
-                                                    fontSize: fontSize,
-                                                    fontWeight: fontWeight,
-                                                    fontStyle: fontStyle,
-                                                    textDecoration: textDecoration,
-                                                    color: textColor,
+                                                    fontSize: fieldFormatting.date?.fontSize || '12pt',
+                                                    fontWeight: fieldFormatting.date?.fontWeight || 'normal',
+                                                    fontStyle: fieldFormatting.date?.fontStyle || 'normal',
+                                                    textDecoration: fieldFormatting.date?.textDecoration || 'none',
+                                                    color: fieldFormatting.date?.color || '#000',
                                                     fontFamily: 'Arial, sans-serif',
                                                     padding: editMode ? '4px 8px' : '0'
                                                 }}
