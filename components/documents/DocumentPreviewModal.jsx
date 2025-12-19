@@ -642,12 +642,13 @@ const DocumentPreviewModal = ({
                             </ModernButton>
                             <ModernButton
                                 onClick={() => {
-                                    // Pass current local positions to print
+                                    // Pass current local positions AND formatting to print
                                     if (onPrint) {
-                                        // Create temporary template with current positions
+                                        // Create temporary template with current positions and formatting
                                         const tempTemplate = {
                                             ...template,
-                                            positions: localPositions
+                                            positions: localPositions,
+                                            formatting: fieldFormatting // Pass formatting!
                                         };
                                         onPrint(tempTemplate);
                                     }

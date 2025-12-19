@@ -220,11 +220,41 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             
             <!-- Content layer with fields -->
             <div class="content-layer">
-              <div class="field patient-name">${data.patientName || ''}</div>
-              <div class="field medications">${data.medications || ''}</div>
-              ${data.instructions ? `<div class="field instructions">${data.instructions}</div>` : ''}
-              <div class="field date">${new Date(data.date).toLocaleDateString('pt-BR')}</div>
-              <div class="field registry">${data.crp || profile.social?.registro || ''}</div>
+              <div class="field patient-name" style="
+                font-size: ${templateToUse.formatting?.patientName?.fontSize || '14pt'};
+                font-weight: ${templateToUse.formatting?.patientName?.fontWeight || 'bold'};
+                font-style: ${templateToUse.formatting?.patientName?.fontStyle || 'normal'};
+                text-decoration: ${templateToUse.formatting?.patientName?.textDecoration || 'none'};
+                color: ${templateToUse.formatting?.patientName?.color || '#000'};
+              ">${data.patientName || ''}</div>
+              <div class="field medications" style="
+                font-size: ${templateToUse.formatting?.medications?.fontSize || '12pt'};
+                font-weight: ${templateToUse.formatting?.medications?.fontWeight || 'normal'};
+                font-style: ${templateToUse.formatting?.medications?.fontStyle || 'normal'};
+                text-decoration: ${templateToUse.formatting?.medications?.textDecoration || 'none'};
+                color: ${templateToUse.formatting?.medications?.color || '#000'};
+              ">${data.medications || ''}</div>
+              ${data.instructions ? `<div class="field instructions" style="
+                font-size: ${templateToUse.formatting?.instructions?.fontSize || '11pt'};
+                font-weight: ${templateToUse.formatting?.instructions?.fontWeight || 'normal'};
+                font-style: ${templateToUse.formatting?.instructions?.fontStyle || 'normal'};
+                text-decoration: ${templateToUse.formatting?.instructions?.textDecoration || 'none'};
+                color: ${templateToUse.formatting?.instructions?.color || '#000'};
+              ">${data.instructions}</div>` : ''}
+              <div class="field date" style="
+                font-size: ${templateToUse.formatting?.date?.fontSize || '12pt'};
+                font-weight: ${templateToUse.formatting?.date?.fontWeight || 'normal'};
+                font-style: ${templateToUse.formatting?.date?.fontStyle || 'normal'};
+                text-decoration: ${templateToUse.formatting?.date?.textDecoration || 'none'};
+                color: ${templateToUse.formatting?.date?.color || '#000'};
+              ">${new Date(data.date).toLocaleDateString('pt-BR')}</div>
+              <div class="field registry" style="
+                font-size: ${templateToUse.formatting?.registry?.fontSize || '11pt'};
+                font-weight: ${templateToUse.formatting?.registry?.fontWeight || 'normal'};
+                font-style: ${templateToUse.formatting?.registry?.fontStyle || 'normal'};
+                text-decoration: ${templateToUse.formatting?.registry?.textDecoration || 'none'};
+                color: ${templateToUse.formatting?.registry?.color || '#000'};
+              ">${data.crp || profile.social?.registro || ''}</div>
               ${profile?.signaturePad ? `<img src="${profile.signaturePad}" class="signature" alt="Assinatura" />` : ''}
               ${profile?.signature_image_url ? `<img src="${profile.signature_image_url}" class="signature-image" alt="Assinatura PNG" />` : ''}
               ${profile?.stamp_image_url ? `<img src="${profile.stamp_image_url}" class="stamp" alt="Carimbo" />` : ''}
