@@ -612,7 +612,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
       <div className="space-y-4">
         {/* Template Gallery */}
         <TemplateGallery
-          templates={prescriptionTemplates}
+          templates={templates}
           type="prescription"
           onAdd={handleAddTemplate}
           onDelete={handleDeleteTemplate}
