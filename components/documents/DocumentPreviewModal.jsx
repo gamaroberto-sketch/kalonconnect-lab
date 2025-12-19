@@ -52,10 +52,20 @@ const DocumentPreviewModal = ({
     };
 
     const handleSavePositions = async () => {
-        if (!profile?.id) return;
+        if (!profile?.id || !template?.id) return;
 
         setSaving(true);
         try {
+            // Get current templates array
+            const currentTemplates = profile[`${documentType}_templates`] || [];
+
+            // Update the specific template's positions
+            const updatedTemplates = currentTemplates.map(t =>
+                t.id === template.id
+                    ? { ...t, positions: localPositions }
+                    : t
+            );
+
             const response = await fetch(`/api/user/profile?userId=${profile.id}`, {
                 method: 'POST',
                 headers: {
@@ -63,7 +73,7 @@ const DocumentPreviewModal = ({
                     'x-user-id': profile.id
                 },
                 body: JSON.stringify({
-                    [`${documentType}_template_positions`]: localPositions
+                    [`${documentType}_templates`]: updatedTemplates
                 })
             });
 
