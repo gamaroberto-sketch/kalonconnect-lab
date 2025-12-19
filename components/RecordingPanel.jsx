@@ -1109,8 +1109,8 @@ const RecordingPanel = () => {
   const recommendationText = "Recomendação: avise o cliente se decidir gravar esta consulta.";
 
   const timeDisplayClass = warningThresholdExceeded
-    ? "text-amber-500 animate-pulse"
-    : "text-emerald-600 dark:text-emerald-300";
+    ? "animate-pulse"
+    : "";
 
   const statusConfig = {
     idle: {
@@ -1425,7 +1425,14 @@ const RecordingPanel = () => {
                 >
                   Tempo de gravação
                 </p>
-                <div className={`mt-2 text-3xl font-semibold ${timeDisplayClass}`}>
+                <div
+                  className={`mt-2 text-3xl font-semibold ${timeDisplayClass}`}
+                  style={{
+                    color: warningThresholdExceeded
+                      ? (themeColors?.warning || "#f59e0b")
+                      : (themeColors?.primary || "#0f172a")
+                  }}
+                >
                   {formatClock(recordingElapsed)}
                 </div>
               </div>
