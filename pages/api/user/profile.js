@@ -156,7 +156,6 @@ export default async function handler(req, res) {
       const socialData = {
         ...currentSocial, // 🟢 v5.60 Preservation: Start with existing DB data (includes waitingRoom)
         ...body.social,   // Overwrite with new Profile Socials
-        city: body.city,
         pixKeys: body.pixKeys,
         currency: body.currency,
         slug: body.slug // 🟢 v5.40/5.58: Save slug
@@ -167,7 +166,6 @@ export default async function handler(req, res) {
         specialty: body.specialty,
         photo_url: body.photo,
         bio: body.bio,
-        city: body.city, // Add city to root level
         services: body.services,
         social: socialData,
         signature_pad: body.signaturePad,
