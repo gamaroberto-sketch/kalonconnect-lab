@@ -402,7 +402,8 @@ const ProfileEditor = () => {
                     price: String(service.price || "0,00") // Keep as formatted string
                 }))
             };
-            console.log('🔍 [ProfileEditor] Saving payload:', { city: payload.city, name: payload.name });
+            console.log('🔍 [ProfileEditor] profile.social:', profile.social);
+            console.log('🔍 [ProfileEditor] Saving payload:', { city: payload.city, socialCity: payload.social?.city, name: payload.name });
             const response = await fetch(`${USER_PROFILE_ENDPOINT}?userId=${user.id}`, {
                 method: "POST",
                 headers: {
