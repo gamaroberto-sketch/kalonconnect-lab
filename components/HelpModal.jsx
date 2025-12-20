@@ -104,62 +104,6 @@ const HelpModal = ({ isOpen, onClose, section }) => {
                             </div>
                         )}
                     </div>
-
-                    {/* Footer */}
-                    <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                        <div className="flex items-center justify-between">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Este guia foi útil?
-                            </p>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            await fetch('/api/help-feedback', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({
-                                                    section: section?.id || 'unknown',
-                                                    helpful: true,
-                                                    timestamp: new Date().toISOString()
-                                                })
-                                            });
-                                            alert('Obrigado pelo feedback! 👍');
-                                        } catch (error) {
-                                            console.error('Error sending feedback:', error);
-                                        }
-                                    }}
-                                    className="px-4 py-2 rounded-lg transition-colors font-medium text-white"
-                                    style={{ backgroundColor: themeColors.primary }}
-                                    onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                    onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-                                >
-                                    👍 Sim
-                                </button>
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            await fetch('/api/help-feedback', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({
-                                                    section: section?.id || 'unknown',
-                                                    helpful: false,
-                                                    timestamp: new Date().toISOString()
-                                                })
-                                            });
-                                            alert('Obrigado pelo feedback! Vamos melhorar este conteúdo.');
-                                        } catch (error) {
-                                            console.error('Error sending feedback:', error);
-                                        }
-                                    }}
-                                    className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
-                                >
-                                    👎 Não
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </motion.div>
             </div>
         </AnimatePresence>
