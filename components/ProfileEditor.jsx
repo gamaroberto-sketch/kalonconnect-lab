@@ -43,7 +43,8 @@ const EMPTY_PROFILE = {
         tiktok: [],
         youtube: [],
         facebook: [],
-        registro: ""
+        registro: "",
+        city: ""
     },
     address: {
         street: "",
@@ -51,7 +52,6 @@ const EMPTY_PROFILE = {
         state: "",
         zipCode: ""
     },
-    city: "",
     pixKeys: [],
     currency: "BRL",
     slug: ""
@@ -675,8 +675,8 @@ const ProfileEditor = () => {
                                     className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900"
                                 />
                                 <input
-                                    value={profile.city}
-                                    onChange={(e) => updateProfile("city", e.target.value)}
+                                    value={profile.social.city || ''}
+                                    onChange={(e) => updateSocial("city", e.target.value)}
                                     placeholder="Cidade (Ex: São Paulo, SP)"
                                     className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900"
                                 />
