@@ -83,7 +83,19 @@ const HelpModal = ({ isOpen, onClose, section }) => {
                                                     alert(`📹 Vídeo "${sub.title}" em breve!\n\nEstamos gravando os vídeos tutoriais. Por enquanto, use o conteúdo textual acima.`);
                                                 }
                                             }}
-                                            className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer group"
+                                            className="p-4 rounded-lg transition-all cursor-pointer group border-2"
+                                            style={{
+                                                backgroundColor: `${themeColors.primary}08`,
+                                                borderColor: `${themeColors.primary}30`
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor = `${themeColors.primary}15`;
+                                                e.currentTarget.style.borderColor = themeColors.primary;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor = `${themeColors.primary}08`;
+                                                e.currentTarget.style.borderColor = `${themeColors.primary}30`;
+                                            }}
                                         >
                                             <div className="flex items-center justify-between gap-2">
                                                 <div className="flex items-center gap-2">
