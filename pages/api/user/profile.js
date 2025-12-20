@@ -54,6 +54,7 @@ const normalizeProfile = (data = {}) => {
     // Read pixKeys/currency from social
     pixKeys: data.pix_keys || social?.pixKeys || [],
     currency: String(data.currency || social?.currency || "BRL"),
+    // City is stored in social JSON column (like registro field)
     social: {
       instagram: normalizeSocialField(social?.instagram),
       whatsapp: normalizeSocialField(social?.whatsapp),
