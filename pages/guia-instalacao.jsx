@@ -186,7 +186,7 @@ export default function GuiaInstalacao() {
 
                   <div className="flex items-center gap-4 mb-6">
                     <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
-                      <div style={{ color: themeColors.primary }}>
+                      <div style={{ color: 'white' }}>
                         {selectedSection.icon}
                       </div>
                     </div>
