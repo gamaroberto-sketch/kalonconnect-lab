@@ -710,6 +710,24 @@ const ProfileEditor = () => {
                                     className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
                                 />
                             </div>
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Nome Completo</label>
+                                <input
+                                    value={profile.signatureText || ""}
+                                    onChange={(e) => updateProfile("signatureText", e.target.value)}
+                                    placeholder="Nome completo para assinatura"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Registro Profissional</label>
+                                <input
+                                    value={profile.social.registro || ""}
+                                    onChange={(e) => updateSocial("registro", e.target.value)}
+                                    placeholder="Ex: CRTH-BR 16673"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
                         </div>
                         <div>
                             <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Biografia Profissional</label>
