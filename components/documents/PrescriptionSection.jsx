@@ -292,8 +292,8 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
 
     } else {
       // Impressão padrão (código original)
-      const logoHtml = profile?.photo
-        ? `<img src="${profile.photo}" style="height: 80px; width: auto; max-width: 200px; object-fit: contain;" alt="Logo" />`
+      const logoHtml = (profile?.logo_url || profile?.photo)
+        ? `<img src="${profile?.logo_url || profile?.photo}" style="height: 80px; width: auto; max-width: 200px; object-fit: contain;" alt="Logo" />`
         : '';
 
       const headerHtml = `
