@@ -627,7 +627,7 @@ const DocumentPreviewModal = ({
                                             <div className="flex justify-between items-end">
                                                 <div>
                                                     <p className="text-sm text-gray-600">
-                                                        {profile?.city || 'São Paulo, SP'}, {new Date(documentData.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                                        {profile?.address?.state || 'São Paulo, SP'}, {new Date(documentData.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
                                                     </p>
                                                 </div>
                                                 <div className="text-center">

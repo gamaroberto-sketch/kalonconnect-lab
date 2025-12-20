@@ -356,7 +356,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             </div>
 
             <div class="field" style="margin-top: 40px; text-align: right;">
-              <div>${profile?.city || 'São Paulo, SP'}, ${new Date(data.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+              <div>${profile?.address?.state || 'São Paulo, SP'}, ${new Date(data.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
             </div>
 
             <div style="margin-top: 60px; display: flex; justify-content: flex-end;">
@@ -601,7 +601,14 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
           <div className="text-right text-xs text-gray-500">
             <div className="flex items-center gap-2 justify-end">
               {profile.photo && <img src={profile.photo} className="w-8 h-8 rounded-full object-cover" alt="Perfil" />}
-              <span>Usando perfil: <strong>{profile.name}</strong></span>
+              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <span>Usando perfil: <strong>{profile.name}</strong></span>
+                {profile.address?.state && (
+                  <span className="ml-4 text-sm text-gray-600 dark:text-gray-400">
+                    📍 {profile.address.state}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="mt-1">Edite seu perfil em Configurações para atualizar seus dados profissionais</div>
           </div>

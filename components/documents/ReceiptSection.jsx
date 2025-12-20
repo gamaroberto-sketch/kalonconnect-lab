@@ -156,7 +156,7 @@ const ReceiptSection = ({ highContrast, fontSize, onReadHelp, isReading, current
             
             <div class="field">
               <div class="label">Local e Data</div>
-              <div class="value">${profile?.city || 'São Paulo, SP'} - ${new Date(data.date).toLocaleDateString('pt-BR')}</div>
+              <div class="value">${profile?.address?.state || 'São Paulo, SP'} - ${new Date(data.date).toLocaleDateString('pt-BR')}</div>
             </div>
 
             <div style="margin-top: 60px; display: flex; justify-content: flex-end;">
