@@ -21,13 +21,15 @@ import {
     Facebook,
     Music2,
     User,
-    Copy
+    Copy,
+    Upload
 } from "lucide-react";
 
 const USER_PROFILE_ENDPOINT = "/api/user/profile";
 
 const EMPTY_PROFILE = {
     photo: "",
+    logo_url: "",
     specialty: "",
     name: "",
     phone: "",
@@ -270,6 +272,19 @@ const ProfileEditor = () => {
             setError(t('profile.errors.imageLoad'));
         }
     };
+
+    const handleLogoUpload = async (event) => {
+        try {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const buffer = await file.arrayBuffer();
+            const base64 = `data:${file.type};base64,${Buffer.from(buffer).toString("base64")}`;
+            updateProfile("logo_url", base64);
+        } catch (error) {
+            setError('Erro ao carregar logo');
+        }
+    };
+
 
     const startCamera = async () => {
         try {
@@ -642,19 +657,43 @@ const ProfileEditor = () => {
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{t('profile.signature.title')}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-3">
-                                <label className="text-sm text-gray-600 dark:text-gray-300">{t('profile.signature.digital')}</label>
-                                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden">
-                                    <canvas
-                                        id="signature-pad"
-                                        width={600}
-                                        height={200}
-                                        className="w-full bg-gray-50 dark:bg-gray-800"
-                                    />
-                                </div>
-                                <div className="flex gap-2">
-                                    <ModernButton variant="outline" type="button" onClick={resetSignaturePad}>
-                                        {t('profile.signature.clear')}
-                                    </ModernButton>
+                                <label className="text-sm text-gray-600 dark:text-gray-300">Logo Profissional</label>
+                                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 text-center">
+                                    {profile.logo_url ? (
+                                        <div className="space-y-3">
+                                            <img
+                                                src={profile.logo_url}
+                                                alt="Logo"
+                                                className="max-h-32 mx-auto object-contain"
+                                            />
+                                            <ModernButton
+                                                variant="outline"
+                                                type="button"
+                                                onClick={() => updateProfile("logo_url", "")}
+                                            >
+                                                Remover Logo
+                                            </ModernButton>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            <Upload className="w-12 h-12 mx-auto text-gray-400" />
+                                            <p className="text-sm text-gray-500">Clique para fazer upload da logo</p>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleLogoUpload}
+                                                className="hidden"
+                                                id="logo-upload"
+                                            />
+                                            <ModernButton
+                                                variant="outline"
+                                                type="button"
+                                                onClick={() => document.getElementById('logo-upload').click()}
+                                            >
+                                                Escolher Arquivo
+                                            </ModernButton>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
