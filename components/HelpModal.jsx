@@ -112,10 +112,49 @@ const HelpModal = ({ isOpen, onClose, section }) => {
                                 Este guia foi útil?
                             </p>
                             <div className="flex gap-2">
-                                <button className="px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors">
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            await fetch('/api/help-feedback', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                    section: section?.id || 'unknown',
+                                                    helpful: true,
+                                                    timestamp: new Date().toISOString()
+                                                })
+                                            });
+                                            alert('Obrigado pelo feedback! 👍');
+                                        } catch (error) {
+                                            console.error('Error sending feedback:', error);
+                                        }
+                                    }}
+                                    className="px-4 py-2 rounded-lg transition-colors font-medium text-white"
+                                    style={{ backgroundColor: themeColors.primary }}
+                                    onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                                    onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                >
                                     👍 Sim
                                 </button>
-                                <button className="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            await fetch('/api/help-feedback', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                    section: section?.id || 'unknown',
+                                                    helpful: false,
+                                                    timestamp: new Date().toISOString()
+                                                })
+                                            });
+                                            alert('Obrigado pelo feedback! Vamos melhorar este conteúdo.');
+                                        } catch (error) {
+                                            console.error('Error sending feedback:', error);
+                                        }
+                                    }}
+                                    className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+                                >
                                     👎 Não
                                 </button>
                             </div>
