@@ -790,21 +790,6 @@ const ProfileEditor = () => {
                         </div>
                     </section>
 
-                    {/* Prescription Template Section */}
-                    <section className="space-y-6">
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">📄 Template de Receituário</h2>
-                        <PrescriptionTemplateUpload
-                            currentTemplate={profile.prescription_template_url}
-                            currentSize={profile.prescription_template_size || 'A4'}
-                            onUpload={(url, size) => {
-                                setProfile(prev => ({
-                                    ...prev,
-                                    prescription_template_url: url,
-                                    prescription_template_size: size
-                                }));
-                            }}
-                        />
-                    </section>
 
                     {/* Social Section */}
                     <section className="space-y-6">
