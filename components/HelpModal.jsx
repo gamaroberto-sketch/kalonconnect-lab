@@ -23,8 +23,10 @@ const HelpModal = ({ isOpen, onClose, section }) => {
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg" style={{ backgroundColor: `${themeColors.primary}20` }}>
-                                {section.icon}
+                            <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
+                                <div style={{ color: 'white' }}>
+                                    {section.icon}
+                                </div>
                             </div>
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
