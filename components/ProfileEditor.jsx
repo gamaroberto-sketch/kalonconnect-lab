@@ -180,6 +180,14 @@ const ProfileEditor = () => {
                     onClick={() => addSocial(network)}
                     className="w-full border-dashed border-2 hover:border-solid hover:bg-transparent dark:hover:bg-transparent"
                     style={{ borderColor: themeColors.border || '#e5e7eb' }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.borderStyle = 'solid';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.borderStyle = 'dashed';
+                    }}
                 >
                     {t('common.add')} {placeholder}
                 </ModernButton>
