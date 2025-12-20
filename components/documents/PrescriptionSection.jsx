@@ -292,8 +292,8 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
 
     } else {
       // Impressão padrão (código original)
-      const logoHtml = (profile?.logo_url || profile?.photo)
-        ? `<img src="${profile?.logo_url || profile?.photo}" style="height: 80px; width: auto; max-width: 200px; object-fit: contain;" alt="Logo" />`
+      const logoHtml = (logo || profile?.logo_url || profile?.photo)
+        ? `<img src="${logo || profile?.logo_url || profile?.photo}" style="height: 80px; width: auto; max-width: 200px; object-fit: contain;" alt="Logo" />`
         : '';
 
       const headerHtml = `
@@ -636,6 +636,48 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
 
       {/* Campos do receituário */}
       <div className="space-y-4">
+        {/* Logo Upload */}
+        <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4">
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            Logo Profissional (opcional)
+          </label>
+          {logo ? (
+            <div className="flex items-center gap-4">
+              <img src={logo} alt="Logo" className="h-20 object-contain" />
+              <ModernButton
+                variant="outline"
+                size="sm"
+                onClick={() => setLogo(null)}
+              >
+                Remover Logo
+              </ModernButton>
+            </div>
+          ) : (
+            <div className="text-center">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => setLogo(ev.target.result);
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="hidden"
+                id="logo-upload-prescription"
+              />
+              <ModernButton
+                variant="outline"
+                onClick={() => document.getElementById('logo-upload-prescription').click()}
+              >
+                Escolher Logo
+              </ModernButton>
+            </div>
+          )}
+        </div>
+
         {/* Template Gallery */}
         <TemplateGallery
           templates={templates}
