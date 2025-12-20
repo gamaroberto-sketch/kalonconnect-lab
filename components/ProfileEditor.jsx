@@ -701,16 +701,6 @@ const ProfileEditor = () => {
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Informações de Contato</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Telefone</label>
-                                <input
-                                    type="tel"
-                                    value={profile.phone || ""}
-                                    onChange={(e) => updateProfile("phone", e.target.value)}
-                                    placeholder="(11) 99999-9999"
-                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
-                                />
-                            </div>
-                            <div>
                                 <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Nome Completo</label>
                                 <input
                                     value={profile.signatureText || ""}
@@ -725,6 +715,16 @@ const ProfileEditor = () => {
                                     value={profile.social.registro || ""}
                                     onChange={(e) => updateSocial("registro", e.target.value)}
                                     placeholder="Ex: CRTH-BR 16673"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Telefone</label>
+                                <input
+                                    type="tel"
+                                    value={profile.phone || ""}
+                                    onChange={(e) => updateProfile("phone", e.target.value)}
+                                    placeholder="(11) 99999-9999"
                                     className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
                                 />
                             </div>
