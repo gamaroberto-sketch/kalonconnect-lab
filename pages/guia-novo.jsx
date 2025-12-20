@@ -132,7 +132,21 @@ const GuiaNovoPage = () => {
                                         onClick={() => handleSectionClick(section)}
                                         className="group cursor-pointer"
                                     >
-                                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-lg" style={{ borderColor: undefined }} onMouseEnter={(e) => e.currentTarget.style.borderColor = themeColors.primary} onMouseLeave={(e) => e.currentTarget.style.borderColor = ''}>
+                                        <div
+                                            className="rounded-xl p-6 border-2 transition-all hover:shadow-lg"
+                                            style={{
+                                                backgroundColor: `${themeColors.primary}05`,
+                                                borderColor: `${themeColors.primary}30`
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor = `${themeColors.primary}10`;
+                                                e.currentTarget.style.borderColor = themeColors.primary;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor = `${themeColors.primary}05`;
+                                                e.currentTarget.style.borderColor = `${themeColors.primary}30`;
+                                            }}
+                                        >
                                             {/* Icon */}
                                             <div className="mb-4 p-3 rounded-lg w-fit" style={{ backgroundColor: `${themeColors.primary}20` }}>
                                                 <div style={{ color: themeColors.primary }}>
