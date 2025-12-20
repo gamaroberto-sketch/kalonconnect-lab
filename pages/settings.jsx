@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
+import GoogleDriveIntegration from '../components/GoogleDriveIntegration';
 import { helpSections } from '../lib/helpContent';
 
 const ProfileNew = () => {
@@ -53,6 +54,7 @@ const ProfileNew = () => {
     const tabs = [
         { id: 'profile', label: 'Perfil', icon: <User size={18} /> },
         { id: 'branding', label: 'Temas', icon: <Palette size={18} /> },
+        { id: 'drive', label: 'Google Drive', icon: <Cloud size={18} /> },
         { id: 'integrations', label: 'Integrações', icon: <Cloud size={18} /> },
         { id: 'invites', label: 'Convites', icon: <Send size={18} /> },
         { id: 'credentials', label: 'Credenciais', icon: <Key size={18} /> },
@@ -147,6 +149,12 @@ const ProfileNew = () => {
                                             </div>
                                             <AdvancedSettings initialTab="branding" hideTabsBar={true} />
                                         </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'drive' && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                        <GoogleDriveIntegration />
                                     </div>
                                 )}
 
