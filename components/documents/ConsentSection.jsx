@@ -139,7 +139,7 @@ const ConsentSection = ({ highContrast, fontSize, onReadHelp, isReading, current
             </p>
 
             <p style="margin-top: 30px;">
-              Local e Data: ${profile?.address?.state || 'São Paulo, SP'}, ${new Date(data.date).toLocaleDateString('pt-BR')}
+              Local e Data: ${profile?.address?.state || 'São Paulo, SP'}, ${new Date(data.date + 'T00:00:00').toLocaleDateString('pt-BR')}
             </p>
 
             <div class="signature-area">

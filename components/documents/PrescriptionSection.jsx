@@ -356,7 +356,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
             </div>
 
             <div class="field" style="margin-top: 40px; text-align: right;">
-              <div>${profile?.address?.state || 'São Paulo, SP'}, ${new Date(data.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+              <div>${profile?.address?.state || 'São Paulo, SP'}, ${new Date(data.date + 'T00:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
             </div>
 
             <div style="margin-top: 60px; display: flex; justify-content: flex-end;">
