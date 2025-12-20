@@ -52,6 +52,7 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [editingTemplate, setEditingTemplate] = useState(null);
+  const [logo, setLogo] = useState(null);
 
   // Migrate old single template to new array format
   const migrateTemplates = (profile) => {
