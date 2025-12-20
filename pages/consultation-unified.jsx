@@ -110,11 +110,33 @@ const ConsultationUnified = () => {
     if (isInitialLoad) return;
 
     setNotesSaved(false);
-    const timer = setTimeout(() => {
-      // Salvar no localStorage
+    const timer = setTimeout(async () => {
       const consultationId = router.query.id || 'current';
-      localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
-      setNotesSaved(true);
+
+      try {
+        // Check if Drive is connected
+        const driveResponse = await fetch('/api/user/drive-status');
+        const driveData = await driveResponse.json();
+
+        if (driveData.connected) {
+          // Save to Google Drive
+          await fetch('/api/consultations/notes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ consultationId, notes: patientNotes })
+          });
+        } else {
+          // Save to localStorage as fallback
+          localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
+        }
+
+        setNotesSaved(true);
+      } catch (error) {
+        console.error('Error auto-saving notes:', error);
+        // Fallback to localStorage
+        localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
+        setNotesSaved(true);
+      }
     }, 2000); // Auto-save após 2 segundos de inatividade
 
     return () => clearTimeout(timer);
@@ -122,11 +144,41 @@ const ConsultationUnified = () => {
 
   // Carregar notas salvas
   useEffect(() => {
-    const consultationId = router.query.id || 'current';
-    const savedNotes = localStorage.getItem(`consultation_notes_${consultationId}`);
-    if (savedNotes) {
-      setPatientNotes(savedNotes);
+    async function loadNotes() {
+      const consultationId = router.query.id || 'current';
+
+      try {
+        // Check if Drive is connected
+        const driveResponse = await fetch('/api/user/drive-status');
+        const driveData = await driveResponse.json();
+
+        if (driveData.connected) {
+          // Load from Google Drive
+          const response = await fetch(`/api/consultations/notes?consultationId=${consultationId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.notes) {
+              setPatientNotes(data.notes);
+            }
+          }
+        } else {
+          // Load from localStorage
+          const savedNotes = localStorage.getItem(`consultation_notes_${consultationId}`);
+          if (savedNotes) {
+            setPatientNotes(savedNotes);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading notes:', error);
+        // Fallback to localStorage
+        const savedNotes = localStorage.getItem(`consultation_notes_${consultationId}`);
+        if (savedNotes) {
+          setPatientNotes(savedNotes);
+        }
+      }
     }
+
+    loadNotes();
   }, [router.query.id]);
 
   // Salvar manualmente
@@ -135,19 +187,28 @@ const ConsultationUnified = () => {
     const consultationId = router.query.id || 'current';
 
     try {
-      // Salvar no localStorage
-      localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
+      // Check if Drive is connected
+      const driveResponse = await fetch('/api/user/drive-status');
+      const driveData = await driveResponse.json();
 
-      // Aqui você pode adicionar chamada à API para salvar no banco
-      // await fetch('/api/consultations/notes', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ consultationId, notes: patientNotes })
-      // });
+      if (driveData.connected) {
+        // Save to Google Drive
+        await fetch('/api/consultations/notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ consultationId, notes: patientNotes })
+        });
+      } else {
+        // Save to localStorage
+        localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
+      }
 
       setNotesSaved(true);
       setTimeout(() => setIsSaving(false), 500);
     } catch (error) {
       console.error('Erro ao salvar notas:', error);
+      // Fallback to localStorage
+      localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
       setIsSaving(false);
     }
   };
