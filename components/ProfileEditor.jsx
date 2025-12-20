@@ -402,8 +402,6 @@ const ProfileEditor = () => {
                     price: String(service.price || "0,00") // Keep as formatted string
                 }))
             };
-            console.log('🔍 [ProfileEditor] profile.social:', profile.social);
-            console.log('🔍 [ProfileEditor] Saving payload:', { city: payload.city, socialCity: payload.social?.city, name: payload.name });
             const response = await fetch(`${USER_PROFILE_ENDPOINT}?userId=${user.id}`, {
                 method: "POST",
                 headers: {
@@ -414,7 +412,6 @@ const ProfileEditor = () => {
             });
             if (!response.ok) throw new Error(t('profile.errors.save'));
             const savedProfile = await response.json();
-            console.log('✅ [ProfileEditor] Received from API:', { city: savedProfile.city, name: savedProfile.name });
             setProfile({ ...EMPTY_PROFILE, ...savedProfile });
             setSuccessMessage(t('profile.success.save'));
         } catch (error) {
