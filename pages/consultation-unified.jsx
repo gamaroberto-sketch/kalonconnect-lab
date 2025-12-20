@@ -429,86 +429,86 @@ const ConsultationUnified = () => {
                         onChange={(e) => setPatientNotes(e.target.value)}
                         placeholder="Digite suas anotações sobre a consulta aqui..."
                         className="w-full h-[calc(100vh-400px)] px-4 py-3 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      </textarea>
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {isSaving ? (
-                          <span className="text-sm text-gray-400">Salvando...</span>
-                        ) : notesSaved ? (
-                          <span className="text-sm text-green-400">✓ Salvo automaticamente</span>
-                        ) : (
-                          <span className="text-sm text-gray-400">Salvando...</span>
-                        )}
+                      />
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {isSaving ? (
+                            <span className="text-sm text-gray-400">Salvando...</span>
+                          ) : notesSaved ? (
+                            <span className="text-sm text-green-400">✓ Salvo automaticamente</span>
+                          ) : (
+                            <span className="text-sm text-gray-400">Salvando...</span>
+                          )}
+                        </div>
+                        <button
+                          onClick={handleSaveNotes}
+                          disabled={isSaving}
+                          className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSaving ? 'Salvando...' : 'Salvar Agora'}
+                        </button>
                       </div>
-                      <button
-                        onClick={handleSaveNotes}
-                        disabled={isSaving}
-                        className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isSaving ? 'Salvando...' : 'Salvar Agora'}
-                      </button>
                     </div>
-                  </div>
                   </div>
                 )}
 
-              {activeTab === 'patient' && (
-                <div className="flex-1 p-6 overflow-y-auto bg-gray-800">
-                  <div className="max-w-4xl mx-auto">
-                    <h2 className="text-2xl font-bold text-white mb-6">Ficha do Paciente</h2>
+                {activeTab === 'patient' && (
+                  <div className="flex-1 p-6 overflow-y-auto bg-gray-800">
+                    <div className="max-w-4xl mx-auto">
+                      <h2 className="text-2xl font-bold text-white mb-6">Ficha do Paciente</h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="bg-gray-700 p-6 rounded-lg">
-                        <h3 className="text-lg font-semibold text-white mb-4">Informações Básicas</h3>
-                        <div className="space-y-3">
-                          <div>
-                            <label className="text-sm text-gray-400">Nome Completo</label>
-                            <p className="text-white">{patientData.name}</p>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-400">Idade</label>
-                            <p className="text-white">{patientData.age} anos</p>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-400">E-mail</label>
-                            <p className="text-white">{patientData.email}</p>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-400">Telefone</label>
-                            <p className="text-white">{patientData.phone}</p>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-400">Última Visita</label>
-                            <p className="text-white">{formatDate(patientData.lastVisit)}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-gray-700 p-6 rounded-lg">
+                          <h3 className="text-lg font-semibold text-white mb-4">Informações Básicas</h3>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="text-sm text-gray-400">Nome Completo</label>
+                              <p className="text-white">{patientData.name}</p>
+                            </div>
+                            <div>
+                              <label className="text-sm text-gray-400">Idade</label>
+                              <p className="text-white">{patientData.age} anos</p>
+                            </div>
+                            <div>
+                              <label className="text-sm text-gray-400">E-mail</label>
+                              <p className="text-white">{patientData.email}</p>
+                            </div>
+                            <div>
+                              <label className="text-sm text-gray-400">Telefone</label>
+                              <p className="text-white">{patientData.phone}</p>
+                            </div>
+                            <div>
+                              <label className="text-sm text-gray-400">Última Visita</label>
+                              <p className="text-white">{formatDate(patientData.lastVisit)}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="bg-gray-700 p-6 rounded-lg">
-                        <h3 className="text-lg font-semibold text-white mb-4">Histórico</h3>
-                        <div className="space-y-3">
-                          <div className="text-gray-400">
-                            <p>Sem histórico disponível no momento.</p>
+                        <div className="bg-gray-700 p-6 rounded-lg">
+                          <h3 className="text-lg font-semibold text-white mb-4">Histórico</h3>
+                          <div className="space-y-3">
+                            <div className="text-gray-400">
+                              <p>Sem histórico disponível no momento.</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="bg-gray-700 p-6 rounded-lg col-span-1 md:col-span-2">
-                        <h3 className="text-lg font-semibold text-white mb-4">Observações</h3>
-                        <textarea
-                          className="w-full h-32 px-4 py-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                          placeholder="Adicione observações sobre o paciente..."
-                        />
+                        <div className="bg-gray-700 p-6 rounded-lg col-span-1 md:col-span-2">
+                          <h3 className="text-lg font-semibold text-white mb-4">Observações</h3>
+                          <textarea
+                            className="w-full h-32 px-4 py-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Adicione observações sobre o paciente..."
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </ProtectedRoute >
   );
 };
