@@ -387,7 +387,7 @@ const ProductsPage = () => {
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
                         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 animate-in fade-in zoom-in duration-300">
-                            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: themeColors.primary + '20', backgroundColor: themeColors.primary + '08' }}>
                                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">{editingProduct ? t('products.editProduct') : t('products.newProduct')}</h2>
                                 <button onClick={closeModal} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-5 h-5 text-gray-500" /></button>
                             </div>
@@ -428,7 +428,7 @@ const ProductsPage = () => {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('products.form.productName')}</label>
-                                        <input required className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none" placeholder={t('products.form.productNamePlaceholder')} value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                                        <input required className="w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 outline-none transition-all" style={{ borderColor: themeColors.border || '#e5e7eb' }} onFocus={(e) => e.currentTarget.style.borderColor = themeColors.primary} onBlur={(e) => e.currentTarget.style.borderColor = themeColors.border || '#e5e7eb'} placeholder={t('products.form.productNamePlaceholder')} value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
@@ -437,13 +437,16 @@ const ProductsPage = () => {
                                             <div className="relative">
                                                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                                 {/* Formatted Price Input */}
-                                                <input required className="w-full pl-10 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none" placeholder={t('products.form.pricePlaceholder')} value={formData.price} onChange={handlePriceChange} />
+                                                <input required className="w-full pl-10 px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 outline-none transition-all" style={{ borderColor: themeColors.border || '#e5e7eb' }} onFocus={(e) => e.currentTarget.style.borderColor = themeColors.primary} onBlur={(e) => e.currentTarget.style.borderColor = themeColors.border || '#e5e7eb'} placeholder={t('products.form.pricePlaceholder')} value={formData.price} onChange={handlePriceChange} />
                                             </div>
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('products.form.actionType')}</label>
                                             <select
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none"
+                                                className="w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 outline-none transition-all"
+                                                style={{ borderColor: themeColors.border || '#e5e7eb' }}
+                                                onFocus={(e) => e.currentTarget.style.borderColor = themeColors.primary}
+                                                onBlur={(e) => e.currentTarget.style.borderColor = themeColors.border || '#e5e7eb'}
                                                 value={formData.actionType}
                                                 onChange={e => setFormData({ ...formData, actionType: e.target.value, actionValue: '' })}
                                             >
@@ -462,7 +465,10 @@ const ProductsPage = () => {
                                             <div className="absolute left-3 top-1/2 -translate-y-1/2">{getActionIcon(formData.actionType)}</div>
                                             <input
                                                 required
-                                                className="w-full pl-10 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none"
+                                                className="w-full pl-10 px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 outline-none transition-all"
+                                                style={{ borderColor: themeColors.border || '#e5e7eb' }}
+                                                onFocus={(e) => e.currentTarget.style.borderColor = themeColors.primary}
+                                                onBlur={(e) => e.currentTarget.style.borderColor = themeColors.border || '#e5e7eb'}
                                                 placeholder={getActionPlaceholder(formData.actionType)}
                                                 value={formData.actionValue}
                                                 onChange={e => setFormData({ ...formData, actionValue: e.target.value })}
@@ -475,7 +481,7 @@ const ProductsPage = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('products.form.description')}</label>
-                                        <textarea className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 outline-none min-h-[100px]" placeholder={t('products.form.descriptionPlaceholder')} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                                        <textarea className="w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 outline-none min-h-[100px] transition-all" style={{ borderColor: themeColors.border || '#e5e7eb' }} onFocus={(e) => e.currentTarget.style.borderColor = themeColors.primary} onBlur={(e) => e.currentTarget.style.borderColor = themeColors.border || '#e5e7eb'} placeholder={t('products.form.descriptionPlaceholder')} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                                     </div>
                                 </div>
 
