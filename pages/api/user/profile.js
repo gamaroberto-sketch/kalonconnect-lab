@@ -51,8 +51,7 @@ const normalizeProfile = (data = {}) => {
     // 🟢 v5.58 Fix: Prioritize 'social.slug' (User Edited) over 'raw_user_meta_data' (Auth System)
     // This prevents stale/empty Auth metadata from hiding the saved slug.
     slug: String(social?.slug || data.raw_user_meta_data?.slug || ""),
-    // Read city/pixKeys/currency from social (not root)
-    city: String(social?.city || ""),
+    // Read pixKeys/currency from social
     pixKeys: data.pix_keys || social?.pixKeys || [],
     currency: String(data.currency || social?.currency || "BRL"),
     social: {
@@ -63,7 +62,7 @@ const normalizeProfile = (data = {}) => {
       youtube: normalizeSocialField(social?.youtube),
       facebook: normalizeSocialField(social?.facebook),
       registro: String(social?.registro ?? ""),
-      city: String(social?.city || "") // Add city to social object
+      city: String(social?.city || "") // City only in social object
     }
   };
 };
