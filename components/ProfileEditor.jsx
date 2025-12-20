@@ -652,69 +652,6 @@ const ProfileEditor = () => {
                         </AnimatePresence>
                     </section>
 
-                    {/* Signature Section */}
-                    <section className="space-y-6">
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{t('profile.signature.title')}</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-3">
-                                <label className="text-sm text-gray-600 dark:text-gray-300">Logo Profissional</label>
-                                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 text-center">
-                                    {profile.logo_url ? (
-                                        <div className="space-y-3">
-                                            <img
-                                                src={profile.logo_url}
-                                                alt="Logo"
-                                                className="max-h-32 mx-auto object-contain"
-                                            />
-                                            <ModernButton
-                                                variant="outline"
-                                                type="button"
-                                                onClick={() => updateProfile("logo_url", "")}
-                                            >
-                                                Remover Logo
-                                            </ModernButton>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            <Upload className="w-12 h-12 mx-auto text-gray-400" />
-                                            <p className="text-sm text-gray-500">Clique para fazer upload da logo</p>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleLogoUpload}
-                                                className="hidden"
-                                                id="logo-upload"
-                                            />
-                                            <ModernButton
-                                                variant="outline"
-                                                type="button"
-                                                onClick={() => document.getElementById('logo-upload').click()}
-                                            >
-                                                Escolher Arquivo
-                                            </ModernButton>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="space-y-3">
-                                <label className="text-sm text-gray-600 dark:text-gray-300">{t('profile.signature.text')}</label>
-                                <input
-                                    value={profile.signatureText}
-                                    onChange={(e) => updateProfile("signatureText", e.target.value)}
-                                    placeholder={t('profile.signature.fullName')}
-                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900"
-                                />
-                                <input
-                                    value={profile.social.registro}
-                                    onChange={(e) => updateSocial("registro", e.target.value)}
-                                    placeholder={t('profile.signature.registry')}
-                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900"
-                                />
-                            </div>
-                        </div>
-                    </section>
-
                     {/* Services Section */}
                     <section className="space-y-6">
                         <div className="flex items-center justify-between gap-2">
