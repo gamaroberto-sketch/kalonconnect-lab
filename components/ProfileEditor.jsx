@@ -672,12 +672,6 @@ const ProfileEditor = () => {
                                     placeholder={t('profile.signature.registry')}
                                     className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900"
                                 />
-                                <input
-                                    value={profile.social.city || ''}
-                                    onChange={(e) => updateSocial("city", e.target.value)}
-                                    placeholder="Cidade (Ex: São Paulo, SP)"
-                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900"
-                                />
                             </div>
                         </div>
                     </section>
