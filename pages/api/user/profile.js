@@ -167,6 +167,7 @@ export default async function handler(req, res) {
         specialty: body.specialty,
         photo_url: body.photo,
         bio: body.bio,
+        city: body.city, // Add city to root level
         services: body.services,
         social: socialData,
         signature_pad: body.signaturePad,
