@@ -135,7 +135,6 @@ export default async function handler(req, res) {
       console.log('User ID:', userId);
 
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-      console.log('Request body:', JSON.stringify(body, null, 2));
 
       // 1. Fetch current user data to preserve 'waitingRoom' and other unmanaged fields
       const { data: currentUser, error: fetchError } = await supabaseAdmin
@@ -161,6 +160,19 @@ export default async function handler(req, res) {
         currency: body.currency,
         slug: body.slug // 🟢 v5.40/5.58: Save slug
       };
+
+      // ... existing code ...
+      // I am only replacing the top part to remove logs 
+      // AND appending the config.
+      // Actually, replace_file_content replaces a chunk.
+      // I need to do 2 chunks or 1 chunk if contiguous.
+      // The logs are at line 137. The end of file is line 229.
+      // It's better to do two replacements or one big one?
+      // I'll do two.
+
+      // Wait, I cannot use comments inside ReplacementContent logic block.
+      // I will implement the tool call.
+
 
       const updateData = {
         name: body.name,
@@ -226,3 +238,11 @@ export default async function handler(req, res) {
   res.setHeader("Allow", ["GET", "POST"]);
   return res.status(405).end("Method Not Allowed");
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '20mb' // Increase limit to handle base64 images
+    }
+  }
+};

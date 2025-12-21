@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../components/ThemeProvider';
-import { HardDrive, CheckCircle, XCircle, Loader, AlertCircle, ExternalLink } from 'lucide-react';
+import { HardDrive, CheckCircle, XCircle, Loader, AlertCircle, ExternalLink, Upload, FolderPlus, FileText, ShieldCheck, Check, Cloud } from 'lucide-react';
 
 const GoogleDriveIntegration = () => {
   const { getThemeColors } = useTheme();
@@ -13,16 +13,21 @@ const GoogleDriveIntegration = () => {
   const [error, setError] = useState(null);
   const [connectedAt, setConnectedAt] = useState(null);
 
+  // Feature States
+  const [fileList, setFileList] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   // Check connection status on mount
   useEffect(() => {
     checkDriveStatus();
 
     // Check for connection success/error from URL params
     const params = new URLSearchParams(window.location.search);
+
     if (params.get('drive') === 'connected') {
       setDriveConnected(true);
       setError(null);
-      // Clean URL
       window.history.replaceState({}, '', '/settings');
     } else if (params.get('error')) {
       setError(getErrorMessage(params.get('error')));
@@ -33,7 +38,26 @@ const GoogleDriveIntegration = () => {
   const checkDriveStatus = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/user/drive-status');
+      const supabaseAuth = localStorage.getItem('sb-lpnzpimxwtexazokytjo-auth-token');
+
+      if (!supabaseAuth) {
+        setLoading(false);
+        return;
+      }
+
+      const authData = JSON.parse(supabaseAuth);
+      const accessToken = authData?.access_token;
+
+      if (!accessToken) {
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch('/api/user/drive-status', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
       const data = await response.json();
 
       if (response.ok) {
@@ -47,8 +71,119 @@ const GoogleDriveIntegration = () => {
     }
   };
 
-  const connectGoogleDrive = () => {
-    window.location.href = '/api/auth/google';
+  const getAuthToken = () => {
+    const supabaseAuth = localStorage.getItem('sb-lpnzpimxwtexazokytjo-auth-token');
+    return supabaseAuth ? JSON.parse(supabaseAuth).access_token : '';
+  };
+
+  // --- Features ---
+
+  const handleListFiles = async () => {
+    setActionLoading(true);
+    setFileList(null);
+    try {
+      const response = await fetch('/api/drive/list', {
+        headers: { Authorization: `Bearer ${getAuthToken()}` }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setFileList(data.files || []);
+      } else {
+        alert('Erro ao listar arquivos: ' + (data.error || 'Erro desconhecido'));
+      }
+    } catch (e) {
+      alert('Erro de conexão ao listar arquivos.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCreateFolders = async () => {
+    setActionLoading(true);
+    try {
+      const response = await fetch('/api/drive/create-folders', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getAuthToken()}` }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert('✅ Pastas criadas com sucesso!\n\nFoi criada a estrutura:\nGoogle Drive / KalonConnect / Clientes');
+      } else {
+        alert('Erro ao criar pastas: ' + (data.error || 'Erro desconhecido'));
+      }
+    } catch (e) {
+      alert('Erro de conexão ao criar pastas.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleFileSelect = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    setActionLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const response = await fetch('/api/drive/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
+        body: formData
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('✅ Arquivo enviado com sucesso!\nVeja na pasta Clientes.');
+        setSelectedFile(null);
+        // Refresh list
+        handleListFiles();
+      } else {
+        alert('Erro no upload: ' + (data.error || 'Erro desconhecido'));
+      }
+    } catch (e) {
+      alert('Erro de conexão no upload.');
+      console.error(e);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const connectGoogleDrive = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const accessToken = getAuthToken();
+
+      if (!accessToken) {
+        setError('Você precisa estar logado para conectar o Google Drive');
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch('/api/auth/prepare-google', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+
+      if (!response.ok) {
+        setError('Erro ao preparar autenticação');
+        setLoading(false);
+        return;
+      }
+
+      window.location.href = '/api/auth/google';
+    } catch (err) {
+      console.error('Error connecting Google Drive:', err);
+      setError('Erro ao iniciar conexão com Google Drive');
+      setLoading(false);
+    }
   };
 
   const disconnectGoogleDrive = async () => {
@@ -58,14 +193,24 @@ const GoogleDriveIntegration = () => {
 
     try {
       setLoading(true);
+      const accessToken = getAuthToken();
+
+      if (!accessToken) {
+        setError('Você precisa estar logado');
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch('/api/user/disconnect-drive', {
-        method: 'POST'
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}` }
       });
 
       if (response.ok) {
         setDriveConnected(false);
         setConnectedAt(null);
         setError(null);
+        setFileList(null);
       } else {
         setError('Erro ao desconectar Google Drive');
       }
@@ -107,8 +252,8 @@ const GoogleDriveIntegration = () => {
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-3 rounded-lg" style={{ backgroundColor: `${themeColors.primary}20` }}>
-          <HardDrive className="w-6 h-6" style={{ color: themeColors.primary }} />
+        <div className="p-3 rounded-lg shadow-sm" style={{ backgroundColor: themeColors.primary }}>
+          <HardDrive className="w-6 h-6 text-white" />
         </div>
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">
@@ -132,29 +277,41 @@ const GoogleDriveIntegration = () => {
 
       {/* Info Box */}
       <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: `${themeColors.primary}10` }}>
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-          🔒 Seus dados, seu controle!
+        <h4 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5" style={{ color: themeColors.primary }} />
+          Seus dados, seu controle!
         </h4>
-        <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
-          <li>✅ Dados de clientes ficam no <strong>SEU Google Drive</strong></li>
-          <li>✅ KalonConnect <strong>nunca</strong> armazena informações sensíveis</li>
-          <li>✅ Backup automático do Google</li>
-          <li>✅ Acesse de qualquer dispositivo</li>
+        <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <li className="flex items-start gap-2">
+            <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
+            <span>Dados de clientes ficam no <strong>SEU Google Drive</strong></span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
+            <span>KalonConnect <strong>nunca</strong> armazena informações sensíveis</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
+            <span>Backup automático do Google</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
+            <span>Acesse de qualquer dispositivo</span>
+          </li>
         </ul>
       </div>
 
-      {/* Connection Status */}
-      <div className="mb-6">
-        {driveConnected ? (
-          <div className="flex items-center justify-between p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+      {driveConnected ? (
+        <div className="flex flex-col space-y-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+              <CheckCircle className="w-6 h-6" style={{ color: themeColors.primary }} />
               <div>
-                <p className="font-semibold text-green-900 dark:text-green-100">
+                <p className="font-semibold text-gray-900 dark:text-gray-100">
                   Google Drive Conectado
                 </p>
                 {connectedAt && (
-                  <p className="text-sm text-green-700 dark:text-green-300">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     Conectado em {new Date(connectedAt).toLocaleDateString('pt-BR')}
                   </p>
                 )}
@@ -162,35 +319,109 @@ const GoogleDriveIntegration = () => {
             </div>
             <button
               onClick={disconnectGoogleDrive}
-              className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors text-sm font-medium"
+              className="px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors text-sm font-medium"
             >
               Desconectar
             </button>
           </div>
-        ) : (
-          <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600">
-            <div className="flex items-center gap-3">
-              <XCircle className="w-6 h-6 text-gray-400" />
-              <div>
-                <p className="font-semibold text-gray-900 dark:text-white">
-                  Google Drive Não Conectado
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Conecte para armazenar dados com segurança
-                </p>
-              </div>
-            </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
             <button
-              onClick={connectGoogleDrive}
-              className="px-6 py-3 rounded-lg text-white font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+              onClick={handleCreateFolders}
+              disabled={actionLoading}
+              className="px-3 py-1.5 text-white rounded hover:opacity-90 disabled:opacity-50 text-sm font-medium flex items-center gap-2"
               style={{ backgroundColor: themeColors.primary }}
             >
-              <HardDrive className="w-5 h-5" />
-              Conectar Google Drive
+              {actionLoading ? <Loader className="w-3 h-3 animate-spin" /> : <FolderPlus className="w-4 h-4" />}
+              Criar Pastas Padrão
+            </button>
+
+            <button
+              onClick={handleListFiles}
+              disabled={actionLoading}
+              className="px-3 py-1.5 text-white rounded hover:opacity-90 disabled:opacity-50 text-sm font-medium flex items-center gap-2"
+              style={{ backgroundColor: themeColors.primary }}
+            >
+              {actionLoading ? <Loader className="w-3 h-3 animate-spin" /> : <FileText className="w-4 h-4" />}
+              Listar Arquivos
             </button>
           </div>
-        )}
-      </div>
+
+          {/* Upload Section */}
+          <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-700">
+            <h4 className="font-semibold text-gray-700 dark:text-gray-200 text-sm mb-2">Enviar Arquivo (Teste)</h4>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="file"
+                onChange={handleFileSelect}
+                className="block w-full text-sm text-gray-500
+                     file:mr-4 file:py-2 file:px-4
+                     file:rounded-full file:border-0
+                     file:text-sm file:font-semibold
+                     file:bg-gray-100 file:text-gray-700
+                     hover:file:bg-gray-200 dark:file:bg-gray-700 dark:file:text-gray-300
+                   "
+              />
+              <button
+                onClick={handleUpload}
+                disabled={!selectedFile || actionLoading}
+                className="px-4 py-2 text-white rounded hover:opacity-90 disabled:opacity-50 text-sm font-medium flex items-center gap-2 whitespace-nowrap justify-center"
+                style={{ backgroundColor: themeColors.primary }}
+              >
+                {actionLoading ? <Loader className="w-3 h-3 animate-spin" /> : <Upload className="w-4 h-4" />}
+                Enviar para Drive
+              </button>
+            </div>
+            {selectedFile && <p className="text-xs text-gray-500 mt-2">Selecionado: {selectedFile.name}</p>}
+          </div>
+
+          {/* File List Area */}
+          {fileList && (
+            <div className="mt-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 max-h-48 overflow-y-auto">
+              <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 sticky top-0">
+                <p className="text-xs font-semibold text-gray-500 uppercase">Arquivos no Drive (Últimos 10)</p>
+              </div>
+              {fileList.length === 0 ? (
+                <div className="p-4 text-center text-sm text-gray-400">Nenhum arquivo encontrado.</div>
+              ) : (
+                <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+                  {fileList.map(f => (
+                    <li key={f.id} className="p-2 text-sm flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                      <span>{f.mimeType.includes('folder') ? '📁' : '📄'}</span>
+                      <span className="truncate flex-1 text-gray-700 dark:text-gray-200" title={f.name}>{f.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600">
+          <div className="flex items-center gap-3">
+            <XCircle className="w-6 h-6 text-gray-400" />
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white">
+                Google Drive Não Conectado
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Conecte para armazenar dados com segurança
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={connectGoogleDrive}
+            disabled={loading}
+            className="px-6 py-3 rounded-lg text-white font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
+            style={{ backgroundColor: themeColors.primary }}
+          >
+            <HardDrive className="w-5 h-5" />
+            Conectar Google Drive
+          </button>
+        </div>
+      )}
+
 
       {/* What Gets Stored */}
       <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -199,20 +430,22 @@ const GoogleDriveIntegration = () => {
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-            <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
-              ✅ No seu Drive
+            <p className="text-sm font-medium text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+              <Check className="w-4 h-4" style={{ color: themeColors.primary }} />
+              No seu Drive
             </p>
-            <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+            <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1 ml-6">
               <li>• Dados de clientes/pacientes</li>
               <li>• Notas de consultas</li>
               <li>• Documentos gerados</li>
             </ul>
           </div>
           <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-            <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
-              ☁️ No KalonConnect
+            <p className="text-sm font-medium text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+              <Cloud className="w-4 h-4" style={{ color: themeColors.primary }} />
+              No KalonConnect
             </p>
-            <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+            <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1 ml-6">
               <li>• Seu perfil profissional</li>
               <li>• Plano e assinatura</li>
               <li>• Produtos e eventos</li>
@@ -234,7 +467,7 @@ const GoogleDriveIntegration = () => {
           Saiba mais sobre segurança do Google Drive
         </a>
       </div>
-    </motion.div>
+    </motion.div >
   );
 };
 

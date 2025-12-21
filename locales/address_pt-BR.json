@@ -1,0 +1,40 @@
+{
+    "address": {
+        "title": "Endereço",
+        "cep": "CEP",
+        "zipCode": "ZIP Code",
+        "postalCode": "Código Postal",
+        "street": "Rua",
+        "number": "Número",
+        "complement": "Complemento",
+        "neighborhood": "Bairro",
+        "city": "Cidade",
+        "state": "Estado",
+        "country": "País",
+        "placeholders": {
+            "cep": "00000-000",
+            "zipCode": "12345",
+            "postalCode": "Código Postal",
+            "street": "Logradouro",
+            "number": "Nº",
+            "complement": "Apto, Bloco, Sala...",
+            "neighborhood": "Bairro",
+            "city": "Cidade",
+            "state": "UF"
+        },
+        "countries": {
+            "brazil": "🇧🇷 Brasil",
+            "usa": "🇺🇸 Estados Unidos",
+            "portugal": "🇵🇹 Portugal",
+            "spain": "🇪🇸 Espanha",
+            "france": "🇫🇷 França",
+            "argentina": "🇦🇷 Argentina",
+            "mexico": "🇲🇽 México",
+            "other": "🌍 Outro"
+        },
+        "hints": {
+            "brazilAutofill": "Para endereços no Brasil, o CEP preenche automaticamente os campos.",
+            "internationalManual": "Para endereços internacionais, preencha os campos manualmente."
+        }
+    }
+}

@@ -50,9 +50,13 @@ const EMPTY_PROFILE = {
     },
     address: {
         street: "",
+        number: "",
+        complement: "",
+        neighborhood: "",
         city: "",
         state: "",
-        zipCode: ""
+        zipCode: "",
+        country: "Brasil"
     },
     pixKeys: [],
     currency: "BRL",
@@ -453,6 +457,51 @@ const ProfileEditor = () => {
         );
     }
 
+    const fetchAddressByCEP = async (cep) => {
+        const cleanCep = cep.replace(/\D/g, '');
+        if (cleanCep.length !== 8) return;
+
+        try {
+            setIsLoading(true);
+            const response = await fetch(`/api/cep?cep=${cleanCep}`);
+            const data = await response.json();
+
+            if (!data.erro) {
+                setProfile(prev => ({
+                    ...prev,
+                    address: {
+                        ...prev.address,
+                        street: data.logradouro,
+                        neighborhood: data.bairro,
+                        city: data.localidade,
+                        state: data.uf,
+                        zipCode: cep
+                    }
+                }));
+            }
+        } catch (error) {
+            console.error("Erro ao buscar CEP:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleCepChange = (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 8) value = value.slice(0, 8);
+
+        // Mask: 00000-000
+        if (value.length > 5) {
+            value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+        }
+
+        setProfile(prev => ({ ...prev, address: { ...prev.address, zipCode: value } }));
+
+        if (value.replace(/\D/g, '').length === 8) {
+            fetchAddressByCEP(value);
+        }
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -749,17 +798,90 @@ const ProfileEditor = () => {
                         </div>
                     </section>
 
-                    {/* Address Section */}
+
                     <section className="space-y-6">
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Endereço</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="md:col-span-2">
+
+                        {/* CEP/ZIP Row */}
+                        <div>
+                            <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">
+                                {profile.address?.country === "Brasil" ? "CEP" :
+                                    profile.address?.country === "Estados Unidos" ? "ZIP Code" :
+                                        profile.address?.country === "Portugal" || profile.address?.country === "Espanha" || profile.address?.country === "França" ? "Código Postal" :
+                                            "CEP / Postal Code"}
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={profile.address?.zipCode || ""}
+                                    onChange={profile.address?.country === "Brasil" ? handleCepChange : (e) => setProfile(prev => ({ ...prev, address: { ...prev.address, zipCode: e.target.value } }))}
+                                    placeholder={profile.address?.country === "Brasil" ? "00000-000" :
+                                        profile.address?.country === "Estados Unidos" ? "12345" :
+                                            "Código Postal"}
+                                    maxLength={profile.address?.country === "Brasil" ? 9 : 20}
+                                    className="w-full sm:w-1/3 px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                                {isLoading && <Loader2 className="absolute right-3 top-2.5 w-5 h-5 animate-spin text-primary" style={{ right: '68%' }} />}
+                            </div>
+                        </div>
+
+                        {/* Street and Number */}
+                        <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4">
+                            <div>
                                 <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Rua</label>
                                 <input
                                     type="text"
                                     value={profile.address?.street || ""}
                                     onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, street: e.target.value } }))}
-                                    placeholder="Rua, número, complemento"
+                                    placeholder="Logradouro"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Número</label>
+                                <input
+                                    type="text"
+                                    value={profile.address?.number || ""}
+                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, number: e.target.value } }))}
+                                    placeholder="Nº"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Complement and Neighborhood */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Complemento</label>
+                                <input
+                                    type="text"
+                                    value={profile.address?.complement || ""}
+                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, complement: e.target.value } }))}
+                                    placeholder="Apto, Bloco, Sala..."
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Bairro</label>
+                                <input
+                                    type="text"
+                                    value={profile.address?.neighborhood || ""}
+                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, neighborhood: e.target.value } }))}
+                                    placeholder="Bairro"
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                                />
+                            </div>
+                        </div>
+
+                        {/* City and State */}
+                        <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4">
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">Cidade</label>
+                                <input
+                                    type="text"
+                                    value={profile.address?.city || ""}
+                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, city: e.target.value } }))}
+                                    placeholder="Cidade"
                                     className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
                                 />
                             </div>
@@ -769,20 +891,53 @@ const ProfileEditor = () => {
                                     type="text"
                                     value={profile.address?.state || ""}
                                     onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, state: e.target.value } }))}
-                                    placeholder="SP"
+                                    placeholder="UF"
+                                    maxLength={2}
                                     className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
                                 />
                             </div>
-                            <div>
-                                <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">CEP</label>
-                                <input
-                                    type="text"
-                                    value={profile.address?.zipCode || ""}
-                                    onChange={(e) => setProfile(prev => ({ ...prev, address: { ...prev.address, zipCode: e.target.value } }))}
-                                    placeholder="00000-000"
-                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
-                                />
-                            </div>
+                        </div>
+
+                        {/* Country */}
+                        <div>
+                            <label className="text-sm text-gray-600 dark:text-gray-300 mb-2 block">País</label>
+                            <select
+                                value={profile.address?.country || "Brasil"}
+                                onChange={(e) => {
+                                    const selectedCountry = e.target.value;
+                                    // Map country to default currency
+                                    const currencyMap = {
+                                        "Brasil": "BRL",
+                                        "Estados Unidos": "USD",
+                                        "Portugal": "EUR",
+                                        "Espanha": "EUR",
+                                        "França": "EUR",
+                                        "Argentina": "ARS",
+                                        "México": "MXN"
+                                    };
+
+                                    setProfile(prev => ({
+                                        ...prev,
+                                        address: { ...prev.address, country: selectedCountry },
+                                        currency: currencyMap[selectedCountry] || prev.currency
+                                    }));
+                                }}
+                                className="w-full sm:w-1/2 px-3 py-2 border rounded-lg dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary/50 outline-none"
+                            >
+                                <option value="Brasil">🇧🇷 Brasil</option>
+                                <option value="Estados Unidos">🇺🇸 Estados Unidos</option>
+                                <option value="Portugal">🇵🇹 Portugal</option>
+                                <option value="Espanha">🇪🇸 Espanha</option>
+                                <option value="França">🇫🇷 França</option>
+                                <option value="Argentina">🇦🇷 Argentina</option>
+                                <option value="México">🇲🇽 México</option>
+                                <option value="Outro">🌍 Outro</option>
+                            </select>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {profile.address?.country === "Brasil"
+                                    ? "Para endereços no Brasil, o CEP preenche automaticamente os campos."
+                                    : "Para endereços internacionais, preencha os campos manualmente."}
+                            </p>
                         </div>
                     </section>
 

@@ -505,6 +505,44 @@
         "disconnect": "Desconectar",
         "folderLabel": "Carpeta Predeterminada para Archivos",
         "folderPlaceholder": "Ej: Clientes/KalonConnect",
+        "security": {
+          "title": "¡Tus datos, tu control!",
+          "clientData": "Los datos de clientes quedan en <strong>TU Google Drive</strong>",
+          "neverStores": "KalonConnect <strong>nunca</strong> almacena información sensible",
+          "autoBackup": "Copia de seguridad automática de Google",
+          "accessAnywhere": "Accede desde cualquier dispositivo"
+        },
+        "statusMessages": {
+          "connected": "Google Drive Conectado",
+          "connectedOn": "Conectado el",
+          "notConnected": "Google Drive No Conectado",
+          "connectPrompt": "Conéctate para almacenar datos de forma segura"
+        },
+        "actions": {
+          "disconnect": "Desconectar",
+          "connect": "Conectar Google Drive",
+          "createFolders": "Crear Carpetas Predeterminadas",
+          "listFiles": "Listar Archivos",
+          "uploadToDrive": "Enviar al Drive"
+        },
+        "upload": {
+          "title": "Enviar Archivo (Prueba)",
+          "selected": "Seleccionado:"
+        },
+        "fileList": {
+          "title": "Archivos en Drive (Últimos 10)",
+          "noFiles": "No se encontraron archivos."
+        },
+        "storage": {
+          "title": "¿Qué se almacena en Google Drive?",
+          "inYourDrive": "En tu Drive",
+          "inKalonConnect": "En KalonConnect",
+          "clientData": "Datos de clientes/pacientes",
+          "consultationNotes": "Notas de consultas",
+          "generatedDocs": "Documentos generados",
+          "professionalProfile": "Tu perfil profesional",
+          "planSubscription": "Plan y suscripción"
+        },
         "features": {
           "clients": {
             "title": "Registro de Clientes",

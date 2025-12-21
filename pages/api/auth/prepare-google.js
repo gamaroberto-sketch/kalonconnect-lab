@@ -4,19 +4,18 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function handler(req, res) {
-    if (req.method !== 'GET') {
+    if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
-        // 1. Extract token from Authorization header
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ error: 'Authorization header missing or invalid' });
         }
         const token = authHeader.replace('Bearer ', '');
 
-        // 2. Initialize Supabase client
+        // Use client's access token to authenticate as the user
         const supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -29,33 +28,18 @@ export default async function handler(req, res) {
             }
         );
 
-        // 3. Verify user
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
         if (userError || !user) {
             console.error('Authentication Error:', userError);
-            return res.status(401).json({ error: 'Invalid Supabase access token' });
+            return res.status(401).json({ error: 'Invalid token' });
         }
 
-        // 4. Get user's Drive connection status
-        // Using maybeSingle() to avoid PGRST116 if record is missing
-        const { data: userData, error } = await supabase
-            .from('users')
-            .select('drive_connected, drive_connected_at')
-            .eq('id', user.id)
-            .maybeSingle();
+        res.setHeader('Set-Cookie', `kc_user_id=${user.id}; Path=/; Max-Age=600; HttpOnly; SameSite=Lax`);
 
-        if (error) {
-            console.error('DB Error:', error);
-            return res.status(500).json({ error: 'Failed to check Drive status' });
-        }
-
-        return res.status(200).json({
-            connected: userData?.drive_connected ?? false,
-            connectedAt: userData?.drive_connected_at ?? null
-        });
+        return res.status(200).json({ success: true, userId: user.id });
     } catch (error) {
-        console.error('API Error:', error);
+        console.error('Error preparing Google auth:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }

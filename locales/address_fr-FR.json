@@ -1,0 +1,40 @@
+{
+    "address": {
+        "title": "Adresse",
+        "cep": "Code Postal",
+        "zipCode": "Code Postal",
+        "postalCode": "Code Postal",
+        "street": "Rue",
+        "number": "Numéro",
+        "complement": "Complément",
+        "neighborhood": "Quartier",
+        "city": "Ville",
+        "state": "État/Région",
+        "country": "Pays",
+        "placeholders": {
+            "cep": "00000-000",
+            "zipCode": "12345",
+            "postalCode": "Code Postal",
+            "street": "Adresse",
+            "number": "Nº",
+            "complement": "Appt, Étage, Bureau...",
+            "neighborhood": "Quartier",
+            "city": "Ville",
+            "state": "État"
+        },
+        "countries": {
+            "brazil": "🇧🇷 Brésil",
+            "usa": "🇺🇸 États-Unis",
+            "portugal": "🇵🇹 Portugal",
+            "spain": "🇪🇸 Espagne",
+            "france": "🇫🇷 France",
+            "argentina": "🇦🇷 Argentine",
+            "mexico": "🇲🇽 Mexique",
+            "other": "🌍 Autre"
+        },
+        "hints": {
+            "brazilAutofill": "Pour les adresses au Brésil, le code postal remplit automatiquement les champs.",
+            "internationalManual": "Pour les adresses internationales, veuillez remplir les champs manuellement."
+        }
+    }
+}

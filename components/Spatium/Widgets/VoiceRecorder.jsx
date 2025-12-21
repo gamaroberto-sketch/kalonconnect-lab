@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Mic, Square, Play, Save, Activity, Check, Music, Download, FileText } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Mic, Square, Activity, Music, Download, FileText, Loader, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../AuthContext';
+import { useVideoPanel } from '../../VideoPanelContext';
 
 const MOCK_REPORT = {
     dominantNotes: ['C#', 'F', 'A', 'G#'],
@@ -15,12 +17,45 @@ const MUSIC_OPTIONS = [
     { id: 3, name: 'Frequências Puras (Binaural)', duration: '7:00' }
 ];
 
+const blobToBase64 = (blob) =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+
 export default function VoiceRecorder() {
+    const { user } = useAuth();
+    const { sessionData } = useVideoPanel();
+
     const [step, setStep] = useState('RECORD'); // RECORD, ANALYZING, RESULT
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
     const [selectedMusic, setSelectedMusic] = useState(null);
     const [progress, setProgress] = useState(0);
+    const [audioBlob, setAudioBlob] = useState(null);
+    const [audioUrl, setAudioUrl] = useState(null);
+    const [visualizerData, setVisualizerData] = useState(new Array(20).fill(10));
+
+    // Status do upload: idle, uploading, success, error
+    const [uploadStatus, setUploadStatus] = useState('idle');
+
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
+    const audioContextRef = useRef(null);
+    const analyserRef = useRef(null);
+    const sourceRef = useRef(null);
+    const animationFrameRef = useRef(null);
+
+    // Clean up on unmount
+    useEffect(() => {
+        return () => {
+            if (audioUrl) URL.revokeObjectURL(audioUrl);
+            cancelAnimationFrame(animationFrameRef.current);
+            if (audioContextRef.current) audioContextRef.current.close();
+        };
+    }, []);
 
     // Recording Timer
     useEffect(() => {
@@ -45,22 +80,152 @@ export default function VoiceRecorder() {
                     }
                     return prev + 2;
                 });
-            }, 100); // 5 seconds simulation
+            }, 50); // Faster simulation
             return () => clearInterval(interval);
         }
     }, [step]);
 
-    const handleToggleRecord = () => {
-        if (isRecording) {
-            if (recordingTime < 5) { // Validation Mock (should be 20s)
-                alert("Por favor, grave pelo menos 20 segundos para uma análise precisa.");
-                return;
-            }
-            setIsRecording(false);
-            setStep('ANALYZING');
-        } else {
+    const saveToSession = async (blob, duration) => {
+        // Tenta obter ID da sessão ativa ou gera um ID Spatium
+        const activeSession = sessionData?.lastSession?.status === 'active'
+            ? sessionData.lastSession.start // Use start time as crude ID if real ID is missing
+            : null;
+
+        // Fallback session ID format: spatium-{timestamp}
+        const currentSessionId = activeSession
+            ? `session-${new Date(activeSession).getTime()}`
+            : `spatium-${Date.now()}`;
+
+        const clientId = user?.id || 'anonymous';
+        const professionalId = user?.id; // Assuming self-use or pro is the user
+
+        console.log("Salavando gravação na sessão:", currentSessionId);
+        setUploadStatus('uploading');
+
+        try {
+            const base64 = await blobToBase64(blob);
+
+            // 1. Save Temp
+            const tempRes = await fetch("/api/recordings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "save-temp",
+                    sessionId: currentSessionId,
+                    data: base64,
+                    mimeType: 'audio/webm',
+                    timestamp: Date.now()
+                })
+            });
+
+            if (!tempRes.ok) throw new Error("Falha no upload temporário");
+            const tempData = await tempRes.json();
+
+            // 2. Finalize
+            const finalizeRes = await fetch("/api/recordings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "finalize",
+                    clientId: clientId,
+                    sessionId: currentSessionId, // This might need to be consistent with main recorder
+                    tempFileName: tempData.fileName,
+                    duration: duration,
+                    recordingMode: 'audio-spatium',
+                    professionalId: professionalId,
+                    notifyClient: false
+                })
+            });
+
+            if (!finalizeRes.ok) throw new Error("Falha ao finalizar gravação");
+
+            setUploadStatus('success');
+            console.log("Gravação salva com sucesso na consulta!");
+        } catch (error) {
+            console.error("Erro ao salvar na consulta:", error);
+            setUploadStatus('error');
+        }
+    };
+
+    const startRecording = async () => {
+        try {
+            setUploadStatus('idle');
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            audioContextRef.current = ctx;
+            const analyser = ctx.createAnalyser();
+            analyser.fftSize = 64;
+            analyserRef.current = analyser;
+            const source = ctx.createMediaStreamSource(stream);
+            sourceRef.current = source;
+            source.connect(analyser);
+
+            drawVisualizer();
+
+            const recorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = recorder;
+            audioChunksRef.current = [];
+
+            recorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunksRef.current.push(e.data);
+            };
+
+            recorder.onstop = async () => {
+                const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
+                setAudioBlob(blob);
+                setAudioUrl(url);
+
+                stream.getTracks().forEach(track => track.stop());
+                cancelAnimationFrame(animationFrameRef.current);
+
+                // Auto-upload
+                // Capture duration at the moment of stopping (recordingTime is state, might be slightly off due to async, but good enough)
+                await saveToSession(blob, recordingTime);
+            };
+
+            recorder.start();
             setIsRecording(true);
             setRecordingTime(0);
+
+        } catch (error) {
+            console.error("Error accessing microphone:", error);
+            alert("Erro ao acessar microfone. Verifique as permissões.");
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+            setStep('ANALYZING'); // Continue workflow while uploading in background
+        }
+    };
+
+    const drawVisualizer = () => {
+        if (!analyserRef.current) return;
+
+        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+        analyserRef.current.getByteFrequencyData(dataArray);
+
+        const bars = [];
+        const step = Math.floor(dataArray.length / 20);
+        for (let i = 0; i < 20; i++) {
+            const val = dataArray[i * step];
+            bars.push(Math.max(10, (val / 255) * 100)); // Min 10% height
+        }
+        setVisualizerData(bars);
+
+        animationFrameRef.current = requestAnimationFrame(drawVisualizer);
+    };
+
+    const handleToggleRecord = () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
         }
     };
 
@@ -68,6 +233,14 @@ export default function VoiceRecorder() {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const handleDownload = () => {
+        if (!audioUrl) return;
+        const a = document.createElement('a');
+        a.href = audioUrl;
+        a.download = `gravacao-spatium-${new Date().toISOString().slice(0, 10)}.webm`;
+        a.click();
     };
 
     return (
@@ -82,21 +255,21 @@ export default function VoiceRecorder() {
                         className="flex flex-col items-center gap-6"
                     >
                         <div className="space-y-2">
-                            <p className="text-white/70 text-sm">Grave sua voz por no mínimo 20 segundos.</p>
+                            <p className="text-white/70 text-sm">Grave sua voz para análise.</p>
                             <p className="text-white/40 text-xs">O sistema analisará sua assinatura vocal.</p>
                         </div>
 
                         {/* Visualizer */}
-                        <div className="w-full h-32 bg-black/40 rounded-lg flex items-center justify-center overflow-hidden relative border border-white/5">
+                        <div className="w-full h-32 bg-black/40 rounded-lg flex items-center justify-center overflow-hidden relative border border-white/5 px-4">
                             {isRecording ? (
-                                <div className="flex items-end gap-1 h-12">
-                                    {[...Array(20)].map((_, i) => (
+                                <div className="flex items-end justify-between w-full h-16 gap-1">
+                                    {visualizerData.map((height, i) => (
                                         <div
                                             key={i}
-                                            className="w-1 bg-cyan-400/80 rounded-full animate-pulse"
+                                            className="w-2 bg-cyan-400/80 rounded-t-sm transition-all duration-75"
                                             style={{
-                                                height: `${Math.random() * 100}%`,
-                                                animationDuration: `${0.2 + Math.random() * 0.5}s`
+                                                height: `${height}%`,
+                                                opacity: 0.5 + (height / 200)
                                             }}
                                         />
                                     ))}
@@ -113,8 +286,8 @@ export default function VoiceRecorder() {
                         <button
                             onClick={handleToggleRecord}
                             className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-300 ${isRecording
-                                    ? 'bg-red-500/20 text-red-400 border border-red-500/50 scale-110 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse'
-                                    : 'bg-white/10 text-white hover:bg-white/20 border border-white/10'
+                                ? 'bg-red-500/20 text-red-400 border border-red-500/50 scale-110 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse'
+                                : 'bg-white/10 text-white hover:bg-white/20 border border-white/10'
                                 }`}
                         >
                             {isRecording ? <Square size={24} fill="currentColor" /> : <Mic size={32} />}
@@ -140,7 +313,9 @@ export default function VoiceRecorder() {
                                     animate={{ width: `${progress}%` }}
                                 />
                             </div>
-                            <p className="text-xs text-cyan-400/80 uppercase tracking-widest">Identificando notas predominantes</p>
+                            <p className="text-xs text-cyan-400/80 uppercase tracking-widest">
+                                {uploadStatus === 'uploading' ? 'Salvando gravação na consulta...' : 'Extraindo parâmetros vocais'}
+                            </p>
                         </div>
                     </motion.div>
                 )}
@@ -152,6 +327,13 @@ export default function VoiceRecorder() {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-left space-y-6"
                     >
+                        {/* Status Message for Saving */}
+                        <div className="flex items-center justify-between text-xs px-2">
+                            {uploadStatus === 'uploading' && <span className="text-yellow-400 flex items-center gap-1"><Loader className="w-3 h-3 animate-spin" /> Salvando na consulta...</span>}
+                            {uploadStatus === 'success' && <span className="text-emerald-400 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Salvo na consulta!</span>}
+                            {uploadStatus === 'error' && <span className="text-red-400 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Erro ao salvar (apenas local)</span>}
+                        </div>
+
                         <div className="bg-white/5 p-4 rounded-lg border border-white/10 space-y-3">
                             <div className="flex items-center gap-2 mb-2">
                                 <Activity size={16} className="text-cyan-400" />
@@ -194,8 +376,8 @@ export default function VoiceRecorder() {
                                         key={music.id}
                                         onClick={() => setSelectedMusic(music.id)}
                                         className={`w-full flex items-center justify-between p-3 rounded-lg border transition-all ${selectedMusic === music.id
-                                                ? 'bg-cyan-500/20 border-cyan-500/50 text-white'
-                                                : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'
+                                            ? 'bg-cyan-500/20 border-cyan-500/50 text-white'
+                                            : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -213,10 +395,8 @@ export default function VoiceRecorder() {
                                 <FileText size={16} /> Ver PDF Completo
                             </button>
                             <button
-                                disabled={!selectedMusic}
-                                className={`flex-1 py-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all ${selectedMusic
-                                        ? 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-lg shadow-cyan-500/20'
-                                        : 'bg-white/10 text-white/30 cursor-not-allowed'
+                                onClick={handleDownload}
+                                className={`flex-1 py-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all ${'bg-cyan-500 hover:bg-cyan-400 text-black shadow-lg shadow-cyan-500/20'
                                     }`}
                             >
                                 <Download size={16} /> Baixar Áudio

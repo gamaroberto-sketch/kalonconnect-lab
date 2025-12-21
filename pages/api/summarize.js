@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import OpenAI from "openai";
 
 const DATA_ROOT = path.join(process.cwd(), "data");
 const TRANSCRIPTS_DIR = path.join(DATA_ROOT, "session-transcripts");
@@ -40,48 +41,23 @@ const writeTranscriptData = async (sessionId, payload) => {
   return filePath;
 };
 
-const extractKeywords = (text) => {
-  if (!text) return [];
-  const words = text
-    .toLowerCase()
-    .replace(/[^a-záàâãéêíóôõúç\s]/gi, " ")
-    .split(/\s+/)
-    .filter((word) => word.length > 4);
-
-  const counter = new Map();
-  words.forEach((word) => {
-    counter.set(word, (counter.get(word) || 0) + 1);
-  });
-
-  return [...counter.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([word]) => word);
-};
-
-const buildSummary = (transcript) => {
-  const paragraphs = transcript.split(/[.!?]+/).filter(Boolean);
-
-  const summary = [
-    "Resumo da Sessão:",
-    paragraphs[0]?.trim() || "Sessão focada em escuta ativa e acolhimento.",
-    paragraphs[1]?.trim() || "Cliente relatou avanços e desafios recentes.",
-    "Profissional sugeriu práticas de autorregulação e um plano de continuidade."
-  ].join(" ");
-
-  const template = {
-    temaPrincipal: "",
-    pontosTrabalhados: "",
-    emocoesObservadas: "",
-    sugestoesTerapeuticas: "",
-    palavrasChaveEnergeticas: ""
+// Mock Fallback
+const buildMockSummary = (transcript) => {
+  return {
+    summary: "RESUMO SIMULADO (Configure OPENAI_API_KEY): O cliente discutiu questões pessoais. O profissional ouviu atentamente.",
+    keywords: ["Simulação", "Teste", "API Key", "Ausente", "Exemplo"],
+    template: {
+      temaPrincipal: "Simulação de Atendimento",
+      pontosTrabalhados: "Nenhum (Mock)",
+      emocoesObservadas: "Neutro",
+      sugestoesTerapeuticas: "Configurar API Real"
+    }
   };
-
-  return { summary, template };
 };
 
 export default async function handler(req, res) {
   if (req.method === "PUT") {
+    // Manual Update (unchanged logic mostly, just ensuring persistence)
     try {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
       const { sessionId, summary, transcript, keywords } = body;
@@ -135,15 +111,61 @@ export default async function handler(req, res) {
       keywords: []
     };
 
-    const { summary, template } = buildSummary(transcript);
-    const keywords = extractKeywords(transcript);
+    let summaryData;
+
+    if (!process.env.OPENAI_API_KEY) {
+      console.warn("OPENAI_API_KEY not found. Using mock summary.");
+      summaryData = buildMockSummary(transcript);
+    } else {
+      try {
+        console.log("Iniciando resumo via OpenAI GPT...");
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+        const prompt = `
+            Você é um assistente especialista em psicologia e terapia.
+            Analise a seguinte transcrição de sessão e gere um resumo clínico estruturado em JSON.
+            O formato deve ser exatamente:
+            {
+                "summary": "Resumo narrativo conciso (max 3 parágrafos) em terceira pessoa",
+                "keywords": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+                "template": {
+                    "temaPrincipal": "Tema central da sessão",
+                    "pontosTrabalhados": "Pontos específicos abordados",
+                    "emocoesObservadas": "Análise do estado emocional",
+                    "sugestoesTerapeuticas": "Sugestões ou insights para próxima sessão"
+                }
+            }
+            
+            Transcrição:
+            "${transcript.slice(0, 15000)}" 
+            `;
+        // Slicing to avoid token limits if transcript is huge, though GPT-4o context is large.
+
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o", // Or gpt-3.5-turbo if cost is concern, but user said "make it work!"
+          messages: [
+            { role: "system", content: "You are a helpful clinical assistant. Output JSON only." },
+            { role: "user", content: prompt }
+          ],
+          response_format: { type: "json_object" }
+        });
+
+        const content = completion.choices[0].message.content;
+        summaryData = JSON.parse(content);
+        console.log("Resumo gerado com sucesso.");
+
+      } catch (aiError) {
+        console.error("Erro na OpenAI API (Summary):", aiError);
+        return res.status(500).json({ error: "Falha ao gerar resumo na IA: " + aiError.message });
+      }
+    }
 
     const payload = {
       ...existing,
       transcript,
-      summary,
-      keywords,
-      template,
+      summary: summaryData.summary,
+      keywords: summaryData.keywords,
+      template: summaryData.template,
       generatedAt: new Date().toISOString(),
       clientId: clientId ?? existing.clientId ?? null,
       clientName: clientName ?? existing.clientName ?? "",
@@ -157,11 +179,7 @@ export default async function handler(req, res) {
 
     await writeTranscriptData(sessionId, payload);
 
-    return res.status(200).json({
-      summary,
-      keywords,
-      template
-    });
+    return res.status(200).json(summaryData);
   } catch (error) {
     console.error("Erro ao gerar resumo:", error);
     return res.status(500).json({ error: "Não foi possível gerar o resumo no momento." });

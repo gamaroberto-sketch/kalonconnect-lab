@@ -1,8 +1,10 @@
-import { promises as fs } from "fs";
+import { promises as fs, createReadStream } from "fs";
 import path from "path";
+import OpenAI from "openai";
 
 const DATA_ROOT = path.join(process.cwd(), "data");
 const TRANSCRIPTS_DIR = path.join(DATA_ROOT, "session-transcripts");
+const CLIENTS_DIR = path.join(DATA_ROOT, "clients");
 
 const sanitize = (value = "") =>
   value
@@ -68,8 +70,8 @@ const buildTranscriptPayload = ({
     keywords: Array.isArray(keywords)
       ? keywords
       : Array.isArray(existing.keywords)
-      ? existing.keywords
-      : [],
+        ? existing.keywords
+        : [],
     recordedAt: recordedAt || existing.recordedAt || now,
     generatedAt: now,
     metadata: {
@@ -99,7 +101,7 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
-    const { sessionId, duration, mode, transcript: incomingTranscript } = body;
+    const { sessionId, duration, mode, clientId, transcript: incomingTranscript } = body;
 
     if (!sessionId) {
       return res.status(400).json({ error: "sessionId é obrigatório." });
@@ -107,16 +109,60 @@ export default async function handler(req, res) {
 
     const existing = await readTranscriptFile(sessionId);
 
-    // Placeholder transcription (simula Whisper.cpp).
-    const transcriptText =
-      incomingTranscript ||
-      [
-        "Transcrição automática (simulada) – início da sessão.",
-        "Profissional acolhe e valida emoções do cliente.",
-        "Cliente relata avanços, recaídas e novas percepções.",
-        "Profissional oferece estratégias de autorregulação e plano de continuidade.",
-        "Conclusão com reforço de conquistas e próximos passos."
-      ].join(" ");
+    let transcriptText = incomingTranscript;
+
+    // If no text provided, attempt to Generate via OpenAI
+    if (!transcriptText) {
+      if (!process.env.OPENAI_API_KEY) {
+        // Fallback to mock if no key, but warn in log
+        console.warn("OPENAI_API_KEY not found. Using mock transcription.");
+        transcriptText = [
+          "[MOCK - Configure OPENAI_API_KEY para real]",
+          "Transcrição automática (simulada) – início da sessão.",
+          "Profissional acolhe e valida emoções do cliente.",
+          "Cliente relata avanços, recaídas e novas percepções.",
+          "Profissional oferece estratégias de autorregulação.",
+          "Conclusão com reforço de conquistas."
+        ].join(" ");
+      } else {
+        // Real Transcription Logic
+        if (!clientId) {
+          return res.status(400).json({ error: "clientId é obrigatório para localizar a gravação." });
+        }
+
+        const recordingPath = path.join(
+          CLIENTS_DIR,
+          sanitize(clientId),
+          "sessions",
+          sanitize(sessionId),
+          "recording.webm"
+        );
+
+        try {
+          await fs.access(recordingPath);
+        } catch {
+          return res.status(404).json({ error: "Arquivo de gravação não encontrado para esta sessão." });
+        }
+
+        try {
+          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+          console.log(`Iniciando transcrição real para: ${recordingPath}`);
+          const transcription = await openai.audio.transcriptions.create({
+            file: createReadStream(recordingPath),
+            model: "whisper-1",
+            language: "pt", // Force Portuguese
+            response_format: "text"
+          });
+
+          transcriptText = transcription; // It returns string if response_format is text
+          console.log("Transcrição concluída com sucesso.");
+        } catch (aiError) {
+          console.error("Erro na OpenAI API:", aiError);
+          return res.status(500).json({ error: "Falha ao processar áudio na IA: " + aiError.message });
+        }
+      }
+    }
 
     const payload = buildTranscriptPayload({
       existing,

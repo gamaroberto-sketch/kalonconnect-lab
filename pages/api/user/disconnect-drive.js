@@ -1,24 +1,40 @@
 import { createClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'Authorization header missing or invalid' });
+        }
+        const token = authHeader.replace('Bearer ', '');
+
+        // Use client's access token to authenticate as the user
         const supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL,
-            process.env.SUPABASE_SERVICE_KEY
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            {
+                global: {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            }
         );
 
-        // TODO: Get user ID from session/auth
-        const userId = req.cookies.userId; // Replace with actual auth
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-        if (!userId) {
-            return res.status(401).json({ error: 'Not authenticated' });
+        if (userError || !user) {
+            console.error('Authentication Error:', userError);
+            return res.status(401).json({ error: 'Invalid token' });
         }
 
-        // Disconnect Drive by removing tokens
         const { error } = await supabase
             .from('users')
             .update({
@@ -27,9 +43,10 @@ export default async function handler(req, res) {
                 google_token_expiry: null,
                 drive_connected: false
             })
-            .eq('id', userId);
+            .eq('id', user.id);
 
         if (error) {
+            console.error('DB Error:', error);
             return res.status(500).json({ error: 'Failed to disconnect Drive' });
         }
 

@@ -20,7 +20,9 @@ import {
   X,
   Upload,
   Image,
-  Search
+  Search,
+  RefreshCcw,
+  Trash
 } from 'lucide-react';
 import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
@@ -44,8 +46,9 @@ export default function ClientRegistration() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const { clients, loading, addClient, updateClient, deleteClient } = useClients();
+  const { clients, loading, addClient, updateClient, deleteClient, restoreClient, fetchClients } = useClients();
   const [showForm, setShowForm] = useState(false);
+  const [showTrash, setShowTrash] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -69,6 +72,13 @@ export default function ClientRegistration() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Refresh list when toggling Trash mode
+  useEffect(() => {
+    if (user?.id) {
+      fetchClients(showTrash);
+    }
+  }, [user, showTrash]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -143,8 +153,18 @@ export default function ClientRegistration() {
   };
 
   const handleDelete = async (clientId) => {
-    if (confirm(t('common.confirmDelete') || 'Tem certeza que deseja excluir?')) {
-      await deleteClient(clientId);
+    // Soft Delete (Moves to trash)
+    await deleteClient(clientId);
+  };
+
+  const handleRestore = async (clientId) => {
+    // Confirmation removed as per user request
+    await restoreClient(clientId);
+  };
+
+  const handlePermanentDelete = async (clientId) => {
+    if (confirm('ATENÇÃO: Isso excluirá PERMANENTEMENTE o cliente e seus arquivos. Deseja continuar?')) {
+      await deleteClient(clientId, true);
     }
   };
 
@@ -223,28 +243,47 @@ export default function ClientRegistration() {
                   <div className="flex items-center space-x-4">
                     <div
                       className="p-3 rounded-xl"
-                      style={{ backgroundColor: themeColors.primary }}
+                      style={{ backgroundColor: showTrash ? '#dc2626' : themeColors.primary }}
                     >
-                      <User className="w-8 h-8" style={{ color: 'white' }} />
+                      {showTrash ? (
+                        <Trash2 className="w-8 h-8" style={{ color: 'white' }} />
+                      ) : (
+                        <User className="w-8 h-8" style={{ color: 'white' }} />
+                      )}
                     </div>
                     <div>
                       <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                        {t('clients.title')}
+                        {showTrash ? 'Lixeira' : t('clients.title')}
                       </h1>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {t('clients.description')}
+                        {showTrash ? 'Recupere clientes excluídos' : t('clients.description')}
                       </p>
                     </div>
                   </div>
 
-                  <ModernButton
-                    icon={<Plus className="w-5 h-5" />}
-                    onClick={() => setShowForm(true)}
-                    variant="primary"
-                    size="lg"
-                  >
-                    {t('clients.newClient')}
-                  </ModernButton>
+                  <div className="flex space-x-3">
+                    <ModernButton
+                      icon={showTrash ? <User className="w-5 h-5" /> : <Trash className="w-5 h-5" />}
+                      onClick={() => setShowTrash(!showTrash)}
+                      variant="secondary"
+                      size="lg"
+                      className={showTrash ? "bg-gray-200" : ""}
+                      title={showTrash ? "Voltar para Clientes" : "Ver Lixeira"}
+                    >
+                      {showTrash ? "Voltar" : "Lixeira"}
+                    </ModernButton>
+
+                    {!showTrash && (
+                      <ModernButton
+                        icon={<Plus className="w-5 h-5" />}
+                        onClick={() => setShowForm(true)}
+                        variant="primary"
+                        size="lg"
+                      >
+                        {t('clients.newClient')}
+                      </ModernButton>
+                    )}
+                  </div>
                 </div>
               </motion.div>
 
@@ -286,7 +325,7 @@ export default function ClientRegistration() {
                 transition={{ delay: 0.2 }}
               >
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
-                  {searchQuery ? `Resultados (${filteredClients.length})` : `${t('clients.clientList')} (${filteredClients.length})`}
+                  {searchQuery ? `Resultados (${filteredClients.length})` : `${showTrash ? 'Lixeira' : t('clients.clientList')} (${filteredClients.length})`}
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -330,18 +369,39 @@ export default function ClientRegistration() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <ModernButton
-                            icon={<Edit className="w-4 h-4" />}
-                            onClick={() => handleEdit(client)}
-                            variant="secondary"
-                            size="sm"
-                          />
-                          <ModernButton
-                            icon={<Trash2 className="w-4 h-4" />}
-                            onClick={() => handleDelete(client.id)}
-                            variant="secondary"
-                            size="sm"
-                          />
+                          {showTrash ? (
+                            <>
+                              <ModernButton
+                                icon={<RefreshCcw className="w-4 h-4" />}
+                                onClick={() => handleRestore(client.id)}
+                                variant="secondary"
+                                size="sm"
+                                title="Restaurar"
+                              />
+                              <ModernButton
+                                icon={<Trash2 className="w-4 h-4 text-red-500" />}
+                                onClick={() => handlePermanentDelete(client.id)}
+                                variant="secondary"
+                                size="sm"
+                                title="Excluir Definitivamente"
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <ModernButton
+                                icon={<Edit className="w-4 h-4" />}
+                                onClick={() => handleEdit(client)}
+                                variant="secondary"
+                                size="sm"
+                              />
+                              <ModernButton
+                                icon={<Trash2 className="w-4 h-4" />}
+                                onClick={() => handleDelete(client.id)}
+                                variant="secondary"
+                                size="sm"
+                              />
+                            </>
+                          )}
                         </div>
                       </div>
 
@@ -360,15 +420,17 @@ export default function ClientRegistration() {
                         </div>
                       </div>
 
-                      <ModernButton
-                        icon={<Video className="w-4 h-4" />}
-                        onClick={() => handleConsultation(client)}
-                        variant="primary"
-                        size="lg"
-                        className="w-full justify-center"
-                      >
-                        {t('clients.goToConsultation')}
-                      </ModernButton>
+                      {!showTrash && (
+                        <ModernButton
+                          icon={<Video className="w-4 h-4" />}
+                          onClick={() => handleConsultation(client)}
+                          variant="primary"
+                          size="lg"
+                          className="w-full justify-center"
+                        >
+                          {t('clients.goToConsultation')}
+                        </ModernButton>
+                      )}
                     </motion.div>
                   ))}
                 </div>
@@ -556,6 +618,3 @@ export default function ClientRegistration() {
     </ProtectedRoute>
   );
 }
-
-
-

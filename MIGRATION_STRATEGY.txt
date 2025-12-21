@@ -1,0 +1,51 @@
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config({ path: '.env.local' });
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing environment variables.');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+async function runMigration() {
+  console.log('Running migration: ADD deleted_at to clients...');
+  
+  // We can use the RPC interface if there is a function to run sql, 
+  // OR we can just hope PostgREST doesn't block DDL (it usually does).
+  // Standard Supabase JS client doesn't support raw SQL query execution easily without a stored procedure.
+  // HOWEVER, for many "Agent" setups, we assume we might have a direct connection or a way to run query.
+  // IF we cannot run DDL via JS Client, we might need to ask the USER to run SQL in their Supabase Dashboard.
+  
+  // LET'S TRY to check if the column exists first by selecting it? 
+  // Actually, I'll instruct the user to run SQL or create a task for it if I can't.
+  
+  // Strategy: I will ask the user to add the column or try to use a "query" helper if one existed. 
+  // Since I don't see a "query" helper in the codebase, I will rely on the user or try to assume it might be there?
+  // User provided `add_city_column.sql` previously, implying they manually run SQL.
+  
+  // WAIT: I can just produce the SQL file and ask the user to run it? 
+  // OR, since this is "Agentic Coding" and I'm supposed to be autonomous... 
+  // I'll create the SQL file and try to run it via the `run_command` if there is a CLI tool, but there isn't.
+  
+  // I will create `add_deleted_at.sql` and ask user to run it? 
+  // BETTER: I can try to "soft delete" by adding a `status` column if it exists? No.
+  
+  // Let's create the SQL file and verify if I can run it. I probably can't.
+  // I will check `add_city_column.sql` to see if there was a pattern.
+  // It seems like a loose file.
+  
+  // I will proceed by Creating the SQL file.
+  // I'll also check if there is any existing "migration" pattern.
+  // There is NO migration pattern.
+  
+  // ALTERNATIVE: Use `supabase-admin` to run a known function? 
+  // Often Supabase projects have `exec_sql` function.
+  
+  // Let's look at `lib/supabase-admin.js` to see how it's initialized.
+}
+// I will just create the SQL file and notify the user to run it in Supabase SQL Editor.
+// This is the safest and most standard way for Supabase projects without a migration framework.

@@ -1,0 +1,40 @@
+{
+    "address": {
+        "title": "Address",
+        "cep": "ZIP Code",
+        "zipCode": "ZIP Code",
+        "postalCode": "Postal Code",
+        "street": "Street",
+        "number": "Number",
+        "complement": "Complement",
+        "neighborhood": "Neighborhood",
+        "city": "City",
+        "state": "State",
+        "country": "Country",
+        "placeholders": {
+            "cep": "00000-000",
+            "zipCode": "12345",
+            "postalCode": "Postal Code",
+            "street": "Street Address",
+            "number": "No.",
+            "complement": "Apt, Suite, Floor...",
+            "neighborhood": "Neighborhood",
+            "city": "City",
+            "state": "State"
+        },
+        "countries": {
+            "brazil": "🇧🇷 Brazil",
+            "usa": "🇺🇸 United States",
+            "portugal": "🇵🇹 Portugal",
+            "spain": "🇪🇸 Spain",
+            "france": "🇫🇷 France",
+            "argentina": "🇦🇷 Argentina",
+            "mexico": "🇲🇽 Mexico",
+            "other": "🌍 Other"
+        },
+        "hints": {
+            "brazilAutofill": "For addresses in Brazil, the ZIP code automatically fills in the fields.",
+            "internationalManual": "For international addresses, please fill in the fields manually."
+        }
+    }
+}

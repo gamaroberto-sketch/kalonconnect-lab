@@ -6,6 +6,11 @@ export default async function handler(req, res) {
     }
 
     try {
+        // Debug: Check if environment variables are loaded
+        console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET');
+        console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT SET');
+        console.log('GOOGLE_REDIRECT_URI:', process.env.GOOGLE_REDIRECT_URI);
+
         const oauth2Client = new google.auth.OAuth2(
             process.env.GOOGLE_CLIENT_ID,
             process.env.GOOGLE_CLIENT_SECRET,

@@ -36,9 +36,10 @@ const ConsultationUnified = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [files, setFiles] = useState([]);
   const [patientData, setPatientData] = useState({
-    name: 'João Silva',
+    id: '82c8a8ba-TEST-DRIVE', // Mock ID for testing matching the folder '82c8a8ba'
+    name: 'Teste Drive',
     age: 35,
-    email: 'joao@example.com',
+    email: 'teste@example.com',
     phone: '(11) 99999-9999',
     lastVisit: '15/01/2024'
   });
@@ -93,124 +94,134 @@ const ConsultationUnified = () => {
     }
   };
 
-  const handleFileUpload = (event) => {
+  // --- Integration Logic ---
+
+  const getAuthToken = () => {
+    const supabaseAuth = localStorage.getItem('sb-lpnzpimxwtexazokytjo-auth-token');
+    return supabaseAuth ? JSON.parse(supabaseAuth).access_token : null;
+  };
+
+  const saveNotesToDrive = async (notes) => {
+    const token = getAuthToken();
+    if (!token) return;
+
+    // Prioritize Router ID (Real scenario), fallback to PatientData ID (Mock/State)
+    const clientId = router.query.id || patientData.id;
+
+    if (!clientId) {
+      console.warn('Cannot save notes: No Client ID');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/consultations/notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          clientId,
+          notes,
+          date: new Date().toISOString().split('T')[0]
+        })
+      });
+      if (!res.ok) throw new Error('Failed to save');
+    } catch (error) {
+      console.error('Failed to save notes to Drive:', error);
+    }
+  };
+
+  const uploadFileToDrive = async (file) => {
+    const token = getAuthToken();
+    if (!token) {
+      alert('Erro de autenticação');
+      return null;
+    }
+
+    const clientId = router.query.id || patientData.id;
+    if (!clientId) {
+      alert('Erro: Cliente não identificado para upload');
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('clientId', clientId);
+
+    // Determine folder based on file type
+    let folder = 'Receitas';
+    if (file.type.startsWith('audio/')) folder = 'Player';
+    formData.append('targetFolder', folder);
+
+    try {
+      const response = await fetch('/api/drive/upload', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }, // Form data headers handled automatically
+        body: formData
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Upload failed');
+
+      alert(`Arquivo salvo com sucesso em: ${folder}`);
+      return data.file;
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Falha no upload para o Drive: ' + error.message);
+      return null;
+    }
+  };
+
+  // --- Event Handlers ---
+
+  const handleFileUpload = async (event) => {
     const uploadedFiles = Array.from(event.target.files);
-    const newFiles = uploadedFiles.map((file, index) => ({
-      id: `file-${Date.now()}-${index}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      uploadDate: formatDateObject(new Date())
-    }));
-    setFiles([...files, ...newFiles]);
+
+    // Process each file
+    for (const file of uploadedFiles) {
+      // Optimistic UI update
+      const tempId = `temp-${Date.now()}`;
+      setFiles(prev => [...prev, {
+        id: tempId,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadDate: formatDateObject(new Date()),
+        status: 'uploading'
+      }]);
+
+      // Real Upload
+      const driveFile = await uploadFileToDrive(file);
+
+      // Update UI with real result
+      setFiles(prev => prev.map(f => f.id === tempId ? {
+        ...f,
+        id: driveFile ? driveFile.id : f.id,
+        status: driveFile ? 'done' : 'error',
+        driveLink: driveFile ? driveFile.webViewLink : null
+      } : f));
+    }
   };
 
   // Auto-save notes (debounced)
   useEffect(() => {
-    if (isInitialLoad) return;
+    if (isInitialLoad || !patientNotes) return;
 
     setNotesSaved(false);
     const timer = setTimeout(async () => {
-      const consultationId = router.query.id || 'current';
-
-      try {
-        // Check if Drive is connected
-        const driveResponse = await fetch('/api/user/drive-status');
-        const driveData = await driveResponse.json();
-
-        if (driveData.connected) {
-          // Save to Google Drive
-          await fetch('/api/consultations/notes', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ consultationId, notes: patientNotes })
-          });
-        } else {
-          // Save to localStorage as fallback
-          localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
-        }
-
-        setNotesSaved(true);
-      } catch (error) {
-        console.error('Error auto-saving notes:', error);
-        // Fallback to localStorage
-        localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
-        setNotesSaved(true);
-      }
-    }, 2000); // Auto-save após 2 segundos de inatividade
+      await saveNotesToDrive(patientNotes);
+      setNotesSaved(true);
+    }, 2000); // 2s debounce
 
     return () => clearTimeout(timer);
-  }, [patientNotes, isInitialLoad, router.query.id]);
+  }, [patientNotes, isInitialLoad]);
 
-  // Carregar notas salvas
-  useEffect(() => {
-    async function loadNotes() {
-      const consultationId = router.query.id || 'current';
-
-      try {
-        // Check if Drive is connected
-        const driveResponse = await fetch('/api/user/drive-status');
-        const driveData = await driveResponse.json();
-
-        if (driveData.connected) {
-          // Load from Google Drive
-          const response = await fetch(`/api/consultations/notes?consultationId=${consultationId}`);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.notes) {
-              setPatientNotes(data.notes);
-            }
-          }
-        } else {
-          // Load from localStorage
-          const savedNotes = localStorage.getItem(`consultation_notes_${consultationId}`);
-          if (savedNotes) {
-            setPatientNotes(savedNotes);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading notes:', error);
-        // Fallback to localStorage
-        const savedNotes = localStorage.getItem(`consultation_notes_${consultationId}`);
-        if (savedNotes) {
-          setPatientNotes(savedNotes);
-        }
-      }
-    }
-
-    loadNotes();
-  }, [router.query.id]);
-
-  // Salvar manualmente
+  // Manual Save
   const handleSaveNotes = async () => {
     setIsSaving(true);
-    const consultationId = router.query.id || 'current';
-
-    try {
-      // Check if Drive is connected
-      const driveResponse = await fetch('/api/user/drive-status');
-      const driveData = await driveResponse.json();
-
-      if (driveData.connected) {
-        // Save to Google Drive
-        await fetch('/api/consultations/notes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ consultationId, notes: patientNotes })
-        });
-      } else {
-        // Save to localStorage
-        localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
-      }
-
-      setNotesSaved(true);
-      setTimeout(() => setIsSaving(false), 500);
-    } catch (error) {
-      console.error('Erro ao salvar notas:', error);
-      // Fallback to localStorage
-      localStorage.setItem(`consultation_notes_${consultationId}`, patientNotes);
-      setIsSaving(false);
-    }
+    await saveNotesToDrive(patientNotes);
+    setNotesSaved(true);
+    setTimeout(() => setIsSaving(false), 500);
   };
 
   return (
