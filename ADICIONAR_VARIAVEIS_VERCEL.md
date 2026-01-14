@@ -1,6 +1,6 @@
-# ✅ Adicionar Variáveis no Vercel (2 minutos)
+# ✅ Adicionar Variáveis no Vercel (Completo)
 
-## 🎯 Método Mais Fácil: Import .env
+## 🎯 Método Recomendado: Import .env
 
 ### Passo 1: Abrir a página de Environment Variables
 
@@ -10,62 +10,45 @@
 
 ### Passo 2: Importar .env.local
 
-1. Na página de Environment Variables, você verá um botão **"Import .env"**
-2. Clique nele
-3. Selecione o arquivo: `C:\kalonos\kalonconnect-lab\.env.local`
-4. Ou **cole o conteúdo** do `.env.local` na área de texto
+1. Na página de Environment Variables, você verá um botão **"Import .env"** ou uma área para colar.
+2. Copie **TODO o conteúdo** do seu arquivo local:
+   `C:\kalonos\kalonconnect-lab\.env.local`
+3. Cole na área de texto do Vercel.
 
-### Passo 3: Verificar e Salvar
+Isso deve incluir variáveis para:
+- **System** (`NEXT_PUBLIC_SITE_URL`)
+- **LiveKit** (`NEXT_PUBLIC_LIVEKIT_URL`, `LIVEKIT_API_KEY`, etc.)
+- **Supabase** (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, etc.)
+- **Google Drive** (`GOOGLE_CLIENT_ID`, etc.)
+- **Stripe** (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`)
+- **Email** (`RESEND_API_KEY`)
 
-1. O Vercel vai mostrar todas as variáveis encontradas
-2. Verifique se apareceram estas 3:
-   - `NEXT_PUBLIC_LIVEKIT_URL`
-   - `LIVEKIT_API_KEY`
-   - `LIVEKIT_API_SECRET`
-3. Marque **"All Environments"** (ou Production, Preview, Development)
-4. Clique em **"Save"**
+### Passo 3: Salvar
 
-**Pronto!** 🎉
-
----
-
-## 📋 Conteúdo do .env.local (para colar)
-
-Se preferir colar diretamente, copie isso:
-
-```
-NEXT_PUBLIC_LIVEKIT_URL=wss://kalonconnect-l8yds5a1.livekit.cloud
-LIVEKIT_API_KEY=APIswZsdLeonhgP
-LIVEKIT_API_SECRET=F9EoIYeheeU7HSCITZEECuvUtJAeebptheGFBxgRkZeC
-```
+1. Marque **"All Environments"** (Production, Preview, Development).
+2. Clique em **"Save"**.
 
 ---
 
 ## 🚀 Depois de Adicionar
 
-Execute:
+Execute o deploy novamente para que as variáveis entrem em vigor:
 
 ```powershell
-cd C:\kalonos\kalonconnect-lab
+cd c:\kalonos\kalonconnect-lab
 vercel --prod
 ```
+
+Ou vá no Dashboard do Vercel e clique em **Redeploy** no último deployment.
 
 ---
 
 ## ✅ Verificar se Funcionou
 
-1. Vá em **Deployments** no Vercel
-2. Clique no último deploy
-3. Veja os **Logs** - não deve ter erros de "LiveKit não configurado"
-4. Teste o app - geração de link deve funcionar!
-
----
-
-**É isso! Muito mais fácil que adicionar uma por uma.** 🎉
-
-
-
-
-
-
-
+1. Vá em **Deployments** no Vercel.
+2. Clique no último deploy.
+3. Teste o app:
+   - Login (Supabase)
+   - Agendamento/Pagamento (Stripe)
+   - Videochamada (LiveKit)
+   - Integração Drive (Google)

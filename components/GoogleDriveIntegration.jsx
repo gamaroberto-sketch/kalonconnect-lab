@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../components/ThemeProvider';
+import { useTranslation } from '../hooks/useTranslation';
 import { HardDrive, CheckCircle, XCircle, Loader, AlertCircle, ExternalLink, Upload, FolderPlus, FileText, ShieldCheck, Check, Cloud } from 'lucide-react';
 
 const GoogleDriveIntegration = () => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { t } = useTranslation();
   const [driveConnected, setDriveConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -257,10 +259,10 @@ const GoogleDriveIntegration = () => {
         </div>
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            Integração Google Drive
+            {t('integrations.googleDrive.title')}
           </h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Armazene dados de clientes no seu Drive pessoal
+            {t('integrations.googleDrive.description')}
           </p>
         </div>
       </div>
@@ -279,24 +281,24 @@ const GoogleDriveIntegration = () => {
       <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: `${themeColors.primary}10` }}>
         <h4 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
           <ShieldCheck className="w-5 h-5" style={{ color: themeColors.primary }} />
-          Seus dados, seu controle!
+          {t('integrations.googleDrive.security.title')}
         </h4>
         <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
           <li className="flex items-start gap-2">
             <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
-            <span>Dados de clientes ficam no <strong>SEU Google Drive</strong></span>
+            <span dangerouslySetInnerHTML={{ __html: t('integrations.googleDrive.security.clientData') }} />
           </li>
           <li className="flex items-start gap-2">
             <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
-            <span>KalonConnect <strong>nunca</strong> armazena informações sensíveis</span>
+            <span dangerouslySetInnerHTML={{ __html: t('integrations.googleDrive.security.neverStores') }} />
           </li>
           <li className="flex items-start gap-2">
             <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
-            <span>Backup automático do Google</span>
+            <span>{t('integrations.googleDrive.security.autoBackup')}</span>
           </li>
           <li className="flex items-start gap-2">
             <Check className="w-4 h-4 mt-0.5" style={{ color: themeColors.primary }} />
-            <span>Acesse de qualquer dispositivo</span>
+            <span>{t('integrations.googleDrive.security.accessAnywhere')}</span>
           </li>
         </ul>
       </div>
@@ -308,11 +310,11 @@ const GoogleDriveIntegration = () => {
               <CheckCircle className="w-6 h-6" style={{ color: themeColors.primary }} />
               <div>
                 <p className="font-semibold text-gray-900 dark:text-gray-100">
-                  Google Drive Conectado
+                  {t('integrations.googleDrive.statusMessages.connected')}
                 </p>
                 {connectedAt && (
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Conectado em {new Date(connectedAt).toLocaleDateString('pt-BR')}
+                    {t('integrations.googleDrive.statusMessages.connectedOn')} {new Date(connectedAt).toLocaleDateString('pt-BR')}
                   </p>
                 )}
               </div>
@@ -321,7 +323,7 @@ const GoogleDriveIntegration = () => {
               onClick={disconnectGoogleDrive}
               className="px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors text-sm font-medium"
             >
-              Desconectar
+              {t('integrations.googleDrive.actions.disconnect')}
             </button>
           </div>
 
@@ -334,7 +336,7 @@ const GoogleDriveIntegration = () => {
               style={{ backgroundColor: themeColors.primary }}
             >
               {actionLoading ? <Loader className="w-3 h-3 animate-spin" /> : <FolderPlus className="w-4 h-4" />}
-              Criar Pastas Padrão
+              {t('integrations.googleDrive.actions.createFolders')}
             </button>
 
             <button
@@ -344,13 +346,13 @@ const GoogleDriveIntegration = () => {
               style={{ backgroundColor: themeColors.primary }}
             >
               {actionLoading ? <Loader className="w-3 h-3 animate-spin" /> : <FileText className="w-4 h-4" />}
-              Listar Arquivos
+              {t('integrations.googleDrive.actions.listFiles')}
             </button>
           </div>
 
           {/* Upload Section */}
           <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-700">
-            <h4 className="font-semibold text-gray-700 dark:text-gray-200 text-sm mb-2">Enviar Arquivo (Teste)</h4>
+            <h4 className="font-semibold text-gray-700 dark:text-gray-200 text-sm mb-2">{t('integrations.googleDrive.upload.title')}</h4>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="file"
@@ -370,20 +372,20 @@ const GoogleDriveIntegration = () => {
                 style={{ backgroundColor: themeColors.primary }}
               >
                 {actionLoading ? <Loader className="w-3 h-3 animate-spin" /> : <Upload className="w-4 h-4" />}
-                Enviar para Drive
+                {t('integrations.googleDrive.actions.uploadToDrive')}
               </button>
             </div>
-            {selectedFile && <p className="text-xs text-gray-500 mt-2">Selecionado: {selectedFile.name}</p>}
+            {selectedFile && <p className="text-xs text-gray-500 mt-2">{t('integrations.googleDrive.upload.selected')} {selectedFile.name}</p>}
           </div>
 
           {/* File List Area */}
           {fileList && (
             <div className="mt-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 max-h-48 overflow-y-auto">
               <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 sticky top-0">
-                <p className="text-xs font-semibold text-gray-500 uppercase">Arquivos no Drive (Últimos 10)</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase">{t('integrations.googleDrive.fileList.title')}</p>
               </div>
               {fileList.length === 0 ? (
-                <div className="p-4 text-center text-sm text-gray-400">Nenhum arquivo encontrado.</div>
+                <div className="p-4 text-center text-sm text-gray-400">{t('integrations.googleDrive.fileList.noFiles')}</div>
               ) : (
                 <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                   {fileList.map(f => (
@@ -403,10 +405,10 @@ const GoogleDriveIntegration = () => {
             <XCircle className="w-6 h-6 text-gray-400" />
             <div>
               <p className="font-semibold text-gray-900 dark:text-white">
-                Google Drive Não Conectado
+                {t('integrations.googleDrive.statusMessages.notConnected')}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Conecte para armazenar dados com segurança
+                {t('integrations.googleDrive.statusMessages.connectPrompt')}
               </p>
             </div>
           </div>
@@ -417,7 +419,7 @@ const GoogleDriveIntegration = () => {
             style={{ backgroundColor: themeColors.primary }}
           >
             <HardDrive className="w-5 h-5" />
-            Conectar Google Drive
+            {t('integrations.googleDrive.actions.connect')}
           </button>
         </div>
       )}
@@ -426,28 +428,28 @@ const GoogleDriveIntegration = () => {
       {/* What Gets Stored */}
       <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
         <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-          O que é armazenado no Google Drive?
+          {t('integrations.googleDrive.storage.title')}
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
             <p className="text-sm font-medium text-gray-900 dark:text-white mb-1 flex items-center gap-2">
               <Check className="w-4 h-4" style={{ color: themeColors.primary }} />
-              No seu Drive
+              {t('integrations.googleDrive.storage.inYourDrive')}
             </p>
             <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1 ml-6">
-              <li>• Dados de clientes/pacientes</li>
-              <li>• Notas de consultas</li>
-              <li>• Documentos gerados</li>
+              <li>• {t('integrations.googleDrive.storage.clientData')}</li>
+              <li>• {t('integrations.googleDrive.storage.consultationNotes')}</li>
+              <li>• {t('integrations.googleDrive.storage.generatedDocs')}</li>
             </ul>
           </div>
           <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
             <p className="text-sm font-medium text-gray-900 dark:text-white mb-1 flex items-center gap-2">
               <Cloud className="w-4 h-4" style={{ color: themeColors.primary }} />
-              No KalonConnect
+              {t('integrations.googleDrive.storage.inKalonConnect')}
             </p>
             <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1 ml-6">
-              <li>• Seu perfil profissional</li>
-              <li>• Plano e assinatura</li>
+              <li>• {t('integrations.googleDrive.storage.professionalProfile')}</li>
+              <li>• {t('integrations.googleDrive.storage.planSubscription')}</li>
               <li>• Produtos e eventos</li>
             </ul>
           </div>
