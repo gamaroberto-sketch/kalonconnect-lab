@@ -151,8 +151,6 @@ const SubscriptionPanel = () => {
                 'Tudo do Pro +',
                 '🎯 Sistema de Créditos (100/mês)',
                 'IA para transcrição automática',
-                'API de integração',
-                'White-label personalizado',
             ],
             current: isPremium,
             premium: true,
