@@ -111,7 +111,7 @@
     "subtitle": "Entre com suas credenciais",
     "emailPlaceholder": "seu@email.com",
     "passwordPlaceholder": "Sua senha",
-    "loginButton": "Entrar",
+    "loginButton": "Acessar Plataforma",
     "forgotPassword": "Esqueceu a senha?",
     "noAccount": "Não tem uma conta?",
     "signUp": "Criar Conta",
@@ -121,8 +121,8 @@
       "network": "Não foi possível conectar. Verifique sua rede e tente novamente."
     },
     "tagline": {
-      "main": "Tecnologia com Alma",
-      "sub": "Quando a Alma fala, o Corpo escuta e o Espírito conduz..."
+      "main": "Tecnologia com Alma para quem cuida de pessoas",
+      "sub": "Quando a Alma fala, o Corpo relaxa e o Espírito conduz."
     },
     "hidePassword": "Ocultar senha",
     "showPassword": "Mostrar senha",
