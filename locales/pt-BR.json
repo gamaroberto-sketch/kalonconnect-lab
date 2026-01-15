@@ -466,10 +466,12 @@
       "signature": "Assinatura",
       "advanced": "Avançado",
       "general": "Geral",
-      "branding": "Identidade",
+      "branding": "Temas",
+      "drive": "Google Drive",
       "integrations": "Integrações",
       "invites": "Convites",
-      "credentials": "Credenciais"
+      "credentials": "Credenciais",
+      "language": "Idioma"
     },
     "language": {
       "title": "Idioma",

@@ -142,6 +142,113 @@
     "backToLogin": "Volver al Login",
     "errorCreating": "Error al crear cuenta."
   },
+  "about": {
+    "title": "Sobre Nosotros",
+    "subtitle": "Conoce nuestra historia y propósito",
+    "mission": {
+      "title": "Nuestra Misión",
+      "description": "Facilitar la gestión profesional de terapias, consultas y eventos, conectando profesionales y clientes a través de una plataforma segura, eficiente e intuitiva, que valora el cuidado humano aliado a la tecnología."
+    },
+    "vision": {
+      "title": "Nuestra Visión",
+      "description": "Ser la plataforma de referencia en gestión y conexión en el área de la salud integrativa y del cuidado emocional, reconocida por la innovación, confiabilidad e impacto positivo en la vida de las personas y en la sociedad."
+    },
+    "values": {
+      "title": "Nuestros Valores",
+      "description": "Empatía en el cuidado, seguridad de la información, innovación continua, excelencia en la experiencia y compromiso genuino con el bienestar emocional y humano."
+    },
+    "team": {
+      "title": "Nuestro Equipo",
+      "developers": {
+        "title": "Nuestro Equipo",
+        "description": "Equipo especializado en desarrollar soluciones tecnológicas robustas, escalables y seguras, enfocadas en las necesidades reales de profesionales y clientes."
+      },
+      "designers": {
+        "title": "Diseñadores",
+        "description": "Profesionales dedicados a la creación de experiencias intuitivas, accesibles y acogedoras, donde la tecnología y la sensibilidad caminan juntas."
+      },
+      "security": {
+        "title": "Seguridad",
+        "description": "Especialistas en protección de datos, privacidad y cumplimiento, garantizando confianza, integridad y tranquilidad en cada interacción en la plataforma."
+      }
+    }
+  },
+  "integrations": {
+    "googleDrive": {
+      "title": "Google Drive",
+      "status": "Estado de Conexión",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "folderLabel": "Carpeta Predeterminada para Archivos",
+      "folderPlaceholder": "Ej: Clientes/KalonConnect",
+      "security": {
+        "title": "¡Tus datos, tu control!",
+        "clientData": "Los datos de clientes quedan en <strong>TU Google Drive</strong>",
+        "neverStores": "KalonConnect <strong>nunca</strong> almacena información sensible",
+        "autoBackup": "Copia de seguridad automática de Google",
+        "accessAnywhere": "Accede desde cualquier dispositivo"
+      },
+      "statusMessages": {
+        "connected": "Google Drive Conectado",
+        "connectedOn": "Conectado el",
+        "notConnected": "Google Drive No Conectado",
+        "connectPrompt": "Conéctate para almacenar datos de forma segura"
+      },
+      "actions": {
+        "disconnect": "Desconectar",
+        "connect": "Conectar Google Drive",
+        "createFolders": "Crear Carpetas Predeterminadas",
+        "listFiles": "Listar Archivos",
+        "uploadToDrive": "Enviar al Drive"
+      },
+      "upload": {
+        "title": "Enviar Archivo (Prueba)",
+        "selected": "Seleccionado:"
+      },
+      "fileList": {
+        "title": "Archivos en Drive (Últimos 10)",
+        "noFiles": "No se encontraron archivos."
+      },
+      "storage": {
+        "title": "¿Qué se almacena en Google Drive?",
+        "inYourDrive": "En tu Drive",
+        "inKalonConnect": "En KalonConnect",
+        "clientData": "Datos de clientes/pacientes",
+        "consultationNotes": "Notas de consultas",
+        "generatedDocs": "Documentos generados",
+        "professionalProfile": "Tu perfil profesional",
+        "planSubscription": "Plan y suscripción"
+      },
+      "features": {
+        "clients": {
+          "title": "Registro de Clientes",
+          "desc": "Automático"
+        },
+        "videos": {
+          "title": "Videos de Sesión",
+          "desc": "Respaldo Automático"
+        },
+        "records": {
+          "title": "Registros de Consultas",
+          "desc": "Almacenamiento Seguro"
+        }
+      }
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "status": "Estado de Conexión",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "phoneLabel": "Número de Móvil",
+      "phonePlaceholder": "+34 612 345 678",
+      "autoMessage": "Mensaje Automático",
+      "autoMessageDesc": "Enviar mensaje de bienvenida al iniciar sesión"
+    }
+  },
   "forgotPassword": {
     "title": "Recuperar Contraseña",
     "subtitle": "Ingresa tu email para recibir un enlace de restablecimiento de contraseña.",
@@ -430,10 +537,12 @@
       "signature": "Firma",
       "advanced": "Avanzado",
       "general": "General",
-      "branding": "Identidad",
+      "branding": "Temas",
+      "drive": "Google Drive",
       "integrations": "Integraciones",
       "invites": "Invitaciones",
-      "credentials": "Credenciales"
+      "credentials": "Credenciales",
+      "language": "Idioma"
     },
     "language": {
       "title": "Idioma",
@@ -494,82 +603,6 @@
       "uploadLogo": "Subir Logo",
       "uploadPhoto": "Subir Foto",
       "uploadAvatar": "Subir Avatar"
-    },
-    "integrations": {
-      "googleDrive": {
-        "title": "Google Drive",
-        "status": "Estado de Conexión",
-        "connected": "Conectado",
-        "disconnected": "Desconectado",
-        "connect": "Conectar",
-        "disconnect": "Desconectar",
-        "folderLabel": "Carpeta Predeterminada para Archivos",
-        "folderPlaceholder": "Ej: Clientes/KalonConnect",
-        "security": {
-          "title": "¡Tus datos, tu control!",
-          "clientData": "Los datos de clientes quedan en <strong>TU Google Drive</strong>",
-          "neverStores": "KalonConnect <strong>nunca</strong> almacena información sensible",
-          "autoBackup": "Copia de seguridad automática de Google",
-          "accessAnywhere": "Accede desde cualquier dispositivo"
-        },
-        "statusMessages": {
-          "connected": "Google Drive Conectado",
-          "connectedOn": "Conectado el",
-          "notConnected": "Google Drive No Conectado",
-          "connectPrompt": "Conéctate para almacenar datos de forma segura"
-        },
-        "actions": {
-          "disconnect": "Desconectar",
-          "connect": "Conectar Google Drive",
-          "createFolders": "Crear Carpetas Predeterminadas",
-          "listFiles": "Listar Archivos",
-          "uploadToDrive": "Enviar al Drive"
-        },
-        "upload": {
-          "title": "Enviar Archivo (Prueba)",
-          "selected": "Seleccionado:"
-        },
-        "fileList": {
-          "title": "Archivos en Drive (Últimos 10)",
-          "noFiles": "No se encontraron archivos."
-        },
-        "storage": {
-          "title": "¿Qué se almacena en Google Drive?",
-          "inYourDrive": "En tu Drive",
-          "inKalonConnect": "En KalonConnect",
-          "clientData": "Datos de clientes/pacientes",
-          "consultationNotes": "Notas de consultas",
-          "generatedDocs": "Documentos generados",
-          "professionalProfile": "Tu perfil profesional",
-          "planSubscription": "Plan y suscripción"
-        },
-        "features": {
-          "clients": {
-            "title": "Registro de Clientes",
-            "desc": "Automático"
-          },
-          "videos": {
-            "title": "Videos de Sesión",
-            "desc": "Respaldo Automático"
-          },
-          "records": {
-            "title": "Registros de Consultas",
-            "desc": "Almacenamiento Seguro"
-          }
-        }
-      },
-      "whatsapp": {
-        "title": "WhatsApp",
-        "status": "Estado de Conexión",
-        "connected": "Conectado",
-        "disconnected": "Desconectado",
-        "connect": "Conectar",
-        "disconnect": "Desconectar",
-        "phoneLabel": "Número de Móvil",
-        "phonePlaceholder": "+34 612 345 678",
-        "autoMessage": "Mensaje Automático",
-        "autoMessageDesc": "Enviar mensaje de bienvenida al iniciar sesión"
-      }
     },
     "backgrounds": {
       "screen": {
@@ -1044,43 +1077,6 @@
       "errorExpire": "No se pudo finalizar la invitación.",
       "errorCopy": "No se pudo copiar el enlace automáticamente.",
       "errorGeneric": "Error al cargar invitaciones."
-    }
-  },
-  "about": {
-    "title": "Acerca de KalonConnect",
-    "subtitle": "Transformamos la gestión de salud mental con tecnología, empatía y excelencia.",
-    "mission": {
-      "title": "Nuestra Misión",
-      "description": "Facilitar la gestión profesional de terapias y eventos, conectando profesionales y pacientes de forma segura y eficiente."
-    },
-    "vision": {
-      "title": "Nuestra Visión",
-      "description": "Ser la plataforma líder en gestión de salud mental, reconocida por innovación e impacto positivo en la sociedad."
-    },
-    "values": {
-      "title": "Nuestros Valores",
-      "description": "Empatía, seguridad, innovación, calidad y compromiso con el bienestar mental de todos."
-    },
-    "team": {
-      "title": "Nuestro Equipo",
-      "developers": {
-        "title": "Desarrolladores",
-        "description": "Equipo especializado en crear soluciones tecnológicas innovadoras."
-      },
-      "designers": {
-        "title": "Diseñadores",
-        "description": "Profesionales enfocados en experiencia del usuario y accesibilidad."
-      },
-      "security": {
-        "title": "Seguridad",
-        "description": "Expertos en protección de datos y privacidad."
-      }
-    },
-    "cta": {
-      "title": "¿Listo para comenzar?",
-      "subtitle": "Pruebe Kalon OS y transforme su gestión de consultas.",
-      "startNow": "Comenzar Ahora",
-      "learnMore": "Saber Más"
     }
   },
   "guide": {

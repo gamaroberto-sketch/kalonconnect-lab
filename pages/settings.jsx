@@ -52,15 +52,15 @@ const ProfileNew = () => {
     }, [darkMode]);
 
     const tabs = [
-        { id: 'profile', label: 'Perfil', icon: <User size={18} /> },
-        { id: 'branding', label: 'Temas', icon: <Palette size={18} /> },
-        { id: 'drive', label: 'Google Drive', icon: <Cloud size={18} /> },
-        { id: 'integrations', label: 'Integrações', icon: <Cloud size={18} /> },
-        { id: 'invites', label: 'Convites', icon: <Send size={18} /> },
-        { id: 'credentials', label: 'Credenciais', icon: <Key size={18} /> },
-        { id: 'language', label: 'Idioma', icon: <Languages size={18} /> },
-        { id: 'waiting_room', label: 'Sala de Espera', icon: <VideoIcon size={18} /> },
-        { id: 'signature', label: 'Assinatura', icon: <PenTool size={18} /> },
+        { id: 'profile', label: t('settings.tabs.profile'), icon: <User size={18} /> },
+        { id: 'branding', label: t('settings.tabs.branding'), icon: <Palette size={18} /> },
+        { id: 'drive', label: t('settings.tabs.drive'), icon: <Cloud size={18} /> },
+        { id: 'integrations', label: t('settings.tabs.integrations'), icon: <Cloud size={18} /> },
+        { id: 'invites', label: t('settings.tabs.invites'), icon: <Send size={18} /> },
+        { id: 'credentials', label: t('settings.tabs.credentials'), icon: <Key size={18} /> },
+        { id: 'language', label: t('settings.tabs.language'), icon: <Languages size={18} /> },
+        { id: 'waiting_room', label: t('settings.tabs.waiting_room'), icon: <VideoIcon size={18} /> },
+        { id: 'signature', label: t('settings.tabs.signature'), icon: <PenTool size={18} /> },
     ];
 
     return (
