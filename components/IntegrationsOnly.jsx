@@ -49,10 +49,10 @@ const IntegrationsOnly = () => {
                     <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div>
                             <p className="font-medium text-gray-800 dark:text-white">
-                                {t('settings.integrations.googleDrive.status')}
+                                {t('integrations.googleDrive.status')}
                             </p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {googleDriveConnected ? t('settings.integrations.googleDrive.connected') : t('settings.integrations.googleDrive.disconnected')}
+                                {googleDriveConnected ? t('integrations.googleDrive.connected') : t('integrations.googleDrive.disconnected')}
                             </p>
                         </div>
                         {googleDriveConnected ? (
@@ -61,7 +61,7 @@ const IntegrationsOnly = () => {
                                 variant="secondary"
                                 size="sm"
                             >
-                                {t('settings.integrations.googleDrive.disconnect')}
+                                {t('integrations.googleDrive.disconnect')}
                             </ModernButton>
                         ) : (
                             <ModernButton
@@ -69,13 +69,13 @@ const IntegrationsOnly = () => {
                                 variant="primary"
                                 size="sm"
                             >
-                                {t('settings.integrations.googleDrive.connect')}
+                                {t('integrations.googleDrive.connect')}
                             </ModernButton>
                         )}
                     </div>
 
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {t('settings.integrations.googleDrive.description')}
+                        {t('integrations.googleDrive.description')}
                     </p>
                 </div>
             </div>
@@ -93,10 +93,10 @@ const IntegrationsOnly = () => {
                     <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div>
                             <p className="font-medium text-gray-800 dark:text-white">
-                                {t('settings.integrations.whatsapp.status')}
+                                {t('integrations.whatsapp.status')}
                             </p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {whatsappConnected ? t('settings.integrations.whatsapp.connected') : t('settings.integrations.whatsapp.disconnected')}
+                                {whatsappConnected ? t('integrations.whatsapp.connected') : t('integrations.whatsapp.disconnected')}
                             </p>
                         </div>
                         {whatsappConnected ? (

@@ -651,10 +651,10 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-800 dark:text-white">
-                      {t('settings.integrations.googleDrive.status')}
+                      {t('integrations.googleDrive.status')}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {googleDriveConnected ? t('settings.integrations.googleDrive.connected') : t('settings.integrations.googleDrive.disconnected')}
+                      {googleDriveConnected ? t('integrations.googleDrive.connected') : t('integrations.googleDrive.disconnected')}
                     </p>
                   </div>
                   {googleDriveConnected ? (
@@ -663,7 +663,7 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                       variant="secondary"
                       size="sm"
                     >
-                      {t('settings.integrations.googleDrive.disconnect')}
+                      {t('integrations.googleDrive.disconnect')}
                     </ModernButton>
                   ) : (
                     <ModernButton
@@ -671,7 +671,7 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                       variant="primary"
                       size="sm"
                     >
-                      {t('settings.integrations.googleDrive.connect')}
+                      {t('integrations.googleDrive.connect')}
                     </ModernButton>
                   )}
                 </div>
@@ -680,13 +680,13 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        {t('settings.integrations.googleDrive.folderLabel')}
+                        {t('integrations.googleDrive.folderLabel')}
                       </label>
                       <input
                         type="text"
                         value={googleDriveFolder}
                         onChange={(e) => setGoogleDriveFolder(e.target.value)}
-                        placeholder={t('settings.integrations.googleDrive.folderPlaceholder')}
+                        placeholder={t('integrations.googleDrive.folderPlaceholder')}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -698,10 +698,10 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                       }}>
                         <FolderOpen className="w-6 h-6 mb-2" style={{ color: 'white' }} />
                         <p className="font-medium text-white">
-                          {t('settings.integrations.googleDrive.features.clients.title')}
+                          {t('integrations.googleDrive.features.clients.title')}
                         </p>
                         <p className="text-sm text-white/90">
-                          {t('settings.integrations.googleDrive.features.clients.desc')}
+                          {t('integrations.googleDrive.features.clients.desc')}
                         </p>
                       </div>
 
@@ -711,20 +711,20 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                       }}>
                         <VideoIcon className="w-6 h-6 mb-2 text-gray-600" />
                         <p className="font-medium text-gray-800">
-                          {t('settings.integrations.googleDrive.features.videos.title')}
+                          {t('integrations.googleDrive.features.videos.title')}
                         </p>
                         <p className="text-sm text-gray-700">
-                          {t('settings.integrations.googleDrive.features.videos.desc')}
+                          {t('integrations.googleDrive.features.videos.desc')}
                         </p>
                       </div>
 
                       <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 md:col-span-2">
                         <FileText className="w-6 h-6 mb-2" style={{ color: themeColors.primary }} />
                         <p className="font-medium text-gray-800 dark:text-white">
-                          {t('settings.integrations.googleDrive.features.records.title')}
+                          {t('integrations.googleDrive.features.records.title')}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {t('settings.integrations.googleDrive.features.records.desc')}
+                          {t('integrations.googleDrive.features.records.desc')}
                         </p>
                       </div>
                     </div>
@@ -751,10 +751,10 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-800 dark:text-white">
-                      {t('settings.integrations.whatsapp.status')}
+                      {t('integrations.whatsapp.status')}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {whatsappConnected ? t('settings.integrations.whatsapp.connected') : t('settings.integrations.whatsapp.disconnected')}
+                      {whatsappConnected ? t('integrations.whatsapp.connected') : t('integrations.whatsapp.disconnected')}
                     </p>
                   </div>
                   {whatsappConnected ? (
@@ -763,7 +763,7 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                       variant="secondary"
                       size="sm"
                     >
-                      {t('settings.integrations.whatsapp.disconnect')}
+                      {t('integrations.whatsapp.disconnect')}
                     </ModernButton>
                   ) : (
                     <ModernButton
@@ -771,7 +771,7 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                       variant="primary"
                       size="sm"
                     >
-                      {t('settings.integrations.whatsapp.connect')}
+                      {t('integrations.whatsapp.connect')}
                     </ModernButton>
                   )}
                 </div>
@@ -779,13 +779,13 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                 {/* Phone Number Input - ALWAYS VISIBLE */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t('settings.integrations.whatsapp.phoneLabel')}
+                    {t('integrations.whatsapp.phoneLabel')}
                   </label>
                   <input
                     type="tel"
                     value={whatsappNumber}
                     onChange={(e) => setWhatsappNumber(e.target.value)}
-                    placeholder={t('settings.integrations.whatsapp.phonePlaceholder')}
+                    placeholder={t('integrations.whatsapp.phonePlaceholder')}
                     disabled={whatsappConnected}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
@@ -820,10 +820,10 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                       }}>
                         <Phone className="w-6 h-6 mb-2 text-white" />
                         <p className="font-medium text-white mb-1">
-                          {t('settings.integrations.whatsapp.autoMessage')}
+                          {t('integrations.whatsapp.autoMessage')}
                         </p>
                         <p className="text-sm text-white/90">
-                          {t('settings.integrations.whatsapp.autoMessageDesc')}
+                          {t('integrations.whatsapp.autoMessageDesc')}
                         </p>
                       </div>
                     )}

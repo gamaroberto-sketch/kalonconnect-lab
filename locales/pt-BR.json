@@ -500,82 +500,6 @@
       "uploadPhoto": "Upload Foto",
       "uploadAvatar": "Upload Avatar"
     },
-    "integrations": {
-      "googleDrive": {
-        "title": "Google Drive",
-        "status": "Status da Conexão",
-        "connected": "Conectado",
-        "disconnected": "Desconectado",
-        "connect": "Conectar",
-        "disconnect": "Desconectar",
-        "folderLabel": "Pasta Padrão para Arquivos",
-        "folderPlaceholder": "Ex: Clientes/KalonConnect",
-        "security": {
-          "title": "Seus dados, seu controle!",
-          "clientData": "Dados de clientes ficam no <strong>SEU Google Drive</strong>",
-          "neverStores": "KalonConnect <strong>nunca</strong> armazena informações sensíveis",
-          "autoBackup": "Backup automático do Google",
-          "accessAnywhere": "Acesse de qualquer dispositivo"
-        },
-        "statusMessages": {
-          "connected": "Google Drive Conectado",
-          "connectedOn": "Conectado em",
-          "notConnected": "Google Drive Não Conectado",
-          "connectPrompt": "Conecte para armazenar dados com segurança"
-        },
-        "actions": {
-          "disconnect": "Desconectar",
-          "connect": "Conectar Google Drive",
-          "createFolders": "Criar Pastas Padrão",
-          "listFiles": "Listar Arquivos",
-          "uploadToDrive": "Enviar para Drive"
-        },
-        "upload": {
-          "title": "Enviar Arquivo (Teste)",
-          "selected": "Selecionado:"
-        },
-        "fileList": {
-          "title": "Arquivos no Drive (Últimos 10)",
-          "noFiles": "Nenhum arquivo encontrado."
-        },
-        "storage": {
-          "title": "O que é armazenado no Google Drive?",
-          "inYourDrive": "No seu Drive",
-          "inKalonConnect": "No KalonConnect",
-          "clientData": "Dados de clientes/pacientes",
-          "consultationNotes": "Notas de consultas",
-          "generatedDocs": "Documentos gerados",
-          "professionalProfile": "Seu perfil profissional",
-          "planSubscription": "Plano e assinatura"
-        },
-        "features": {
-          "clients": {
-            "title": "Cadastro de Clientes",
-            "desc": "Automático"
-          },
-          "videos": {
-            "title": "Vídeos de Sessão",
-            "desc": "Backup Automático"
-          },
-          "records": {
-            "title": "Registros de Consultas",
-            "desc": "Armazenamento Seguro"
-          }
-        }
-      },
-      "whatsapp": {
-        "title": "WhatsApp",
-        "status": "Status da Conexão",
-        "connected": "Conectado",
-        "disconnected": "Desconectado",
-        "connect": "Conectar",
-        "disconnect": "Desconectar",
-        "phoneLabel": "Número do Celular",
-        "phonePlaceholder": "+55 21 98765-4321",
-        "autoMessage": "Mensagem Automática",
-        "autoMessageDesc": "Enviar mensagem de boas-vindas ao iniciar sessão"
-      }
-    },
     "backgrounds": {
       "screen": {
         "gradientBlue": "Azul Gradiente",
@@ -1844,6 +1768,82 @@
       "history": {
         "title": "Histórico de Envios"
       }
+    }
+  },
+  "integrations": {
+    "googleDrive": {
+      "title": "Google Drive",
+      "status": "Status da Conexão",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "folderLabel": "Pasta Padrão para Arquivos",
+      "folderPlaceholder": "Ex: Clientes/KalonConnect",
+      "security": {
+        "title": "Seus dados, seu controle!",
+        "clientData": "Dados de clientes ficam no <strong>SEU Google Drive</strong>",
+        "neverStores": "KalonConnect <strong>nunca</strong> armazena informações sensíveis",
+        "autoBackup": "Backup automático do Google",
+        "accessAnywhere": "Acesse de qualquer dispositivo"
+      },
+      "statusMessages": {
+        "connected": "Google Drive Conectado",
+        "connectedOn": "Conectado em",
+        "notConnected": "Google Drive Não Conectado",
+        "connectPrompt": "Conecte para armazenar dados com segurança"
+      },
+      "actions": {
+        "disconnect": "Desconectar",
+        "connect": "Conectar Google Drive",
+        "createFolders": "Criar Pastas Padrão",
+        "listFiles": "Listar Arquivos",
+        "uploadToDrive": "Enviar para Drive"
+      },
+      "upload": {
+        "title": "Enviar Arquivo (Teste)",
+        "selected": "Selecionado:"
+      },
+      "fileList": {
+        "title": "Arquivos no Drive (Últimos 10)",
+        "noFiles": "Nenhum arquivo encontrado."
+      },
+      "storage": {
+        "title": "O que é armazenado no Google Drive?",
+        "inYourDrive": "No seu Drive",
+        "inKalonConnect": "No KalonConnect",
+        "clientData": "Dados de clientes/pacientes",
+        "consultationNotes": "Notas de consultas",
+        "generatedDocs": "Documentos gerados",
+        "professionalProfile": "Seu perfil profissional",
+        "planSubscription": "Plano e assinatura"
+      },
+      "features": {
+        "clients": {
+          "title": "Cadastro de Clientes",
+          "desc": "Automático"
+        },
+        "videos": {
+          "title": "Vídeos de Sessão",
+          "desc": "Backup Automático"
+        },
+        "records": {
+          "title": "Registros de Consultas",
+          "desc": "Armazenamento Seguro"
+        }
+      }
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "status": "Status da Conexão",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "phoneLabel": "Número do Celular",
+      "phonePlaceholder": "+55 21 98765-4321",
+      "autoMessage": "Mensagem Automática",
+      "autoMessageDesc": "Enviar mensagem de boas-vindas ao iniciar sessão"
     }
   }
 }
