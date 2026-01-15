@@ -113,6 +113,13 @@ const About = () => {
             </div>
           </div>
 
+          {/* Multilingual Footer */}
+          <div className="mt-16 text-center border-t border-gray-200 dark:border-gray-800 pt-8">
+            <p className="text-sm text-gray-500 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              {t('about.multilingual_footer')}
+            </p>
+          </div>
+
 
 
         </div>
