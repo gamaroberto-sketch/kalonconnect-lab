@@ -1860,5 +1860,24 @@
       "autoMessage": "Mensagem Automática",
       "autoMessageDesc": "Enviar mensagem de boas-vindas ao iniciar sessão"
     }
+  },
+  "address": {
+    "title": "Endereço Profissional",
+    "postalCode": "CEP",
+    "street": "Rua / Avenida",
+    "number": "Número",
+    "complement": "Complemento",
+    "neighborhood": "Bairro",
+    "city": "Cidade",
+    "state": "Estado (UF)",
+    "country": "País",
+    "countries": {
+      "brazil": "Brasil",
+      "usa": "Estados Unidos",
+      "other": "Outro"
+    },
+    "hints": {
+      "internationalManual": "Para endereços internacionais, preencha manualmente."
+    }
   }
 }
