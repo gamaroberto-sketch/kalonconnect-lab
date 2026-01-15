@@ -625,11 +625,14 @@ const ProfileEditor = () => {
                                                     },
                                                     body: JSON.stringify({ ...profile, slug: profile.slug })
                                                 });
-                                                if (!response.ok) throw new Error("Erro ao salvar");
+                                                if (!response.ok) {
+                                                    const errorData = await response.json();
+                                                    throw new Error(errorData.message || "Erro ao salvar");
+                                                }
                                                 setSuccessMessage("Link salvo!");
                                                 setTimeout(() => setSuccessMessage(""), 2000);
                                             } catch (error) {
-                                                setError("Erro ao salvar link");
+                                                setError(error.message || "Erro ao salvar link");
                                             }
                                         }}
                                         className="px-3 py-1.5 text-xs font-medium rounded-md transition-colors"

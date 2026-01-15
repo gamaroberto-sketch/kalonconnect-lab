@@ -162,6 +162,20 @@ export default async function handler(req, res) {
         slug: body.slug // 🟢 v5.40/5.58: Save slug
       };
 
+      // 🟡 Check for Duplicate Slug (if slug is changing and not empty)
+      if (body.slug && body.slug.length > 0) {
+        const { data: existingUsers, error: dupError } = await supabaseAdmin
+          .from('users')
+          .select('id')
+          .eq('social->>slug', body.slug)
+          .neq('id', userId) // Exclude current user
+          .limit(1);
+
+        if (existingUsers && existingUsers.length > 0) {
+          return res.status(409).json({ message: "Este link já está em uso. Por favor, escolha outro." });
+        }
+      }
+
       // ... existing code ...
       // I am only replacing the top part to remove logs 
       // AND appending the config.
