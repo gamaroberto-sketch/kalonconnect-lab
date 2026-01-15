@@ -105,6 +105,7 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
   // Carregar configurações salvas
   useEffect(() => {
     loadSettings();
+    checkDriveStatus(); // Check real status on mount
   }, []);
 
   // Auto-save quando houver mudanças
@@ -259,26 +260,86 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
     reader.readAsDataURL(file);
   };
 
-  const connectGoogleDrive = async () => {
-    // Simulação de conexão - implementar com Google OAuth utilizado
-    setGoogleDriveConnected(true);
-    if (!googleDriveFolder) {
-      setGoogleDriveFolder('KalonConnect_Dados');
-      // Salvar imediatamente para persistir a sugestão
-      localStorage.setItem('kalonAdvancedSettings', JSON.stringify({
-        ...JSON.parse(localStorage.getItem('kalonAdvancedSettings') || '{}'),
-        googleDriveConnected: true,
-        googleDriveFolder: 'KalonConnect_Dados'
-      }));
-    }
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+
+
+  // --- Real Google Drive Implementation ---
+
+  const getAuthToken = () => {
+    const supabaseAuth = localStorage.getItem('sb-lpnzpimxwtexazokytjo-auth-token');
+    return supabaseAuth ? JSON.parse(supabaseAuth).access_token : '';
   };
 
-  const disconnectGoogleDrive = () => {
-    setGoogleDriveConnected(false);
-    setGoogleDriveFolder('');
-    saveSettings(true);
+  const checkDriveStatus = async () => {
+    try {
+      const accessToken = getAuthToken();
+      if (!accessToken) return;
+
+      const response = await fetch('/api/user/drive-status', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setGoogleDriveConnected(data.connected);
+        // We could also update the folder from metadata if available, but for now we keep local preference
+      }
+    } catch (err) {
+      console.error('Error checking Drive status in AdvancedSettings:', err);
+    }
+  };
+
+  const connectGoogleDrive = async () => {
+    try {
+      const accessToken = getAuthToken();
+      if (!accessToken) {
+        alert('Você precisa estar logado para conectar o Google Drive');
+        return;
+      }
+
+      const response = await fetch('/api/auth/prepare-google', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+
+      if (!response.ok) {
+        alert('Erro ao preparar autenticação');
+        return;
+      }
+
+      window.location.href = '/api/auth/google';
+    } catch (err) {
+      console.error('Error connecting Google Drive:', err);
+      alert('Erro ao iniciar conexão com Google Drive');
+    }
+  };
+
+  const disconnectGoogleDrive = async () => {
+    if (!confirm('Tem certeza que deseja desconectar o Google Drive?')) {
+      return;
+    }
+
+    try {
+      const accessToken = getAuthToken();
+      if (!accessToken) return;
+
+      const response = await fetch('/api/user/disconnect-drive', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+
+      if (response.ok) {
+        setGoogleDriveConnected(false);
+        setGoogleDriveFolder('');
+        saveSettings(true);
+      } else {
+        alert('Erro ao desconectar Google Drive');
+      }
+    } catch (err) {
+      console.error('Error disconnecting Google Drive:', err);
+      alert('Erro ao desconectar Google Drive');
+    }
   };
 
   const connectWhatsApp = async () => {
