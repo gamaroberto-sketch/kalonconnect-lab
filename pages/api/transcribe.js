@@ -126,6 +126,26 @@ export default async function handler(req, res) {
         ].join(" ");
       } else {
         // Real Transcription Logic
+        // 🟢 v5.75: Check Credits
+        const { hasSufficientCredits, deductCredits, AI_COSTS } = require("../../lib/credits");
+        const professionalId = body.professionalId; // Ensure this is passed from frontend
+
+        if (!professionalId) {
+          // Try to infer or fail? 
+          // Transcribe is usually called by the professional.
+          console.warn("ProfessionalId missing in transcribe request. Charging might fail.");
+          // For strictness:
+          return res.status(400).json({ error: "professionalId é obrigatório para cobrança de créditos." });
+        }
+
+        const canProceed = await hasSufficientCredits(professionalId, AI_COSTS.TRANSCRIPTION);
+        if (!canProceed) {
+          return res.status(402).json({
+            error: "Créditos insuficientes.",
+            message: `Transcrição requer ${AI_COSTS.TRANSCRIPTION} créditos. Recarregue sua conta.`
+          });
+        }
+
         if (!clientId) {
           return res.status(400).json({ error: "clientId é obrigatório para localizar a gravação." });
         }
@@ -156,7 +176,11 @@ export default async function handler(req, res) {
           });
 
           transcriptText = transcription; // It returns string if response_format is text
-          console.log("Transcrição concluída com sucesso.");
+
+          // 🟢 v5.75: Deduct Credits on Success
+          await deductCredits(professionalId, AI_COSTS.TRANSCRIPTION);
+          console.log(`Transcrição concluída. ${AI_COSTS.TRANSCRIPTION} Créditos descontados de ${professionalId}`);
+
         } catch (aiError) {
           console.error("Erro na OpenAI API:", aiError);
           return res.status(500).json({ error: "Falha ao processar áudio na IA: " + aiError.message });

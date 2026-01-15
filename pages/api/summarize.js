@@ -117,6 +117,21 @@ export default async function handler(req, res) {
       console.warn("OPENAI_API_KEY not found. Using mock summary.");
       summaryData = buildMockSummary(transcript);
     } else {
+      // 🟢 v5.75: Check Credits
+      const { hasSufficientCredits, deductCredits, AI_COSTS } = require("../../lib/credits");
+
+      if (!professionalId) {
+        return res.status(400).json({ error: "professionalId é obrigatório para cobrança de créditos." });
+      }
+
+      const canProceed = await hasSufficientCredits(professionalId, AI_COSTS.SUMMARY);
+      if (!canProceed) {
+        return res.status(402).json({
+          error: "Créditos insuficientes.",
+          message: "Você não possui créditos de IA suficientes para realizar esta ação."
+        });
+      }
+
       try {
         console.log("Iniciando resumo via OpenAI GPT...");
         const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -152,7 +167,10 @@ export default async function handler(req, res) {
 
         const content = completion.choices[0].message.content;
         summaryData = JSON.parse(content);
-        console.log("Resumo gerado com sucesso.");
+
+        // 🟢 v5.75: Deduct Credits on Success
+        await deductCredits(professionalId, AI_COSTS.SUMMARY);
+        console.log(`Resumo gerado com sucesso. 1 Crédito descontado de ${professionalId}`);
 
       } catch (aiError) {
         console.error("Erro na OpenAI API (Summary):", aiError);

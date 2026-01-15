@@ -64,7 +64,8 @@ const normalizeProfile = (data = {}) => {
       facebook: normalizeSocialField(social?.facebook),
       registro: String(social?.registro ?? ""),
       city: String(social?.city || "") // City only in social object
-    }
+    },
+    ai_credits: data.ai_credits || 0 // 🟢 v5.75: Expose AI Credits
   };
 };
 
