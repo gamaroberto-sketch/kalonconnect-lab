@@ -1,4 +1,4 @@
-import { supabase } from '../../../lib/supabase';
+import { supabaseAdmin } from '../../../lib/supabase-admin';
 
 export default async function handler(req, res) {
     if (req.method !== 'DELETE') {
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         }
 
         // Delete the term (RLS will ensure user can only delete their own)
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
             .from('glossary')
             .delete()
             .eq('id', id)

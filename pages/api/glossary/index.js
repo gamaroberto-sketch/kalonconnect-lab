@@ -1,4 +1,4 @@
-import { supabase } from '../../../lib/supabase';
+import { supabaseAdmin } from '../../../lib/supabase-admin';
 
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         }
 
         // Fetch all glossary terms for this professional
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('glossary')
             .select('*')
             .eq('professional_id', professional_id)
