@@ -837,6 +837,23 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                   )}
                 </div>
 
+                {/* Sandbox Helper Info - Valid only when disconnected or purely for help */}
+                {!whatsappConnected && (
+                  <div className="mb-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800">
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-300 text-sm mb-2 flex items-center gap-2">
+                      ℹ️ Modo Sandbox (Teste)
+                    </h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-400 mb-2">
+                      Para receber mensagens no modo teste (Sandbox/Trial), siga os passos:
+                    </p>
+                    <ol className="list-decimal list-inside text-sm text-blue-700 dark:text-blue-400 space-y-1 mb-3">
+                      <li>Acesse: <a href="https://console.twilio.com/us1/develop/sms/settings/whatsapp-sandbox" target="_blank" rel="noopener noreferrer" className="underline font-medium hover:text-blue-900">Twilio WhatsApp Sandbox</a></li>
+                      <li>Envie o código (ex: <strong>join palavra</strong>) para o número indicado no WhatsApp.</li>
+                      <li>Use o formato correto abaixo: <strong>55 + DDD + Número</strong> (ex: 5511999999999)</li>
+                    </ol>
+                  </div>
+                )}
+
                 {/* Phone Number Input - ALWAYS VISIBLE */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
