@@ -196,7 +196,7 @@
     "noAppointments": "Nenhum agendamento próximo",
     "guide": {
       "title": "Guia de Utilização",
-      "description": "Primeira vez usando o <span className=\"font-bold normal-case\">KalonConnect</span>? Acesse o guia completo para configurar tudo.",
+      "description": "Primeira vez no <span className=\"font-bold normal-case\">KalonConnect</span>? Acesse o guia completo e comece com tranquilidade.",
       "open": "Abrir Guia"
     },
     "actions": {

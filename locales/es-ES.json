@@ -271,7 +271,7 @@
     "noAppointments": "No hay citas próximas",
     "guide": {
       "title": "Guía de Usuario",
-      "description": "¿Primera vez usando <span className=\"font-bold normal-case\">KalonConnect</span>? Acceda a la guía completa para configurar todo.",
+      "description": "¿Primera vez en <span className=\"font-bold normal-case\">KalonConnect</span>? Acceda a la guía completa y comience con tranquilidad.",
       "open": "Abrir Guía"
     },
     "actions": {

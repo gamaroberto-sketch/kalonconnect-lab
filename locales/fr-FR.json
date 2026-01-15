@@ -183,7 +183,7 @@
     "noAppointments": "Aucun rendez-vous à venir",
     "guide": {
       "title": "Guide d'Utilisation",
-      "description": "Première fois sur <span className=\"font-bold normal-case\">KalonConnect</span> ? Accédez au guide complet pour tout configurer.",
+      "description": "Première fois sur <span className=\"font-bold normal-case\">KalonConnect</span> ? Accédez au guide complet et commencez en toute tranquillité.",
       "open": "Ouvrir le Guide"
     },
     "actions": {

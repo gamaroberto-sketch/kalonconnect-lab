@@ -270,7 +270,7 @@
     "noAppointments": "No upcoming appointments",
     "guide": {
       "title": "User Guide",
-      "description": "First time using <span className=\"font-bold normal-case\">KalonConnect</span>? Access the complete guide to set everything up.",
+      "description": "First time on <span className=\"font-bold normal-case\">KalonConnect</span>? Access the complete guide and start with peace of mind.",
       "open": "Open Guide"
     },
     "actions": {
