@@ -250,9 +250,13 @@ const SubscriptionPanel = () => {
             </div>
 
             {isPremium && (
-                <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm text-blue-900 dark:text-blue-100">
+                <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 space-y-2">
+                    <p className="text-sm text-blue-900 dark:text-blue-100 font-medium">
                         {t('subscription.tip.text')}
+                    </p>
+                    {/* 🟢 AI Disclaimer */}
+                    <p className="text-xs text-blue-800 dark:text-blue-200/80 italic border-t border-blue-200 dark:border-blue-700/50 pt-2 mt-2">
+                        {t('subscription.aiDisclaimer')}
                     </p>
                 </div>
             )}

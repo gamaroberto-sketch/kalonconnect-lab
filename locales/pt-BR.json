@@ -1553,12 +1553,13 @@
         "period": "/mês",
         "features": [
           "Tudo do Profissional",
-          "100 créditos mensais de IA para transcrição e resumos",
+          "Até 100 minutos mensais de transcrição automática por IA",
           "Recursos avançados de produtividade",
           "API de integração"
         ]
       }
     },
+    "aiDisclaimer": "O tempo de IA corresponde à duração exata do áudio transcrito. Seus minutos são renovados mensalmente para que você possa focar inteiramente na escuta do seu cliente, enquanto a tecnologia cuida das anotações.",
     "cancelAnytime": "Sem fidelidade. Cancele quando quiser."
   },
   "financial": {
