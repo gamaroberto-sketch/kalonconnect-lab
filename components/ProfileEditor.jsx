@@ -65,6 +65,7 @@ const EMPTY_PROFILE = {
 
 const ProfileEditor = () => {
     const { getThemeColors } = useTheme();
+    const themeColors = getThemeColors();
     const { t } = useTranslation();
 
 
