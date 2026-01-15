@@ -627,7 +627,11 @@ const ProfileEditor = () => {
                                                 });
                                                 if (!response.ok) {
                                                     const errorData = await response.json();
-                                                    throw new Error(errorData.message || "Erro ao salvar");
+                                                    // Combined error message for better debugging
+                                                    const detailedError = errorData.error
+                                                        ? `${errorData.message}: ${errorData.error}`
+                                                        : (errorData.message || "Erro ao salvar");
+                                                    throw new Error(detailedError);
                                                 }
                                                 setSuccessMessage("Link salvo!");
                                                 setTimeout(() => setSuccessMessage(""), 2000);
