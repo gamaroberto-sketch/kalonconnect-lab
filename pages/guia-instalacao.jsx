@@ -81,7 +81,7 @@ export default function GuiaInstalacao() {
                         {t('guide.title') || 'Guia de Utilização'}
                       </h1>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {t('guide.subtitle') || 'Manual completo do'} <span className="font-bold">KalonConnect</span>
+                        {t('guide.subtitle_prefix') || 'Seu apoio para usar o'} <span className="font-bold">KalonConnect</span> {t('guide.subtitle_suffix') || 'com tranquilidade.'}
                       </p>
                     </div>
                   </div>

@@ -1085,7 +1085,8 @@
   },
   "guide": {
     "title": "User Guide",
-    "subtitle": "Complete manual for",
+    "subtitle_prefix": "Your support to use",
+    "subtitle_suffix": " with peace of mind.",
     "downloadPdf": "Download PDF",
     "loading": "Loading guide...",
     "loadingFallback": "If the guide does not load, please download the PDF using the \"Download PDF\" button.",

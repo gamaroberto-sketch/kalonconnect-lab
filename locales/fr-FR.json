@@ -1503,7 +1503,8 @@
   },
   "guide": {
     "title": "Guide d'Utilisation",
-    "subtitle": "Manuel complet de",
+    "subtitle_prefix": "Votre soutien pour utiliser",
+    "subtitle_suffix": " en toute tranquillité.",
     "downloadPdf": "Télécharger PDF",
     "loading": "Chargement du guide...",
     "loadingFallback": "Si le guide ne charge pas, veuillez télécharger le PDF en utilisant le bouton \"Télécharger PDF\".",
