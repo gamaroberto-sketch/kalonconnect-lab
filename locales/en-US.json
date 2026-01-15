@@ -1639,25 +1639,42 @@
     },
     "plans": {
       "normal": {
-        "name": "Normal",
+        "name": "Essential",
+        "description": "Organization and security for your daily practice.",
         "period": "/month",
         "features": [
-          "Basic system access",
-          "Unlimited consultations",
+          "System access",
+          "Client management",
+          "Appointments and consultations",
+          "Medical records and basic documents",
           "Email support"
         ]
       },
       "pro": {
-        "name": "Pro",
+        "name": "Professional",
+        "description": "Everything you need to care for people professionally.",
         "period": "/month",
         "features": [
-          "Full system access",
+          "Everything in Essential",
           "Unlimited consultations",
-          "Priority support",
-          "Advanced features"
+          "Financial management (receipts and control)",
+          "Waiting room customization",
+          "Priority support"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Advanced technology to save time and care with more presence.",
+        "period": "/month",
+        "features": [
+          "Everything in Professional",
+          "Up to 100 minutes of automatic AI transcription per month",
+          "Advanced productivity features",
+          "Integration API"
         ]
       }
     },
+    "aiDisclaimer": "AI time corresponds to the exact duration of transcribed audio. Your minutes are renewed monthly so you can focus entirely on listening to your client, while technology takes care of the notes.",
     "cancelAnytime": "No lock-in. Cancel anytime."
   },
   "invites": {
@@ -1717,5 +1734,24 @@
     ],
     "disabledInfo": "Enable captions to configure languages and start using real-time translation.",
     "translating": "Translating..."
+  },
+  "address": {
+    "title": "Professional Address",
+    "postalCode": "Zip Code",
+    "street": "Street / Avenue",
+    "number": "Number",
+    "complement": "Complement",
+    "neighborhood": "Neighborhood",
+    "city": "City",
+    "state": "State",
+    "country": "Country",
+    "countries": {
+      "brazil": "Brazil",
+      "usa": "United States",
+      "other": "Other"
+    },
+    "hints": {
+      "internationalManual": "For international addresses, please fill manually."
+    }
   }
 }

@@ -1747,25 +1747,43 @@
     },
     "plans": {
       "normal": {
-        "name": "Normal",
+        "name": "Essentiel",
+        "description": "Organisation et sécurité pour votre pratique quotidienne.",
         "period": "/mois",
         "features": [
-          "Accès de base au système",
-          "Consultations illimitées",
+          "Accès au système",
+          "Gestion des clients",
+          "Rendez-vous et consultations",
+          "Dossiers médicaux et documents de base",
           "Support par e-mail"
         ]
       },
       "pro": {
-        "name": "Pro",
+        "name": "Professionnel",
+        "description": "Tout ce dont vous avez besoin pour prendre soin des gens avec professionnalisme.",
         "period": "/mois",
         "features": [
-          "Accès complet au système",
+          "Tout de l'Essentiel",
           "Consultations illimitées",
-          "Support prioritaire",
-          "Fonctionnalités avancées"
+          "Gestion financière (reçus et contrôle)",
+          "Personnalisation de la salle d'attente",
+          "Support prioritaire"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Technologie avancée pour gagner du temps et soigner avec plus de présence.",
+        "period": "/mois",
+        "features": [
+          "Tout du Professionnel",
+          "Jusqu'à 100 minutes de transcription automatique par IA par mois",
+          "Fonctionnalités avancées de productivité",
+          "API d'intégration"
         ]
       }
-    }
+    },
+    "aiDisclaimer": "Le temps d'IA correspond à la durée exacte de l'audio transcrit. Vos minutes sont renouvelées chaque mois pour que vous puissiez vous concentrer entièrement sur l'écoute de votre client, pendant que la technologie s'occupe des notes.",
+    "cancelAnytime": "Sans engagement. Annulez à tout moment."
   },
   "invites": {
     "title": "Paramètres d'invitation",
@@ -1824,5 +1842,24 @@
     ],
     "disabledInfo": "Activez les sous-titres pour configurer les langues et commencer à utiliser la traduction en temps réel.",
     "translating": "Traduction..."
+  },
+  "address": {
+    "title": "Adresse Professionnelle",
+    "postalCode": "Code Postal",
+    "street": "Rue / Avenue",
+    "number": "Numéro",
+    "complement": "Complément",
+    "neighborhood": "Quartier",
+    "city": "Ville",
+    "state": "État / Province",
+    "country": "Pays",
+    "countries": {
+      "brazil": "Brésil",
+      "usa": "États-Unis",
+      "other": "Autre"
+    },
+    "hints": {
+      "internationalManual": "Pour les adresses internationales, veuillez remplir manuellement."
+    }
   }
 }

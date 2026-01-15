@@ -1635,27 +1635,43 @@
     },
     "plans": {
       "normal": {
-        "name": "Normal",
+        "name": "Esencial",
+        "description": "Organización y seguridad para el día a día de su atención.",
         "period": "/mes",
         "features": [
-          "Acceso básico al sistema",
-          "Consultas ilimitadas",
+          "Acceso al sistema",
+          "Gestión de clientes",
+          "Citas y consultas",
+          "Historial médico y documentos básicos",
           "Soporte por correo"
         ]
       },
       "pro": {
-        "name": "Pro",
+        "name": "Profesional",
+        "description": "Todo lo que necesita para cuidar a las personas con profesionalismo.",
         "period": "/mes",
         "features": [
-          "Acceso completo al sistema",
+          "Todo lo de Esencial",
           "Consultas ilimitadas",
-          "Funciones avanzadas"
+          "Gestión financiera (recibos y control)",
+          "Personalización de la sala de espera",
+          "Soporte prioritario"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Tecnología avanzada para ganar tiempo y cuidar con más presencia.",
+        "period": "/mes",
+        "features": [
+          "Todo lo de Profesional",
+          "Hasta 100 minutos mensuales de transcripción automática por IA",
+          "Funciones avanzadas de productividad",
+          "API de integración"
         ]
       }
-    }
-  },
-  "financial": {
-    "title": "Financiero",
+    },
+    "aiDisclaimer": "El tiempo de IA corresponde a la duración exacta del audio transcrito. Sus minutos se renuevan mensualmente para que pueda concentrarse completamente en escuchar a su cliente, mientras la tecnología se encarga de las notas.",
+    "cancelAnytime": "Sin fidelidad. Cancele cuando quiera.",
     "income": "Ingresos",
     "expenses": "Gastos",
     "pending": "Pendiente",
@@ -1774,5 +1790,24 @@
     ],
     "disabledInfo": "Activa los subtítulos para configurar idiomas y comenzar a usar traducción en tiempo real.",
     "translating": "Traduciendo..."
+  },
+  "address": {
+    "title": "Dirección Profesional",
+    "postalCode": "Código Postal",
+    "street": "Calle / Avenida",
+    "number": "Número",
+    "complement": "Complemento",
+    "neighborhood": "Barrio",
+    "city": "Ciudad",
+    "state": "Estado / Provincia",
+    "country": "País",
+    "countries": {
+      "brazil": "Brasil",
+      "usa": "Estados Unidos",
+      "other": "Otro"
+    },
+    "hints": {
+      "internationalManual": "Para direcciones internacionales, rellene manualmente."
+    }
   }
 }
