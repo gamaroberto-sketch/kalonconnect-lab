@@ -1514,32 +1514,48 @@
   },
   "subscription": {
     "title": "Assinatura",
-    "activePlan": "Plano Pro Ativo",
-    "recommended": "Recomendado",
-    "currentPlan": "Plano Atual",
-    "subscribe": "Assinar Agora",
+    "activePlan": "Plano Ativo",
+    "recommended": "Melhor Escolha",
+    "currentPlan": "Seu Plano",
+    "subscribe": "Começar Agora",
     "tip": {
-      "text": "💡 Dica: Você pode gerenciar sua assinatura, atualizar forma de pagamento ou cancelar a qualquer momento através do Portal do Cliente.",
+      "text": "💡 Dica: Você pode alterar seu plano ou cancelar a qualquer momento sem burocracia.",
       "label": "Dica:"
     },
     "plans": {
       "normal": {
-        "name": "Normal",
+        "name": "Essencial",
+        "description": "Organização e segurança para o dia a dia do seu atendimento.",
         "period": "/mês",
         "features": [
-          "Acesso básico ao sistema",
-          "Consultas ilimitadas",
-          "Suporte por email"
+          "Acesso ao sistema",
+          "Gestão de clientes",
+          "Agendamentos e consultas",
+          "Prontuário e documentos básicos",
+          "Suporte por e-mail"
         ]
       },
       "pro": {
-        "name": "Pro",
+        "name": "Profissional",
+        "description": "Tudo o que você precisa para cuidar das pessoas com profissionalismo.",
         "period": "/mês",
         "features": [
-          "Acesso completo ao sistema",
+          "Tudo do Essencial",
           "Consultas ilimitadas",
-          "Suporte prioritário",
-          "Recursos avançados"
+          "Gestão financeira (recibos e controle)",
+          "Personalização da sala de atendimento",
+          "Suporte prioritário"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Tecnologia avançada para ganhar tempo e aprofundar o cuidado.",
+        "period": "/mês",
+        "features": [
+          "Tudo do Profissional",
+          "100 créditos mensais de IA para transcrição e resumos",
+          "Recursos avançados de produtividade",
+          "API de integração"
         ]
       }
     },

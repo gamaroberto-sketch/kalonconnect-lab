@@ -118,6 +118,7 @@ const SubscriptionPanel = () => {
     const plans = [
         {
             name: t('subscription.plans.normal.name'),
+            description: t('subscription.plans.normal.description'),
             price: `${currentConfig.symbol} ${currentConfig.plans.normal.price}`,
             period: t('subscription.plans.normal.period'),
             priceId: currentConfig.plans.normal.priceId,
@@ -125,11 +126,14 @@ const SubscriptionPanel = () => {
                 t('subscription.plans.normal.features.0'),
                 t('subscription.plans.normal.features.1'),
                 t('subscription.plans.normal.features.2'),
+                t('subscription.plans.normal.features.3'),
+                t('subscription.plans.normal.features.4'),
             ],
             current: isNormal,
         },
         {
             name: t('subscription.plans.pro.name'),
+            description: t('subscription.plans.pro.description'),
             price: `${currentConfig.symbol} ${currentConfig.plans.pro.price}`,
             period: t('subscription.plans.pro.period'),
             priceId: currentConfig.plans.pro.priceId,
@@ -138,19 +142,22 @@ const SubscriptionPanel = () => {
                 t('subscription.plans.pro.features.1'),
                 t('subscription.plans.pro.features.2'),
                 t('subscription.plans.pro.features.3'),
+                t('subscription.plans.pro.features.4'),
             ],
             current: isPro,
             recommended: true,
         },
         {
-            name: 'Premium',
+            name: t('subscription.plans.premium.name'),
+            description: t('subscription.plans.premium.description'),
             price: `${currentConfig.symbol} ${currentConfig.plans.premium.price}`,
-            period: '/mês',
+            period: t('subscription.plans.premium.period'),
             priceId: currentConfig.plans.premium.priceId,
             features: [
-                'Tudo do Pro +',
-                '🎯 Sistema de Créditos (100/mês)',
-                'IA para transcrição automática',
+                t('subscription.plans.premium.features.0'),
+                t('subscription.plans.premium.features.1'),
+                t('subscription.plans.premium.features.2'),
+                t('subscription.plans.premium.features.3'),
             ],
             current: isPremium,
             premium: true,
@@ -205,6 +212,10 @@ const SubscriptionPanel = () => {
                                     {plan.period}
                                 </span>
                             </div>
+                            {/* 🟢 Short Copy Description */}
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 italic min-h-[40px]">
+                                {plan.description}
+                            </p>
                         </div>
 
                         <ul className="space-y-3 mb-6">
