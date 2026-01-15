@@ -143,6 +143,37 @@
     "backToLogin": "Voltar para Login",
     "errorCreating": "Erro ao criar conta."
   },
+  "about": {
+    "title": "Sobre Nós",
+    "subtitle": "Conheça nossa história e propósito",
+    "mission": {
+      "title": "Nossa Missão",
+      "description": "Facilitar a gestão profissional de terapias, atendimentos e eventos, conectando profissionais e clientes por meio de uma plataforma segura, eficiente e intuitiva, que valoriza o cuidado humano aliado à tecnologia."
+    },
+    "vision": {
+      "title": "Nossa Visão",
+      "description": "Ser a plataforma de referência em gestão e conexão na área da saúde integrativa e do cuidado emocional, reconhecida pela inovação, confiabilidade e impacto positivo na vida das pessoas e na sociedade."
+    },
+    "values": {
+      "title": "Nossos Valores",
+      "description": "Empatia no cuidado, segurança da informação, inovação contínua, excelência na experiência e compromisso genuíno com o bem-estar emocional e humano."
+    },
+    "team": {
+      "title": "Nosso Time",
+      "developers": {
+        "title": "Nossa Equipe",
+        "description": "Time especializado em desenvolver soluções tecnológicas robustas, escaláveis e seguras, focadas nas reais necessidades de profissionais e clientes."
+      },
+      "designers": {
+        "title": "Designers",
+        "description": "Profissionais dedicados à criação de experiências intuitivas, acessíveis e acolhedoras, onde tecnologia e sensibilidade caminham juntas."
+      },
+      "security": {
+        "title": "Segurança",
+        "description": "Especialistas em proteção de dados, privacidade e conformidade, garantindo confiança, integridade e tranquilidade em cada interação na plataforma."
+      }
+    }
+  },
   "forgotPassword": {
     "title": "Recuperar Senha",
     "subtitle": "Digite seu email para receber um link de redefinição de senha.",
