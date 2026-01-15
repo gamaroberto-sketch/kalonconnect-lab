@@ -171,7 +171,8 @@
         "title": "Seguridad",
         "description": "Especialistas en protección de datos, privacidad y cumplimiento, garantizando confianza, integridad y tranquilidad en cada interacción en la plataforma."
       }
-    }
+    },
+    "multilingual_footer": "Plataforma multilingüe, actualmente disponible en cuatro idiomas, con posibilidad de integración de nuevos idiomas según la evolución de KalonConnect."
   },
   "integrations": {
     "googleDrive": {

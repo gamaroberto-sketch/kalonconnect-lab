@@ -170,7 +170,8 @@
         "title": "Security",
         "description": "Specialists in data protection, privacy, and compliance, ensuring trust, integrity, and tranquility in every interaction on the platform."
       }
-    }
+    },
+    "multilingual_footer": "Multilingual platform, currently available in four languages, with the possibility of integrating new languages as KalonConnect evolves."
   },
   "integrations": {
     "googleDrive": {
