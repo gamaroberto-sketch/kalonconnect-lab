@@ -1874,7 +1874,21 @@
     "countries": {
       "brazil": "Brasil",
       "usa": "Estados Unidos",
+      "portugal": "Portugal",
+      "spain": "Espanha",
+      "france": "França",
+      "argentina": "Argentina",
+      "mexico": "México",
       "other": "Outro"
+    },
+    "placeholders": {
+      "postalCode": "00000-000",
+      "street": "Rua Exemplo",
+      "number": "123",
+      "complement": "Apto 101",
+      "neighborhood": "Centro",
+      "city": "Sua Cidade",
+      "state": "UF"
     },
     "hints": {
       "internationalManual": "Para endereços internacionais, preencha manualmente."

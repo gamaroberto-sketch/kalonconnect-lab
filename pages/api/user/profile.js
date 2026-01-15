@@ -209,23 +209,23 @@ export default async function handler(req, res) {
       if (body.stamp_image_url !== undefined) updateData.stamp_image_url = body.stamp_image_url;
       if (body.prescription_template_url !== undefined) updateData.prescription_template_url = body.prescription_template_url;
       if (body.prescription_template_size !== undefined) updateData.prescription_template_size = body.prescription_template_size;
-      if (body.prescription_template_positions !== undefined) updateData.prescription_template_positions = body.prescription_template_positions;
+      // if (body.prescription_template_positions !== undefined) updateData.prescription_template_positions = body.prescription_template_positions;
       if (body.prescription_templates !== undefined) updateData.prescription_templates = body.prescription_templates;
       if (body.consent_template_url !== undefined) updateData.consent_template_url = body.consent_template_url;
       if (body.consent_template_size !== undefined) updateData.consent_template_size = body.consent_template_size;
-      if (body.consent_template_positions !== undefined) updateData.consent_template_positions = body.consent_template_positions;
+      // if (body.consent_template_positions !== undefined) updateData.consent_template_positions = body.consent_template_positions;
       if (body.receipt_template_url !== undefined) updateData.receipt_template_url = body.receipt_template_url;
       if (body.receipt_template_size !== undefined) updateData.receipt_template_size = body.receipt_template_size;
-      if (body.receipt_template_positions !== undefined) updateData.receipt_template_positions = body.receipt_template_positions;
+      // if (body.receipt_template_positions !== undefined) updateData.receipt_template_positions = body.receipt_template_positions;
       if (body.report_template_url !== undefined) updateData.report_template_url = body.report_template_url;
       if (body.report_template_size !== undefined) updateData.report_template_size = body.report_template_size;
-      if (body.report_template_positions !== undefined) updateData.report_template_positions = body.report_template_positions;
+      // if (body.report_template_positions !== undefined) updateData.report_template_positions = body.report_template_positions;
       if (body.certificate_template_url !== undefined) updateData.certificate_template_url = body.certificate_template_url;
       if (body.certificate_template_size !== undefined) updateData.certificate_template_size = body.certificate_template_size;
-      if (body.certificate_template_positions !== undefined) updateData.certificate_template_positions = body.certificate_template_positions;
+      // if (body.certificate_template_positions !== undefined) updateData.certificate_template_positions = body.certificate_template_positions;
       if (body.opinion_template_url !== undefined) updateData.opinion_template_url = body.opinion_template_url;
       if (body.opinion_template_size !== undefined) updateData.opinion_template_size = body.opinion_template_size;
-      if (body.opinion_template_positions !== undefined) updateData.opinion_template_positions = body.opinion_template_positions;
+      // if (body.opinion_template_positions !== undefined) updateData.opinion_template_positions = body.opinion_template_positions;
 
       console.log('Update data:', JSON.stringify(updateData, null, 2));
 
