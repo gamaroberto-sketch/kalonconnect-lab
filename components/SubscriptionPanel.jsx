@@ -218,7 +218,7 @@ const SubscriptionPanel = () => {
                             </p>
                         </div>
 
-                        <ul className="space-y-4 mb-8 flex-grow">
+                        <ul className={`mb-8 flex-grow ${plan.premium ? 'space-y-6' : 'space-y-4'}`}>
                             {plan.features.map((feature, index) => {
                                 // Detect AI feature to highlight subtly
                                 const isAiFeature = plan.premium && (feature.includes('100') || feature.includes('IA'));
@@ -240,10 +240,10 @@ const SubscriptionPanel = () => {
                             onClick={() => handleSubscribe(plan.priceId)}
                             disabled={loading || plan.current}
                             className={`w-full py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${plan.current
-                                ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 border border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                                : plan.recommended || plan.premium
-                                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg'
-                                    : 'bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                    ? 'bg-gray-50 dark:bg-gray-800/50 text-gray-400/70 border border-gray-100 dark:border-gray-700/50 cursor-not-allowed text-sm font-medium'
+                                    : plan.recommended || plan.premium
+                                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg'
+                                        : 'bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
                                 }`}
                         >
                             {loading && <Loader2 className="w-5 h-5 animate-spin" />}
