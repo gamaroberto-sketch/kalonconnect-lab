@@ -988,43 +988,6 @@
       "errorGeneric": "Falha ao carregar convites."
     }
   },
-  "about": {
-    "title": "Sobre o KalonConnect",
-    "subtitle": "Transformamos a gestão de saúde mental com tecnologia, empatia e excelência.",
-    "mission": {
-      "title": "Nossa Missão",
-      "description": "Facilitar a gestão profissional de terapias e eventos, conectando profissionais e pacientes de forma segura e eficiente."
-    },
-    "vision": {
-      "title": "Nossa Visão",
-      "description": "Ser a plataforma líder em gestão de saúde mental, reconhecida por inovação e impacto positivo na sociedade."
-    },
-    "values": {
-      "title": "Nossos Valores",
-      "description": "Empatia, segurança, inovação, qualidade e compromisso com o bem-estar mental de todos."
-    },
-    "team": {
-      "title": "Nossa Equipe",
-      "developers": {
-        "title": "Desenvolvedores",
-        "description": "Time especializado em criar soluções tecnológicas inovadoras."
-      },
-      "designers": {
-        "title": "Designers",
-        "description": "Profissionais focados em experiência do usuário e acessibilidade."
-      },
-      "security": {
-        "title": "Segurança",
-        "description": "Especialistas em proteção de dados e privacidade."
-      }
-    },
-    "cta": {
-      "title": "Pronto para começar?",
-      "subtitle": "Experimente o Kalon OS e transforme sua gestão de consultas.",
-      "startNow": "Começar Agora",
-      "learnMore": "Saber Mais"
-    }
-  },
   "guide": {
     "title": "Guia de Utilização",
     "subtitle": "Manual completo do",
