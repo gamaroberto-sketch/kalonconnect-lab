@@ -173,6 +173,32 @@
       }
     }
   },
+  "home": {
+    "welcome": "Bienvenue, {name}",
+    "tagline": "L'Âme s'étend, le Corps se détend — et votre pratique coule avec plus d'organisation.",
+    "quickActions": "Actions Rapides",
+    "recentActivity": "Activité Récente",
+    "upcomingAppointments": "Prochains Rendez-vous",
+    "statistics": "Statistiques",
+    "noAppointments": "Aucun rendez-vous à venir",
+    "guide": {
+      "title": "Guide d'Utilisation",
+      "description": "Première fois sur <span className=\"font-bold normal-case\">KalonConnect</span> ? Accédez au guide complet pour tout configurer.",
+      "open": "Ouvrir le Guide"
+    },
+    "actions": {
+      "manageClients": "Gérer les clients",
+      "videoSessions": "Séances vidéo en ligne",
+      "calendar": "Calendrier et gestion",
+      "documents": "Ordonnances et termes",
+      "financial": "Contrôle financier",
+      "settings": "Personnaliser le système",
+      "profile": "Gérer votre profil et paramètres",
+      "events": "Gérer vos événements et ateliers",
+      "reports": "Voir les rapports et statistiques",
+      "about": "En savoir plus sur la plateforme"
+    }
+  },
   "integrations": {
     "googleDrive": {
       "title": "Google Drive",
