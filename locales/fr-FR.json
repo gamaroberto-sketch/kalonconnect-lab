@@ -110,7 +110,7 @@
     "subtitle": "Entrez vos identifiants",
     "emailPlaceholder": "votre@email.com",
     "passwordPlaceholder": "Votre mot de passe",
-    "loginButton": "Connexion",
+    "loginButton": "Accéder à la Plateforme",
     "forgotPassword": "Mot de passe oublié ?",
     "noAccount": "Pas de compte ?",
     "signUp": "S'inscrire",
@@ -120,8 +120,8 @@
       "network": "Impossible de se connecter. Vérifiez votre réseau et réessayez."
     },
     "tagline": {
-      "main": "Technologie avec Âme",
-      "sub": "Quand l'Âme parle, le Corps écoute et l'Esprit guide..."
+      "main": "Technologie avec Âme pour ceux qui prennent soin des autres",
+      "sub": "Quand l'Âme parle, le Corps se détend et l'Esprit guide."
     },
     "hidePassword": "Masquer le mot de passe",
     "showPassword": "Afficher le mot de passe",

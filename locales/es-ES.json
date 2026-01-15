@@ -110,7 +110,7 @@
     "subtitle": "Ingrese sus credenciales",
     "emailPlaceholder": "su@email.com",
     "passwordPlaceholder": "Su contraseña",
-    "loginButton": "Iniciar sesión",
+    "loginButton": "Acceder a la Plataforma",
     "forgotPassword": "¿Olvidó su contraseña?",
     "noAccount": "¿No tiene una cuenta?",
     "signUp": "Regístrese",
@@ -120,8 +120,8 @@
       "network": "No se pudo conectar. Verifique su red e intente nuevamente."
     },
     "tagline": {
-      "main": "Tecnología con Alma",
-      "sub": "Cuando el Alma habla, el Cuerpo escucha y el Espíritu guía..."
+      "main": "Tecnología con Alma para quienes cuidan personas",
+      "sub": "Cuando el Alma habla, el Cuerpo se relaja y el Espíritu guía."
     },
     "hidePassword": "Ocultar contraseña",
     "showPassword": "Mostrar contraseña",

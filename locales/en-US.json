@@ -109,7 +109,7 @@
     "subtitle": "Enter your credentials",
     "emailPlaceholder": "your@email.com",
     "passwordPlaceholder": "Your password",
-    "loginButton": "Login",
+    "loginButton": "Access Platform",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
     "signUp": "Sign up",
@@ -119,8 +119,8 @@
       "network": "Could not connect. Check your network and try again."
     },
     "tagline": {
-      "main": "Technology with Soul",
-      "sub": "When the Soul speaks, the Body listens and the Spirit leads..."
+      "main": "Technology with Soul for those who care for people",
+      "sub": "When the Soul speaks, the Body relaxes and the Spirit leads."
     },
     "hidePassword": "Hide password",
     "showPassword": "Show password",
