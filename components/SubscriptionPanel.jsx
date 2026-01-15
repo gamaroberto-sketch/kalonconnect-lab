@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Crown, CreditCard, Check, Loader2, ShieldCheck } from 'lucide-react';
+import { Crown, CreditCard, Check, Loader2, ShieldCheck, Clock } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useTheme } from './ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
@@ -187,52 +187,63 @@ const SubscriptionPanel = () => {
                 {plans.map((plan) => (
                     <div
                         key={plan.name}
-                        className={`relative rounded-xl border-2 p-6 transition-all ${plan.current
-                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                        className={`relative rounded-xl p-8 transition-all duration-300 flex flex-col ${plan.recommended
+                            ? 'border border-indigo-200 dark:border-indigo-800 bg-indigo-50/10 dark:bg-indigo-900/10 shadow-xl shadow-indigo-200/20 z-10 scale-[1.02]'
+                            : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
                             }`}
                     >
                         {plan.recommended && (
                             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                                <span className="px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
+                                <span className="px-4 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold bg-indigo-600 text-white shadow-sm">
                                     {t('subscription.recommended')}
                                 </span>
                             </div>
                         )}
 
-                        <div className="text-center mb-4">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                        <div className="text-center mb-6">
+                            <h3 className={`text-lg font-bold mb-2 ${plan.recommended ? 'text-indigo-900 dark:text-indigo-100' : 'text-gray-900 dark:text-white'}`}>
                                 {plan.name}
                             </h3>
                             <div className="flex items-baseline justify-center gap-1">
-                                <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
                                     {plan.price}
                                 </span>
-                                <span className="text-gray-500 dark:text-gray-400">
+                                <span className="text-gray-500 dark:text-gray-400 font-medium">
                                     {plan.period}
                                 </span>
                             </div>
                             {/* 🟢 Short Copy Description */}
-                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 italic min-h-[40px]">
+                            <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 italic min-h-[40px] leading-relaxed">
                                 {plan.description}
                             </p>
                         </div>
 
-                        <ul className="space-y-3 mb-6">
-                            {plan.features.map((feature, index) => (
-                                <li key={index} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-                                    <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                    <span>{feature}</span>
-                                </li>
-                            ))}
+                        <ul className="space-y-4 mb-8 flex-grow">
+                            {plan.features.map((feature, index) => {
+                                // Detect AI feature to highlight subtly
+                                const isAiFeature = plan.premium && (feature.includes('100') || feature.includes('IA'));
+
+                                return (
+                                    <li key={index} className={`flex items-start gap-3 text-sm ${isAiFeature ? 'text-indigo-700 dark:text-indigo-300 font-medium' : 'text-gray-600 dark:text-gray-300'}`}>
+                                        {isAiFeature ? (
+                                            <Clock className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                        ) : (
+                                            <Check className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0 mt-0.5" />
+                                        )}
+                                        <span>{feature}</span>
+                                    </li>
+                                );
+                            })}
                         </ul>
 
                         <button
                             onClick={() => handleSubscribe(plan.priceId)}
                             disabled={loading || plan.current}
                             className={`w-full py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${plan.current
-                                ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
+                                ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 border border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                                : plan.recommended || plan.premium
+                                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg'
+                                    : 'bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
                                 }`}
                         >
                             {loading && <Loader2 className="w-5 h-5 animate-spin" />}
