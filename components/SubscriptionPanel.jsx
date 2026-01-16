@@ -146,7 +146,7 @@ const SubscriptionPanel = () => {
                 <div className="grid grid-cols-4 divide-x divide-gray-800/50">
 
                     {/* Column 1: Labels (Sticky on mobile if needed, usually hidden on very small screens or stacked) */}
-                    <div className="col-span-1 bg-gray-950 p-6 flex flex-col justify-center space-y-6">
+                    <div className="col-span-1 bg-gray-950 p-6 flex flex-col space-y-6">
                         <div className="h-24 flex items-end pb-2 font-semibold text-gray-500 uppercase text-xs tracking-wider">
                             {t('subscription.table.headers.features')}
                         </div>
