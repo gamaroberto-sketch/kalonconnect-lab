@@ -134,7 +134,7 @@ const SubscriptionPanel = () => {
             </div>
 
             {/* Pricing Table */}
-            <div className="rounded-2xl overflow-hidden border border-gray-800 bg-gray-950 shadow-2xl relative">
+            <div className="rounded-2xl overflow-visible border border-gray-800 bg-gray-900 shadow-2xl relative">
                 {/* Background Glow */}
                 <div
                     className="absolute top-0 center w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent"
@@ -146,8 +146,8 @@ const SubscriptionPanel = () => {
                 <div className="grid grid-cols-4 divide-x divide-gray-800/50">
 
                     {/* Column 1: Labels */}
-                    <div className="col-span-1 bg-gray-950 p-6 flex flex-col space-y-6">
-                        <div className="h-40 flex items-end pb-2 font-semibold text-gray-500 uppercase text-xs tracking-wider">
+                    <div className="col-span-1 bg-gray-900 p-6 flex flex-col space-y-6 rounded-l-2xl">
+                        <div className="h-40 flex items-end pb-4 font-semibold text-gray-500 uppercase text-xs tracking-wider">
                             {t('subscription.table.headers.features')}
                         </div>
                         {/* Row Headers */}
@@ -273,7 +273,7 @@ const SubscriptionPanel = () => {
                     </div>
 
                     {/* Column 4: Premium */}
-                    <div className="col-span-1 bg-gray-900/20 p-6 flex flex-col items-center text-center relative">
+                    <div className="col-span-1 bg-gray-900/20 p-6 flex flex-col items-center text-center relative rounded-r-2xl">
                         {isPremium && <span className="absolute top-3 right-3 text-[10px] bg-emerald-500 text-black font-bold px-2 py-0.5 rounded-full">{t('subscription.activePlan')}</span>}
 
                         <div className="h-40 flex flex-col justify-end pb-4 w-full">
