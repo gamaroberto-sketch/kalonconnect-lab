@@ -43,33 +43,33 @@ const SubscriptionPanel = () => {
         BRL: {
             symbol: 'R$',
             plans: {
-                normal: { price: '49', priceId: 'price_1Sax43RwUd9zUTs47aQAqyRK' },
-                pro: { price: '99', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' },
-                premium: { price: '149', priceId: 'price_BRL_Premium_Placeholder_REPLACE_ME' }
+                normal: { price: '99', priceId: 'price_1Sax43RwUd9zUTs47aQAqyRK' },
+                pro: { price: '149', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' },
+                premium: { price: '199', priceId: 'price_BRL_Premium_Placeholder_REPLACE_ME' }
             }
         },
         USD: {
             symbol: '$',
             plans: {
-                normal: { price: '9', priceId: 'price_USD_Normal_Placeholder_REPLACE_ME' },
-                pro: { price: '19', priceId: 'price_USD_Pro_Placeholder_REPLACE_ME' },
-                premium: { price: '29', priceId: 'price_USD_Premium_Placeholder_REPLACE_ME' }
+                normal: { price: '19', priceId: 'price_USD_Normal_Placeholder_REPLACE_ME' },
+                pro: { price: '29', priceId: 'price_USD_Pro_Placeholder_REPLACE_ME' },
+                premium: { price: '39', priceId: 'price_USD_Premium_Placeholder_REPLACE_ME' }
             }
         },
         EUR: {
             symbol: '€',
             plans: {
-                normal: { price: '9', priceId: 'price_EUR_Normal_Placeholder_REPLACE_ME' },
-                pro: { price: '19', priceId: 'price_EUR_Pro_Placeholder_REPLACE_ME' },
-                premium: { price: '29', priceId: 'price_EUR_Premium_Placeholder_REPLACE_ME' }
+                normal: { price: '19', priceId: 'price_EUR_Normal_Placeholder_REPLACE_ME' },
+                pro: { price: '29', priceId: 'price_EUR_Pro_Placeholder_REPLACE_ME' },
+                premium: { price: '39', priceId: 'price_EUR_Premium_Placeholder_REPLACE_ME' }
             }
         },
         GBP: {
             symbol: '£',
             plans: {
-                normal: { price: '8', priceId: 'price_GBP_Normal_Placeholder_REPLACE_ME' },
-                pro: { price: '18', priceId: 'price_GBP_Pro_Placeholder_REPLACE_ME' },
-                premium: { price: '28', priceId: 'price_GBP_Premium_Placeholder_REPLACE_ME' }
+                normal: { price: '15', priceId: 'price_GBP_Normal_Placeholder_REPLACE_ME' },
+                pro: { price: '25', priceId: 'price_GBP_Pro_Placeholder_REPLACE_ME' },
+                premium: { price: '35', priceId: 'price_GBP_Premium_Placeholder_REPLACE_ME' }
             }
         }
     };
@@ -134,7 +134,7 @@ const SubscriptionPanel = () => {
             </div>
 
             {/* Pricing Table */}
-            <div className="rounded-2xl overflow-visible border border-gray-800 bg-gray-900 shadow-2xl relative">
+            <div className="rounded-2xl overflow-visible border border-gray-700 bg-gray-800 shadow-2xl relative">
                 {/* Background Glow */}
                 <div
                     className="absolute top-0 center w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent"
@@ -143,11 +143,11 @@ const SubscriptionPanel = () => {
                     }}
                 />
 
-                <div className="grid grid-cols-4 divide-x divide-gray-800/50">
+                <div className="grid grid-cols-4 divide-x divide-gray-700/50">
 
                     {/* Column 1: Labels */}
-                    <div className="col-span-1 bg-gray-900 p-6 flex flex-col space-y-6 rounded-l-2xl">
-                        <div className="h-40 flex items-end pb-4 font-semibold text-gray-500 uppercase text-xs tracking-wider">
+                    <div className="col-span-1 bg-gray-800 p-6 flex flex-col space-y-6 rounded-l-2xl">
+                        <div className="h-40 flex flex-col justify-end pb-4 font-semibold text-gray-400 uppercase text-xs tracking-wider">
                             {t('subscription.table.headers.features')}
                         </div>
                         {/* Row Headers */}
@@ -165,8 +165,8 @@ const SubscriptionPanel = () => {
                     </div>
 
                     {/* Column 2: Essencial (Normal) */}
-                    <div className="col-span-1 bg-gray-900/40 p-6 flex flex-col items-center text-center hover:bg-gray-900/60 transition-colors relative">
-                        {isNormal && <span className="absolute top-2 right-2 text-[10px] bg-gray-700 text-white px-2 py-0.5 rounded-full">{t('subscription.currentPlan')}</span>}
+                    <div className="col-span-1 bg-gray-800/40 p-6 flex flex-col items-center text-center hover:bg-gray-800/60 transition-colors relative">
+                        {isNormal && <span className="absolute top-2 right-2 text-[10px] bg-gray-600 text-white px-2 py-0.5 rounded-full">{t('subscription.currentPlan')}</span>}
 
                         <div className="h-40 flex flex-col justify-end pb-4 w-full">
                             <h3 className="text-xl font-bold text-white mb-2">{t('subscription.plans.normal.name')}</h3>
@@ -202,7 +202,7 @@ const SubscriptionPanel = () => {
                         {!isNormal && (
                             <button
                                 onClick={() => handleSubscribe(currentConfig.plans.normal.priceId)}
-                                className="mt-8 w-full py-3 rounded-xl border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors text-sm font-medium"
+                                className="mt-8 w-full py-3 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors text-sm font-medium"
                             >
                                 {t('subscription.subscribe')}
                             </button>
@@ -210,13 +210,13 @@ const SubscriptionPanel = () => {
                     </div>
 
                     {/* Column 3: Profissional (Melhor Escolha) */}
-                    <div className="col-span-1 bg-gradient-to-b from-gray-900 to-transparent p-6 flex flex-col items-center text-center border-x-2 border-gray-800 relative">
+                    <div className="col-span-1 bg-gradient-to-b from-gray-800 to-transparent p-6 flex flex-col items-center text-center border-x-2 border-gray-700 relative">
                         <div className="absolute top-0 left-0 w-full h-1.5" style={{ backgroundColor: themeColors.primary }} />
                         <span className="absolute -top-3 px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider rounded-md shadow-lg" style={{ backgroundColor: themeColors.primary }}>
                             {t('subscription.recommended')}
                         </span>
 
-                        {isPro && <span className="absolute top-3 right-3 text-[10px] text-white font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: themeColors.primary }}>{t('subscription.activePlan')}</span>}
+                        {isPro && <span className="absolute top-4 right-4 text-[10px] text-white font-bold px-2 py-0.5 rounded-full z-10" style={{ backgroundColor: themeColors.primary }}>{t('subscription.activePlan')}</span>}
 
                         <div className="h-40 flex flex-col justify-end pb-4 w-full">
                             <h3 className="text-2xl font-bold mb-2" style={{ color: themeColors.primary }}>{t('subscription.plans.pro.name')}</h3>
