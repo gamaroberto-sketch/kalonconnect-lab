@@ -124,11 +124,11 @@ const SubscriptionPanel = () => {
         <div className="max-w-5xl mx-auto space-y-8">
             {/* Header */}
             <div className="text-center space-y-3 mb-10">
-                <div className="flex items-center justify-center gap-2 text-2xl font-serif text-amber-500 mb-2">
+                <div className="flex items-center justify-center gap-2 text-2xl font-serif mb-2" style={{ color: themeColors.primary }}>
                     <Crown className="w-6 h-6 fill-current" />
                     <h2 className="font-medium tracking-wide">{t('subscription.title')}</h2>
                 </div>
-                <p className="text-gray-400 max-w-xl mx-auto">
+                <p className="text-gray-600 max-w-xl mx-auto">
                     {t('subscription.subtitle')}
                 </p>
             </div>
@@ -136,7 +136,12 @@ const SubscriptionPanel = () => {
             {/* Pricing Table */}
             <div className="rounded-2xl overflow-hidden border border-gray-800 bg-gray-950 shadow-2xl relative">
                 {/* Background Glow */}
-                <div className="absolute top-0 center w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+                <div
+                    className="absolute top-0 center w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent"
+                    style={{
+                        backgroundImage: `linear-gradient(to right, transparent, ${themeColors.primary}80, transparent)`
+                    }}
+                />
 
                 <div className="grid grid-cols-4 divide-x divide-gray-800/50">
 
@@ -254,12 +259,12 @@ const SubscriptionPanel = () => {
                 </div>
             </div>
 
-            <div className="text-center text-gray-500 text-sm mt-8 flex flex-col gap-2">
+            <div className="text-center text-gray-600 text-sm mt-8 flex flex-col gap-2">
                 <p className="flex items-center justify-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    <ShieldCheck className="w-4 h-4" style={{ color: themeColors.primary }} />
                     {t('subscription.cancelAnytime')}
                 </p>
-                <p className="text-xs italic opacity-70">
+                <p className="text-xs italic">
                     {t('subscription.aiDisclaimer')}
                 </p>
             </div>
