@@ -1624,47 +1624,66 @@
     }
   },
   "subscription": {
-    "title": "Planes de Suscripción",
-    "subtitle": "Elija el plan ideal para su momento profesional",
-    "activePlan": "Plan Activo",
-    "recommended": "Recomendado",
-    "currentPlan": "Actual",
-    "subscribe": "Suscribirse Ahora",
-    "tip": "💡 Consejo: Cambie o cancele su plan en cualquier momento.",
-    "aiDisclaimer": "* Los créditos de IA corresponden a minutos de audio procesado.",
-    "cancelAnytime": "Sin fidelidad. Cancele cuando quiera.",
+    "title": "Elija el Plan Ideal para Su Jornada",
+    "subtitle": "Nuestros planes crecen junto con su práctica profesional:",
+    "activePlan": "SU PLAN",
+    "recommended": "MEJOR OPCIÓN",
+    "currentPlan": "Plan Actual",
+    "subscribe": "Comenzar Ahora",
+    "tip": {
+      "text": "Consejo: El plan Premium incluye créditos mensuales de IA para transcripciones automáticas.",
+      "label": "Consejo:"
+    },
     "plans": {
-      "normal": "Plan Normal",
-      "pro": "Plan Pro",
-      "premium": "Plan Premium"
+      "normal": {
+        "name": "Esencial",
+        "description": "Organización y seguridad para su práctica diaria."
+      },
+      "pro": {
+        "name": "Profesional",
+        "description": "Todo lo que necesita para atender a las personas con profesionalismo."
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Tecnología avanzada para ganar tiempo y atender con más presencia."
+      }
     },
     "table": {
       "headers": {
         "features": "Funcionalidades",
-        "normal": "Normal",
-        "pro": "Pro",
+        "normal": "Esencial",
+        "pro": "Profesional",
         "premium": "Premium"
       },
       "rows": {
-        "monthlyPrice": "Valor Mensual",
-        "systemAccess": "Acceso al Sistema",
-        "consultations": "Consultas",
+        "price": "Valor Mensual",
+        "access": "Acceso al sistema",
+        "clients": "Gestión de clientes",
+        "appointments": "Citas y consultas",
+        "records": "Historia clínica y documentos",
         "support": "Soporte",
-        "advancedFeatures": "Recursos Avanzados",
-        "premiumDifferentials": "Diferenciales Premium"
+        "consultations": "Consultas ilimitadas",
+        "financial": "Gestión financiera (recibos y control)",
+        "customization": "Personalización de la sala",
+        "ai": "IA de Transcripción",
+        "advanced": "Recursos avanzados de productividad",
+        "api": "API de integración"
       },
       "values": {
-        "basic": "Básico",
-        "full": "Completo",
+        "accessBasic": "Acceso al sistema",
+        "accessComplete": "Todo de Esencial",
+        "accessCompleteAI": "Todo de Profesional",
         "unlimited": "Ilimitadas",
-        "email": "Por Email",
-        "priority": "Prioritario",
-        "included": "Incluido",
-        "credits": "Sistema de Créditos (100/mes)",
-        "transcription": "IA de Transcripción",
-        "integration": "API de Integración"
+        "emailSupport": "Soporte por correo",
+        "prioritySupport": "Soporte prioritario",
+        "financialDesc": "Gestión financiera",
+        "customizationDesc": "Personalización de sala",
+        "aiCredits": "Hasta 100 minutos mensuales de transcripción automática por IA",
+        "included": "Incluido"
       }
-    }
+    },
+    "aiDisclaimer": "* Sin fidelidad. Cancele cuando quiera.",
+    "cancelAnytime": "Sin fidelidad. Cancele cuando quiera."
   },
   "invites": {
     "title": "Configuración de Invitaciones",

@@ -1736,47 +1736,66 @@
     }
   },
   "subscription": {
-    "title": "Plans d'Abonnement",
-    "subtitle": "Choisissez le plan idéal pour votre carrière",
-    "activePlan": "Plan Actif",
-    "recommended": "Recommandé",
-    "currentPlan": "Actuel",
-    "subscribe": "S'abonner",
-    "tip": "💡 Astuce : Changez ou annulez votre plan à tout moment.",
-    "aiDisclaimer": "* Les crédits IA correspondent aux minutes d'audio traité.",
-    "cancelAnytime": "Sans engagement. Annulez à tout moment.",
+    "title": "Choisissez le Plan Idéal pour Votre Parcours",
+    "subtitle": "Nos plans évoluent avec votre pratique professionnelle :",
+    "activePlan": "VOTRE PLAN",
+    "recommended": "MEILLEUR CHOIX",
+    "currentPlan": "Plan Actuel",
+    "subscribe": "Commencer Maintenant",
+    "tip": {
+      "text": "Conseil : Le plan Premium inclut des crédits mensuels d'IA pour les transcriptions automatiques.",
+      "label": "Conseil :"
+    },
     "plans": {
-      "normal": "Plan Normal",
-      "pro": "Plan Pro",
-      "premium": "Plan Premium"
+      "normal": {
+        "name": "Essentiel",
+        "description": "Organisation et sécurité pour votre pratique quotidienne."
+      },
+      "pro": {
+        "name": "Professionnel",
+        "description": "Tout ce dont vous avez besoin pour soigner avec professionnalisme."
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Technologie avancée pour gagner du temps et soigner avec plus de présence."
+      }
     },
     "table": {
       "headers": {
         "features": "Fonctionnalités",
-        "normal": "Normal",
-        "pro": "Pro",
+        "normal": "Essentiel",
+        "pro": "Professionnel",
         "premium": "Premium"
       },
       "rows": {
-        "monthlyPrice": "Valeur Mensuelle",
-        "systemAccess": "Accès Système",
-        "consultations": "Consultations",
+        "price": "Prix Mensuel",
+        "access": "Accès au système",
+        "clients": "Gestion des clients",
+        "appointments": "Rendez-vous et consultations",
+        "records": "Dossiers médicaux et documents",
         "support": "Support",
-        "advancedFeatures": "Fonctions Avancées",
-        "premiumDifferentials": "Différentiels Premium"
+        "consultations": "Consultations illimitées",
+        "financial": "Gestion financière (reçus et contrôle)",
+        "customization": "Personnalisation de la salle",
+        "ai": "IA de Transcription",
+        "advanced": "Fonctionnalités de productivité avancées",
+        "api": "API d'intégration"
       },
       "values": {
-        "basic": "Basique",
-        "full": "Complet",
-        "unlimited": "Illimitées",
-        "email": "Par E-mail",
-        "priority": "Prioritaire",
-        "included": "Inclus",
-        "credits": "Système de Crédits (100/mois)",
-        "transcription": "IA de Transcription",
-        "integration": "API d'Intégration"
+        "accessBasic": "Accès au système",
+        "accessComplete": "Tout de l'Essentiel",
+        "accessCompleteAI": "Tout du Professionnel",
+        "unlimited": "Illimité",
+        "emailSupport": "Support par e-mail",
+        "prioritySupport": "Support prioritaire",
+        "financialDesc": "Gestion financière",
+        "customizationDesc": "Personnalisation de la salle",
+        "aiCredits": "Jusqu'à 100 minutes mensuelles de transcription automatique par IA",
+        "included": "Inclus"
       }
-    }
+    },
+    "aiDisclaimer": "* Sans engagement. Annulez à tout moment.",
+    "cancelAnytime": "Sans engagement. Annulez à tout moment."
   },
   "invites": {
     "title": "Paramètres d'invitation",

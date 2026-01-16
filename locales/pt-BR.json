@@ -1548,57 +1548,63 @@
     "title": "Escolha o Plano Ideal para Sua Jornada",
     "subtitle": "Nossos planos crescem junto com sua prática profissional:",
     "activePlan": "SEU PLANO",
-    "recommended": "RECOMENDADO",
+    "recommended": "MELHOR ESCOLHA",
     "currentPlan": "Plano Atual",
-    "subscribe": "Assinar Agora",
+    "subscribe": "Começar Agora",
     "tip": {
       "text": "Dica: O plano Premium inclui créditos mensais de IA para transcrições automáticas.",
       "label": "Dica:"
     },
     "plans": {
       "normal": {
-        "name": "Plano Normal",
-        "description": "Essencial"
+        "name": "Essencial",
+        "description": "Organização e segurança para o dia a dia do seu atendimento."
       },
       "pro": {
-        "name": "Plano Pro",
-        "description": "Profissional"
+        "name": "Profissional",
+        "description": "Tudo o que você precisa para cuidar das pessoas com profissionalismo."
       },
       "premium": {
-        "name": "Plano Premium",
-        "description": "Completo + IA"
+        "name": "Premium",
+        "description": "Tecnologia avançada para ganhar tempo e cuidar com mais presença."
       }
     },
     "table": {
       "headers": {
         "features": "Funcionalidades",
-        "normal": "Plano Normal",
-        "pro": "Plano Pro",
-        "premium": "Plano Premium"
+        "normal": "Essencial",
+        "pro": "Profissional",
+        "premium": "Premium"
       },
       "rows": {
         "price": "Valor Mensal",
-        "access": "Acesso ao Sistema",
-        "consultations": "Consultas",
+        "access": "Acesso ao sistema",
+        "clients": "Gestão de clientes",
+        "appointments": "Agendamentos e consultas",
+        "records": "Prontuário e documentos básicos",
         "support": "Suporte",
-        "advanced": "Recursos Avançados",
-        "premiumDiff": "Diferenciais Premium"
+        "consultations": "Consultas ilimitadas",
+        "financial": "Gestão financeira (recibos e controle)",
+        "customization": "Personalização da sala de atendimento",
+        "ai": "IA de Transcrição",
+        "advanced": "Recursos avançados de produtividade",
+        "api": "API de integração"
       },
       "values": {
-        "accessBasic": "Básico",
-        "accessComplete": "Completo",
-        "accessCompleteAI": "Completo + IA",
+        "accessBasic": "Acesso ao sistema",
+        "accessComplete": "Tudo do Essencial",
+        "accessCompleteAI": "Tudo do Profissional",
         "unlimited": "Ilimitadas",
-        "emailSupport": "Por Email",
-        "prioritySupport": "Prioritário",
-        "included": "Incluso",
-        "credits": "Sistema de Créditos (100/mês)",
-        "transcription": "IA de Transcrição",
-        "api": "API de Integração"
+        "emailSupport": "Suporte por e-mail",
+        "prioritySupport": "Suporte prioritário",
+        "financialDesc": "Gestão financeira",
+        "customizationDesc": "Personalização da sala",
+        "aiCredits": "Até 100 minutos mensais de transcrição automática por IA",
+        "included": "Incluso"
       }
     },
-    "aiDisclaimer": "* Créditos de IA renovados mensalmente.",
-    "cancelAnytime": "Cancele a qualquer momento. Sem fidelidade."
+    "aiDisclaimer": "* Sem fidelidade. Cancele quando quiser.",
+    "cancelAnytime": "Sem fidelidade. Cancele quando quiser."
   },
   "financial": {
     "title": "Financeiro",

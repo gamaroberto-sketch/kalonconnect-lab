@@ -1628,47 +1628,66 @@
     }
   },
   "subscription": {
-    "title": "Subscription Plans",
-    "subtitle": "Choose the ideal plan for your career moment",
-    "activePlan": "Active Plan",
-    "recommended": "Recommended",
-    "currentPlan": "Current",
-    "subscribe": "Subscribe Now",
-    "tip": "💡 Tip: Change or cancel your plan anytime through the portal.",
-    "aiDisclaimer": "* AI credits correspond to minutes of processed audio.",
-    "cancelAnytime": "No lock-in. Cancel anytime.",
+    "title": "Choose the Ideal Plan for Your Journey",
+    "subtitle": "Our plans grow together with your professional practice:",
+    "activePlan": "YOUR PLAN",
+    "recommended": "BEST CHOICE",
+    "currentPlan": "Current Plan",
+    "subscribe": "Start Now",
+    "tip": {
+      "text": "Tip: The Premium plan includes monthly AI credits for automatic transcriptions.",
+      "label": "Tip:"
+    },
     "plans": {
-      "normal": "Normal Plan",
-      "pro": "Pro Plan",
-      "premium": "Premium Plan"
+      "normal": {
+        "name": "Essential",
+        "description": "Organization and security for your daily practice."
+      },
+      "pro": {
+        "name": "Professional",
+        "description": "Everything you need to care for people with professionalism."
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Advanced technology to gain time and care with more presence."
+      }
     },
     "table": {
       "headers": {
         "features": "Features",
-        "normal": "Normal",
-        "pro": "Pro",
+        "normal": "Essential",
+        "pro": "Professional",
         "premium": "Premium"
       },
       "rows": {
-        "monthlyPrice": "Monthly Price",
-        "systemAccess": "System Access",
-        "consultations": "Consultations",
+        "price": "Monthly Price",
+        "access": "System access",
+        "clients": "Client management",
+        "appointments": "Appointments and consultations",
+        "records": "Medical records and documents",
         "support": "Support",
-        "advancedFeatures": "Advanced Features",
-        "premiumDifferentials": "Premium Differentials"
+        "consultations": "Unlimited consultations",
+        "financial": "Financial management (receipts and control)",
+        "customization": "Room customization",
+        "ai": "AI Transcription",
+        "advanced": "Advanced productivity features",
+        "api": "Integration API"
       },
       "values": {
-        "basic": "Basic",
-        "full": "Full",
+        "accessBasic": "System access",
+        "accessComplete": "Everything from Essential",
+        "accessCompleteAI": "Everything from Professional",
         "unlimited": "Unlimited",
-        "email": "By Email",
-        "priority": "Priority",
-        "included": "Included",
-        "credits": "Credit System (100/mo)",
-        "transcription": "Transcription AI",
-        "integration": "Integration API"
+        "emailSupport": "Email support",
+        "prioritySupport": "Priority support",
+        "financialDesc": "Financial management",
+        "customizationDesc": "Room customization",
+        "aiCredits": "Up to 100 minutes monthly of automatic AI transcription",
+        "included": "Included"
       }
-    }
+    },
+    "aiDisclaimer": "* No lock-in. Cancel anytime.",
+    "cancelAnytime": "No lock-in. Cancel anytime."
   },
   "invites": {
     "title": "Invite Settings",
