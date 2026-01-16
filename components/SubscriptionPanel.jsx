@@ -44,8 +44,8 @@ const SubscriptionPanel = () => {
             symbol: 'R$',
             plans: {
                 normal: { price: '99', priceId: 'price_1Sax43RwUd9zUTs47aQAqyRK' },
-                pro: { price: '149', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' },
-                premium: { price: '199', priceId: 'price_BRL_Premium_Placeholder_REPLACE_ME' }
+                pro: { price: '149', priceId: 'price_1SqKdCRwUd9zUTs4MuinPpg2' },
+                premium: { price: '199', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' }
             }
         },
         USD: {
