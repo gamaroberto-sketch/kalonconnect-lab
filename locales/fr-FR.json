@@ -1736,54 +1736,47 @@
     }
   },
   "subscription": {
-    "title": "Abonnement",
-    "activePlan": "Plan Pro Actif",
+    "title": "Plans d'Abonnement",
+    "subtitle": "Choisissez le plan idéal pour votre carrière",
+    "activePlan": "Plan Actif",
     "recommended": "Recommandé",
-    "currentPlan": "Plan Actuel",
-    "subscribe": "S'abonner Maintenant",
-    "tip": {
-      "text": "💡 Astuce : Vous pouvez gérer votre abonnement, mettre à jour le mode de paiement ou annuler à tout moment via le Portail Client.",
-      "label": "Astuce :"
-    },
+    "currentPlan": "Actuel",
+    "subscribe": "S'abonner",
+    "tip": "💡 Astuce : Changez ou annulez votre plan à tout moment.",
+    "aiDisclaimer": "* Les crédits IA correspondent aux minutes d'audio traité.",
+    "cancelAnytime": "Sans engagement. Annulez à tout moment.",
     "plans": {
-      "normal": {
-        "name": "Essentiel",
-        "description": "Organisation et sécurité pour votre pratique quotidienne.",
-        "period": "/mois",
-        "features": [
-          "Accès au système",
-          "Gestion des clients",
-          "Rendez-vous et consultations",
-          "Dossiers médicaux et documents de base",
-          "Support par e-mail"
-        ]
-      },
-      "pro": {
-        "name": "Professionnel",
-        "description": "Tout ce dont vous avez besoin pour prendre soin des gens avec professionnalisme.",
-        "period": "/mois",
-        "features": [
-          "Tout de l'Essentiel",
-          "Consultations illimitées",
-          "Gestion financière (reçus et contrôle)",
-          "Personnalisation de la salle d'attente",
-          "Support prioritaire"
-        ]
-      },
-      "premium": {
-        "name": "Premium",
-        "description": "Technologie avancée pour gagner du temps et soigner avec plus de présence.",
-        "period": "/mois",
-        "features": [
-          "Tout du Professionnel",
-          "Jusqu'à 100 minutes de transcription automatique par IA par mois",
-          "Fonctionnalités avancées de productivité",
-          "API d'intégration"
-        ]
-      }
+      "normal": "Plan Normal",
+      "pro": "Plan Pro",
+      "premium": "Plan Premium"
     },
-    "aiDisclaimer": "Le temps d'IA correspond à la durée exacte de l'audio transcrit. Vos minutes sont renouvelées chaque mois pour que vous puissiez vous concentrer entièrement sur l'écoute de votre client, pendant que la technologie s'occupe des notes.",
-    "cancelAnytime": "Sans engagement. Annulez à tout moment."
+    "table": {
+      "headers": {
+        "features": "Fonctionnalités",
+        "normal": "Normal",
+        "pro": "Pro",
+        "premium": "Premium"
+      },
+      "rows": {
+        "monthlyPrice": "Valeur Mensuelle",
+        "systemAccess": "Accès Système",
+        "consultations": "Consultations",
+        "support": "Support",
+        "advancedFeatures": "Fonctions Avancées",
+        "premiumDifferentials": "Différentiels Premium"
+      },
+      "values": {
+        "basic": "Basique",
+        "full": "Complet",
+        "unlimited": "Illimitées",
+        "email": "Par E-mail",
+        "priority": "Prioritaire",
+        "included": "Inclus",
+        "credits": "Système de Crédits (100/mois)",
+        "transcription": "IA de Transcription",
+        "integration": "API d'Intégration"
+      }
+    }
   },
   "invites": {
     "title": "Paramètres d'invitation",

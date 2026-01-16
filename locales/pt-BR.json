@@ -640,6 +640,38 @@
       "video": "Vídeo de Exemplo",
       "music": "Música de Exemplo",
       "message": "Olá! Seja bem-vindo(a) à nossa sala de espera. Respire fundo e relaxe, em breve iniciaremos nossa sessão. Estou preparando tudo para te atender da melhor forma possível."
+    },
+    "specialty": {
+      "title": "Configuração por Especialidade",
+      "select": "Selecione uma especialidade",
+      "add": "Adicionar Especialidade",
+      "placeholderMessage": "Mensagem específica...",
+      "placeholderVideo": "Vídeo específico...",
+      "placeholderMusic": "Música específica...",
+      "empty": "Nenhuma configuração específica salva.",
+      "defaultMessage": "Mensagem padrão",
+      "default": "Padrão"
+    },
+    "captions": {
+      "title": "Legendas com Tradução",
+      "enabled": "Ativado",
+      "disabled": "Desativado",
+      "myLanguage": "Meu Idioma",
+      "clientLanguage": "Idioma do Cliente",
+      "myLanguageHint": "Idioma que você vai falar durante a consulta",
+      "clientLanguageHint": "Idioma para traduzir suas palavras",
+      "saveSettings": "Salvar Configurações",
+      "browserNotSupported": "Navegador não suportado",
+      "browserNotSupportedMessage": "As legendas funcionam apenas no Chrome ou Edge.",
+      "freeVersion": "Versão Gratuita:",
+      "freeVersionFeatures": [
+        "Web Speech API (navegador) para transcrição",
+        "MyMemory Translation (1000 palavras/dia)",
+        "Qualidade: 85-90%",
+        "Latência: 1-3 segundos"
+      ],
+      "disabledInfo": "Ative as legendas para configurar os idiomas e começar a usar tradução em tempo real.",
+      "translating": "Traduzindo..."
     }
   },
   "videoControls": {
@@ -1513,54 +1545,60 @@
     }
   },
   "subscription": {
-    "title": "Assinatura",
-    "activePlan": "Plano Ativo",
-    "recommended": "Melhor Escolha",
-    "currentPlan": "Seu Plano",
-    "subscribe": "Começar Agora",
+    "title": "Escolha o Plano Ideal para Sua Jornada",
+    "subtitle": "Nossos planos crescem junto com sua prática profissional:",
+    "activePlan": "SEU PLANO",
+    "recommended": "RECOMENDADO",
+    "currentPlan": "Plano Atual",
+    "subscribe": "Assinar Agora",
     "tip": {
-      "text": "💡 Dica: Você pode alterar seu plano ou cancelar a qualquer momento sem burocracia.",
+      "text": "Dica: O plano Premium inclui créditos mensais de IA para transcrições automáticas.",
       "label": "Dica:"
     },
     "plans": {
       "normal": {
-        "name": "Essencial",
-        "description": "Organização e segurança para o dia a dia do seu atendimento.",
-        "period": "/mês",
-        "features": [
-          "Acesso ao sistema",
-          "Gestão de clientes",
-          "Agendamentos e consultas",
-          "Prontuário e documentos básicos",
-          "Suporte por e-mail"
-        ]
+        "name": "Plano Normal",
+        "description": "Essencial"
       },
       "pro": {
-        "name": "Profissional",
-        "description": "Tudo o que você precisa para cuidar das pessoas com profissionalismo.",
-        "period": "/mês",
-        "features": [
-          "Tudo do Essencial",
-          "Consultas ilimitadas",
-          "Gestão financeira (recibos e controle)",
-          "Personalização da sala de atendimento",
-          "Suporte prioritário"
-        ]
+        "name": "Plano Pro",
+        "description": "Profissional"
       },
       "premium": {
-        "name": "Premium",
-        "description": "Tecnologia avançada para ganhar tempo e cuidar com mais presença.",
-        "period": "/mês",
-        "features": [
-          "Tudo do Profissional",
-          "Até 100 minutos mensais de transcrição automática por IA",
-          "Recursos avançados de produtividade",
-          "API de integração"
-        ]
+        "name": "Plano Premium",
+        "description": "Completo + IA"
       }
     },
-    "aiDisclaimer": "O tempo de IA corresponde à duração exata do áudio transcrito. Seus minutos são renovados mensalmente para que você possa focar inteiramente na escuta do seu cliente, enquanto a tecnologia cuida das anotações.",
-    "cancelAnytime": "Sem fidelidade. Cancele quando quiser."
+    "table": {
+      "headers": {
+        "features": "Funcionalidades",
+        "normal": "Plano Normal",
+        "pro": "Plano Pro",
+        "premium": "Plano Premium"
+      },
+      "rows": {
+        "price": "Valor Mensal",
+        "access": "Acesso ao Sistema",
+        "consultations": "Consultas",
+        "support": "Suporte",
+        "advanced": "Recursos Avançados",
+        "premiumDiff": "Diferenciais Premium"
+      },
+      "values": {
+        "accessBasic": "Básico",
+        "accessComplete": "Completo",
+        "accessCompleteAI": "Completo + IA",
+        "unlimited": "Ilimitadas",
+        "emailSupport": "Por Email",
+        "prioritySupport": "Prioritário",
+        "included": "Incluso",
+        "credits": "Sistema de Créditos (100/mês)",
+        "transcription": "IA de Transcrição",
+        "api": "API de Integração"
+      }
+    },
+    "aiDisclaimer": "* Créditos de IA renovados mensalmente.",
+    "cancelAnytime": "Cancele a qualquer momento. Sem fidelidade."
   },
   "financial": {
     "title": "Financeiro",
@@ -1623,166 +1661,6 @@
       "loadBanksMessage": "Erro ao carregar lista de bancos.",
       "loadFavoritesMessage": "Erro ao carregar favoritos.",
       "saveFavoritesMessage": "Erro ao salvar alterações."
-    }
-  },
-  "invites": {
-    "title": "Configurações de Convite",
-    "subtitle": "Personalize como seus clientes recebem os avisos das sessões.",
-    "channels": {
-      "title": "Canais de Envio",
-      "whatsapp": "WhatsApp",
-      "email": "E-mail"
-    },
-    "timing": {
-      "title": "Quando enviar?",
-      "dayBefore": "Dia anterior",
-      "dayOf": "No dia da consulta",
-      "tenMinBefore": "10 minutos antes"
-    },
-    "message": {
-      "title": "Mensagem Personalizada",
-      "placeholder": "Escreva sua mensagem...",
-      "help": "Use [data/hora] e [CLIENTE] para personalizar. O link da plataforma será inserido automaticamente.",
-      "template": "Olá [CLIENTE]! 🌟\n\nSua consulta está agendada para [data/hora].\n\nAcesse o link abaixo para entrar na sala:\n{LINK_CONSULTA}\n\nAté breve!"
-    },
-    "buttons": {
-      "save": "Salvar Configurações",
-      "test": "Enviar Teste"
-    },
-    "history": {
-      "title": "Histórico de Envios"
-    },
-    "alerts": {
-      "saved": "Configurações salvas!",
-      "testGenerated": "Teste gerado: {message}"
-    }
-  },
-  "waitingRoom": {
-    "title": "Sala de Espera Virtual",
-    "subtitle": "Personalize a experiência do seu cliente antes da consulta",
-    "examples": {
-      "title": "Exemplos",
-      "message": "Olá! Estamos preparando seu atendimento. Que bom ter você aqui. Sinta-se confortável. Inspire... Expire... Relaxe. 🍃"
-    },
-    "video": {
-      "title": "Vídeo de Apresentação",
-      "description": "Adicione um link do YouTube ou Vimeo"
-    },
-    "music": {
-      "title": "Música de Fundo",
-      "description": "Link de áudio (MP3) ou lista de reprodução"
-    },
-    "message": {
-      "title": "Mensagem de Boas-vindas",
-      "tip": "Dica: Use uma mensagem acolhedora para tranquilizar o paciente."
-    },
-    "visualPreferences": {
-      "title": "Preferências Visuais",
-      "animatedMessage": "Mensagem Animada",
-      "animatedMessageDesc": "Exibir texto com efeito de digitação",
-      "allowClientPreview": "Permitir Preview",
-      "allowClientPreviewDesc": "Cliente pode testar câmera antes de entrar",
-      "alertOnClientJoin": "Alertar Entrada",
-      "alertOnClientJoinDesc": "Tocar som quando cliente chegar",
-      "multiSpecialty": "Multi-especialidade",
-      "multiSpecialtyDesc": "Permitir seleção de especialidade"
-    },
-    "specialty": {
-      "title": "Configuração por Especialidade",
-      "select": "Selecione uma especialidade",
-      "add": "Adicionar Especialidade",
-      "placeholderMessage": "Mensagem específica...",
-      "placeholderVideo": "Vídeo específico...",
-      "placeholderMusic": "Música específica...",
-      "empty": "Nenhuma configuração específica salva.",
-      "defaultMessage": "Mensagem padrão",
-      "default": "Padrão"
-    },
-    "fileDisclaimer": "Nota: Arquivos locais não são suportados na versão web. Use links externos.",
-    "loading": "Carregando configurações...",
-    "saving": "Salvando...",
-    "saveButton": "Salvar Alterações",
-    "saveButtonBottom": "Salvar Todas as Configurações",
-    "success": "Configurações salvas com sucesso!",
-    "roomVisual": "Visual da Sala",
-    "roomVisualDesc": "Personalize a aparência da sala de espera",
-    "backgroundVideo": "Vídeo de Fundo",
-    "backgroundVideoPlaceholder": "Link do vídeo (YouTube, Vimeo, etc)",
-    "staticImage": "Imagem Estática",
-    "slidesText": "Slides/Texto",
-    "backgroundCustomization": "Personalização de Fundo",
-    "backgroundImageUpload": "Upload de Imagem de Fundo",
-    "audioFile": "Arquivo de Áudio",
-    "audioFilePlaceholder": "Link do arquivo de áudio (MP3, OGG)",
-    "imageFile": "Arquivo de Imagem",
-    "welcomeMessage": "Mensagem de Boas-vindas",
-    "saveReminder": "Lembre-se de salvar suas alterações",
-    "farewellImage": "Imagem de Despedida",
-    "preview": "Pré-visualização",
-    "previewTabs": {
-      "entrance": "Entrada",
-      "waitingRoom": "Aguardando",
-      "exit": "Despedida"
-    },
-    "errors": {
-      "load": "Erro ao carregar configurações.",
-      "upload": "Erro no upload.",
-      "uploadGeneric": "Erro ao fazer upload.",
-      "save": "Erro ao salvar.",
-      "saveGeneric": "Erro ao salvar configurações."
-    },
-    "captions": {
-      "title": "Legendas com Tradução",
-      "enabled": "Ativado",
-      "disabled": "Desativado",
-      "myLanguage": "Meu Idioma",
-      "clientLanguage": "Idioma do Cliente",
-      "myLanguageHint": "Idioma que você vai falar durante a consulta",
-      "clientLanguageHint": "Idioma para traduzir suas palavras",
-      "saveSettings": "Salvar Configurações",
-      "browserNotSupported": "Navegador não suportado",
-      "browserNotSupportedMessage": "As legendas funcionam apenas no Chrome ou Edge.",
-      "freeVersion": "Versão Gratuita:",
-      "freeVersionFeatures": [
-        "Web Speech API (navegador) para transcrição",
-        "MyMemory Translation (1000 palavras/dia)",
-        "Qualidade: 85-90%",
-        "Latência: 1-3 segundos"
-      ],
-      "disabledInfo": "Ative as legendas para configurar os idiomas e começar a usar tradução em tempo real.",
-      "translating": "Traduzindo..."
-    },
-    "invites": {
-      "title": "Envio Automático de Convite da Consulta",
-      "subtitle": "Configure quando e como enviar convites para seus clientes",
-      "channels": {
-        "title": "Canais de Envio",
-        "whatsapp": "WhatsApp",
-        "email": "E-mail"
-      },
-      "timing": {
-        "title": "Quando Enviar",
-        "dayBefore": "Enviar no dia anterior, às",
-        "dayOf": "Enviar no dia da consulta, às",
-        "tenMinBefore": "Enviar 10 minutos antes do início"
-      },
-      "message": {
-        "title": "Mensagem do Convite (Editável)",
-        "placeholder": "Digite sua mensagem personalizada aqui...",
-        "help": "Use [data/hora] para a data/hora da consulta e [CLIENTE] para o nome do cliente",
-        "template": "Olá [CLIENTE]! 🌟\n\nSua consulta está agendada para [data/hora].\n\nAcesse o link abaixo para entrar na sala:\n{LINK_CONSULTA}\n\nAté breve!"
-      },
-      "buttons": {
-        "save": "Salvar Configurações",
-        "test": "Enviar Teste Agora"
-      },
-      "alerts": {
-        "saved": "Configurações salvas com sucesso!",
-        "testGenerated": "Mensagem de teste gerada:\n\n{message}"
-      },
-      "history": {
-        "title": "Histórico de Envios"
-      }
     }
   },
   "integrations": {

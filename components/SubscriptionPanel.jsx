@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Crown, CreditCard, Check, Loader2, ShieldCheck, Clock } from 'lucide-react';
+import { Crown, CreditCard, Check, Loader2, ShieldCheck, X } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useTheme } from './ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
@@ -34,20 +34,18 @@ const SubscriptionPanel = () => {
         loadProfileCurrency();
     }, [user]);
 
-    const isPro = user?.version === 'PRO';
-    const isNormal = user?.version === 'NORMAL';
+    const isPro = user?.version === 'PRO' || user?.version === 'PROFESSIONAL'; // Handle legacy names if any
     const isPremium = user?.version === 'PREMIUM';
-
-    console.log('🔵 SubscriptionPanel - user.version:', user?.version, 'isPro:', isPro, 'isNormal:', isNormal, 'isPremium:', isPremium);
+    const isNormal = !isPro && !isPremium; // Default or NORMAL
 
     // Multi-currency Pricing Configuration
     const PRICING_CONFIG = {
         BRL: {
             symbol: 'R$',
             plans: {
-                normal: { price: '99', priceId: 'price_1Sax43RwUd9zUTs47aQAqyRK' },
-                pro: { price: '149', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' },
-                premium: { price: '199', priceId: 'price_BRL_Premium_Placeholder_REPLACE_ME' }
+                normal: { price: '49', priceId: 'price_1Sax43RwUd9zUTs47aQAqyRK' },
+                pro: { price: '99', priceId: 'price_1Sax4QRwUd9zUTs4ZwXr21OF' },
+                premium: { price: '149', priceId: 'price_BRL_Premium_Placeholder_REPLACE_ME' }
             }
         },
         USD: {
@@ -76,35 +74,25 @@ const SubscriptionPanel = () => {
         }
     };
 
-    // Get configuration for current currency or fallback to BRL
     const currentConfig = PRICING_CONFIG[profileCurrency] || PRICING_CONFIG['BRL'];
 
     const handleSubscribe = async (priceId) => {
         setLoading(true);
         try {
-            console.log('🔵 Iniciando checkout com priceId:', priceId);
-            console.log('🔵 User:', user);
-
             const response = await fetch('/api/stripe/checkout_sessions', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     priceId,
-                    userId: user.id || user.uid, // Try both properties
+                    userId: user.id || user.uid,
                     userEmail: user.email,
                 }),
             });
 
             const data = await response.json();
-            console.log('🔵 Resposta da API:', response.status, data);
-
             if (data.url) {
-                // Redirect to Stripe Checkout
                 window.location.href = data.url;
             } else {
-                console.error('❌ Erro: API não retornou URL', data);
                 throw new Error(data.error || 'Failed to create checkout session');
             }
         } catch (error) {
@@ -115,162 +103,166 @@ const SubscriptionPanel = () => {
         }
     };
 
-    const plans = [
-        {
-            name: t('subscription.plans.normal.name'),
-            description: t('subscription.plans.normal.description'),
-            price: `${currentConfig.symbol} ${currentConfig.plans.normal.price}`,
-            period: t('subscription.plans.normal.period'),
-            priceId: currentConfig.plans.normal.priceId,
-            features: [
-                t('subscription.plans.normal.features.0'),
-                t('subscription.plans.normal.features.1'),
-                t('subscription.plans.normal.features.2'),
-                t('subscription.plans.normal.features.3'),
-                t('subscription.plans.normal.features.4'),
-            ],
-            current: isNormal,
-        },
-        {
-            name: t('subscription.plans.pro.name'),
-            description: t('subscription.plans.pro.description'),
-            price: `${currentConfig.symbol} ${currentConfig.plans.pro.price}`,
-            period: t('subscription.plans.pro.period'),
-            priceId: currentConfig.plans.pro.priceId,
-            features: [
-                t('subscription.plans.pro.features.0'),
-                t('subscription.plans.pro.features.1'),
-                t('subscription.plans.pro.features.2'),
-                t('subscription.plans.pro.features.3'),
-                t('subscription.plans.pro.features.4'),
-            ],
-            current: isPro,
-            recommended: true,
-        },
-        {
-            name: t('subscription.plans.premium.name'),
-            description: t('subscription.plans.premium.description'),
-            price: `${currentConfig.symbol} ${currentConfig.plans.premium.price}`,
-            period: t('subscription.plans.premium.period'),
-            priceId: currentConfig.plans.premium.priceId,
-            features: [
-                t('subscription.plans.premium.features.0'),
-                t('subscription.plans.premium.features.1'),
-                t('subscription.plans.premium.features.2'),
-                t('subscription.plans.premium.features.3'),
-            ],
-            current: isPremium,
-            premium: true,
-        },
-    ];
+    // Helper to render check mark or dash
+    const renderCell = (isIncluded, text = null, isPremiumFeature = false) => {
+        if (text) {
+            return <span className={`font-medium ${isPremiumFeature ? 'text-emerald-400' : 'text-gray-300'}`}>{text}</span>;
+        }
+        if (isIncluded) {
+            return (
+                <div className="flex items-center justify-center gap-1">
+                    <div className="bg-emerald-500/20 p-1 rounded">
+                        <Check className="w-5 h-5 text-emerald-400" />
+                    </div>
+                </div>
+            );
+        }
+        return <span className="text-gray-600">—</span>;
+    };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <div className="p-3 rounded-xl" style={{ backgroundColor: themeColors.primary }}>
-                        <CreditCard className="w-6 h-6" style={{ color: 'white' }} />
-                    </div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                        {t('subscription.title')}
-                    </h2>
+        <div className="max-w-5xl mx-auto space-y-8">
+            {/* Header */}
+            <div className="text-center space-y-3 mb-10">
+                <div className="flex items-center justify-center gap-2 text-2xl font-serif text-amber-500 mb-2">
+                    <Crown className="w-6 h-6 fill-current" />
+                    <h2 className="font-medium tracking-wide">{t('subscription.title')}</h2>
                 </div>
-                {isPremium && (
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
-                        <Crown className="w-3.5 h-3.5" />
-                        {t('subscription.activePlan')}
-                    </span>
-                )}
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-                {plans.map((plan) => (
-                    <div
-                        key={plan.name}
-                        className={`relative rounded-xl p-8 transition-all duration-300 flex flex-col ${plan.recommended
-                            ? 'border border-indigo-200 dark:border-indigo-800 bg-indigo-50/10 dark:bg-indigo-900/10 shadow-xl shadow-indigo-200/20 z-10 scale-[1.02]'
-                            : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
-                            }`}
-                    >
-                        {plan.recommended && (
-                            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                                <span className="px-4 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold bg-indigo-600 text-white shadow-sm">
-                                    {t('subscription.recommended')}
-                                </span>
-                            </div>
-                        )}
-
-                        <div className="text-center mb-6">
-                            <h3 className={`text-lg font-bold mb-2 ${plan.recommended ? 'text-indigo-900 dark:text-indigo-100' : 'text-gray-900 dark:text-white'}`}>
-                                {plan.name}
-                            </h3>
-                            <div className="flex items-baseline justify-center gap-1">
-                                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                                    {plan.price}
-                                </span>
-                                <span className="text-gray-500 dark:text-gray-400 font-medium">
-                                    {plan.period}
-                                </span>
-                            </div>
-                            {/* 🟢 Short Copy Description */}
-                            <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 italic min-h-[40px] leading-relaxed">
-                                {plan.description}
-                            </p>
-                        </div>
-
-                        <ul className={`mb-8 flex-grow ${plan.premium ? 'space-y-6' : 'space-y-4'}`}>
-                            {plan.features.map((feature, index) => {
-                                // Detect AI feature to highlight subtly
-                                const isAiFeature = plan.premium && (feature.includes('100') || feature.includes('IA'));
-
-                                return (
-                                    <li key={index} className={`flex items-start gap-3 text-sm ${isAiFeature ? 'text-indigo-700 dark:text-indigo-300 font-medium' : 'text-gray-600 dark:text-gray-300'}`}>
-                                        {isAiFeature ? (
-                                            <Clock className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
-                                        ) : (
-                                            <Check className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0 mt-0.5" />
-                                        )}
-                                        <span>{feature}</span>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-
-                        <button
-                            onClick={() => handleSubscribe(plan.priceId)}
-                            disabled={loading || plan.current}
-                            className={`w-full py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${plan.current
-                                    ? 'bg-gray-50 dark:bg-gray-800/50 text-gray-400/70 border border-gray-100 dark:border-gray-700/50 cursor-not-allowed text-sm font-medium'
-                                    : plan.recommended || plan.premium
-                                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg'
-                                        : 'bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
-                                }`}
-                        >
-                            {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                            {plan.current ? t('subscription.currentPlan') : t('subscription.subscribe')}
-                        </button>
-                    </div>
-                ))}
-            </div>
-
-            <div className="mt-4 text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-green-500" />
-                    {t('subscription.cancelAnytime')}
+                <p className="text-gray-400 max-w-xl mx-auto">
+                    {t('subscription.subtitle')}
                 </p>
             </div>
 
-            {isPremium && (
-                <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 space-y-2">
-                    <p className="text-sm text-blue-900 dark:text-blue-100 font-medium">
-                        {t('subscription.tip.text')}
-                    </p>
-                    {/* 🟢 AI Disclaimer */}
-                    <p className="text-xs text-blue-800 dark:text-blue-200/80 italic border-t border-blue-200 dark:border-blue-700/50 pt-2 mt-2">
-                        {t('subscription.aiDisclaimer')}
-                    </p>
+            {/* Pricing Table */}
+            <div className="rounded-2xl overflow-hidden border border-gray-800 bg-gray-950 shadow-2xl relative">
+                {/* Background Glow */}
+                <div className="absolute top-0 center w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+
+                <div className="grid grid-cols-4 divide-x divide-gray-800/50">
+
+                    {/* Column 1: Labels (Sticky on mobile if needed, usually hidden on very small screens or stacked) */}
+                    <div className="col-span-1 bg-gray-950 p-6 flex flex-col justify-center space-y-6">
+                        <div className="h-24 flex items-end pb-2 font-semibold text-gray-500 uppercase text-xs tracking-wider">
+                            {t('subscription.table.headers.features')}
+                        </div>
+                        {/* Row Headers */}
+                        <div className="space-y-6 text-sm font-medium text-gray-400 py-2">
+                            <div className="h-10 flex items-center">{t('subscription.table.rows.price')}</div>
+                            <div className="h-10 flex items-center">{t('subscription.table.rows.access')}</div>
+                            <div className="h-10 flex items-center">{t('subscription.table.rows.consultations')}</div>
+                            <div className="h-10 flex items-center">{t('subscription.table.rows.support')}</div>
+                            <div className="h-10 flex items-center">{t('subscription.table.rows.advanced')}</div>
+                            <div className="h-20 flex items-start pt-2 text-emerald-400">{t('subscription.table.rows.premiumDiff')}</div>
+                        </div>
+                    </div>
+
+                    {/* Column 2: Normal */}
+                    <div className="col-span-1 bg-gray-900/40 p-6 flex flex-col items-center text-center hover:bg-gray-900/60 transition-colors relative">
+                        {isNormal && <span className="absolute top-2 right-2 text-[10px] bg-gray-700 text-white px-2 py-0.5 rounded-full">{t('subscription.currentPlan')}</span>}
+                        <h3 className="text-lg font-bold text-white mb-1 h-24 flex items-end pb-4">{t('subscription.table.headers.normal')}</h3>
+
+                        <div className="space-y-6 text-sm w-full py-2">
+                            <div className="h-10 flex items-center justify-center font-bold text-xl text-white">
+                                {currentConfig.symbol} {currentConfig.plans.normal.price} <span className="text-xs font-normal text-gray-500 ml-1">/mês</span>
+                            </div>
+                            <div className="h-10 flex items-center justify-center text-gray-400">{t('subscription.table.values.accessBasic')}</div>
+                            <div className="h-10 flex items-center justify-center text-gray-400">{t('subscription.table.values.unlimited')}</div>
+                            <div className="h-10 flex items-center justify-center text-gray-400">{t('subscription.table.values.emailSupport')}</div>
+                            <div className="h-10 flex items-center justify-center">{renderCell(false)}</div>
+                            <div className="h-20 flex items-start justify-center pt-2">{renderCell(false)}</div>
+                        </div>
+
+                        {!isNormal && (
+                            <button
+                                onClick={() => handleSubscribe(currentConfig.plans.normal.priceId)}
+                                className="mt-8 w-full py-2 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors text-sm"
+                            >
+                                {t('subscription.subscribe')}
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Column 3: Pro (Featured) */}
+                    <div className="col-span-1 bg-gradient-to-b from-amber-900/10 to-transparent p-6 flex flex-col items-center text-center border-x-2 border-amber-500/20 relative">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-amber-500" />
+                        {isPro && <span className="absolute top-3 right-3 text-[10px] bg-amber-500 text-black font-bold px-2 py-0.5 rounded-full">{t('subscription.activePlan')}</span>}
+
+                        <h3 className="text-xl font-bold text-amber-400 mb-1 h-24 flex items-end pb-4">{t('subscription.table.headers.pro')}</h3>
+
+                        <div className="space-y-6 text-sm w-full py-2">
+                            <div className="h-10 flex items-center justify-center font-bold text-2xl text-amber-400">
+                                {currentConfig.symbol} {currentConfig.plans.pro.price} <span className="text-xs font-normal text-amber-500/70 ml-1">/mês</span>
+                            </div>
+                            <div className="h-10 flex items-center justify-center text-white font-medium">{t('subscription.table.values.accessComplete')}</div>
+                            <div className="h-10 flex items-center justify-center text-white font-medium">{t('subscription.table.values.unlimited')}</div>
+                            <div className="h-10 flex items-center justify-center text-amber-400 font-medium">{t('subscription.table.values.prioritySupport')}</div>
+                            <div className="h-10 flex items-center justify-center">
+                                <div className="flex items-center gap-1.5 text-amber-400 font-medium bg-amber-500/10 px-3 py-1 rounded-full">
+                                    <Check className="w-4 h-4" /> {t('subscription.table.values.included')}
+                                </div>
+                            </div>
+                            <div className="h-20 flex items-start justify-center pt-2">{renderCell(false)}</div>
+                        </div>
+
+                        {!isPro && (
+                            <button
+                                onClick={() => handleSubscribe(currentConfig.plans.pro.priceId)}
+                                className="mt-8 w-full py-2 rounded-lg bg-amber-500 text-black font-bold hover:bg-amber-400 shadow-lg shadow-amber-500/20 transition-all text-sm"
+                            >
+                                {t('subscription.subscribe')}
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Column 4: Premium */}
+                    <div className="col-span-1 bg-gray-900/20 p-6 flex flex-col items-center text-center relative">
+                        {isPremium && <span className="absolute top-3 right-3 text-[10px] bg-emerald-500 text-black font-bold px-2 py-0.5 rounded-full">{t('subscription.activePlan')}</span>}
+
+                        <h3 className="text-lg font-bold text-white mb-1 h-24 flex items-end pb-4">{t('subscription.table.headers.premium')}</h3>
+
+                        <div className="space-y-6 text-sm w-full py-2">
+                            <div className="h-10 flex items-center justify-center font-bold text-xl text-white">
+                                {currentConfig.symbol} {currentConfig.plans.premium.price} <span className="text-xs font-normal text-gray-500 ml-1">/mês</span>
+                            </div>
+                            <div className="h-10 flex items-center justify-center text-white">{t('subscription.table.values.accessCompleteAI')}</div>
+                            <div className="h-10 flex items-center justify-center text-white">{t('subscription.table.values.unlimited')}</div>
+                            <div className="h-10 flex items-center justify-center text-white">{t('subscription.table.values.prioritySupport')}</div>
+                            <div className="h-10 flex items-center justify-center">
+                                <div className="flex items-center gap-1.5 text-white font-medium bg-gray-700 px-3 py-1 rounded-full">
+                                    <Check className="w-4 h-4" /> {t('subscription.table.values.included')}
+                                </div>
+                            </div>
+                            <div className="h-20 flex flex-col items-center justify-start pt-0 space-y-1">
+                                <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                                    <Check className="w-3 h-3" /> {t('subscription.table.values.credits')}
+                                </div>
+                                <span className="text-xs text-gray-400">{t('subscription.table.values.transcription')}</span>
+                                <span className="text-xs text-gray-400">{t('subscription.table.values.api')}</span>
+                            </div>
+                        </div>
+
+                        {!isPremium && (
+                            <button
+                                onClick={() => handleSubscribe(currentConfig.plans.premium.priceId)}
+                                className="mt-8 w-full py-2 rounded-lg border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 transition-colors text-sm"
+                            >
+                                {t('subscription.subscribe')}
+                            </button>
+                        )}
+                    </div>
+
                 </div>
-            )}
+            </div>
+
+            <div className="text-center text-gray-500 text-sm mt-8 flex flex-col gap-2">
+                <p className="flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    {t('subscription.cancelAnytime')}
+                </p>
+                <p className="text-xs italic opacity-70">
+                    {t('subscription.aiDisclaimer')}
+                </p>
+            </div>
         </div>
     );
 };

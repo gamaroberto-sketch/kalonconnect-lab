@@ -1624,113 +1624,46 @@
     }
   },
   "subscription": {
-    "title": "Suscripción",
-    "activePlan": "Plan Pro Activo",
+    "title": "Planes de Suscripción",
+    "subtitle": "Elija el plan ideal para su momento profesional",
+    "activePlan": "Plan Activo",
     "recommended": "Recomendado",
-    "currentPlan": "Plan Actual",
+    "currentPlan": "Actual",
     "subscribe": "Suscribirse Ahora",
-    "tip": {
-      "text": "💡 Consejo: Puede gestionar su suscripción, actualizar el método de pago o cancelar en cualquier momento a través del Portal del Cliente.",
-      "label": "Consejo:"
-    },
-    "plans": {
-      "normal": {
-        "name": "Esencial",
-        "description": "Organización y seguridad para el día a día de su atención.",
-        "period": "/mes",
-        "features": [
-          "Acceso al sistema",
-          "Gestión de clientes",
-          "Citas y consultas",
-          "Historial médico y documentos básicos",
-          "Soporte por correo"
-        ]
-      },
-      "pro": {
-        "name": "Profesional",
-        "description": "Todo lo que necesita para cuidar a las personas con profesionalismo.",
-        "period": "/mes",
-        "features": [
-          "Todo lo de Esencial",
-          "Consultas ilimitadas",
-          "Gestión financiera (recibos y control)",
-          "Personalización de la sala de espera",
-          "Soporte prioritario"
-        ]
-      },
-      "premium": {
-        "name": "Premium",
-        "description": "Tecnología avanzada para ganar tiempo y cuidar con más presencia.",
-        "period": "/mes",
-        "features": [
-          "Todo lo de Profesional",
-          "Hasta 100 minutos mensuales de transcripción automática por IA",
-          "Funciones avanzadas de productividad",
-          "API de integración"
-        ]
-      }
-    },
-    "aiDisclaimer": "El tiempo de IA corresponde a la duración exacta del audio transcrito. Sus minutos se renuevan mensualmente para que pueda concentrarse completamente en escuchar a su cliente, mientras la tecnología se encarga de las notas.",
+    "tip": "💡 Consejo: Cambie o cancele su plan en cualquier momento.",
+    "aiDisclaimer": "* Los créditos de IA corresponden a minutos de audio procesado.",
     "cancelAnytime": "Sin fidelidad. Cancele cuando quiera.",
-    "income": "Ingresos",
-    "expenses": "Gastos",
-    "pending": "Pendiente",
-    "overdue": "Vencido",
-    "shortcuts": "Atajos",
-    "configureBanks": "Configurar Bancos",
-    "configureBanksTitle": "Configurar Bancos",
-    "configureBanksDesc": "Seleccione los bancos que utiliza y desea ver en el panel.",
-    "searchPlaceholder": "Buscar banco por nombre o código",
-    "loadingBanks": "Cargando lista de bancos...",
-    "noBanksFound": "Ningún banco encontrado para",
-    "digitalBanks": "Bancos Digitales",
-    "traditionalBanks": "Bancos Tradicionales y Otros",
-    "access": {
-      "normalOrPro": "Disponible en versiones Normal o Pro",
-      "proOnly": "Disponible solo en versión Pro"
+    "plans": {
+      "normal": "Plan Normal",
+      "pro": "Plan Pro",
+      "premium": "Plan Premium"
     },
-    "export": "Exportar",
-    "register": "Registro",
-    "qrPix": "Generar QR PIX",
-    "summary": "Resumen",
-    "favoriteBanks": "Mis Bancos",
-    "saving": "Guardando...",
-    "selectBanks": "Seleccione sus bancos en Configurar Bancos.",
-    "clickToEdit": "Haga clic para ver detalles",
-    "selectFavoriteToEdit": "Seleccione un banco favorito para ver detalles.",
-    "pixKeys": "Llaves PIX",
-    "noPixKeys": "Ninguna llave registrada",
-    "enterPixKey": "Ingrese la llave PIX",
-    "bankAccounts": "Cuentas Bancarias",
-    "noAccounts": "Ninguna cuenta registrada",
-    "account": {
-      "number": "Cuenta",
-      "agency": "Agencia",
-      "holder": "Titular",
-      "doc": "CPF/CNPJ",
-      "type": "Tipo",
-      "types": {
-        "CC": "Cuenta Corriente",
-        "CP": "Ahorros",
-        "CD": "Cuenta Digital",
-        "PJ": "Persona Jurídica"
+    "table": {
+      "headers": {
+        "features": "Funcionalidades",
+        "normal": "Normal",
+        "pro": "Pro",
+        "premium": "Premium"
+      },
+      "rows": {
+        "monthlyPrice": "Valor Mensual",
+        "systemAccess": "Acceso al Sistema",
+        "consultations": "Consultas",
+        "support": "Soporte",
+        "advancedFeatures": "Recursos Avanzados",
+        "premiumDifferentials": "Diferenciales Premium"
+      },
+      "values": {
+        "basic": "Básico",
+        "full": "Completo",
+        "unlimited": "Ilimitadas",
+        "email": "Por Email",
+        "priority": "Prioritario",
+        "included": "Incluido",
+        "credits": "Sistema de Créditos (100/mes)",
+        "transcription": "IA de Transcripción",
+        "integration": "API de Integración"
       }
-    },
-    "movements": {
-      "title": "Movimientos",
-      "all": "Todas",
-      "date": "Fecha",
-      "description": "Descripción",
-      "category": "Categoría",
-      "value": "Valor",
-      "status": "Estado",
-      "actions": "Acciones",
-      "empty": "Ningún movimiento registrado."
-    },
-    "errors": {
-      "loadBanksMessage": "Error al cargar lista de bancos.",
-      "loadFavoritesMessage": "Error al cargar favoritos.",
-      "saveFavoritesMessage": "Error al guardar cambios."
     }
   },
   "invites": {
