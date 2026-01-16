@@ -1558,15 +1558,35 @@
     "plans": {
       "normal": {
         "name": "Essencial",
-        "description": "Organização e segurança para o dia a dia do seu atendimento."
+        "description": "Organização e segurança para o dia a dia do seu atendimento.",
+        "features": [
+          "Acesso ao sistema",
+          "Gestão de clientes",
+          "Agendamentos e consultas",
+          "Prontuário e documentos básicos",
+          "Suporte por e-mail"
+        ]
       },
       "pro": {
         "name": "Profissional",
-        "description": "Tudo o que você precisa para cuidar das pessoas com profissionalismo."
+        "description": "Tudo o que você precisa para cuidar das pessoas com profissionalismo.",
+        "features": [
+          "Tudo do Essencial",
+          "Consultas ilimitadas",
+          "Gestão financeira (recibos e controle)",
+          "Personalização da sala de atendimento",
+          "Suporte prioritário"
+        ]
       },
       "premium": {
         "name": "Premium",
-        "description": "Tecnologia avançada para ganhar tempo e cuidar com mais presença."
+        "description": "Tecnologia avançada para ganhar tempo e cuidar com mais presença.",
+        "features": [
+          "Tudo do Profissional",
+          "Até 100 minutos mensais de transcrição automática por IA",
+          "Recursos avançados de produtividade",
+          "API de integração"
+        ]
       }
     },
     "table": {

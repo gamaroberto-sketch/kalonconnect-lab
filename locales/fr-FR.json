@@ -1749,15 +1749,35 @@
     "plans": {
       "normal": {
         "name": "Essentiel",
-        "description": "Organisation et sécurité pour votre pratique quotidienne."
+        "description": "Organisation et sécurité pour votre pratique quotidienne.",
+        "features": [
+          "Accès au système",
+          "Gestion des clients",
+          "Rendez-vous et consultations",
+          "Dossiers et documents de base",
+          "Support par e-mail"
+        ]
       },
       "pro": {
         "name": "Professionnel",
-        "description": "Tout ce dont vous avez besoin pour soigner avec professionnalisme."
+        "description": "Tout ce dont vous avez besoin pour soigner avec professionnalisme.",
+        "features": [
+          "Tout de l'Essentiel",
+          "Consultations illimitées",
+          "Gestion financière (reçus et contrôle)",
+          "Personnalisation du cabinet",
+          "Support prioritaire"
+        ]
       },
       "premium": {
         "name": "Premium",
-        "description": "Technologie avancée pour gagner du temps et soigner avec plus de présence."
+        "description": "Technologie avancée pour gagner du temps et soigner avec plus de présence.",
+        "features": [
+          "Tout du Professionnel",
+          "Jusqu'à 100 min/mois de transcription IA",
+          "Fonctionnalités avancées",
+          "API d'intégration"
+        ]
       }
     },
     "table": {

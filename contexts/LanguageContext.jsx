@@ -96,6 +96,10 @@ export const LanguageProvider = ({ children }) => {
         }
 
         if (typeof value !== 'string') {
+            // Allow objects/arrays to be returned (useful for lists of features)
+            if (typeof value === 'object' && value !== null) {
+                return value;
+            }
             console.warn(`Translation value is not a string: ${key} `);
             return key;
         }

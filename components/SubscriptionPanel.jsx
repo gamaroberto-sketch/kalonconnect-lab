@@ -133,206 +133,136 @@ const SubscriptionPanel = () => {
                 </p>
             </div>
 
-            {/* Pricing Table */}
-            <div className="kalon-card relative overflow-visible">
-                {/* Background Glow */}
-                <div
-                    className="absolute top-0 center w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent"
-                    style={{
-                        backgroundImage: `linear-gradient(to right, transparent, ${themeColors.primary}80, transparent)`
-                    }}
-                />
+            {/* Pricing Cards - V2 Layout (Disconnect Cards) */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
 
-                <div className="grid grid-cols-4 divide-x divide-gray-700/50">
-
-                    {/* Column 1: Labels */}
-                    <div className="col-span-1 p-6 flex flex-col space-y-6 rounded-l-2xl">
-                        <div className="flex flex-col h-40">
-                            <div className="h-16 flex items-end pb-2 font-semibold text-gray-400 uppercase text-xs tracking-wider">
-                                {t('subscription.table.headers.features')}
-                            </div>
-                            <div className="h-24"></div>
+                {/* Card 1: Essencial */}
+                <div className="kalon-card p-8 flex flex-col relative transition-transform hover:scale-[1.02] border-t-4 border-gray-400">
+                    <div className="text-center mb-6">
+                        <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{t('subscription.plans.normal.name')}</h3>
+                        <div className="flex items-center justify-center text-gray-800 dark:text-white">
+                            <span className="text-sm font-medium mr-1">{currentConfig.symbol}</span>
+                            <span className="text-4xl font-bold">{currentConfig.plans.normal.price}</span>
+                            <span className="text-gray-500 text-sm ml-1">/mês</span>
                         </div>
-                        {/* Row Headers */}
-                        <div className="space-y-6 text-sm font-medium text-gray-400 py-2">
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.price')}</div>
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.access')}</div>
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.clients')}</div>
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.appointments')}</div>
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.records')}</div>
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.support')}</div>
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.financial')}</div>
-                            <div className="h-10 flex items-center">{t('subscription.table.rows.customization')}</div>
-                            <div className="h-24 flex items-start pt-2" style={{ color: themeColors.primary }}>{t('subscription.table.rows.ai')}</div>
-                        </div>
+                        <p className="text-sm text-gray-500 mt-4 h-10 px-4">
+                            {t('subscription.plans.normal.description')}
+                        </p>
                     </div>
 
-                    {/* Column 2: Essencial (Normal) */}
-                    <div className="col-span-1 p-6 flex flex-col items-center text-center hover:bg-white/5 transition-colors relative">
-                        {isNormal && <span className="absolute top-2 right-2 text-[10px] bg-gray-600 text-white px-2 py-0.5 rounded-full">{t('subscription.currentPlan')}</span>}
+                    <div className="flex-grow space-y-4 mb-8">
+                        {Array.isArray(t('subscription.plans.normal.features')) && t('subscription.plans.normal.features').map((feature, i) => (
+                            <div key={i} className="flex items-start">
+                                <Check className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0 mt-0.5" />
+                                <span className="text-gray-600 dark:text-gray-300 text-sm leading-tight">{feature}</span>
+                            </div>
+                        ))}
+                    </div>
 
-                        <div className="flex flex-col h-40 w-full">
-                            <div className="h-16 flex flex-col justify-end pb-2">
-                                <h3 className="text-xl font-bold text-white mb-1">{t('subscription.plans.normal.name')}</h3>
-                            </div>
-                            <div className="h-24 flex items-start justify-center pt-1 px-2">
-                                <p className="text-xs text-gray-400 italic leading-relaxed">
-                                    {t('subscription.plans.normal.description')}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-6 text-sm w-full py-2">
-                            <div className="h-10 flex items-center justify-center font-bold text-2xl text-white">
-                                {currentConfig.symbol} {currentConfig.plans.normal.price} <span className="text-xs font-normal text-gray-500 ml-1">/mês</span>
-                            </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <div className="flex items-center gap-1.5 text-gray-300">
-                                    <Check className="w-4 h-4 text-gray-500" /> {t('subscription.table.values.accessBasic')}
-                                </div>
-                            </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <Check className="w-5 h-5 text-gray-500" />
-                            </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <Check className="w-5 h-5 text-gray-500" />
-                            </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <Check className="w-5 h-5 text-gray-500" />
-                            </div>
-                            <div className="h-10 flex items-center justify-center text-gray-400 text-xs">{t('subscription.table.values.emailSupport')}</div>
-                            <div className="h-10 flex items-center justify-center">{renderCell(false)}</div>
-                            <div className="h-10 flex items-center justify-center">{renderCell(false)}</div>
-                            <div className="h-24 flex items-start justify-center pt-2">{renderCell(false)}</div>
-                        </div>
-
-                        {!isNormal && (
+                    <div className="mt-auto">
+                        {isNormal ? (
+                            <button disabled className="w-full py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-500 font-medium cursor-default">
+                                {t('subscription.currentPlan')}
+                            </button>
+                        ) : (
                             <button
                                 onClick={() => handleSubscribe(currentConfig.plans.normal.priceId)}
-                                className="mt-8 w-full py-3 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors text-sm font-medium"
+                                className="w-full py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                             >
                                 {t('subscription.subscribe')}
                             </button>
                         )}
                     </div>
+                </div>
 
-                    {/* Column 3: Profissional (Melhor Escolha) */}
-                    <div className="col-span-1 bg-gradient-to-b from-white/5 to-transparent p-6 flex flex-col items-center text-center border-x-2 border-gray-700/50 relative">
-                        <div className="absolute top-0 left-0 w-full h-1.5" style={{ backgroundColor: themeColors.primary }} />
-                        <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider rounded-md shadow-lg z-20" style={{ backgroundColor: themeColors.primary }}>
+                {/* Card 2: Profissional (Highlighted) */}
+                <div className="kalon-card p-8 flex flex-col relative transform scale-105 shadow-2xl z-10 border-t-4" style={{ borderColor: themeColors.primary }}>
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                        <span className="px-3 py-1 text-xs font-bold text-white uppercase tracking-wider rounded-md shadow-lg" style={{ backgroundColor: themeColors.primary }}>
                             {t('subscription.recommended')}
                         </span>
+                    </div>
 
-                        {isPro && <span className="absolute top-2 right-2 text-[10px] text-white font-bold px-2 py-0.5 rounded-full z-10" style={{ backgroundColor: themeColors.primary }}>{t('subscription.activePlan')}</span>}
-
-                        <div className="flex flex-col h-40 w-full">
-                            <div className="h-16 flex flex-col justify-end pb-2">
-                                <h3 className="text-2xl font-bold mb-1" style={{ color: themeColors.primary }}>{t('subscription.plans.pro.name')}</h3>
-                            </div>
-                            <div className="h-24 flex items-start justify-center pt-1 px-2">
-                                <p className="text-xs text-gray-400 italic leading-relaxed">
-                                    {t('subscription.plans.pro.description')}
-                                </p>
-                            </div>
+                    <div className="text-center mb-6 pt-2">
+                        <h3 className="text-2xl font-bold mb-2" style={{ color: themeColors.primary }}>{t('subscription.plans.pro.name')}</h3>
+                        <div className="flex items-center justify-center" style={{ color: themeColors.primary }}>
+                            <span className="text-sm font-medium mr-1">{currentConfig.symbol}</span>
+                            <span className="text-5xl font-bold">{currentConfig.plans.pro.price}</span>
+                            <span className="text-gray-500 text-sm ml-1">/mês</span>
                         </div>
+                        <p className="text-sm text-gray-500 mt-4 h-10 px-4">
+                            {t('subscription.plans.pro.description')}
+                        </p>
+                    </div>
 
-                        <div className="space-y-6 text-sm w-full py-2">
-                            <div className="h-10 flex items-center justify-center font-bold text-3xl" style={{ color: themeColors.primary }}>
-                                {currentConfig.symbol} {currentConfig.plans.pro.price} <span className="text-xs font-normal text-gray-500 ml-1">/mês</span>
+                    <div className="flex-grow space-y-4 mb-8">
+                        {Array.isArray(t('subscription.plans.pro.features')) && t('subscription.plans.pro.features').map((feature, i) => (
+                            <div key={i} className="flex items-start">
+                                <Check className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" style={{ color: themeColors.primary }} />
+                                <span className="text-gray-800 dark:text-white text-sm font-medium leading-tight">{feature}</span>
                             </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <div className="flex items-center gap-1.5 font-medium" style={{ color: themeColors.primary }}>
-                                    <Check className="w-4 h-4" /> {t('subscription.table.values.included')}
-                                </div>
-                            </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <div className="flex items-center gap-1.5 font-medium" style={{ color: themeColors.primary }}>
-                                    <Check className="w-4 h-4" /> {t('subscription.table.values.included')}
-                                </div>
-                            </div>
-                            <div className="h-10 flex items-center justify-center text-white font-medium">{t('subscription.table.values.unlimited')}</div>
-                            <div className="h-10 flex items-center justify-center">
-                                <div className="flex items-center gap-1.5 font-medium" style={{ color: themeColors.primary }}>
-                                    <Check className="w-4 h-4" /> {t('subscription.table.values.included')}
-                                </div>
-                            </div>
-                            <div className="h-10 flex items-center justify-center font-bold" style={{ color: themeColors.primary }}>{t('subscription.table.values.prioritySupport')}</div>
+                        ))}
+                    </div>
 
-                            <div className="h-10 flex items-center justify-center">
-                                <div className="flex items-center gap-1.5 font-medium" style={{ color: themeColors.primary }}>
-                                    <Check className="w-4 h-4" /> {t('subscription.table.values.included')}
-                                </div>
-                            </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <div className="flex items-center gap-1.5 font-medium" style={{ color: themeColors.primary }}>
-                                    <Check className="w-4 h-4" /> {t('subscription.table.values.included')}
-                                </div>
-                            </div>
-
-                            <div className="h-24 flex items-start justify-center pt-2">{renderCell(false)}</div>
-                        </div>
-
-                        {!isPro && (
+                    <div className="mt-auto">
+                        {isPro ? (
+                            <button disabled className="w-full py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-500 font-medium cursor-default">
+                                {t('subscription.activePlan')}
+                            </button>
+                        ) : (
                             <button
                                 onClick={() => handleSubscribe(currentConfig.plans.pro.priceId)}
-                                className="mt-8 w-full py-3 rounded-xl text-white font-bold hover:opacity-90 shadow-xl transition-all text-sm transform hover:scale-105"
-                                style={{ backgroundColor: themeColors.primary, boxShadow: `0 4px 20px 0 ${themeColors.primary}40` }}
+                                className="w-full py-3 rounded-xl text-white font-bold hover:shadow-lg transition-all transform hover:scale-[1.02]"
+                                style={{ backgroundColor: themeColors.primary, boxShadow: `0 4px 14px 0 ${themeColors.primary}40` }}
                             >
                                 {t('subscription.subscribe')}
                             </button>
                         )}
                     </div>
+                </div>
 
-                    {/* Column 4: Premium */}
-                    <div className="col-span-1 p-6 flex flex-col items-center text-center relative rounded-r-2xl">
-                        {isPremium && <span className="absolute top-2 right-2 text-[10px] bg-emerald-500 text-black font-bold px-2 py-0.5 rounded-full">{t('subscription.activePlan')}</span>}
-
-                        <div className="flex flex-col h-40 w-full">
-                            <div className="h-16 flex flex-col justify-end pb-2">
-                                <h3 className="text-xl font-bold text-white mb-1">{t('subscription.plans.premium.name')}</h3>
-                            </div>
-                            <div className="h-24 flex items-start justify-center pt-1 px-2">
-                                <p className="text-xs text-gray-400 italic leading-relaxed">
-                                    {t('subscription.plans.premium.description')}
-                                </p>
-                            </div>
+                {/* Card 3: Premium */}
+                <div className="kalon-card p-8 flex flex-col relative transition-transform hover:scale-[1.02] border-t-4 border-gray-400">
+                    <div className="text-center mb-6">
+                        <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{t('subscription.plans.premium.name')}</h3>
+                        <div className="flex items-center justify-center text-gray-800 dark:text-white">
+                            <span className="text-sm font-medium mr-1">{currentConfig.symbol}</span>
+                            <span className="text-4xl font-bold">{currentConfig.plans.premium.price}</span>
+                            <span className="text-gray-500 text-sm ml-1">/mês</span>
                         </div>
+                        <p className="text-sm text-gray-500 mt-4 h-10 px-4">
+                            {t('subscription.plans.premium.description')}
+                        </p>
+                    </div>
 
-                        <div className="space-y-6 text-sm w-full py-2">
-                            <div className="h-10 flex items-center justify-center font-bold text-2xl text-white">
-                                {currentConfig.symbol} {currentConfig.plans.premium.price} <span className="text-xs font-normal text-gray-500 ml-1">/mês</span>
-                            </div>
-                            <div className="h-10 flex items-center justify-center text-gray-400 italic">{t('subscription.table.values.accessCompleteAI')}</div>
-                            <div className="h-10 flex items-center justify-center text-gray-400 italic">{t('subscription.table.values.accessCompleteAI')}</div>
-                            <div className="h-10 flex items-center justify-center text-white">{t('subscription.table.values.unlimited')}</div>
-                            <div className="h-10 flex items-center justify-center text-gray-400 italic">{t('subscription.table.values.accessCompleteAI')}</div>
-                            <div className="h-10 flex items-center justify-center text-white font-medium">{t('subscription.table.values.prioritySupport')}</div>
-                            <div className="h-10 flex items-center justify-center">
-                                <Check className="w-5 h-5 text-gray-500" />
-                            </div>
-                            <div className="h-10 flex items-center justify-center">
-                                <Check className="w-5 h-5 text-gray-500" />
-                            </div>
-                            <div className="h-24 flex flex-col items-center justify-start pt-0 space-y-2">
-                                <div className="flex flex-col items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20 w-full">
-                                    <div className="flex items-center gap-1"><Check className="w-3 h-3" /> 100 min/mês</div>
-                                    <span className="font-normal opacity-80">{t('subscription.table.values.transcription')}</span>
+                    <div className="flex-grow space-y-4 mb-8">
+                        {Array.isArray(t('subscription.plans.premium.features')) && t('subscription.plans.premium.features').map((feature, i) => (
+                            <div key={i} className="flex items-start">
+                                <div className="mr-3 flex-shrink-0 mt-0.5">
+                                    {/* Use Check for standard features, maybe specific icon for AI? Standard Check is safer */}
+                                    <Check className="w-5 h-5 text-gray-400" />
                                 </div>
-                                <span className="text-xs text-gray-500">{t('subscription.table.values.api')}</span>
+                                <span className="text-gray-600 dark:text-gray-300 text-sm leading-tight">{feature}</span>
                             </div>
-                        </div>
+                        ))}
+                    </div>
 
-                        {!isPremium && (
+                    <div className="mt-auto">
+                        {isPremium ? (
+                            <button disabled className="w-full py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-500 font-medium cursor-default">
+                                {t('subscription.activePlan')}
+                            </button>
+                        ) : (
                             <button
                                 onClick={() => handleSubscribe(currentConfig.plans.premium.priceId)}
-                                className="mt-8 w-full py-3 rounded-xl border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 transition-colors text-sm font-medium"
+                                className="w-full py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                             >
                                 {t('subscription.subscribe')}
                             </button>
                         )}
                     </div>
-
                 </div>
+
             </div>
 
             <div className="text-center text-gray-600 text-sm mt-8 flex flex-col gap-2">

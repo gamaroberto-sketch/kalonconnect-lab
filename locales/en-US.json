@@ -1641,15 +1641,35 @@
     "plans": {
       "normal": {
         "name": "Essential",
-        "description": "Organization and security for your daily practice."
+        "description": "Organization and security for your daily practice.",
+        "features": [
+          "System access",
+          "Client management",
+          "Appointments and scheduling",
+          "Basic records and documents",
+          "Email support"
+        ]
       },
       "pro": {
         "name": "Professional",
-        "description": "Everything you need to care for people with professionalism."
+        "description": "Everything you need to care for people professionally.",
+        "features": [
+          "Everything in Essential",
+          "Unlimited consultations",
+          "Financial management (receipts & control)",
+          "Office customization",
+          "Priority support"
+        ]
       },
       "premium": {
         "name": "Premium",
-        "description": "Advanced technology to gain time and care with more presence."
+        "description": "Advanced technology to save time and care with more presence.",
+        "features": [
+          "Everything in Professional",
+          "Up to 100 AI transcription minutes/mo",
+          "Advanced productivity features",
+          "Integration API"
+        ]
       }
     },
     "table": {
