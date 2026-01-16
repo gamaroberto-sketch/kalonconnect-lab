@@ -134,7 +134,7 @@ const SubscriptionPanel = () => {
             </div>
 
             {/* Pricing Table */}
-            <div className="rounded-2xl overflow-visible border border-gray-700 bg-gray-800 shadow-2xl relative">
+            <div className="kalon-card relative overflow-visible">
                 {/* Background Glow */}
                 <div
                     className="absolute top-0 center w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent"
@@ -146,9 +146,12 @@ const SubscriptionPanel = () => {
                 <div className="grid grid-cols-4 divide-x divide-gray-700/50">
 
                     {/* Column 1: Labels */}
-                    <div className="col-span-1 bg-gray-800 p-6 flex flex-col space-y-6 rounded-l-2xl">
-                        <div className="h-40 flex flex-col justify-end pb-4 font-semibold text-gray-400 uppercase text-xs tracking-wider">
-                            {t('subscription.table.headers.features')}
+                    <div className="col-span-1 p-6 flex flex-col space-y-6 rounded-l-2xl">
+                        <div className="flex flex-col h-40">
+                            <div className="h-16 flex items-end pb-2 font-semibold text-gray-400 uppercase text-xs tracking-wider">
+                                {t('subscription.table.headers.features')}
+                            </div>
+                            <div className="h-24"></div>
                         </div>
                         {/* Row Headers */}
                         <div className="space-y-6 text-sm font-medium text-gray-400 py-2">
@@ -165,14 +168,18 @@ const SubscriptionPanel = () => {
                     </div>
 
                     {/* Column 2: Essencial (Normal) */}
-                    <div className="col-span-1 bg-gray-800/40 p-6 flex flex-col items-center text-center hover:bg-gray-800/60 transition-colors relative">
+                    <div className="col-span-1 p-6 flex flex-col items-center text-center hover:bg-white/5 transition-colors relative">
                         {isNormal && <span className="absolute top-2 right-2 text-[10px] bg-gray-600 text-white px-2 py-0.5 rounded-full">{t('subscription.currentPlan')}</span>}
 
-                        <div className="h-40 flex flex-col justify-end pb-4 w-full">
-                            <h3 className="text-xl font-bold text-white mb-2">{t('subscription.plans.normal.name')}</h3>
-                            <p className="text-xs text-gray-400 italic leading-relaxed px-2">
-                                {t('subscription.plans.normal.description')}
-                            </p>
+                        <div className="flex flex-col h-40 w-full">
+                            <div className="h-16 flex flex-col justify-end pb-2">
+                                <h3 className="text-xl font-bold text-white mb-1">{t('subscription.plans.normal.name')}</h3>
+                            </div>
+                            <div className="h-24 flex items-start justify-center pt-1 px-2">
+                                <p className="text-xs text-gray-400 italic leading-relaxed">
+                                    {t('subscription.plans.normal.description')}
+                                </p>
+                            </div>
                         </div>
 
                         <div className="space-y-6 text-sm w-full py-2">
@@ -210,19 +217,23 @@ const SubscriptionPanel = () => {
                     </div>
 
                     {/* Column 3: Profissional (Melhor Escolha) */}
-                    <div className="col-span-1 bg-gradient-to-b from-gray-800 to-transparent p-6 flex flex-col items-center text-center border-x-2 border-gray-700 relative">
+                    <div className="col-span-1 bg-gradient-to-b from-white/5 to-transparent p-6 flex flex-col items-center text-center border-x-2 border-gray-700/50 relative">
                         <div className="absolute top-0 left-0 w-full h-1.5" style={{ backgroundColor: themeColors.primary }} />
-                        <span className="absolute -top-3 px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider rounded-md shadow-lg" style={{ backgroundColor: themeColors.primary }}>
+                        <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider rounded-md shadow-lg z-20" style={{ backgroundColor: themeColors.primary }}>
                             {t('subscription.recommended')}
                         </span>
 
-                        {isPro && <span className="absolute top-4 right-4 text-[10px] text-white font-bold px-2 py-0.5 rounded-full z-10" style={{ backgroundColor: themeColors.primary }}>{t('subscription.activePlan')}</span>}
+                        {isPro && <span className="absolute top-2 right-2 text-[10px] text-white font-bold px-2 py-0.5 rounded-full z-10" style={{ backgroundColor: themeColors.primary }}>{t('subscription.activePlan')}</span>}
 
-                        <div className="h-40 flex flex-col justify-end pb-4 w-full">
-                            <h3 className="text-2xl font-bold mb-2" style={{ color: themeColors.primary }}>{t('subscription.plans.pro.name')}</h3>
-                            <p className="text-xs text-gray-400 italic leading-relaxed px-2">
-                                {t('subscription.plans.pro.description')}
-                            </p>
+                        <div className="flex flex-col h-40 w-full">
+                            <div className="h-16 flex flex-col justify-end pb-2">
+                                <h3 className="text-2xl font-bold mb-1" style={{ color: themeColors.primary }}>{t('subscription.plans.pro.name')}</h3>
+                            </div>
+                            <div className="h-24 flex items-start justify-center pt-1 px-2">
+                                <p className="text-xs text-gray-400 italic leading-relaxed">
+                                    {t('subscription.plans.pro.description')}
+                                </p>
+                            </div>
                         </div>
 
                         <div className="space-y-6 text-sm w-full py-2">
@@ -273,14 +284,18 @@ const SubscriptionPanel = () => {
                     </div>
 
                     {/* Column 4: Premium */}
-                    <div className="col-span-1 bg-gray-900/20 p-6 flex flex-col items-center text-center relative rounded-r-2xl">
-                        {isPremium && <span className="absolute top-3 right-3 text-[10px] bg-emerald-500 text-black font-bold px-2 py-0.5 rounded-full">{t('subscription.activePlan')}</span>}
+                    <div className="col-span-1 p-6 flex flex-col items-center text-center relative rounded-r-2xl">
+                        {isPremium && <span className="absolute top-2 right-2 text-[10px] bg-emerald-500 text-black font-bold px-2 py-0.5 rounded-full">{t('subscription.activePlan')}</span>}
 
-                        <div className="h-40 flex flex-col justify-end pb-4 w-full">
-                            <h3 className="text-xl font-bold text-white mb-2">{t('subscription.plans.premium.name')}</h3>
-                            <p className="text-xs text-gray-400 italic leading-relaxed px-2">
-                                {t('subscription.plans.premium.description')}
-                            </p>
+                        <div className="flex flex-col h-40 w-full">
+                            <div className="h-16 flex flex-col justify-end pb-2">
+                                <h3 className="text-xl font-bold text-white mb-1">{t('subscription.plans.premium.name')}</h3>
+                            </div>
+                            <div className="h-24 flex items-start justify-center pt-1 px-2">
+                                <p className="text-xs text-gray-400 italic leading-relaxed">
+                                    {t('subscription.plans.premium.description')}
+                                </p>
+                            </div>
                         </div>
 
                         <div className="space-y-6 text-sm w-full py-2">
