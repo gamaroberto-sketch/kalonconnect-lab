@@ -259,15 +259,7 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
-            <div className="flex justify-between mt-1 px-1">
-              <button
-                type="button"
-                onClick={() => router.push('/register')}
-                className="text-xs font-bold uppercase tracking-wider hover:underline transition-colors"
-                style={{ color: palette.primary }}
-              >
-                {t('login.signUp')}
-              </button>
+            <div className="flex justify-end mt-1 px-1">
               <button
                 type="button"
                 onClick={() => router.push('/forgot-password')}
