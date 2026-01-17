@@ -121,8 +121,8 @@
       "network": "Não foi possível conectar. Verifique sua rede e tente novamente."
     },
     "tagline": {
-      "main": "Tecnologia com Alma para quem cuida de pessoas",
-      "sub": "Quando a Alma fala, o Corpo relaxa e o Espírito conduz."
+      "main": "Tecnologia com Alma para sua Prática Profissional",
+      "sub": "Gerencie consultas, agenda e documentos em um ambiente seguro e integrado."
     },
     "hidePassword": "Ocultar senha",
     "showPassword": "Mostrar senha",
@@ -189,7 +189,7 @@
   },
   "home": {
     "welcome": "Bem-vindo, {name}",
-    "tagline": "A Alma se expande, o Corpo relaxa — e sua prática flui com mais organização.",
+    "tagline": "Tudo o que você precisa para atender bem: agenda, vídeo e clientes em um só lugar.",
     "quickActions": "Ações Rápidas",
     "recentActivity": "Atividade Recente",
     "upcomingAppointments": "Próximos Agendamentos",
@@ -200,13 +200,19 @@
       "description": "Primeira vez no <span className=\"font-bold normal-case\">KalonConnect</span>? Acesse o guia completo e comece com tranquilidade.",
       "open": "Abrir Guia"
     },
+    "onboarding": {
+      "title": "Comece por aqui em 3 passos",
+      "step1": "Complete seu <strong>Perfil Profissional</strong> para transmitir confiança.",
+      "step2": "Cadastre seu primeiro <strong>Cliente</strong> (é rápido).",
+      "step3": "Agende uma <strong>Consulta Teste</strong> para conhecer o vídeo."
+    },
     "actions": {
-      "manageClients": "Gerencie seus clientes com clareza e histórico completo",
-      "videoSessions": "Atendimentos online com estabilidade e segurança",
-      "calendar": "Organize sua agenda com praticidade",
-      "documents": "Receituário e termos",
-      "financial": "Acompanhe seus recebimentos com simplicidade",
-      "settings": "Personalize o sistema",
+      "manageClients": "Acesse o histórico completo e anotações privadas em segundos.",
+      "videoSessions": "Vídeo estável e seguro, sem limite de tempo.",
+      "calendar": "Visualize sua semana e evite conflitos de horário.",
+      "documents": "Crie receituários e termos prontos com um clique.",
+      "financial": "Controle quem pagou e quanto você vai receber.",
+      "settings": "Ajuste seu perfil, logo e preferências de atendimento.",
       "profile": "Gerencie seu perfil e configurações",
       "events": "Gerencie seus eventos e workshops",
       "reports": "Visualize relatórios e estatísticas",

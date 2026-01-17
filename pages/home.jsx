@@ -250,17 +250,6 @@ export default function Home() {
               </div>
               <button
                 onClick={handleGuia}
-                className="px-6 py-3 rounded-lg font-bold transition-colors text-white"
-                style={{
-                  backgroundColor: themeColors.primary,
-                  color: 'white'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = themeColors.primaryDark;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = themeColors.primary;
-                }}
               >
                 <span>{t('home.guide.open')}</span>
               </button>

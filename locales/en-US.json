@@ -119,8 +119,8 @@
       "network": "Could not connect. Check your network and try again."
     },
     "tagline": {
-      "main": "The Soul expands, the Body relaxes — and your practice flows with more organization. for those who care for people",
-      "sub": "When the Soul speaks, the Body relaxes and the Spirit leads."
+      "main": "Technology with Soul for your Professional Practice",
+      "sub": "Manage consultations, calendar, and documents in a secure and integrated environment."
     },
     "hidePassword": "Hide password",
     "showPassword": "Show password",
@@ -263,7 +263,7 @@
   },
   "home": {
     "welcome": "Welcome, {name}",
-    "tagline": "The Soul expands, the Body relaxes, the Spirit leads.",
+    "tagline": "Everything you need to care well: calendar, video, and clients in one place.",
     "quickActions": "Quick Actions",
     "recentActivity": "Recent Activity",
     "upcomingAppointments": "Upcoming Appointments",
@@ -274,13 +274,19 @@
       "description": "First time on <span className=\"font-bold normal-case\">KalonConnect</span>? Access the complete guide and start with peace of mind.",
       "open": "Open Guide"
     },
+    "onboarding": {
+      "title": "Start here in 3 steps",
+      "step1": "Complete your <strong>Professional Profile</strong> to convey trust.",
+      "step2": "Register your first <strong>Client</strong> (it's fast).",
+      "step3": "Schedule a <strong>Test Consultation</strong> to try the video."
+    },
     "actions": {
-      "manageClients": "Manage your clients with clarity and complete history",
-      "videoSessions": "Online sessions with stability and security",
-      "calendar": "Organize your schedule with ease",
-      "documents": "Prescriptions and terms",
-      "financial": "Track your earnings with simplicity",
-      "settings": "Customize the system",
+      "manageClients": "Access full history and private notes in seconds.",
+      "videoSessions": "Stable and secure video, no time limit.",
+      "calendar": "View your week and avoid scheduling conflicts.",
+      "documents": "Create prescriptions and terms with one click.",
+      "financial": "Track who paid and what you will receive.",
+      "settings": "Adjust your profile, logo, and care preferences.",
       "profile": "Manage your profile and settings",
       "events": "Manage your events and workshops",
       "reports": "View reports and statistics",

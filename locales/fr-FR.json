@@ -120,8 +120,8 @@
       "network": "Impossible de se connecter. Vérifiez votre réseau et réessayez."
     },
     "tagline": {
-      "main": "Technologie avec Âme pour ceux qui prennent soin des autres",
-      "sub": "Quand l'Âme parle, le Corps se détend et l'Esprit guide."
+      "main": "Technologie avec Âme pour votre Pratique Professionnelle",
+      "sub": "Gérez vos consultations, votre agenda et vos documents dans un environnement sécurisé et intégré."
     },
     "hidePassword": "Masquer le mot de passe",
     "showPassword": "Afficher le mot de passe",
@@ -176,7 +176,7 @@
   },
   "home": {
     "welcome": "Bienvenue, {name}",
-    "tagline": "L'Âme s'étend, le Corps se détend — et votre pratique coule avec plus d'organisation.",
+    "tagline": "Votre pratique organisée de bout en bout : de la prise de rendez-vous aux soins en ligne.",
     "quickActions": "Actions Rapides",
     "recentActivity": "Activité Récente",
     "upcomingAppointments": "Prochains Rendez-vous",
@@ -290,7 +290,7 @@
   },
   "home": {
     "welcome": "Bienvenue, {name}",
-    "tagline": "L'Âme s'étend, le Corps se détend, l'Esprit guide.",
+    "tagline": "Tout ce dont vous avez besoin pour bien soigner : agenda, vidéo et clients en un seul endroit.",
     "quickActions": "Actions Rapides",
     "recentActivity": "Activité Récente",
     "upcomingAppointments": "Prochains Rendez-vous",
@@ -301,15 +301,21 @@
       "description": "Première fois sur <span className=\"font-bold normal-case\">KalonConnect</span> ? Accédez au guide complet pour tout configurer.",
       "open": "Ouvrir le Guide"
     },
+    "onboarding": {
+      "title": "Commencez ici en 3 étapes",
+      "step1": "Complétez votre <strong>Profil Professionnel</strong> pour transmettre la confiance.",
+      "step2": "Enregistrez votre premier <strong>Client</strong> (c'est rapide).",
+      "step3": "Planifiez une <strong>Consultation Test</strong> pour découvrir la vidéo."
+    },
     "actions": {
-      "manageClients": "Gérer les clients",
-      "videoSessions": "Séances vidéo en ligne",
-      "calendar": "Calendrier et gestion",
-      "documents": "Ordonnances et conditions",
-      "financial": "Contrôle financier",
-      "settings": "Personnalisez le système",
-      "profile": "Gérez votre profil et vos paramètres",
-      "events": "Gérez vos événements et ateliers",
+      "manageClients": "Accédez à l'historique complet et aux notes privées en quelques secondes.",
+      "videoSessions": "Vidéo stable et sécurisée, sans limite de temps.",
+      "calendar": "Visualisez votre semaine et évitez les conflits d'horaire.",
+      "documents": "Créez des ordonnances et des conditions en un clic.",
+      "financial": "Contrôlez qui a payé et combien vous allez recevoir.",
+      "settings": "Ajustez votre profil, votre logo et vos préférences de soins.",
+      "profile": "Gérer votre profil et vos paramètres",
+      "events": "Gérer vos événements et ateliers",
       "reports": "Voir les rapports et statistiques",
       "about": "En savoir plus sur la plateforme"
     }
