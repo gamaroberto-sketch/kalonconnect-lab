@@ -496,22 +496,27 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               onClick={handleToggleAudio}
               className={iconButtonClasses}
               style={audioButtonStyle}
+              title="Microfone"
             >
               {isAudioOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
             </button>
 
-            <button
-              type="button"
-              onClick={handleToggleCameraPreview}
-              className={iconButtonClasses}
-              style={cameraButtonStyle}
-            >
-              {isCameraPreviewOn ? (
-                <Camera className="w-4 h-4" />
-              ) : (
-                <VideoOff className="w-4 h-4" />
-              )}
-            </button>
+            <div className="flex flex-col items-center">
+              <span className="text-[0.6rem] uppercase font-bold text-gray-500 mb-1">Preview Local</span>
+              <button
+                type="button"
+                onClick={handleToggleCameraPreview}
+                className={iconButtonClasses}
+                style={cameraButtonStyle}
+                title="Ativar/Desativar sua câmera (apenas para você)"
+              >
+                {isCameraPreviewOn ? (
+                  <Camera className="w-4 h-4" />
+                ) : (
+                  <VideoOff className="w-4 h-4" />
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Start Session */}
@@ -549,17 +554,22 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
           )}
 
           {/* Video & Screen Share */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleToggleVideo}
-              className={`${iconButtonClasses} ${!isConnected ? "opacity-50" : ""}`}
-              style={videoButtonStyle}
-            // 🟢 v5.17: Always allow clicking (removed disabled prop) to prevent "Inactive" complaints
-            // Logic inside/LiveKit will handle the rest.
-            >
-              <Video className="w-4 h-4" />
-            </button>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center">
+              <span className="text-[0.6rem] uppercase font-bold text-gray-500 mb-1">Transmitir</span>
+              <button
+                type="button"
+                onClick={handleToggleVideo}
+                className={`${iconButtonClasses} ${!isConnected ? "opacity-50" : ""}`}
+                style={videoButtonStyle}
+                title="Transmitir vídeo para o cliente"
+              >
+                <Video className="w-4 h-4" />
+              </button>
+              <span className={`text-[0.6rem] font-bold mt-1 ${isVideoOn ? 'text-green-600' : 'text-gray-400'}`}>
+                {isVideoOn ? "Cliente vê: SIM" : "Cliente vê: NÃO"}
+              </span>
+            </div>
 
             <button
               type="button"
