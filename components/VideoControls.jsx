@@ -525,14 +525,15 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               }
               handleSessionConnect();
             }}
-            className={`${baseButtonClasses} font-semibold`}
+            className={`${baseButtonClasses} font-semibold disabled:cursor-not-allowed`}
             style={{
               backgroundColor: isSessionStarted ? "#10b981" : primaryColor, // Green if active
               color: "#fff",
               opacity: isSessionStarted ? 0.8 : 1,
-              cursor: isSessionStarted ? "default" : "pointer"
+              cursor: isSessionStarted ? "not-allowed" : "pointer" // 🔴 ACHADO #7: Cursor Feedback
             }}
             disabled={isSessionStarted}
+            title={isSessionStarted ? "Sessão já está ativa. Use o botão ⏹️ para encerrar." : "Iniciar Sessão"} // 🔴 ACHADO #7: Passive Feedback
           >
             {isSessionStarted
               ? (isConnected ? "🟢 AO VIVO" : "Aguardando Cliente...")
