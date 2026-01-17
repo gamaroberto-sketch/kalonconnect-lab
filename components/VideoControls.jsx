@@ -221,8 +221,11 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
   };
 
   const handleReset = () => {
-    trackUsageAction({ type: "sessionReset" });
-    handleSessionReset();
+    // 🔴 ACHADO #14: Confirm Session Reset
+    if (confirm("⚠️ Encerrar sessão?\n\nO timer será zerado e o histórico desta sessão será finalizado. Gravações não salvas podem ser perdidas.\n\nDeseja continuar?")) {
+      trackUsageAction({ type: "sessionReset" });
+      handleSessionReset();
+    }
   };
 
   const handleToggleAudio = async () => {
