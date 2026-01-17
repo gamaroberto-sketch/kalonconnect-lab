@@ -292,6 +292,17 @@
       "reports": "View reports and statistics",
       "about": "Learn more about the platform",
       "products": "Register your products and choose how to sell (Link, WhatsApp or PIX)."
+    },
+    "whyKalon": {
+      "title": "Why use KalonConnect?",
+      "subtitle": "Because your professional practice deserves a tool built for it — not adaptations.",
+      "items": {
+        "1": "Everything in one place — integrated schedule, consultations, clients, documents, and financials.",
+        "2": "Video made for professional care — stable, secure, and unlimited time.",
+        "3": "Ready-to-use documents — prescriptions, terms, and reusable records.",
+        "4": "Professional experience for you and the client — clean and organized interface.",
+        "5": "Soulful Technology — functionality with care and clarity."
+      }
     }
   },
   "consultations": {

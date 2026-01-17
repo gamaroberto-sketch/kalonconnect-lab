@@ -319,6 +319,17 @@
       "reports": "Voir les rapports et statistiques",
       "about": "En savoir plus sur la plateforme",
       "products": "Enregistrez vos produits et choisissez comment vendre (Lien, WhatsApp ou PIX)."
+    },
+    "whyKalon": {
+      "title": "Pourquoi utiliser KalonConnect ?",
+      "subtitle": "Parce que votre pratique professionnelle mérite un outil conçu pour elle — pas des adaptations.",
+      "items": {
+        "1": "Tout au même endroit — agenda, consultations, clients, documents et finances intégrés.",
+        "2": "Vidéo conçue pour les soins professionnels — stable, sécurisée et illimitée.",
+        "3": "Documents prêts à l'emploi — ordonnances, conditions et dossiers réutilisables.",
+        "4": "Expérience professionnelle pour vous et le client — interface propre et organisée.",
+        "5": "Technologie avec Âme — fonctionnalité avec soin et clarté."
+      }
     }
   },
   "consultations": {

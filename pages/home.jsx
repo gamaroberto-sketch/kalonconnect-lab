@@ -17,7 +17,8 @@ import {
   Briefcase,
   BarChart3,
   Info,
-  ShoppingBag
+  ShoppingBag,
+  CheckCircle
 } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import { useRouter } from 'next/router';
@@ -562,6 +563,47 @@ export default function Home() {
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
             </div>
           </motion.button>
+        </div>
+
+        {/* Why KalonConnect Section */}
+        <div className="max-w-4xl mx-auto mt-20 mb-12">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold mb-3" style={{ color: themeColors.primaryDark }}>
+              {t('whyKalon.title')}
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              {t('whyKalon.subtitle')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[1, 2, 3, 4, 5].map((item) => (
+              <motion.div
+                key={item}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: item * 0.1 }}
+                className={`p-6 rounded-xl border-2 shadow-sm hover:shadow-md transition-all ${item === 5 ? 'md:col-span-2' : ''}`}
+                style={{
+                  backgroundColor: themeColors.background || 'white',
+                  borderColor: themeColors.primary + '20'
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className="p-2 rounded-lg shrink-0 mt-1"
+                    style={{ backgroundColor: themeColors.primary + '15' }}
+                  >
+                    <CheckCircle className="w-5 h-5" style={{ color: themeColors.primary }} />
+                  </div>
+                  <p className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed font-medium">
+                    {t(`whyKalon.items.${item}`)}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
