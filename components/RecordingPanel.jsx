@@ -1855,7 +1855,15 @@ const RecordingPanel = () => {
                 <div className="text-xs text-gray-500 dark:text-gray-400">
                   Arquivo temporário: {currentTempFile || "salvo"}
                 </div>
-                <div className="flex items-center gap-2">
+                {/* 🔴 ACHADO #3: Paused Recording Warning */}
+                {isPaused && (
+                  <div className="flex items-center gap-2 mb-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 px-3 py-2 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <Pause className="w-4 h-4 animate-pulse" />
+                    <span className="text-sm font-semibold">GRAVAÇÃO PAUSADA</span>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-4">
                   <button
                     type="button"
                     onClick={handleDiscardRecording}
