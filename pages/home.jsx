@@ -569,10 +569,10 @@ export default function Home() {
         <div className="max-w-4xl mx-auto mt-20 mb-12">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold mb-3" style={{ color: themeColors.primaryDark }}>
-              {t('whyKalon.title')}
+              {t('home.whyKalon.title')}
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              {t('whyKalon.subtitle')}
+              {t('home.whyKalon.subtitle')}
             </p>
           </div>
 
@@ -598,7 +598,7 @@ export default function Home() {
                     <CheckCircle className="w-5 h-5" style={{ color: themeColors.primary }} />
                   </div>
                   <p className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed font-medium">
-                    {t(`whyKalon.items.${item}`)}
+                    {t(`home.whyKalon.items.${item}`)}
                   </p>
                 </div>
               </motion.div>
