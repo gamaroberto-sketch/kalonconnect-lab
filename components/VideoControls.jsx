@@ -531,8 +531,18 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
             }}
             disabled={isSessionStarted}
           >
-            {isSessionStarted ? "Sessão Iniciada" : t('videoControls.startSession')}
+            {isSessionStarted
+              ? (isConnected ? "🟢 AO VIVO" : "Aguardando Cliente...")
+              : t('videoControls.startSession')}
           </button>
+
+          {/* 🔴 ACHADO #2: Participant Counter */}
+          {isSessionStarted && (
+            <div className="flex flex-col items-center justify-center text-xs font-medium text-gray-500 dark:text-gray-400 -ml-2 mr-2">
+              <span>{isConnected ? "2/2" : "1/2"}</span>
+              <span className="text-[0.6rem] uppercase opacity-75">conectados</span>
+            </div>
+          )}
 
           {/* Video & Screen Share */}
           <div className="flex items-center gap-2">
