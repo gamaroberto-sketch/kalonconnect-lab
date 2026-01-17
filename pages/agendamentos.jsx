@@ -32,7 +32,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useAppointments } from '../hooks/useAppointments';
 import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
-import HelpModal from '../components/HelpModal';
+
 import { helpSections } from '../lib/helpContent';
 import { useFeedback } from '../contexts/FeedbackContext';
 
