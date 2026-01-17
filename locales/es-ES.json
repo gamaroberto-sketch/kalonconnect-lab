@@ -1190,42 +1190,6 @@
       "primaryDark": "Primario Oscuro"
     }
   },
-  "invites": {
-    "title": "Envío Automático de Invitación a Consulta",
-    "subtitle": "Configure cuándo y cómo enviar invitaciones a sus clientes",
-    "channels": {
-      "title": "Canales de Envío",
-      "whatsapp": "WhatsApp",
-      "email": "Correo electrónico"
-    },
-    "whereby": {
-      "title": "Enlace de Sala Whereby",
-      "placeholder": "https://whereby.com/su-sala",
-      "help": "Este enlace se enviará automáticamente a los clientes"
-    },
-    "timing": {
-      "title": "Cuándo Enviar",
-      "dayBefore": "Enviar el día anterior, a las",
-      "dayOf": "Enviar el día de la consulta, a las",
-      "tenMinBefore": "Enviar 10 minutos antes del inicio"
-    },
-    "message": {
-      "title": "Mensaje de Invitación (Editable)",
-      "placeholder": "Ingrese su mensaje personalizado...",
-      "help": "Use [data/hora], [LINK_WHERBY_DO_PROFISSIONAL] y [CLIENTE] como marcadores"
-    },
-    "buttons": {
-      "save": "Guardar Configuraciones",
-      "test": "Enviar Prueba Ahora"
-    },
-    "history": {
-      "title": "Historial de Envíos"
-    },
-    "alerts": {
-      "saved": "¡Configuraciones de invitación guardadas con éxito!",
-      "testGenerated": "Mensaje generado:\n\n{message}\n\nRevise el historial a continuación."
-    }
-  },
   "credentials": {
     "title": "Credenciales de Acceso",
     "username": {

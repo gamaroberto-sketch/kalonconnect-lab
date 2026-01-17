@@ -174,32 +174,6 @@
     },
     "multilingual_footer": "Plateforme multilingue, actuellement disponible en quatre langues, avec la possibilité d'intégrer de nouvelles langues au fur et à mesure de l'évolution de KalonConnect."
   },
-  "home": {
-    "welcome": "Bienvenue, {name}",
-    "tagline": "Votre pratique organisée de bout en bout : de la prise de rendez-vous aux soins en ligne.",
-    "quickActions": "Actions Rapides",
-    "recentActivity": "Activité Récente",
-    "upcomingAppointments": "Prochains Rendez-vous",
-    "statistics": "Statistiques",
-    "noAppointments": "Aucun rendez-vous à venir",
-    "guide": {
-      "title": "Guide d'Utilisation",
-      "description": "Première fois sur <span className=\"font-bold normal-case\">KalonConnect</span> ? Accédez au guide complet et commencez en toute tranquillité.",
-      "open": "Ouvrir le Guide"
-    },
-    "actions": {
-      "manageClients": "Gérez vos clients avec clarté et historique complet",
-      "videoSessions": "Consultations en ligne avec stabilité et sécurité",
-      "calendar": "Organisez votre agenda avec praticité",
-      "documents": "Ordonnances et termes",
-      "financial": "Suivez vos revenus en toute simplicité",
-      "settings": "Personnaliser le système",
-      "profile": "Gérer votre profil et paramètres",
-      "events": "Gérer vos événements et ateliers",
-      "reports": "Voir les rapports et statistiques",
-      "about": "En savoir plus sur la plateforme"
-    }
-  },
   "integrations": {
     "googleDrive": {
       "title": "Google Drive",
