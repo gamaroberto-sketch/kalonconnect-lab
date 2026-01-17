@@ -244,7 +244,7 @@
       "items": {
         "1": {
           "q": "Meu cliente não conseguiu entrar na consulta. O que devo fazer?",
-          "a": "Respire e mantenha a calma. Peça para ele atualizar a página do navegador. Se não funcionar, feche e abra o navegador novamente. Verifique se ele permitiu o uso da câmera e microfone quando o navegador pediu."
+          "a": "Peça para ele atualizar a página (F5 ou Ctrl+R). Se não funcionar, feche e abra o navegador novamente. Verifique se ele permitiu câmera e microfone."
         },
         "2": {
           "q": "Funciona no celular ou tablet?",
