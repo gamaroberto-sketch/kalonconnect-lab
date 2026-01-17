@@ -317,10 +317,10 @@ export default function LoginPage() {
       </div>
 
       <div
-        className="absolute bottom-6 right-6 flex flex-col items-center gap-2"
+        className="absolute bottom-6 right-6 flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity"
         style={{ color: palette.textPrimary }}
       >
-        <p className="text-xs font-semibold uppercase tracking-[0.4em]">
+        <p className="text-[0.6rem] font-medium uppercase tracking-[0.2em]">
           {t('login.developedBy')}
         </p>
         <a
@@ -329,19 +329,13 @@ export default function LoginPage() {
           rel="noopener noreferrer"
           className="flex flex-col items-center gap-1 transition"
           style={{ color: palette.textPrimary }}
-          onMouseEnter={(event) => {
-            event.currentTarget.style.color = palette.primaryDark;
-          }}
-          onMouseLeave={(event) => {
-            event.currentTarget.style.color = palette.textPrimary;
-          }}
         >
           <img
             src="/logo2.png"
             alt="Desenvolvido por Roberto Gama"
-            className="h-10 object-contain"
+            className="h-6 object-contain grayscale opacity-80"
           />
-          <span className="text-[0.7rem] font-medium tracking-[0.25em] lowercase">
+          <span className="text-[0.55rem] font-medium tracking-[0.15em] lowercase">
             www.robertogama.com
           </span>
         </a>
