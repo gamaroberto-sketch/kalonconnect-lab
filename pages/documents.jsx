@@ -18,8 +18,7 @@ import {
 } from 'lucide-react';
 import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
-import HelpButton from '../components/HelpButton';
-import HelpModal from '../components/HelpModal';
+
 import { helpSections } from '../lib/helpContent';
 import { useFeedback } from '../contexts/FeedbackContext';
 
