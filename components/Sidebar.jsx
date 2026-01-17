@@ -221,7 +221,7 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
 
         {/* 🟢 AI Credits Display */}
         {user && (
-          <div className="mt-4 px-3 py-2 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div title="Créditos usados para recursos de IA (ex.: transcrição automática)." className="mt-4 px-3 py-2 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-200 dark:border-gray-700 cursor-help">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold flex items-center gap-1" style={{ color: themeColors.primaryDark }}>
                 <Brain className="w-3 h-3" />
