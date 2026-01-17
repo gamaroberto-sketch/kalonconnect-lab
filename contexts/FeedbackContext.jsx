@@ -52,6 +52,21 @@ export const FeedbackProvider = ({ children }) => {
         setFeedback(null);
     }, []);
 
+    // 🟢 ACHADO #13: Global Event Bus for non-component feedback
+    React.useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const handleCustomToast = (event) => {
+            const { title, message, type, duration } = event.detail || {};
+            if (message) {
+                showFeedback({ title, message, type, duration });
+            }
+        };
+
+        window.addEventListener("kalon-toast", handleCustomToast);
+        return () => window.removeEventListener("kalon-toast", handleCustomToast);
+    }, [showFeedback]);
+
     return (
         <FeedbackContext.Provider value={{ showFeedback, closeFeedback }}>
             {children}

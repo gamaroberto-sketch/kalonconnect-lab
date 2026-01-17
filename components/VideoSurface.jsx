@@ -278,10 +278,46 @@ const VideoSurface = ({ roomId }) => {
           onConnected={() => {
             console.log("✅ [PROFESSIONAL] LiveKit Connected!");
           }}
-          onDisconnected={(reason) => {
+          onDisconnected={async (reason) => {
             console.warn("⚠️ [PROFESSIONAL] LiveKit Disconnected!", reason);
-            // We don't clear state here to handle re-renders/strict mode gracefully.
-            // disconnectSession() should be called by the effect if isSessionStarted becomes false.
+
+            // 🔴 ACHADO #13: Immediate Disconnect Feedback & Auto-Reconnect
+            // Note: internal retry logic might be preferable, but we want EXPLICIT feedback
+
+            // 1. Show Warning
+            // Assuming showFeedback is available via hook (need to import it)
+            // For now, we use a simple alert-like approach if context not available in this scope?
+            // Actually, let's inject a custom logic.
+
+            const MAX_RETRIES = 3;
+            const currentRetry = window.kalon_reconnect_attempts || 0;
+
+            if (currentRetry < MAX_RETRIES) {
+              const feedbackEvent = new CustomEvent("kalon-toast", {
+                detail: {
+                  type: 'error',
+                  title: 'Conexão Perdida',
+                  message: `Tentando reconectar... (${currentRetry + 1}/${MAX_RETRIES})`
+                }
+              });
+              window.dispatchEvent(feedbackEvent);
+
+              window.kalon_reconnect_attempts = currentRetry + 1;
+
+              // Force Reconnect Trigger
+              setTimeout(() => {
+                connectSession(consultationId || roomId);
+              }, 2000);
+            } else {
+              const feedbackEvent = new CustomEvent("kalon-toast", {
+                detail: {
+                  type: 'error',
+                  title: 'Falha de Conexão',
+                  message: '❌ Não foi possível reconectar. Por favor, recarregue a página.'
+                }
+              });
+              window.dispatchEvent(feedbackEvent);
+            }
           }}
           onError={(err) => {
             console.error("❌ [PROFESSIONAL] LiveKit Error:", err);
