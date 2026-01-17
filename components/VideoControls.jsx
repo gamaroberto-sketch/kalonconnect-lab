@@ -23,8 +23,10 @@ import { useVideoPanel } from "./VideoPanelContext";
 import { useAuth } from "./AuthContext";
 import { useAccessControl } from "../hooks/useAccessControl";
 import { useUsageTrackerContext } from "./UsageTrackerContext";
+import { useUsageTrackerContext } from "./UsageTrackerContext";
 import { generateClientLink, debugOrigin } from "@/utils/generateClientLink";
 import { useTranslation } from "../hooks/useTranslation";
+import { useFeedback } from "../contexts/FeedbackContext"; // 🟢 Added for Toast Feedback
 
 const baseButtonClasses =
   "px-3 py-2 rounded-full border-2 border-transparent text-sm font-medium transition-colors";
@@ -36,6 +38,7 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
   const { user } = useAuth();
   const { canUseFeature } = useAccessControl(user?.version);
   const { trackAction: trackUsageAction } = useUsageTrackerContext();
+  const { showFeedback } = useFeedback(); // 🟢 Added
   /* 🟢 v5.38: Local State for Fresh Slug Fetching */
   const [fetchedSlug, setFetchedSlug] = React.useState(null);
 
@@ -159,10 +162,17 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
 
     try {
       await navigator.clipboard.writeText(link);
-      alert("Link copiado!\n\n" + link);
+      // 🟢 ACHADO #11: Reliable Feedback
+      showFeedback({
+        title: "Sucesso",
+        message: "✅ Link copiado para a área de transferência",
+        type: "success",
+        duration: 3000
+      });
     } catch (err) {
       console.warn("⚠️ Clip failed", err);
-      prompt("Copie seu link:", link);
+      // Fallback robusto
+      prompt("Não foi possível copiar automaticamente. Copie manualmente abaixo:", link);
     }
   }
 
