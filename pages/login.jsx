@@ -302,6 +302,19 @@ export default function LoginPage() {
             <ChevronRight className="w-4 h-4 ml-2" />
           </button>
 
+          {/* Preview Bypass Button - TEMPORARY FOR UX REVIEW */}
+          <button
+            type="button"
+            onClick={() => router.push('/home')}
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-dashed font-bold uppercase tracking-[0.1em] transition hover:bg-gray-50 mt-2 text-sm"
+            style={{
+              borderColor: `${palette.primary}66`,
+              color: palette.primary
+            }}
+          >
+            <span>👁️ Visualizar Home (Preview/Sem Senha)</span>
+          </button>
+
           {/* Signup Link */}
           <div className="mt-4 text-center">
             <p style={{ color: `${palette.textPrimary}cc` }} className="text-sm">
