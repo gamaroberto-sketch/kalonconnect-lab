@@ -18,12 +18,16 @@ import {
 } from 'lucide-react';
 import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
+import HelpButton from '../components/HelpButton';
+import HelpModal from '../components/HelpModal';
 import { helpSections } from '../lib/helpContent';
+import { useFeedback } from '../contexts/FeedbackContext';
 
 const DocumentsNew = () => {
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
     const { t } = useTranslation();
+    const { showFeedback } = useFeedback();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
     const { user } = useAuth();
@@ -102,6 +106,21 @@ const DocumentsNew = () => {
                 const { document } = await response.json();
                 setCustomDocuments([...customDocuments, document]);
                 setActiveTab(`custom_${document.id}`);
+
+                // Feedback Emocional Positivo (First Document)
+                const hasSeenFeedback = localStorage.getItem('kalon:feedback:firstDocument');
+                if (!hasSeenFeedback) {
+                    showFeedback({
+                        title: t('feedback.documentCreated.title'),
+                        message: t('feedback.documentCreated.message'),
+                        type: 'success',
+                        cta: {
+                            label: t('feedback.documentCreated.cta'),
+                            action: () => setActiveTab(`custom_${document.id}`)
+                        }
+                    });
+                    localStorage.setItem('kalon:feedback:firstDocument', 'true');
+                }
             }
         } catch (error) {
             console.error('Error creating document:', error);

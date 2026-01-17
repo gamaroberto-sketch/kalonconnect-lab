@@ -175,15 +175,19 @@ const Agendamentos = () => {
 
     // Feedback Emocional Positivo
     if (!selectedAppointment) {
-      showFeedback({
-        title: t('feedback.consultationScheduled.title'),
-        message: t('feedback.consultationScheduled.message'),
-        type: 'success',
-        cta: {
-          label: t('feedback.consultationScheduled.cta'),
-          action: () => window.location.href = '/consultations'
-        }
-      });
+      const hasSeenFeedback = localStorage.getItem('kalon:feedback:firstAppointment');
+      if (!hasSeenFeedback) {
+        showFeedback({
+          title: t('feedback.consultationScheduled.title'),
+          message: t('feedback.consultationScheduled.message'),
+          type: 'success',
+          cta: {
+            label: t('feedback.consultationScheduled.cta'),
+            action: () => window.location.href = '/consultations'
+          }
+        });
+        localStorage.setItem('kalon:feedback:firstAppointment', 'true');
+      }
     }
   };
 

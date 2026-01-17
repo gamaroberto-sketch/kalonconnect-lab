@@ -1820,6 +1820,11 @@
       "title": "¡Consulta concluida!",
       "message": "Consulta concluida con éxito.",
       "cta": "Generar documento"
+    },
+    "documentCreated": {
+      "title": "¡Documento creado!",
+      "message": "Su primer documento fue generado.",
+      "cta": "Ver documentos"
     }
   }
 }

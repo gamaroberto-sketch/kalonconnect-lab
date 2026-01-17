@@ -1840,6 +1840,11 @@
       "title": "Consulta concluída!",
       "message": "Consulta concluída com sucesso.",
       "cta": "Gerar documento"
+    },
+    "documentCreated": {
+      "title": "Documento criado!",
+      "message": "Seu primeiro documento foi gerado.",
+      "cta": "Ver documentos"
     }
   }
 }

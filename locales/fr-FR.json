@@ -1932,6 +1932,11 @@
       "title": "Consultation terminée !",
       "message": "Consultation terminée avec succès.",
       "cta": "Générer un document"
+    },
+    "documentCreated": {
+      "title": "Document créé !",
+      "message": "Votre premier document a été généré.",
+      "cta": "Voir les documents"
     }
   }
 }

@@ -1792,6 +1792,11 @@
       "title": "Consultation finished!",
       "message": "Consultation completed successfully.",
       "cta": "Generate document"
+    },
+    "documentCreated": {
+      "title": "Document created!",
+      "message": "Your first document has been generated.",
+      "cta": "View documents"
     }
   }
 }
