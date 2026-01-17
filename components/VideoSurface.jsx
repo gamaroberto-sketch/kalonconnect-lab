@@ -201,7 +201,8 @@ const VideoSurface = ({ roomId }) => {
     isConnected, // From Context
     isSessionStarted,
     toggleScreenShare,
-    processedTrack // 🟢 Virtual Background
+    processedTrack, // 🟢 Virtual Background
+    lowPowerMode // 🟢 ACHADO #15
   } = useVideoPanel();
 
   const { t } = useTranslation();
@@ -256,6 +257,13 @@ const VideoSurface = ({ roomId }) => {
             {isRoomConnected ? "ONLINE (Ao Vivo)" : "OFFLINE"}
           </span>
         </div>
+
+        {/* 🔴 ACHADO #15: Low Power Mode Badge */}
+        {lowPowerMode && (
+          <div className="absolute top-12 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/80 backdrop-blur-md border border-yellow-400/50 shadow-lg animate-pulse">
+            <span className="text-xs font-bold text-black tracking-wide">🔋 MODO ECONOMIA</span>
+          </div>
+        )}
 
         <LocalVideoLayer
           localVideoRef={localVideoRef}

@@ -58,8 +58,35 @@ export const VideoPanelProvider = ({
   const [showScreenSharePanel, setShowScreenSharePanel] = useState(false);
   const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
   const [useWhereby, setUseWhereby] = useState(false);
-  const [isHighMeshEnabled, setIsHighMeshEnabled] = useState(false);
+
+  // 🔴 ACHADO #15: Low Power Mode State
   const [lowPowerMode, setLowPowerMode] = useState(false);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setLowPowerMode(true);
+        // Toast Notification
+        if (typeof window !== "undefined") {
+          const event = new CustomEvent("kalon-toast", {
+            detail: {
+              type: 'warning',
+              title: 'Modo Economia',
+              message: 'Vídeo pausado para economizar recursos (aba inativa).'
+            }
+          });
+          window.dispatchEvent(event);
+        }
+      } else {
+        setLowPowerMode(false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+  const [isHighMeshEnabled, setIsHighMeshEnabled] = useState(false);
+  // lowPowerMode removed (duplicate)
   const [recordingState, setRecordingState] = useState({ active: false, notifyClient: false });
   const [backgroundConfig, setBackgroundConfig] = useState({ type: 'none' });
   const [branding, setBranding] = useState({ profile: null, themeColors: null, isLoading: true });
@@ -1018,6 +1045,9 @@ export const VideoPanelProvider = ({
     fetchLiveKitToken,
     backgroundConfig,
     setBackgroundConfig,
+
+    // 🔴 ACHADO #15
+    lowPowerMode,
     branding,
     // Caption Settings for Real-Time Translation
     captionSettings,
