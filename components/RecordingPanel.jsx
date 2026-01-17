@@ -1418,6 +1418,36 @@ const RecordingPanel = () => {
                       </span>
                     </span>
                   </label>
+
+                  {/* 🔴 ACHADO #5: Consent Checkbox & Warning */}
+                  <div className="pt-2 border-t border-dashed" style={{ borderColor: borderTone }}>
+                    <label className="flex items-start gap-3 text-sm">
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-4 w-4 rounded border"
+                        style={{
+                          borderColor: borderTone,
+                          accentColor: accentColor
+                        }}
+                        checked={notifyClient}
+                        onChange={(event) => setNotifyClient(event.target.checked)}
+                      />
+                      <span>
+                        <strong className="block font-semibold">Notificar cliente sobre gravação</strong>
+                        <span className="text-xs" style={{ color: textSecondary }}>
+                          Exibe um aviso na tela do cliente informando que a sessão está sendo gravada.
+                        </span>
+                      </span>
+                    </label>
+
+                    <div className="mt-2 ml-7 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs">
+                      <p className="font-bold mb-1">⚠️ ATENÇÃO ÉTICA:</p>
+                      <p>
+                        Marcar esta opção <strong>NÃO substitui o consentimento verbal gravado.</strong><br />
+                        Ao iniciar, peça ao cliente para dizer: <em>"Eu autorizo a gravação desta sessão."</em>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1455,7 +1485,9 @@ const RecordingPanel = () => {
                     key="start"
                     type="button"
                     onClick={startRecording}
-                    className="flex h-16 w-16 items-center justify-center rounded-full border-4 text-white shadow-lg transition focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    disabled={!notifyClient} // 🔴 ACHADO #5: Enforce Consent
+                    className="flex h-16 w-16 items-center justify-center rounded-full border-4 text-white shadow-lg transition focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
+                    title={!notifyClient ? "Você deve marcar a notificação do cliente para gravar" : "Iniciar Gravação"}
                     style={{
                       borderColor: `${themeColors?.error || "#ef4444"}40`,
                       backgroundColor: themeColors?.error || "#ef4444"
