@@ -81,11 +81,11 @@ export default function Home() {
     }
 
     // Se não há usuário no contexto E não há usuário válido no localStorage, redirecionar
-    // [PREVIEW MODE] Bypassando verificação para permitir visualização da UX sem backend
-    // if (!loading && !user && !hasValidUser) {
-    //   router.replace('/');
-    // }
-    console.log('[Preview Mode] Auth Check bypassed');
+    // [PREVIEW MODE] Bypass removed to ensure consistent auth state across app
+    if (!loading && !user && !hasValidUser) {
+      router.replace('/');
+    }
+    // console.log('[Preview Mode] Auth Check bypassed');
   }, [user, loading, mounted, router]);
 
   const handleLogout = () => {
@@ -137,7 +137,7 @@ export default function Home() {
     router.push('/about');
   };
 
-  const greetingName = preferredName || user?.name || 'Visitante (Preview)';
+  const greetingName = preferredName || user?.name || 'Visitante';
 
 
   // Mostrar loading enquanto verifica autenticação ou enquanto monta
@@ -277,15 +277,30 @@ export default function Home() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleProfile}>
-                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+                  style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
+                >
+                  1
+                </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step1') }} />
               </div>
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleCadastro}>
-                <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+                  style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
+                >
+                  2
+                </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step2') }} />
               </div>
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleConsultas}>
-                <div className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+                  style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
+                >
+                  3
+                </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step3') }} />
               </div>
             </div>
