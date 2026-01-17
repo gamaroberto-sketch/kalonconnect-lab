@@ -418,7 +418,7 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               {timerDisplay}
             </div>
 
-            {/* 🔴 ACHADO #1: Persistent Recording Badge */}
+            {/* 🔴 ACHADO #1 & #6: Persistent Recording Badge + Timer */}
             {recordingState?.active && (
               <div
                 className="flex items-center gap-2 px-3 py-2 rounded-full shadow-sm animate-pulse"
@@ -427,6 +427,9 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               >
                 <div className="w-2 h-2 rounded-full bg-white" />
                 <span className="text-xs font-bold tracking-wide">GRAVANDO</span>
+                <span className="text-xs font-mono border-l border-white/30 pl-2 ml-1">
+                  {recordingState.elapsed || "00:00"}
+                </span>
               </div>
             )}
 
