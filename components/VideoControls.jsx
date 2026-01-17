@@ -433,6 +433,18 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               </div>
             )}
 
+            {/* 🔴 ACHADO #9: Mute Warning Badge */}
+            {!isAudioOn && (
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-full shadow-sm animate-pulse"
+                style={{ backgroundColor: "#dc2626", color: "#ffffff" }}
+                title="Seu microfone está desligado"
+              >
+                <MicOff className="w-3 h-3" />
+                <span className="text-xs font-bold tracking-wide">MICROFONE DESLIGADO</span>
+              </div>
+            )}
+
             <button
               type="button"
               onClick={handleOpenSettingsWithTracking}
