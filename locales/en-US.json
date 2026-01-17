@@ -271,7 +271,7 @@
     "noAppointments": "No upcoming appointments",
     "guide": {
       "title": "User Guide",
-      "description": "First time on <span className=\"font-bold normal-case\">KalonConnect</span>? Access the complete guide and start with peace of mind.",
+      "description": "Set up your profile, register your first client, and start your first consultation in under 5 minutes.",
       "open": "Open Guide"
     },
     "onboarding": {

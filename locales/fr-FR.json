@@ -298,7 +298,7 @@
     "noAppointments": "Aucun rendez-vous à venir",
     "guide": {
       "title": "Guide Utilisateur",
-      "description": "Première fois sur <span className=\"font-bold normal-case\">KalonConnect</span> ? Accédez au guide complet pour tout configurer.",
+      "description": "Configurez votre profil, enregistrez votre premier client et commencez votre première consultation en moins de 5 minutes.",
       "open": "Ouvrir le Guide"
     },
     "onboarding": {
