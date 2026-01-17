@@ -309,13 +309,13 @@
     },
     "actions": {
       "manageClients": "Accédez à l'historique complet et aux notes privées en quelques secondes.",
-      "videoSessions": "Vidéo stable et sécurisée, sans limite de temps.",
+      "videoSessions": "Vidéo stable et sécurisée pour des soins sans interruption.",
       "calendar": "Visualisez votre semaine et évitez les conflits d'horaire.",
       "documents": "Créez des ordonnances et des conditions en un clic.",
       "financial": "Contrôlez qui a payé et combien vous allez recevoir.",
       "settings": "Ajustez votre profil, votre logo et vos préférences de soins.",
       "profile": "Gérer votre profil et vos paramètres",
-      "events": "Gérer vos événements et ateliers",
+      "events": "Organisez des événements et ateliers avec inscriptions et contrôle.",
       "reports": "Voir les rapports et statistiques",
       "about": "En savoir plus sur la plateforme",
       "products": "Enregistrez vos produits et choisissez comment vendre (Lien, WhatsApp ou PIX)."

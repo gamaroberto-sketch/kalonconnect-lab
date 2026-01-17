@@ -283,13 +283,13 @@
     },
     "actions": {
       "manageClients": "Accede al historial completo y notas privadas en segundos.",
-      "videoSessions": "Video estable y seguro, sin límite de tiempo.",
+      "videoSessions": "Video estable y seguro para atenciones sin interrupciones.",
       "calendar": "Visualiza tu semana y evita conflictos de horario.",
       "documents": "Crea recetas y términos listos con un clic.",
       "financial": "Controla quién pagó y cuánto vas a recibir.",
       "settings": "Ajusta tu perfil, logo y preferencias de atención.",
       "profile": "Administra tu perfil y configuración",
-      "events": "Administra tus eventos y talleres",
+      "events": "Organiza eventos y talleres con inscripciones y control.",
       "reports": "Ver informes y estadísticas",
       "about": "Más información sobre la plataforma",
       "products": "Registra tus productos y elige cómo vender (Enlace, WhatsApp o PIX)."

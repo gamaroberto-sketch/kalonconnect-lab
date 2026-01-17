@@ -81,11 +81,9 @@ export default function Home() {
     }
 
     // Se não há usuário no contexto E não há usuário válido no localStorage, redirecionar
-    // [PREVIEW MODE] Bypassando verificação para permitir visualização da UX sem backend
-    // if (!loading && !user && !hasValidUser) {
-    //   router.replace('/');
-    // }
-    console.log('[Preview Mode] Auth Check bypassed');
+    if (!loading && !user && !hasValidUser) {
+      router.replace('/');
+    }
   }, [user, loading, mounted, router]);
 
   const handleLogout = () => {
@@ -137,12 +135,11 @@ export default function Home() {
     router.push('/about');
   };
 
-  const greetingName = preferredName || user?.name || 'Visitante (Preview)';
+  const greetingName = preferredName || user?.name || 'Profissional Kalon';
 
 
   // Mostrar loading enquanto verifica autenticação ou enquanto monta
-  // [PREVIEW MODE] Ignorando loading/user null para forçar renderização
-  if (!mounted) {
+  if (!mounted || loading || !user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -253,12 +250,17 @@ export default function Home() {
               </div>
               <button
                 onClick={handleGuia}
+                style={{ backgroundColor: themeColors.primaryDark }}
+                className="px-6 py-3 rounded-xl text-white font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
               >
-                <span>{t('home.guide.open')}</span>
+                {t('home.guide.open')}
+                <ArrowRight className="w-5 h-5" />
               </button>
             </div>
           </div>
         </motion.div>
+
+
 
         {/* Ações Principais */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">

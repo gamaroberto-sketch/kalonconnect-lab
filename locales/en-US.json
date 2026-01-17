@@ -282,13 +282,13 @@
     },
     "actions": {
       "manageClients": "Access full history and private notes in seconds.",
-      "videoSessions": "Stable and secure video, no time limit.",
+      "videoSessions": "Stable and secure video for uninterrupted care.",
       "calendar": "View your week and avoid scheduling conflicts.",
       "documents": "Create prescriptions and terms with one click.",
       "financial": "Track who paid and what you will receive.",
       "settings": "Adjust your profile, logo, and care preferences.",
       "profile": "Manage your profile and settings",
-      "events": "Manage your events and workshops",
+      "events": "Organize events and workshops with registration and control.",
       "reports": "View reports and statistics",
       "about": "Learn more about the platform",
       "products": "Register your products and choose how to sell (Link, WhatsApp or PIX)."
