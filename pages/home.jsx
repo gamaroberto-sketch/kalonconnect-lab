@@ -81,9 +81,11 @@ export default function Home() {
     }
 
     // Se não há usuário no contexto E não há usuário válido no localStorage, redirecionar
-    if (!loading && !user && !hasValidUser) {
-      router.replace('/');
-    }
+    // [PREVIEW MODE] Bypassando verificação para permitir visualização da UX sem backend
+    // if (!loading && !user && !hasValidUser) {
+    //   router.replace('/');
+    // }
+    console.log('[Preview Mode] Auth Check bypassed');
   }, [user, loading, mounted, router]);
 
   const handleLogout = () => {
@@ -135,11 +137,12 @@ export default function Home() {
     router.push('/about');
   };
 
-  const greetingName = preferredName || user?.name || 'Profissional Kalon';
+  const greetingName = preferredName || user?.name || 'Visitante (Preview)';
 
 
   // Mostrar loading enquanto verifica autenticação ou enquanto monta
-  if (!mounted || loading || !user) {
+  // [PREVIEW MODE] Ignorando loading/user null para forçar renderização
+  if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -256,6 +259,35 @@ export default function Home() {
                 {t('home.guide.open')}
                 <ArrowRight className="w-5 h-5" />
               </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Micro-Onboarding - New Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="max-w-4xl mx-auto mb-10"
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-yellow-500" />
+              {t('home.onboarding.title')}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleProfile}>
+                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
+                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step1') }} />
+              </div>
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleCadastro}>
+                <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
+                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step2') }} />
+              </div>
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleConsultas}>
+                <div className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
+                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step3') }} />
+              </div>
             </div>
           </div>
         </motion.div>
