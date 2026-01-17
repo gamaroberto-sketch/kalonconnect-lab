@@ -244,6 +244,13 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
   };
 
   const handleToggleScreenShare = async () => {
+    // 🔴 ACHADO #10: Confirm before sharing
+    if (!isScreenSharing) {
+      if (!confirm("⚠️ ATENÇÃO: Ao compartilhar a tela, tudo o que aparecer nela será visível para o cliente.\n\nDeseja continuar?")) {
+        return;
+      }
+    }
+
     trackUsageAction({
       type: isScreenSharing ? "stopScreenShare" : "startScreenShare",
       featureKey: "screenShare"
@@ -290,7 +297,7 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               type: "enterFullscreen",
               featureKey: "video.fullscreen"
             });
-          } else if (videoArea.mozRequestFullScreen) {
+          } else if (videoArea.mozRequestFullscreen) {
             videoArea.mozRequestFullScreen();
             setIsFullscreen(true);
             trackUsageAction({
@@ -442,6 +449,18 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               >
                 <MicOff className="w-3 h-3" />
                 <span className="text-xs font-bold tracking-wide">MICROFONE DESLIGADO</span>
+              </div>
+            )}
+
+            {/* 🔴 ACHADO #10: Screen Share Badge */}
+            {isScreenSharing && (
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-full shadow-sm border animate-pulse"
+                style={{ backgroundColor: "#3b82f6", color: "#ffffff", borderColor: "#2563eb" }}
+                title="Você está compartilhando sua tela"
+              >
+                <Monitor className="w-3 h-3" />
+                <span className="text-xs font-bold tracking-wide">COMPARTILHANDO TELA</span>
               </div>
             )}
 
