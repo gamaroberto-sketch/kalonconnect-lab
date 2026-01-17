@@ -657,12 +657,18 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                 </h2>
               </div>
 
-              <textarea
-                value={customSlogan}
-                onChange={(e) => setCustomSlogan(e.target.value)}
-                placeholder={t('settings.slogan.placeholder')}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
-              />
+              <div className="relative">
+                <textarea
+                  value={customSlogan}
+                  onChange={(e) => setCustomSlogan(e.target.value)}
+                  placeholder={t('settings.slogan.placeholder')}
+                  maxLength={30}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                />
+                <div className="absolute bottom-3 right-3 text-xs text-gray-500 dark:text-gray-400">
+                  {customSlogan.length}/30
+                </div>
+              </div>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 {t('settings.slogan.description')}
               </p>
