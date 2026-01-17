@@ -127,7 +127,7 @@ const Sidebar = ({ activeSection, setActiveSection, sidebarOpen, darkMode }) => 
     },
     {
       name: t('sidebar.events'),
-      icon: <Calendar className="w-5 h-5" />,
+      icon: <Users className="w-5 h-5" />,
       path: 'events'
     },
     {
