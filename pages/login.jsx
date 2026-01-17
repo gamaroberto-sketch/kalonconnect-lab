@@ -9,14 +9,14 @@ import { useTranslation } from "../hooks/useTranslation";
 import SignupWizard from '../components/SignupWizard';
 
 export default function LoginPage() {
-  console.log('🔵 [LoginPage] Componente renderizando...');
+
 
   const router = useRouter();
   const { loginUser } = useAuth();
   const { getThemeColors, isInitialized } = useTheme();
   const { t } = useTranslation();
 
-  console.log('🔵 [LoginPage] Hooks inicializados, isInitialized:', isInitialized);
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +26,7 @@ export default function LoginPage() {
   const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
-    console.log('✅ [LoginPage] Componente montado completamente');
+
 
     // 🔧 CORREÇÃO: Remover overlays que bloqueiam a página de login
     const fixOverlays = () => {
@@ -68,7 +68,7 @@ export default function LoginPage() {
       clearTimeout(timer2);
       clearTimeout(timer3);
       observer.disconnect();
-      console.log('🔄 [LoginPage] Componente desmontando');
+
     };
   }, []);
 
