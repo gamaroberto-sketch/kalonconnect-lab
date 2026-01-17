@@ -83,7 +83,8 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
     handleOpenSettings,
     showTimeWarning,
     isProfessional,
-    setConsultationId // 🟢 Added
+    setConsultationId, // 🟢 Added
+    recordingState // 🟢 Added for Persistent Badge
   } = useVideoPanel();
 
   // ---------------------------------------------------------
@@ -416,6 +417,18 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
             <div className={timerButtonClasses} style={timerButtonStyle}>
               {timerDisplay}
             </div>
+
+            {/* 🔴 ACHADO #1: Persistent Recording Badge */}
+            {recordingState?.active && (
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-full shadow-sm animate-pulse"
+                style={{ backgroundColor: "#dc2626", color: "#ffffff" }}
+                title="Gravação de sessão ativa"
+              >
+                <div className="w-2 h-2 rounded-full bg-white" />
+                <span className="text-xs font-bold tracking-wide">GRAVANDO</span>
+              </div>
+            )}
 
             <button
               type="button"
