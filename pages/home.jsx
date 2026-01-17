@@ -24,6 +24,8 @@ import { useAuth } from '../components/AuthContext';
 import { useRouter } from 'next/router';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
+import { useContextualTranslation } from '../hooks/useContextualTranslation';
+import PracticeSelectionModal from '../components/PracticeSelectionModal';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { getProfile } from '../lib/profile';
@@ -34,6 +36,7 @@ export default function Home() {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
   const { t } = useTranslation();
+  const { ct } = useContextualTranslation();
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -284,7 +287,7 @@ export default function Home() {
                 >
                   1
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step1') }} />
+                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: ct('home.onboarding.step1') }} />
               </div>
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleCadastro}>
                 <div
@@ -293,7 +296,7 @@ export default function Home() {
                 >
                   2
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step2') }} />
+                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: ct('home.onboarding.step2') }} />
               </div>
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleConsultas}>
                 <div
@@ -302,7 +305,7 @@ export default function Home() {
                 >
                   3
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('home.onboarding.step3') }} />
+                <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: ct('home.onboarding.step3') }} />
               </div>
             </div>
           </div>
@@ -335,7 +338,7 @@ export default function Home() {
                 <User className="w-8 h-8" style={{ color: 'white' }} />
               </div>
               <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.clients')}</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.manageClients')}</p>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{ct('home.actions.manageClients')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.primary }} />
             </div>
           </motion.button>
@@ -363,7 +366,7 @@ export default function Home() {
                 <Video className="w-8 h-8" style={{ color: 'white' }} />
               </div>
               <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.textPrimary || '#111827' }}>{t('sidebar.consultations')}</h3>
-              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{t('home.actions.videoSessions')}</p>
+              <p className="mb-4" style={{ color: themeColors.textSecondary || '#6b7280' }}>{ct('home.actions.videoSessions')}</p>
               <ArrowRight className="w-5 h-5 mx-auto" style={{ color: themeColors.secondary || themeColors.primary }} />
             </div>
           </motion.button>
@@ -606,6 +609,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <PracticeSelectionModal />
     </div>
   );
 }

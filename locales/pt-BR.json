@@ -204,11 +204,19 @@
       "title": "Comece por aqui em 3 passos",
       "step1": "Complete seu <strong>Perfil Profissional</strong> para transmitir confiança.",
       "step2": "Cadastre seu primeiro <strong>Cliente</strong> (é rápido).",
-      "step3": "Agende uma <strong>Consulta Teste</strong> para conhecer o vídeo."
+      "step2_psychology": "Cadastre seu primeiro <strong>Paciente</strong> (é rápido).",
+      "step2_coaching": "Cadastre seu primeiro <strong>Coachee</strong> (é rápido).",
+      "step3": "Agende uma <strong>Consulta Teste</strong> para conhecer o vídeo.",
+      "step3_psychology": "Agende uma <strong>Sessão Teste</strong> para conhecer o vídeo.",
+      "step3_coaching": "Agende uma <strong>Mentoria Teste</strong> para conhecer o vídeo."
     },
     "actions": {
       "manageClients": "Acesse o histórico completo e anotações privadas em segundos.",
+      "manageClients_psychology": "Acesse prontuários e anotações clínicas em segundos.",
+      "manageClients_coaching": "Acesse o histórico de evolução e metas em segundos.",
       "videoSessions": "Vídeo estável e seguro para atendimentos sem interrupções.",
+      "videoSessions_psychology": "Vídeo seguro e sigiloso para sessões sem interrupções.",
+      "videoSessions_coaching": "Vídeo estável para mentorias focadas e sem interrupções.",
       "calendar": "Visualize sua semana e evite conflitos de horário.",
       "documents": "Crie receituários e termos prontos com um clique.",
       "financial": "Controle quem pagou e quanto você vai receber.",

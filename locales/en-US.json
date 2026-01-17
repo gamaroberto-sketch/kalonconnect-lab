@@ -278,11 +278,19 @@
       "title": "Start here in 3 steps",
       "step1": "Complete your <strong>Professional Profile</strong> to convey trust.",
       "step2": "Register your first <strong>Client</strong> (it's fast).",
-      "step3": "Schedule a <strong>Test Consultation</strong> to try the video."
+      "step2_psychology": "Register your first <strong>Patient</strong> (it's fast).",
+      "step2_coaching": "Register your first <strong>Coachee</strong> (it's fast).",
+      "step3": "Schedule a <strong>Test Consultation</strong> to try the video.",
+      "step3_psychology": "Schedule a <strong>Test Session</strong> to try the video.",
+      "step3_coaching": "Schedule a <strong>Test Mentoring</strong> to try the video."
     },
     "actions": {
       "manageClients": "Access full history and private notes in seconds.",
+      "manageClients_psychology": "Access charts and clinical notes in seconds.",
+      "manageClients_coaching": "Access progress history and goals in seconds.",
       "videoSessions": "Stable and secure video for uninterrupted care.",
+      "videoSessions_psychology": "Secure and confidential video for sessions.",
+      "videoSessions_coaching": "Stable video for focused mentoring sessions.",
       "calendar": "View your week and avoid scheduling conflicts.",
       "documents": "Create prescriptions and terms with one click.",
       "financial": "Track who paid and what you will receive.",

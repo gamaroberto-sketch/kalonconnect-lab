@@ -305,11 +305,19 @@
       "title": "Commencez ici en 3 étapes",
       "step1": "Complétez votre <strong>Profil Professionnel</strong> pour transmettre la confiance.",
       "step2": "Enregistrez votre premier <strong>Client</strong> (c'est rapide).",
-      "step3": "Planifiez une <strong>Consultation Test</strong> pour découvrir la vidéo."
+      "step2_psychology": "Enregistrez votre premier <strong>Patient</strong> (c'est rapide).",
+      "step2_coaching": "Enregistrez votre premier <strong>Coachee</strong> (c'est rapide).",
+      "step3": "Planifiez une <strong>Consultation Test</strong> pour découvrir la vidéo.",
+      "step3_psychology": "Planifiez une <strong>Séance Test</strong> pour découvrir la vidéo.",
+      "step3_coaching": "Planifiez une <strong>Mentorat Test</strong> pour découvrir la vidéo."
     },
     "actions": {
       "manageClients": "Accédez à l'historique complet et aux notes privées en quelques secondes.",
+      "manageClients_psychology": "Accédez aux dossiers et notes cliniques en quelques secondes.",
+      "manageClients_coaching": "Accédez à l'historique des progrès et aux objectifs.",
       "videoSessions": "Vidéo stable et sécurisée pour des soins sans interruption.",
+      "videoSessions_psychology": "Vidéo sécurisée et confidentielle pour les séances.",
+      "videoSessions_coaching": "Vidéo stable pour des séances de mentorat ciblées.",
       "calendar": "Visualisez votre semaine et évitez les conflits d'horaire.",
       "documents": "Créez des ordonnances et des conditions en un clic.",
       "financial": "Contrôlez qui a payé et combien vous allez recevoir.",
