@@ -76,7 +76,7 @@
   },
   "header": {
     "title": "KalonConnect",
-    "subtitle": "Sistema de Consciência Integrada"
+    "subtitle": "Tecnologia com Alma"
   },
   "sidebar": {
     "home": "Início",
@@ -103,7 +103,7 @@
     "seminars": "Seminários",
     "adminReports": "Admin: Relatórios",
     "adminTestUsers": "Admin: Terapeutas",
-    "subtitle": "Sistema de Consciência Integrada"
+    "subtitle": "Tecnologia com Alma"
   },
   "login": {
     "welcomeTo": "Bem-vindo(a) ao",
@@ -866,6 +866,10 @@
       "instructionsPlaceholder": "Orientações adicionais ao paciente sobre uso e cuidados",
       "registry": "Registro Profissional",
       "date": "Data",
+      "digital": "Assinatura Digital",
+      "image": "Assinatura (Imager)",
+      "stamp": "Carimbo Profissional",
+      "issuer": "Emitido via KalonConnect",
       "successSave": "Receituário salvo com sucesso!",
       "successPDF": "PDF do receituário gerado com sucesso!",
       "successSend": "Receituário enviado ao paciente!"
@@ -951,7 +955,7 @@
       }
     },
     "common": {
-      "usingProfile": "Usando perfil",
+      "usingProfile": "Usando perfil: ",
       "editProfileHint": "Edite seu perfil em Configurações para atualizar seus dados profissionais"
     }
   },

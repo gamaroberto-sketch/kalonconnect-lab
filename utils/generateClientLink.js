@@ -5,7 +5,7 @@ export function generateClientLink(clientId, consultationId) {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "http://localhost:3000"; // fallback final garantido (SEM 3001)
+    (process.env.NODE_ENV === 'production' ? 'https://kalonconnect.com' : 'http://localhost:3000');
 
   // Método 2: Client-side
   if (typeof window !== "undefined") {

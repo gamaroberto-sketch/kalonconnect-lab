@@ -29,6 +29,14 @@ const REQUIRED_VARS = [
     'RESEND_API_KEY'
 ];
 
+const OPTIONAL_VARS = [
+    // Firebase (Legacy)
+    'FIREBASE_SERVICE_ACCOUNT_KEY',
+    'FIREBASE_CLIENT_EMAIL',
+    'FIREBASE_PRIVATE_KEY',
+    'NEXT_PUBLIC_FIREBASE_API_KEY'
+];
+
 async function checkEnvVars() {
     const envPath = path.join(process.cwd(), '.env.local');
 
@@ -84,12 +92,10 @@ async function checkEnvVars() {
         }
     });
 
-    // Firebase special check
-    const hasFirebaseServiceKey = envVars.hasOwnProperty('FIREBASE_SERVICE_ACCOUNT_KEY') && envVars['FIREBASE_SERVICE_ACCOUNT_KEY'];
-    const hasFirebaseIndividualKeys = envVars.hasOwnProperty('FIREBASE_CLIENT_EMAIL') && envVars['FIREBASE_PRIVATE_KEY'];
-
-    if (!hasFirebaseServiceKey && !hasFirebaseIndividualKeys) {
-        missingVars.push('FIREBASE_SERVICE_ACCOUNT_KEY (or FIREBASE_CLIENT_EMAIL + PRIVATE_KEY)');
+    // Optional Firebase Check
+    const hasAnyFirebase = OPTIONAL_VARS.some(v => envVars[v]);
+    if (hasAnyFirebase) {
+        console.log('💡 Legacy Firebase detected (Optional)');
     }
 
     console.log('\n🔍 Environment Variables Check:\n');

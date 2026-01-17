@@ -256,9 +256,9 @@ const PrescriptionSection = ({ highContrast, fontSize, onReadHelp, isReading, cu
                 text-decoration: ${templateToUse.formatting?.registry?.textDecoration || 'none'};
                 color: ${templateToUse.formatting?.registry?.color || '#000'};
               ">${data.crp || profile.social?.registro || ''}</div>
-              ${profile?.signaturePad ? `<img src="${profile.signaturePad}" class="signature" alt="Assinatura" />` : ''}
-              ${profile?.signature_image_url ? `<img src="${profile.signature_image_url}" class="signature-image" alt="Assinatura PNG" />` : ''}
-              ${profile?.stamp_image_url ? `<img src="${profile.stamp_image_url}" class="stamp" alt="Carimbo" />` : ''}
+              ${profile?.signaturePad ? `<img src="${profile.signaturePad}" class="signature" alt="${t('documents.prescription.digital')}" />` : ''}
+              ${profile?.signature_image_url ? `<img src="${profile.signature_image_url}" class="signature-image" alt="${t('documents.prescription.image')}" />` : ''}
+              ${profile?.stamp_image_url ? `<img src="${profile.stamp_image_url}" class="stamp" alt="${t('documents.prescription.stamp')}" />` : ''}
             </div>
           </body>
         </html>

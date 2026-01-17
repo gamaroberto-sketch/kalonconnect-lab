@@ -75,7 +75,7 @@
   },
   "header": {
     "title": "KalonConnect",
-    "subtitle": "Integrated Consciousness System"
+    "subtitle": "Technology with Soul"
   },
   "sidebar": {
     "home": "Home",
@@ -101,7 +101,7 @@
     "products": "My Products",
     "adminReports": "Admin: Reports",
     "adminTestUsers": "Admin: Therapists",
-    "subtitle": "Integrated Consciousness System"
+    "subtitle": "Technology with Soul"
   },
   "login": {
     "welcomeTo": "Welcome to",
@@ -912,6 +912,10 @@
       "instructionsPlaceholder": "Additional guidelines for the patient",
       "registry": "Professional Registry",
       "date": "Date",
+      "digital": "Digital Signature",
+      "image": "Signature Image",
+      "stamp": "Professional Stamp",
+      "issuer": "Issued via KalonConnect",
       "successSave": "Prescription saved successfully!",
       "successPDF": "Prescription PDF generated successfully!",
       "successSend": "Prescription sent to patient!"
@@ -1151,7 +1155,8 @@
       "title": "When to Send",
       "dayBefore": "Send the day before, at",
       "dayOf": "Send on the day of consultation, at",
-      "tenMinBefore": "Send 10 minutes before start"
+      "tenMinBefore": "Send 10 minutes before start",
+      "question": "When to send?"
     },
     "message": {
       "title": "Invite Message (Editable)",
@@ -1708,43 +1713,6 @@
     },
     "aiDisclaimer": "* No lock-in. Cancel anytime.",
     "cancelAnytime": "No lock-in. Cancel anytime."
-  },
-  "invites": {
-    "title": "Invite Settings",
-    "subtitle": "Customize how your clients receive session notifications.",
-    "channels": {
-      "title": "Delivery Channels",
-      "whatsapp": "WhatsApp",
-      "email": "E-mail"
-    },
-    "whereby": {
-      "title": "Video Session Link",
-      "placeholder": "Whereby/Zoom/Meet Link",
-      "help": "This link will be automatically inserted into the invitation."
-    },
-    "timing": {
-      "title": "When to send?",
-      "dayBefore": "Day before",
-      "dayOf": "On the day of consultation",
-      "tenMinBefore": "10 minutes before"
-    },
-    "message": {
-      "title": "Custom Message",
-      "placeholder": "Write your message...",
-      "help": "Use [date/time] and [CLIENT] to customize. The platform link will be inserted automatically.",
-      "template": "Hello! Confirming your online consultation [data/hora].\nTo participate, access the KalonConnect platform:\nhttps://kalonconnect.com\nAny questions, just reply to this message."
-    },
-    "buttons": {
-      "save": "Save Settings",
-      "test": "Send Test"
-    },
-    "history": {
-      "title": "Sent History"
-    },
-    "alerts": {
-      "saved": "Settings saved!",
-      "testGenerated": "Test generated: {message}"
-    }
   },
   "captions": {
     "title": "Captions with Translation",

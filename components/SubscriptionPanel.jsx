@@ -13,6 +13,23 @@ const SubscriptionPanel = () => {
     const themeColors = getThemeColors();
     const [loading, setLoading] = useState(false);
     const [profileCurrency, setProfileCurrency] = useState('BRL');
+    const [showSuccess, setShowSuccess] = useState(false);
+
+    // Check for success param in URL
+    React.useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('success') === 'true') {
+                setShowSuccess(true);
+                // Clear the param after 5 seconds
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    // Option: remove from URL without reload
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }, 8000);
+            }
+        }
+    }, []);
 
     // Fetch user profile to get currency
     React.useEffect(() => {
@@ -122,6 +139,22 @@ const SubscriptionPanel = () => {
 
     return (
         <div className="max-w-6xl mx-auto space-y-8">
+            {/* Success Banner */}
+            {showSuccess && (
+                <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-4 rounded-xl flex items-center gap-4 animate-in fade-in slide-in-from-top duration-500">
+                    <div className="bg-emerald-500 rounded-full p-1">
+                        <Check className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-grow">
+                        <h4 className="text-emerald-800 dark:text-emerald-400 font-bold">Assinatura Concluída com Sucesso!</h4>
+                        <p className="text-emerald-700 dark:text-emerald-500 text-sm">Seu plano foi atualizado e todos os recursos já estão disponíveis.</p>
+                    </div>
+                    <button onClick={() => setShowSuccess(false)} className="text-emerald-400 hover:text-emerald-600">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="text-center space-y-3 mb-10">
                 <div className="flex items-center justify-center gap-2 text-3xl font-serif mb-2" style={{ color: themeColors.primary }}>

@@ -33,8 +33,8 @@ export default async function handler(req, res) {
             metadata: {
                 userId: userId,
             },
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/settings?session_id={CHECKOUT_SESSION_ID}&success=true`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/settings?canceled=true`,
+            success_url: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/settings?session_id={CHECKOUT_SESSION_ID}&success=true`,
+            cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/settings?canceled=true`,
         });
 
         return res.status(200).json({ sessionId: session.id, url: session.url });
