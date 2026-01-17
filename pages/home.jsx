@@ -283,7 +283,7 @@ export default function Home() {
               {t('home.onboarding.title')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleProfile}>
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onClick={handleProfile}>
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
                   style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
@@ -292,7 +292,7 @@ export default function Home() {
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: ct('home.onboarding.step1') }} />
               </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleCadastro}>
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onClick={handleCadastro}>
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
                   style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
@@ -301,7 +301,7 @@ export default function Home() {
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: ct('home.onboarding.step2') }} />
               </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={handleConsultas}>
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onClick={handleConsultas}>
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
                   style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
