@@ -35,7 +35,7 @@ import ModernButton from '../components/ModernButton';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
 import { useClients } from '../hooks/useClients';
-import { useClients } from '../hooks/useClients';
+
 import { compressImage } from '../lib/imageCompression';
 import { useFeedback } from '../contexts/FeedbackContext';
 
