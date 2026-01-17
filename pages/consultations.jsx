@@ -794,15 +794,19 @@ const Consultations = () => {
               warningThreshold={warningThreshold}
               brandingSlug={professionalId}
               onSessionEnd={() => {
-                showFeedback({
-                  title: t('feedback.consultationCompleted.title'),
-                  message: t('feedback.consultationCompleted.message'),
-                  type: 'success',
-                  cta: {
-                    label: t('feedback.consultationCompleted.cta'),
-                    action: () => togglePanel('notes') // Changing to notes as documents panel doesn't exist
-                  }
-                });
+                const hasSeenFeedback = localStorage.getItem('kalon:feedback:firstConsultation');
+                if (!hasSeenFeedback) {
+                  showFeedback({
+                    title: t('feedback.consultationCompleted.title'),
+                    message: t('feedback.consultationCompleted.message'),
+                    type: 'success',
+                    cta: {
+                      label: t('feedback.consultationCompleted.cta'),
+                      action: () => togglePanel('notes')
+                    }
+                  });
+                  localStorage.setItem('kalon:feedback:firstConsultation', 'true');
+                }
               }}
             >
               <div className="relative w-full max-w-[1600px] mx-auto px-6 pt-6 pb-16 space-y-8">

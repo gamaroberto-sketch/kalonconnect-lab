@@ -138,17 +138,21 @@ export default function ClientRegistration() {
       setEditingClient(null);
       setFormData({ name: '', email: '', phone: '', photo: '', preferredLanguage: 'pt-BR' });
 
-      // Feedback Emocional Positivo
+      // Feedback Emocional Positivo (First Time Only)
       if (!editingClient) {
-        showFeedback({
-          title: t('feedback.clientRegistered.title'),
-          message: t('feedback.clientRegistered.message'),
-          type: 'success',
-          cta: {
-            label: t('feedback.clientRegistered.cta'),
-            action: () => window.location.href = '/agendamentos'
-          }
-        });
+        const hasSeenFeedback = localStorage.getItem('kalon:feedback:firstClient');
+        if (!hasSeenFeedback) {
+          showFeedback({
+            title: t('feedback.clientRegistered.title'),
+            message: t('feedback.clientRegistered.message'),
+            type: 'success',
+            cta: {
+              label: t('feedback.clientRegistered.cta'),
+              action: () => window.location.href = '/agendamentos'
+            }
+          });
+          localStorage.setItem('kalon:feedback:firstClient', 'true');
+        }
       }
     } catch (error) {
       console.error('Unexpected error:', error);

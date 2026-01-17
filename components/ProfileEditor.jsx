@@ -445,15 +445,22 @@ const ProfileEditor = () => {
             const savedProfile = await response.json();
             setProfile({ ...EMPTY_PROFILE, ...savedProfile });
             setSuccessMessage(t('profile.success.save'));
-            showFeedback({
-                title: t('feedback.profileComplete.title'),
-                message: t('feedback.profileComplete.message'),
-                type: 'success',
-                cta: {
-                    label: t('feedback.profileComplete.cta'),
-                    action: () => window.location.href = '/client-registration'
-                }
-            });
+            setSuccessMessage(t('profile.success.save'));
+
+            // Feedback Emocional Positivo (First Time Only)
+            const hasSeenFeedback = localStorage.getItem('kalon:feedback:profileComplete');
+            if (!hasSeenFeedback) {
+                showFeedback({
+                    title: t('feedback.profileComplete.title'),
+                    message: t('feedback.profileComplete.message'),
+                    type: 'success',
+                    cta: {
+                        label: t('feedback.profileComplete.cta'),
+                        action: () => window.location.href = '/client-registration'
+                    }
+                });
+                localStorage.setItem('kalon:feedback:profileComplete', 'true');
+            }
         } catch (error) {
             setError(error.message);
         } finally {
