@@ -18,12 +18,11 @@ export default function PracticeSelectionModal({ onComplete }) {
     const [selected, setSelected] = useState(null);
     const { t } = useTranslation();
 
+    // Listens for custom event to open (REPLACES auto-open)
     useEffect(() => {
-        const savedPractice = localStorage.getItem('kalon:practice_type');
-        if (!savedPractice) {
-            // Small delay to not clash with other modals
-            setTimeout(() => setIsOpen(true), 1000);
-        }
+        const handleOpen = () => setIsOpen(true);
+        window.addEventListener('kalon:open_practice_modal', handleOpen);
+        return () => window.removeEventListener('kalon:open_practice_modal', handleOpen);
     }, []);
 
     const handleSave = () => {
@@ -31,8 +30,6 @@ export default function PracticeSelectionModal({ onComplete }) {
         localStorage.setItem('kalon:practice_type', selected);
         setIsOpen(false);
         if (onComplete) onComplete(selected);
-        // Force reload to apply contextual changes if needed, or rely on React state
-        window.location.reload();
     };
 
     if (!isOpen) return null;
@@ -66,8 +63,8 @@ export default function PracticeSelectionModal({ onComplete }) {
                                     key={type.id}
                                     onClick={() => setSelected(type.id)}
                                     className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${selected === type.id
-                                            ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20'
-                                            : 'border-gray-100 dark:border-gray-700 hover:border-teal-200 dark:hover:border-teal-800'
+                                        ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20'
+                                        : 'border-gray-100 dark:border-gray-700 hover:border-teal-200 dark:hover:border-teal-800'
                                         }`}
                                 >
                                     <div className="flex items-center gap-3">
@@ -86,15 +83,23 @@ export default function PracticeSelectionModal({ onComplete }) {
                             ))}
                         </div>
 
-                        <div className="mt-8 flex justify-end">
+                        <div className="mt-8 flex flex-col md:flex-row gap-3 justify-end">
+                            <ModernButton
+                                variant="outline"
+                                size="lg"
+                                onClick={() => setIsOpen(false)}
+                                className="w-full md:flex-1"
+                            >
+                                Decidir depois
+                            </ModernButton>
                             <ModernButton
                                 variant="primary"
                                 size="lg"
                                 onClick={handleSave}
                                 disabled={!selected}
-                                className="w-full"
+                                className="w-full md:flex-1"
                             >
-                                Confirmar e Personalizar
+                                Confirmar
                             </ModernButton>
                         </div>
                     </div>
