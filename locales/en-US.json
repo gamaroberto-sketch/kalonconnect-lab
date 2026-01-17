@@ -1760,5 +1760,27 @@
     "hints": {
       "internationalManual": "For international addresses, please fill manually."
     }
+  },
+  "feedback": {
+    "profileComplete": {
+      "title": "Profile Complete!",
+      "message": "Your professional presentation is now ready.",
+      "cta": "Register client"
+    },
+    "clientRegistered": {
+      "title": "Client registered!",
+      "message": "Client registered successfully.",
+      "cta": "Schedule consultation"
+    },
+    "consultationScheduled": {
+      "title": "Consultation scheduled!",
+      "message": "Everything is ready for the appointment.",
+      "cta": "Access room"
+    },
+    "consultationCompleted": {
+      "title": "Consultation finished!",
+      "message": "Consultation completed successfully.",
+      "cta": "Generate document"
+    }
   }
 }

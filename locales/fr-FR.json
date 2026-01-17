@@ -1900,5 +1900,27 @@
     "hints": {
       "internationalManual": "Pour les adresses internationales, veuillez remplir manuellement."
     }
+  },
+  "feedback": {
+    "profileComplete": {
+      "title": "Profil Complet !",
+      "message": "Votre présentation professionnelle est prête.",
+      "cta": "Enregistrer un client"
+    },
+    "clientRegistered": {
+      "title": "Client enregistré !",
+      "message": "Client enregistré avec succès.",
+      "cta": "Planifier une consultation"
+    },
+    "consultationScheduled": {
+      "title": "Consultation planifiée !",
+      "message": "Tout est prêt pour le rendez-vous.",
+      "cta": "Accéder à la salle"
+    },
+    "consultationCompleted": {
+      "title": "Consultation terminée !",
+      "message": "Consultation terminée avec succès.",
+      "cta": "Générer un document"
+    }
   }
 }

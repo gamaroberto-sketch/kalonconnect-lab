@@ -6,6 +6,7 @@ import ModernButton from "./ModernButton";
 import { useTheme } from "./ThemeProvider";
 import { useTranslation } from "../hooks/useTranslation";
 import { useAuth } from "./AuthContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 import PrescriptionTemplateUpload from "./settings/PrescriptionTemplateUpload";
 import {
     Camera,
@@ -67,6 +68,7 @@ const ProfileEditor = () => {
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
     const { t } = useTranslation();
+    const { showFeedback } = useFeedback();
 
 
     const { user } = useAuth();
@@ -443,6 +445,15 @@ const ProfileEditor = () => {
             const savedProfile = await response.json();
             setProfile({ ...EMPTY_PROFILE, ...savedProfile });
             setSuccessMessage(t('profile.success.save'));
+            showFeedback({
+                title: t('feedback.profileComplete.title'),
+                message: t('feedback.profileComplete.message'),
+                type: 'success',
+                cta: {
+                    label: t('feedback.profileComplete.cta'),
+                    action: () => window.location.href = '/client-registration'
+                }
+            });
         } catch (error) {
             setError(error.message);
         } finally {

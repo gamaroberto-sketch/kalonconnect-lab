@@ -35,13 +35,16 @@ import ModernButton from '../components/ModernButton';
 import { useTheme } from '../components/ThemeProvider';
 import { useTranslation } from '../hooks/useTranslation';
 import { useClients } from '../hooks/useClients';
+import { useClients } from '../hooks/useClients';
 import { compressImage } from '../lib/imageCompression';
+import { useFeedback } from '../contexts/FeedbackContext';
 
 export default function ClientRegistration() {
   const { user, userType } = useAuth();
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
   const { t } = useTranslation();
+  const { showFeedback } = useFeedback();
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -134,6 +137,19 @@ export default function ClientRegistration() {
       setShowForm(false);
       setEditingClient(null);
       setFormData({ name: '', email: '', phone: '', photo: '', preferredLanguage: 'pt-BR' });
+
+      // Feedback Emocional Positivo
+      if (!editingClient) {
+        showFeedback({
+          title: t('feedback.clientRegistered.title'),
+          message: t('feedback.clientRegistered.message'),
+          type: 'success',
+          cta: {
+            label: t('feedback.clientRegistered.cta'),
+            action: () => window.location.href = '/agendamentos'
+          }
+        });
+      }
     } catch (error) {
       console.error('Unexpected error:', error);
       alert('Erro inesperado ao salvar cliente');

@@ -5,6 +5,7 @@ import "@livekit/components-styles/prefabs/index.css";
 import { AuthProvider } from '../components/AuthContext';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { LanguageProvider } from '../contexts/LanguageContext';
+import { FeedbackProvider } from '../contexts/FeedbackContext';
 import AdminAccess from '../components/AdminAccess';
 import { useEffect } from 'react';
 
@@ -28,8 +29,10 @@ export default function App({ Component, pageProps }) {
     <ThemeProvider>
       <LanguageProvider>
         <AuthProvider>
-          <Component {...pageProps} />
-          <AdminAccess />
+          <FeedbackProvider>
+            <Component {...pageProps} />
+            <AdminAccess />
+          </FeedbackProvider>
         </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>

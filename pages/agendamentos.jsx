@@ -32,13 +32,16 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useAppointments } from '../hooks/useAppointments';
 import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
+import HelpModal from '../components/HelpModal';
 import { helpSections } from '../lib/helpContent';
+import { useFeedback } from '../contexts/FeedbackContext';
 
 const Agendamentos = () => {
   const { user, userType } = useAuth();
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
   const { t, language } = useTranslation();
+  const { showFeedback } = useFeedback();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const { appointments, loading, addAppointment, updateAppointment, deleteAppointment } = useAppointments();
@@ -169,6 +172,19 @@ const Agendamentos = () => {
 
     setShowAppointmentForm(false);
     setSelectedAppointment(null);
+
+    // Feedback Emocional Positivo
+    if (!selectedAppointment) {
+      showFeedback({
+        title: t('feedback.consultationScheduled.title'),
+        message: t('feedback.consultationScheduled.message'),
+        type: 'success',
+        cta: {
+          label: t('feedback.consultationScheduled.cta'),
+          action: () => window.location.href = '/consultations'
+        }
+      });
+    }
   };
 
   const handleDeleteAppointment = async (appointmentId) => {

@@ -39,6 +39,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
 import { helpSections } from '../lib/helpContent';
+import { useFeedback } from '../contexts/FeedbackContext';
 
 const MIN_PANEL_SIZE = { width: 240, height: 220 };
 
@@ -50,6 +51,7 @@ const Consultations = () => {
   const themeColors = getThemeColors();
   const { user } = useAuth();
   const { t } = useTranslation();
+  const { showFeedback } = useFeedback();
 
   // Read clientId from URL parameter
   const { clientId } = router.query;
@@ -791,6 +793,17 @@ const Consultations = () => {
               elapsedTime={elapsedTime}
               warningThreshold={warningThreshold}
               brandingSlug={professionalId}
+              onSessionEnd={() => {
+                showFeedback({
+                  title: t('feedback.consultationCompleted.title'),
+                  message: t('feedback.consultationCompleted.message'),
+                  type: 'success',
+                  cta: {
+                    label: t('feedback.consultationCompleted.cta'),
+                    action: () => togglePanel('notes') // Changing to notes as documents panel doesn't exist
+                  }
+                });
+              }}
             >
               <div className="relative w-full max-w-[1600px] mx-auto px-6 pt-6 pb-16 space-y-8">
                 <motion.div

@@ -803,6 +803,10 @@ export const VideoPanelProvider = ({
     if (localVideoRef.current) {
       localVideoRef.current.srcObject = null;
     }
+
+    if (onSessionEnd) {
+      onSessionEnd();
+    }
   };
 
   useEffect(() => {

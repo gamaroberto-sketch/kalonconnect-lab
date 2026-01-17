@@ -1788,5 +1788,27 @@
     "hints": {
       "internationalManual": "Para direcciones internacionales, rellene manualmente."
     }
+  },
+  "feedback": {
+    "profileComplete": {
+      "title": "¡Perfil Completo!",
+      "message": "Ahora su presentación profesional está lista.",
+      "cta": "Registrar cliente"
+    },
+    "clientRegistered": {
+      "title": "¡Cliente registrado!",
+      "message": "Cliente registrado con éxito.",
+      "cta": "Agendar consulta"
+    },
+    "consultationScheduled": {
+      "title": "¡Consulta agendada!",
+      "message": "Todo listo para la atención.",
+      "cta": "Acceder a sala"
+    },
+    "consultationCompleted": {
+      "title": "¡Consulta concluida!",
+      "message": "Consulta concluida con éxito.",
+      "cta": "Generar documento"
+    }
   }
 }
