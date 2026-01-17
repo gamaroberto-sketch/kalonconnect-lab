@@ -8,7 +8,8 @@ import {
   User,
   FileText,
   Upload,
-  Circle
+  Circle,
+  Minimize2 // 🟢 ACHADO #16
 } from 'lucide-react';
 
 import Header from '../components/Header';
@@ -288,6 +289,37 @@ const Consultations = () => {
     });
   };
 
+  /* 🟢 ACHADO #16: Minimize All Panels (Function) */
+  const minimizeAllPanels = React.useCallback(() => {
+    setPanelsState((prev) => {
+      const nextState = { ...prev };
+      Object.keys(nextState).forEach((key) => {
+        if (nextState[key]) {
+          nextState[key] = { ...nextState[key], isOpen: false };
+        }
+      });
+      panelsStateRef.current = nextState;
+      return nextState;
+    });
+    trackUsageAction({ type: 'minimizeAllPanels' });
+    showFeedback({ title: "Foco", message: "Todos os painéis foram minimizados.", type: 'info', duration: 2000 });
+  }, [trackUsageAction, showFeedback]);
+
+  /* 🟢 ACHADO #16: Esc Key Listener */
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape') {
+        // Check if any panel is open
+        const hasOpen = Object.values(panelsStateRef.current).some(p => p.isOpen);
+        if (hasOpen) {
+          minimizeAllPanels();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleEscKey);
+    return () => window.removeEventListener('keydown', handleEscKey);
+  }, [minimizeAllPanels]);
+
   const closePanel = (id) => {
     setPanelsState((prev) => {
       const nextState = {
@@ -463,9 +495,43 @@ const Consultations = () => {
     };
 
     const handleUp = () => {
-      const finalState = panelsStateRef.current;
+      let finalState = panelsStateRef.current;
+
+      // 🟢 ACHADO #16: Snap Simples (Evitar centro)
+      // Se soltar o painel no centro (onde fica o rosto), empurrar para a lateral mais próxima.
+      if (dragState && finalState) {
+        const panel = finalState[dragState.id];
+        const containerRect = panelsAreaRef.current?.getBoundingClientRect();
+        if (panel && containerRect) {
+          const panelWidth = panel.size?.width || MIN_PANEL_SIZE.width;
+          const panelCenter = (panel.offset?.x || 0) + (panelWidth / 2);
+          const screenCenter = containerRect.width / 2;
+          const deadZone = 150; // 300px wide zone in center
+
+          if (Math.abs(panelCenter - screenCenter) < deadZone) {
+            // Push to closest side
+            let newX = 0;
+            if (panelCenter > screenCenter) {
+              newX = containerRect.width - panelWidth; // Right
+            } else {
+              newX = 0; // Left
+            }
+
+            // Apply Snap
+            finalState = {
+              ...finalState,
+              [dragState.id]: {
+                ...panel,
+                offset: { ...panel.offset, x: newX }
+              }
+            };
+            setPanelsState(finalState);
+          }
+        }
+      }
+
       if (finalState) {
-        persistPanel(dragState.id, finalState);
+        persistPanel(dragState?.id, finalState);
       }
       setDragState(null);
     };
@@ -931,6 +997,16 @@ const Consultations = () => {
                           </button>
                         );
                       })}
+                      {/* 🟢 ACHADO #16: Botão Minimizar Todos */}
+                      <button
+                        type="button"
+                        onClick={minimizeAllPanels}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-semibold text-sm transition-transform duration-150 shadow-sm focus:outline-none focus:ring-0 hover:-translate-y-0.5 bg-slate-200 text-slate-700 border-4 border-slate-300 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700"
+                        title="Minimizar todos os painéis (Esc)"
+                      >
+                        <Minimize2 className="w-4 h-4" />
+                        <span className="hidden sm:inline">Minimizar</span>
+                      </button>
                     </div>
 
                     <section
@@ -960,7 +1036,7 @@ const Consultations = () => {
                                 delete panelRefs.current[id];
                               }
                             }}
-                            className="absolute pointer-events-auto border border-slate-200 dark:border-slate-700 shadow-xl rounded-xl overflow-visible"
+                            className="absolute pointer-events-auto border border-slate-200 dark:border-slate-700 shadow-xl rounded-xl overflow-visible transition-all duration-200"
                             style={{
                               left: offset.x,
                               top: offset.y,
@@ -976,7 +1052,7 @@ const Consultations = () => {
                             }}
                           >
                             <div
-                              className="flex items-center justify-between px-4 py-3 border-b border-slate-200/70 dark:border-slate-700 cursor-grab active:cursor-grabbing select-none"
+                              className="flex items-center justify-between px-4 py-3 border-b border-slate-200/70 dark:border-slate-700 cursor-grab active:cursor-grabbing select-none bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm rounded-t-xl"
                               onPointerDown={(event) => {
                                 // Não iniciar drag se clicar no botão de fechar
                                 if (event.target.closest('button')) {
@@ -1001,7 +1077,8 @@ const Consultations = () => {
                                 Fechar
                               </button>
                             </div>
-                            <div className="p-4 bg-white dark:bg-slate-900 overflow-visible">
+                            {/* 🟢 ACHADO #16: Opacity/Backdrop Blur for Visibility */}
+                            <div className="p-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md overflow-visible rounded-b-xl">
                               {content}
                             </div>
 
