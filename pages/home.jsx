@@ -81,9 +81,11 @@ export default function Home() {
     }
 
     // Se não há usuário no contexto E não há usuário válido no localStorage, redirecionar
-    if (!loading && !user && !hasValidUser) {
-      router.replace('/');
-    }
+    // [PREVIEW MODE] Bypassando verificação para permitir visualização da UX sem backend
+    // if (!loading && !user && !hasValidUser) {
+    //   router.replace('/');
+    // }
+    console.log('[Preview Mode] Auth Check bypassed');
   }, [user, loading, mounted, router]);
 
   const handleLogout = () => {
@@ -135,11 +137,12 @@ export default function Home() {
     router.push('/about');
   };
 
-  const greetingName = preferredName || user?.name || 'Profissional Kalon';
+  const greetingName = preferredName || user?.name || 'Visitante (Preview)';
 
 
   // Mostrar loading enquanto verifica autenticação ou enquanto monta
-  if (!mounted || loading || !user) {
+  // [PREVIEW MODE] Ignorando loading/user null para forçar renderização
+  if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
