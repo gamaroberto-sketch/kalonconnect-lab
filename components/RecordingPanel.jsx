@@ -418,12 +418,24 @@ const RecordingPanel = () => {
         setCurrentTempFile(payload.fileName);
         return payload;
       } catch (error) {
-        setErrorMessage("Não foi possível salvar a gravação temporária.");
-        console.error(error);
+        // 🔴 ACHADO #4: Critical Failure Handling
+        console.error("[CRITICAL] Falha ao salvar gravação:", error);
+
+        // 1. Force Stop State
+        setRecordingState({ active: false, notifyClient: false });
+        setIsRecording(false);
+        setIsPaused(false);
+
+        // 2. Show Blocking Error
+        setErrorMessage("❌ GRAVAÇÃO FALHOU: O arquivo não pôde ser salvo. Verifique sua conexão e tente novamente.");
+
+        // 3. Reset Temp File (Disables Save Button)
+        setCurrentTempFile(null);
+
         return null;
       }
     },
-    [clientId, sessionId]
+    [clientId, sessionId, setRecordingState]
   );
 
   const runSummaryWorkflow = useCallback(
