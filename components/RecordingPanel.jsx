@@ -519,12 +519,9 @@ const RecordingPanel = () => {
       });
       setIsGeneratingTranscription(true);
       setProcessingStatus("processing");
-      setTranscriptionProgress(5);
-      let progressValue = 5;
-      const timer = window.setInterval(() => {
-        progressValue = Math.min(progressValue + Math.random() * 18, 90);
-        setTranscriptionProgress(Math.round(progressValue));
-      }, 320);
+      // 🔴 ACHADO #12: No Fake Progress
+      setTranscriptionProgress(0); // Indeterminate or just start
+
       try {
         const response = await fetch("/api/transcribe", {
           method: "POST",
@@ -555,7 +552,6 @@ const RecordingPanel = () => {
         setProcessingStatus("idle");
         return null;
       } finally {
-        window.clearInterval(timer);
         setTimeout(() => setTranscriptionProgress(0), 1200);
         setIsGeneratingTranscription(false);
       }
@@ -1652,18 +1648,22 @@ const RecordingPanel = () => {
             </div>
           </header>
 
-          {transcriptionProgress > 0 && (
+          {isGeneratingTranscription && (
             <div className="mb-3">
               <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                <span>Transcrevendo...</span>
-                <span>{transcriptionProgress}%</span>
+                <span className="flex items-center gap-1 font-semibold animate-pulse">
+                  ⏳ Processando transcrição...
+                </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                <div
-                  className="h-full rounded-full bg-emerald-500 transition-all"
-                  style={{ width: `${transcriptionProgress}%` }}
-                />
+              <div className="h-1 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                <div className="h-full w-1/3 bg-emerald-500 rounded-full animate-[shimmer_1.5s_infinite_linear]" />
               </div>
+            </div>
+          )}
+
+          {transcriptionProgress === 100 && (
+            <div className="mb-3 flex items-center gap-2 text-xs font-bold text-emerald-600">
+              ✅ Transcrição concluída
             </div>
           )}
 
