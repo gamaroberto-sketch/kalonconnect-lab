@@ -247,26 +247,22 @@
           "a": "Peça para ele atualizar a página (F5 ou Ctrl+R). Se não funcionar, feche e abra o navegador novamente. Verifique se ele permitiu câmera e microfone."
         },
         "2": {
-          "q": "Funciona no celular ou tablet?",
-          "a": "Sim, funciona perfeitamente. Basta abrir o link da consulta no navegador do celular (Recomendamos Chrome ou Safari), sem precisar instalar nenhum aplicativo."
+          "q": "Funciona no celular? Preciso instalar algo?",
+          "a": "Sim, funciona no celular, tablet e computador. Basta abrir o link no navegador (Chrome ou Safari recomendados). Sem instalação, sem aplicativo."
         },
         "3": {
-          "q": "Preciso instalar algum programa?",
-          "a": "Não. O KalonConnect roda 100% no seu navegador, tanto no computador quanto no celular. É só acessar e usar."
-        },
-        "4": {
           "q": "Posso gravar a consulta?",
           "a": "Sim, a ferramenta permite. Mas atenção: pela ética profissional e leis de dados, você <strong>deve ter o consentimento explícito e gravado</strong> do seu cliente antes de iniciar qualquer gravação. Dica prática: no início da sessão, peça para o cliente dizer em voz alta: \"Eu autorizo a gravação desta sessão.\""
         },
-        "5": {
+        "4": {
           "q": "Qual a internet mínima recomendada para uma boa consulta?",
           "a": "Uma conexão 4G estável ou um Wi-Fi básico (5 a 10 Mega) já é suficiente para ter uma chamada de vídeo clara e sem travamentos."
         },
-        "6": {
+        "5": {
           "q": "O cliente precisa ter conta no KalonConnect?",
           "a": "Não, de forma alguma. Seu cliente recebe um link direto seu e entra na sala imediatamente, sem precisar fazer cadastro ou criar senhas."
         },
-        "7": {
+        "6": {
           "q": "É seguro em termos de privacidade e dados?",
           "a": "Sim, totalmente. A conexão de vídeo é criptografada e não armazenamos o vídeo das suas chamadas. Seguimos padrões rígidos para garantir que o que acontece na sessão, fica na sessão."
         }
