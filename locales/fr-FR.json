@@ -338,6 +338,40 @@
         "4": "Expérience professionnelle pour vous et le client — interface propre et organisée.",
         "5": "Technologie avec Âme — fonctionnalité avec soin et clarté."
       }
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "subtitle": "Des réponses rapides pour démarrer en toute sécurité.",
+      "items": {
+        "1": {
+          "q": "Mon client n'a pas pu entrer en consultation. Que faire ?",
+          "a": "Respirez et restez calme. Demandez-lui d'actualiser la page du navigateur. Si cela ne fonctionne pas, fermez et rouvrez le navigateur. Vérifiez s'il a autorisé l'utilisation de la caméra et du microphone."
+        },
+        "2": {
+          "q": "Cela fonctionne-t-il sur mobile ou tablette ?",
+          "a": "Oui, cela fonctionne parfaitement. Ouvrez simplement le lien de consultation dans le navigateur mobile (Chrome ou Safari recommandé), sans avoir besoin d'installer d'application."
+        },
+        "3": {
+          "q": "Dois-je installer un logiciel ?",
+          "a": "Non. KalonConnect fonctionne à 100% dans votre navigateur, sur ordinateur et mobile. Il suffit d'accéder et d'utiliser."
+        },
+        "4": {
+          "q": "Puis-je enregistrer la consultation ?",
+          "a": "Oui, l'outil le permet. Mais attention : pour l'éthique professionnelle et les lois sur les données, vous <strong>devez avoir le consentement explicite et enregistré</strong> de votre client avant de commencer tout enregistrement."
+        },
+        "5": {
+          "q": "Quel est l'internet minimum recommandé pour une bonne consultation ?",
+          "a": "Une connexion 4G stable ou un Wi-Fi de base (5 à 10 Mo) suffit déjà pour avoir un appel vidéo clair et fluide."
+        },
+        "6": {
+          "q": "Le client a-t-il besoin d'un compte KalonConnect ?",
+          "a": "Non, pas du tout. Votre client reçoit un lien direct de votre part et entre dans la salle immédiatement, sans avoir besoin de s'inscrire ou de créer des mots de passe."
+        },
+        "7": {
+          "q": "Est-ce sécurisé en termes de confidentialité et de données ?",
+          "a": "Oui, totalement. La connexion vidéo est cryptée et nous ne stockons pas la vidéo de vos appels. Nous suivons des normes strictes pour garantir que ce qui se passe durant la séance, reste dans la séance."
+        }
+      }
     }
   },
   "consultations": {

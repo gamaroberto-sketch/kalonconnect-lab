@@ -18,7 +18,9 @@ import {
   BarChart3,
   Info,
   ShoppingBag,
-  CheckCircle
+  CheckCircle,
+  ChevronDown,
+  HelpCircle
 } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import { useRouter } from 'next/router';
@@ -40,6 +42,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [faqOpen, setFaqOpen] = useState(null);
   const [preferredName, setPreferredName] = useState(null);
 
   useEffect(() => {
@@ -608,6 +611,71 @@ export default function Home() {
             ))}
           </div>
         </div>
+        {/* FAQ Section */}
+        <div className="max-w-3xl mx-auto mt-20 mb-24">
+          <div className="text-center mb-10">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ backgroundColor: themeColors.primary + '15' }}
+            >
+              <HelpCircle className="w-6 h-6" style={{ color: themeColors.primary }} />
+            </div>
+            <h2 className="text-3xl font-bold mb-3" style={{ color: themeColors.primaryDark }}>
+              {t('home.faq.title')}
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
+              {t('home.faq.subtitle')}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5, 6, 7].map((item) => {
+              const isOpen = faqOpen === item;
+              return (
+                <motion.div
+                  key={item}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: item * 0.05 }}
+                  className="rounded-xl border overflow-hidden bg-white dark:bg-gray-800"
+                  style={{
+                    borderColor: isOpen ? themeColors.primary : (darkMode ? '#374151' : '#e5e7eb'),
+                    boxShadow: isOpen ? `0 4px 20px ${themeColors.primary}15` : 'none'
+                  }}
+                >
+                  <button
+                    onClick={() => setFaqOpen(isOpen ? null : item)}
+                    className="w-full flex items-center justify-between p-5 text-left transition-colors"
+                  >
+                    <span
+                      className="text-lg font-medium pr-8"
+                      style={{ color: isOpen ? themeColors.primary : (darkMode ? '#f3f4f6' : '#1f2937') }}
+                    >
+                      {t(`home.faq.items.${item}.q`)}
+                    </span>
+                    <ChevronDown
+                      className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                      style={{ color: isOpen ? themeColors.primary : '#9ca3af' }}
+                    />
+                  </button>
+
+                  <motion.div
+                    initial={false}
+                    animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-5 pt-0 text-gray-600 dark:text-gray-300 leading-relaxed border-t border-dashed" style={{ borderColor: themeColors.primary + '20' }}>
+                      <div dangerouslySetInnerHTML={{ __html: t(`home.faq.items.${item}.a`) }} />
+                    </div>
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
       <PracticeSelectionModal />
     </div>

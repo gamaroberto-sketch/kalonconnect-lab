@@ -311,6 +311,40 @@
         "4": "Professional experience for you and the client — clean and organized interface.",
         "5": "Soulful Technology — functionality with care and clarity."
       }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Quick answers to start with confidence.",
+      "items": {
+        "1": {
+          "q": "My client couldn't enter the consultation. What should I do?",
+          "a": "Breathe and stay calm. Ask them to refresh the browser page. If that doesn't work, close and reopen the browser. Check if they allowed camera and microphone usage when prompted."
+        },
+        "2": {
+          "q": "Does it work on mobile or tablet?",
+          "a": "Yes, it works perfectly. Just open the consultation link in the mobile browser (Chrome or Safari recommended), without needing to install any app."
+        },
+        "3": {
+          "q": "Do I need to install any software?",
+          "a": "No. KalonConnect runs 100% in your browser, on both computer and mobile. Just access and use."
+        },
+        "4": {
+          "q": "Can I record the consultation?",
+          "a": "Yes, the tool allows it. But attention: for professional ethics and data laws, you <strong>must have explicit recorded consent</strong> from your client before starting any recording."
+        },
+        "5": {
+          "q": "What is the recommended internet speed for a good consultation?",
+          "a": "A stable 4G connection or basic Wi-Fi (5 to 10 Mbps) is sufficient for a clear video call without freezing."
+        },
+        "6": {
+          "q": "Does the client need a KalonConnect account?",
+          "a": "No, absolutely not. Your client receives a direct link from you and enters the room immediately, without needing to register or create passwords."
+        },
+        "7": {
+          "q": "Is it secure regarding privacy and data?",
+          "a": "Yes, completely. The video connection is encrypted and we do not store your call video. We follow strict standards to ensure that what happens in the session, stays in the session."
+        }
+      }
     }
   },
   "consultations": {
