@@ -24,6 +24,7 @@ import { useAuth } from "./AuthContext";
 import { processRecording } from "../lib/recording";
 import { useAccessControl } from "../hooks/useAccessControl";
 import { useUsageTrackerContext } from "./UsageTrackerContext";
+import { trackActivity } from "../lib/userActivity";
 
 const RECORDING_OPTIONS = [
   {
@@ -430,6 +431,18 @@ const RecordingPanel = () => {
         // 🟢 ACHADO #6: Validate Size (Prevent Silent Failure)
         const sizeMB = blob.size / (1024 * 1024);
         if (sizeMB > 500) {
+          // 🟢 Ethical Telemetry: Track specific failure event
+          trackActivity({
+            userId: user?.id || 'anonymous',
+            activityType: 'recording_aborted_size_limit',
+            metadata: {
+              sessionId,
+              recordingDurationSeconds: recordingElapsed,
+              estimatedSizeMB: parseFloat(sizeMB.toFixed(2)),
+              timestamp: new Date().toISOString()
+            }
+          });
+
           setErrorMessage("❌ Gravação muito longa (>500MB). Salve em partes menores.");
           return null;
         }
