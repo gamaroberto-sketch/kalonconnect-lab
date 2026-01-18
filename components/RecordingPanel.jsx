@@ -398,6 +398,13 @@ const RecordingPanel = () => {
     async (blob, mimeType) => {
       if (!sessionId) return null;
       try {
+        // 🟢 ACHADO #6: Validate Size (Prevent Silent Failure)
+        const sizeMB = blob.size / (1024 * 1024);
+        if (sizeMB > 500) {
+          setErrorMessage("❌ Gravação muito longa (>500MB). Salve em partes menores.");
+          return null;
+        }
+
         const base64 = await blobToBase64(blob);
         const response = await fetch("/api/recordings", {
           method: "POST",
