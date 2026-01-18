@@ -20,6 +20,16 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
       };
     } else if (currentStream && localVideoRef.current) {
       localVideoRef.current.srcObject = currentStream;
+      // 🟢 ACHADO #16: Handle Autoplay Blocking (Manual Start)
+      const playPromise = localVideoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+            console.warn("⚠️ Autoplay blocked by browser (Local Video)");
+            // We don't show toast for local video (it's muted usually), but good to know
+          }
+        });
+      }
     } else if (!currentStream && localVideoRef.current) {
       localVideoRef.current.srcObject = null;
     }
@@ -55,6 +65,22 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
   // A. 📤 Publish Manual Stream (CLONED)
   // 🟢 ACHADO #12: Clone cleanup ref
   const clonedTrackRef = useRef(null);
+
+  // 🟢 ACHADO #16: Autoplay Error Handler
+  const handleAutoPlayError = (err) => {
+    // Detect "NotAllowedError" which means Browser Autoplay Policy blocked it
+    if (err?.name === 'NotAllowedError' || (err?.message && err.message.includes('play'))) {
+      console.error("🛑 Browser Autoplay Blocked!");
+      const event = new CustomEvent("kalon-toast", {
+        detail: {
+          type: 'warning',
+          title: 'Reprodução Bloqueada',
+          message: '▶️ Clique na tela para iniciar o vídeo (restrição do navegador).'
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  };
 
   // A. 📤 Publish Manual Stream (CLONED)
   useEffect(() => {
@@ -328,9 +354,18 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
       <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
         <div className="h-full w-full flex items-center justify-center relative">
           {screenTrack ? (
-            <VideoTrack trackRef={screenTrack} className="h-full w-full object-contain" />
+            <VideoTrack
+              trackRef={screenTrack}
+              className="h-full w-full object-contain"
+              onError={handleAutoPlayError} // 🟢 ACHADO #16
+            />
           ) : remoteCameraTrack ? (
-            <VideoTrack trackRef={remoteCameraTrack} className="h-full w-full object-contain" style={{ objectFit: 'contain' }} />
+            <VideoTrack
+              trackRef={remoteCameraTrack}
+              className="h-full w-full object-contain"
+              style={{ objectFit: 'contain' }}
+              onError={handleAutoPlayError} // 🟢 ACHADO #16
+            />
           ) : (
             <div className="flex flex-col items-center">
               <div className="text-white/50 animate-pulse text-lg mb-2">
