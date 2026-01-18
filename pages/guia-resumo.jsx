@@ -103,7 +103,7 @@ const QuickGuidePage = () => {
                             <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                                 <li className="flex items-start gap-2">
                                     <AlertOctagon size={16} className="text-red-500 mt-0.5" />
-                                    <span><strong>Sessões > 90min:</strong> Risco. Pause/Salve cada 60min.</span>
+                                    <span><strong>Sessões &gt; 90min:</strong> Risco. Pause/Salve cada 60min.</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <AlertOctagon size={16} className="text-red-500 mt-0.5" />

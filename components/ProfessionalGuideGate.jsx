@@ -40,6 +40,11 @@ const ProfessionalGuideGate = ({ children }) => {
     // Actually, wait for user to be loaded.
     if (loading) return <>{children}</>;
 
+    // 1.5 Don't block the guide pages!
+    if (typeof window !== 'undefined' && (window.location.pathname === '/guia' || window.location.pathname === '/guia-resumo')) {
+        return <>{children}</>;
+    }
+
     // 2. Not logged in -> Don't block login pages
     if (!user) return <>{children}</>;
 
