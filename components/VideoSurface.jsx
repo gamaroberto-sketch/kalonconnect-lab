@@ -47,7 +47,7 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
 // 🎥 COMPONENT 2: REMOTE SESSION (Transient)
 // This handles the connection logic, media publishing, and remote video rendering.
 // It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError, setHasRemoteParticipants }) => {
+const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError, setHasRemoteParticipants, setRoomState }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
   const [publishedTrack, setPublishedTrack] = useState(null);
@@ -259,6 +259,23 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     setHasRemoteParticipants(hasRemote);
   }, [participants, setHasRemoteParticipants]);
 
+  // 🟢 ACHADO #14: Sync Real Room State
+  useEffect(() => {
+    if (!room || typeof setRoomState !== 'function') return;
+
+    const syncState = () => {
+      setRoomState(room.state);
+    };
+
+    // Initial Sync
+    syncState();
+
+    room.on('connectionStateChanged', syncState);
+    return () => {
+      room.off('connectionStateChanged', syncState);
+    };
+  }, [room, setRoomState]);
+
   // D. 📥 Render Remote Tracks
   const tracks = useTracks(
     [
@@ -363,6 +380,8 @@ const VideoSurface = ({ roomId }) => {
   const [isReconnecting, setIsReconnecting] = useState(false);
   // 🟢 ACHADO #8: Participant Awareness
   const [hasRemoteParticipants, setHasRemoteParticipants] = useState(false);
+  // 🟢 ACHADO #14: Real Room State
+  const [roomState, setRoomState] = useState('disconnected');
 
   return (
     <div className="h-full w-full flex flex-col lg:flex-row gap-4 bg-gray-900 rounded-3xl overflow-hidden p-4">
@@ -370,28 +389,34 @@ const VideoSurface = ({ roomId }) => {
       {/* 🟢 COMPONENT 1: LOCAL VIDEO (ALWAYS ON) */}
       <div className="relative flex-1 flex flex-col">
         {/* UPPER STATUS INDICATOR */}
-        <div className={`absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border shadow-lg ${isReconnecting
+        <div className={`absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border shadow-lg ${roomState === 'reconnecting' || isReconnecting
           ? "bg-orange-500/80 border-orange-400/50" // RECONECTANDO
-          : isRoomConnected && hasRemoteParticipants
+          : roomState === 'connected' && hasRemoteParticipants
             ? "bg-green-500/80 border-green-400/50" // AO VIVO (COM CLIENTE)
-            : isRoomConnected
+            : roomState === 'connected'
               ? "bg-blue-500/80 border-blue-400/50" // AGUARDANDO (CONECTADO MAS SOZINHO)
-              : "bg-red-500/80 border-red-400/50" // OFFLINE
+              : roomState === 'connecting'
+                ? "bg-yellow-500/80 border-yellow-400/50" // CONECTANDO
+                : "bg-red-500/80 border-red-400/50" // OFFLINE
           }`}>
-          <div className={`w-3 h-3 rounded-full ${isReconnecting
+          <div className={`w-3 h-3 rounded-full ${roomState === 'reconnecting' || isReconnecting
             ? "bg-white animate-ping"
-            : isRoomConnected && hasRemoteParticipants && isActuallyPublishing
+            : roomState === 'connected' && hasRemoteParticipants && isActuallyPublishing
               ? "bg-white animate-pulse"
-              : "bg-white/50"
+              : roomState === 'connecting'
+                ? "bg-white/70 animate-bounce"
+                : "bg-white/50"
             }`} />
           <span className="text-xs font-bold text-white tracking-wide uppercase">
-            {isReconnecting
+            {roomState === 'reconnecting' || isReconnecting
               ? "RECONECTANDO..."
-              : isRoomConnected && hasRemoteParticipants
+              : roomState === 'connected' && hasRemoteParticipants
                 ? "AO VIVO (Cliente Conectado)"
-                : isRoomConnected
+                : roomState === 'connected'
                   ? "AGUARDANDO CLIENTE"
-                  : "OFFLINE"
+                  : roomState === 'connecting'
+                    ? "CONECTANDO..."
+                    : "OFFLINE"
             }
           </span>
         </div>
@@ -501,6 +526,7 @@ const VideoSurface = ({ roomId }) => {
               disconnectSession();
             }}
             setHasRemoteParticipants={setHasRemoteParticipants} // 🟢 ACHADO #8
+            setRoomState={setRoomState} // 🟢 ACHADO #14
           />
         </LiveKitRoom>
       ) : (
