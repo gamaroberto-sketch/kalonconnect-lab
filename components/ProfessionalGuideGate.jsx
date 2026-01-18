@@ -9,6 +9,31 @@ const ProfessionalGuideGate = ({ children }) => {
     const { user, loading, markProfessionalGuideAsRead } = useAuth();
     const [isChecked, setIsChecked] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showRevalidationToast, setShowRevalidationToast] = useState(false);
+
+    const GUIDE_VERSION_DATE = new Date('2026-01-18').getTime(); // Data da última atualização maior
+    const REVALIDATION_PERIOD_MS = 90 * 24 * 60 * 60 * 1000; // 90 dias
+
+    // Revalidation Logic (Cognitive Light)
+    React.useEffect(() => {
+        if (user?.hasReadProfessionalGuide && user?.guideReadAt) {
+            const lastRead = new Date(user.guideReadAt).getTime();
+            const needsReview = (Date.now() - lastRead > REVALIDATION_PERIOD_MS) || (lastRead < GUIDE_VERSION_DATE);
+
+            if (needsReview) {
+                setShowRevalidationToast(true);
+            }
+        }
+    }, [user]);
+
+    const handleDismissToast = () => {
+        setShowRevalidationToast(false);
+    };
+
+    const handleOpenGuideForReview = () => {
+        markProfessionalGuideAsRead(); // Atualiza timestamp para "hoje"
+        setShowRevalidationToast(false);
+    };
 
     // 1. Loading state -> Don't block, just show nothing or loading spinner
     // But usually we just let children render if we are waiting for auth check?
@@ -18,8 +43,41 @@ const ProfessionalGuideGate = ({ children }) => {
     // 2. Not logged in -> Don't block login pages
     if (!user) return <>{children}</>;
 
-    // 3. Already read -> Don't block
-    if (user.hasReadProfessionalGuide) return <>{children}</>;
+    // 3. User HAS read guide -> Show App (and maybe Toast for revalidation)
+    if (user.hasReadProfessionalGuide) {
+        return (
+            <>
+                {children}
+                {showRevalidationToast && (
+                    <div className="fixed bottom-4 right-4 z-[9999] max-w-sm w-full bg-white dark:bg-gray-800 border-l-4 border-amber-500 shadow-xl rounded-lg p-4 animate-in slide-in-from-bottom-5 duration-500 flex items-start gap-3">
+                        <div className="p-1 bg-amber-100 dark:bg-amber-900/30 rounded-full text-amber-600 dark:text-amber-400">
+                            <ShieldCheck size={20} />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">Guia Atualizado</h4>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">O Guia do Profissional foi revisado. Recomendamos uma leitura rápida.</p>
+                            <div className="mt-3 flex gap-3">
+                                <Link
+                                    href="/guia"
+                                    target="_blank"
+                                    onClick={handleOpenGuideForReview}
+                                    className="text-xs font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 uppercase tracking-wide"
+                                >
+                                    Abrir Guia
+                                </Link>
+                                <button
+                                    onClick={handleDismissToast}
+                                    className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                                >
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </>
+        );
+    }
 
     const handleContinue = async () => {
         setIsSubmitting(true);

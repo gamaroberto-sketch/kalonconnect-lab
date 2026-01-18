@@ -14,7 +14,8 @@ const normalizeUser = (userData) => {
     ...userData,
     version: (userData.version || DEFAULT_VERSION).toUpperCase(),
     type: userData.type || "professional",
-    hasReadProfessionalGuide: userData.user_metadata?.hasReadProfessionalGuide || false // 🟢 Normalized
+    hasReadProfessionalGuide: userData.user_metadata?.hasReadProfessionalGuide || false, // 🟢 Normalized
+    guideReadAt: userData.user_metadata?.guideReadAt || null // 🟢 Timestamp for revalidation
   };
 };
 
@@ -197,15 +198,23 @@ export const AuthProvider = ({ children }) => {
 
   const markProfessionalGuideAsRead = async () => {
     if (!user) return;
+    const now = new Date().toISOString();
     try {
       const { data, error } = await supabase.auth.updateUser({
-        data: { hasReadProfessionalGuide: true }
+        data: {
+          hasReadProfessionalGuide: true,
+          guideReadAt: now
+        }
       });
 
       if (error) throw error;
 
       // Update local state immediately for seamless UX
-      setUser(prev => ({ ...prev, hasReadProfessionalGuide: true }));
+      setUser(prev => ({
+        ...prev,
+        hasReadProfessionalGuide: true,
+        guideReadAt: now
+      }));
       return { success: true };
     } catch (err) {
       console.error("Failed to update guide status:", err);
