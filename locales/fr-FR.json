@@ -1392,670 +1392,531 @@
     "errors": {
       "unauthorized": "Accès non autorisé",
       "network": "Impossible de valider les identifiants. Vérifiez votre connexion."
-    }
-  },
-  "documents": {
-    "common": {
-      "usingProfile": "Utilisation du profil de",
-      "editProfileHint": "Pour modifier le logo/données, modifiez votre Profil."
     },
-    "help": {
-      "prescription": {
-        "title": "Comment utiliser les Ordonnances",
-        "text": "Remplissez le nom du patient, les médicaments et les instructions. Cliquez sur le bouton de signature, dessinez ou joignez votre signature, et générez le PDF pour imprimer ou envoyer.",
-        "video": "Tutoriel vidéo bientôt disponible"
+    "demoInvites": {
+      "title": "Invitations de Démonstration",
+      "subtitle": "Générez des liens temporaires pour que les thérapeutes testent la plateforme.",
+      "form": {
+        "guestName": "Nom de l'invité",
+        "guestNamePlaceholder": "Nom complet",
+        "guestEmail": "Email de l'invité",
+        "guestEmailPlaceholder": "email@exemple.com",
+        "duration": "Durée (heures)",
+        "generating": "Génération...",
+        "generateButton": "Générer l'invitation"
       },
-      "signature": {
-        "title": "Comment créer une Signature Électronique",
-        "text": "Vous pouvez signer avec la souris, le doigt (tactile) ou insérer une image. Utilisez gov.br ou dessinez votre propre signature.",
-        "video": "Tutoriel étape par étape disponible"
+      "table": {
+        "guest": "Invité",
+        "email": "Email",
+        "createdAt": "Créé le",
+        "expiresAt": "Expire le",
+        "status": "Statut",
+        "actions": "Actions"
       },
-      "receipt": {
-        "title": "Comment émettre des Reçus",
-        "text": "Entrez le montant, le service et sélectionnez la signature. Générez le reçu en PDF, imprimez ou envoyez au client.",
-        "video": "Directives complètes dans le bouton d'aide"
+      "status": {
+        "active": "✅ Actif",
+        "used": "📌 Utilisé",
+        "expired": "⌛ Expiré"
       },
-      "consent": {
-        "title": "À propos du Formulaire de Consentement",
-        "text": "Lisez le terme complet, cliquez pour écouter en audio. Le client peut signer en utilisant la souris ou le doigt.",
-        "video": "Explication complète disponible"
+      "actions": {
+        "copyLink": "Copier le lien",
+        "expire": "Terminer"
       },
-      "payment": {
-        "title": "Comment configurer le Paiement PIX",
-        "text": "Enregistrez votre clé PIX en cliquant sur le bouton. Pour générer un QR Code, entrez le montant et cliquez sur \"Générer QR\".",
-        "video": "Liens officiels et tutoriel disponible"
+      "messages": {
+        "success": "Invitation créée avec succès ! Lien copié dans le presse-papiers.",
+        "linkCopied": "Lien copié !",
+        "inviteExpired": "Invitation terminée.",
+        "noInvites": "Aucune invitation de démonstration générée pour le moment.",
+        "errorLoad": "Impossible de charger les invitations de démonstration.",
+        "errorCreate": "Impossible de créer l'invitation demo.",
+        "errorExpire": "Impossible de terminer l'invitation.",
+        "errorCopy": "Impossible de copier le lien automatiquement.",
+        "errorGeneric": "Échec du chargement des invitations."
       }
     },
-    "title": "Documents et Légaux",
-    "subtitle": "Système complet de documents avec accessibilité totale",
-    "actions": {
-      "save": "Enregistrer",
-      "pdf": "PDF",
-      "print": "Imprimer",
-      "send": "Envoyer",
-      "generateQR": "Générer QR",
-      "copyPix": "Copier PIX",
-      "clear": "Effacer",
-      "sign": "Signer",
-      "upload": "Télécharger Image"
-    },
-    "prescription": {
-      "title": "Ordonnance",
-      "patientName": "Nom du Patient",
-      "patientPlaceholder": "Entrez le nom complet du patient",
-      "medications": "Médicaments / Prescription",
-      "medicationsPlaceholder": "Entrez les médicaments, dosages et instructions",
-      "instructions": "Instructions Supplémentaires",
-      "instructionsPlaceholder": "Directives supplémentaires pour le patient",
-      "registry": "Registre Professionnel",
-      "date": "Date",
-      "successSave": "Ordonnance enregistrée avec succès !",
-      "successPDF": "PDF de l'ordonnance généré avec succès !",
-      "successSend": "Ordonnance envoyée au patient !"
-    },
-    "signature": {
-      "title": "Signature Électronique",
-      "draw": "Dessiner",
-      "type": "Taper",
-      "upload": "Télécharger",
-      "clear": "Effacer la Signature",
-      "save": "Enregistrer la Signature",
-      "placeholder": "Signez ici...",
-      "success": "Signature enregistrée avec succès !",
-      "tutorial": {
-        "title": "💡 Comment créer une signature numérique ?",
-        "text": "Vous pouvez utiliser des applications de signature numérique gratuites ou créer la vôtre. Cliquez sur le bouton d'aide pour le tutoriel complet.",
-        "button": "Voir le Tutoriel"
-      }
-    },
-    "receipt": {
-      "title": "Reçu",
-      "amount": "Montant (€)",
-      "service": "Service Fourni",
-      "servicePlaceholder": "Ex : Consultation Psychologique",
-      "payer": "Payeur (Nom/ID)",
-      "payerPlaceholder": "Nom complet ou raison sociale",
-      "date": "Date de Paiement",
-      "success": "Reçu généré avec succès !"
-    },
-    "consent": {
-      "title": "Formulaire de Consentement",
-      "content": "Contenu du Terme",
-      "read": "J'ai lu et j'accepte les termes",
-      "sign": "Signer le Terme",
-      "success": "Terme signé avec succès !"
-    },
-    "payment": {
-      "title": "Paiement PIX",
-      "pixKey": "Clé PIX",
-      "pixKeyPlaceholder": "ID, Email, Téléphone ou Clé Aléatoire",
-      "amount": "Montant à Recevoir",
-      "qrCode": "QR Code de Paiement",
-      "copy": "Copier le Code",
-      "success": "Clé PIX enregistrée avec succès !"
-    }
-  },
-  "demoInvites": {
-    "title": "Invitations de Démonstration",
-    "subtitle": "Générez des liens temporaires pour que les thérapeutes testent la plateforme.",
-    "form": {
-      "guestName": "Nom de l'invité",
-      "guestNamePlaceholder": "Nom complet",
-      "guestEmail": "Email de l'invité",
-      "guestEmailPlaceholder": "email@exemple.com",
-      "duration": "Durée (heures)",
-      "generating": "Génération...",
-      "generateButton": "Générer l'invitation"
-    },
-    "table": {
-      "guest": "Invité",
-      "email": "Email",
-      "createdAt": "Créé le",
-      "expiresAt": "Expire le",
-      "status": "Statut",
-      "actions": "Actions"
-    },
-    "status": {
-      "active": "✅ Actif",
-      "used": "📌 Utilisé",
-      "expired": "⌛ Expiré"
-    },
-    "actions": {
-      "copyLink": "Copier le lien",
-      "expire": "Terminer"
-    },
-    "messages": {
-      "success": "Invitation créée avec succès ! Lien copié dans le presse-papiers.",
-      "linkCopied": "Lien copié !",
-      "inviteExpired": "Invitation terminée.",
-      "noInvites": "Aucune invitation de démonstration générée pour le moment.",
-      "errorLoad": "Impossible de charger les invitations de démonstration.",
-      "errorCreate": "Impossible de créer l'invitation demo.",
-      "errorExpire": "Impossible de terminer l'invitation.",
-      "errorCopy": "Impossible de copier le lien automatiquement.",
-      "errorGeneric": "Échec du chargement des invitations."
-    }
-  },
-  "guide": {
-    "title": "Guide d'Utilisation",
-    "subtitle_prefix": "Votre soutien pour utiliser",
-    "subtitle_suffix": " en toute tranquillité.",
-    "downloadPdf": "Télécharger PDF",
-    "loading": "Chargement du guide...",
-    "loadingFallback": "Si le guide ne charge pas, veuillez télécharger le PDF en utilisant le bouton \"Télécharger PDF\".",
-    "error": {
-      "title": "Erreur lors du chargement du guide",
-      "fallback": "Veuillez réessayer ou télécharger le PDF en utilisant le bouton \"Télécharger PDF\"."
-    },
-    "modal": {
-      "title": "Créer Structure de Dossiers",
-      "nameLabel": "Votre Nom Complet",
-      "namePlaceholder": "Ex: Marie Dupont",
-      "nameHelp": "Ce nom sera utilisé dans le dossier principal: \"KalonConnect - [Votre Nom]\"",
-      "osLabel": "Système d'Exploitation",
-      "downloadScript": "Télécharger Script de Création",
-      "alertName": "Veuillez d'abord entrer votre nom !",
-      "success": {
-        "title": "Script téléchargé avec succès !",
-        "nextSteps": "Prochaines étapes :",
-        "step1": "Localisez le fichier téléchargé sur votre ordinateur",
-        "step2Windows": "Double-cliquez sur le fichier \"criar_pastas_kalon.bat\" pour l'exécuter",
-        "step2Unix": "Ouvrez le Terminal, naviguez vers le dossier de téléchargement et exécutez : chmod +x criar_pastas_kalon.sh && ./criar_pastas_kalon.sh",
-        "step3": "Les dossiers seront créés automatiquement dans votre dossier Documents",
-        "step4": "Copiez le dossier \"KalonConnect - {name}\" sur votre Google Drive",
-        "step5": "Terminé ! Votre structure est organisée dans le cloud"
-      }
-    }
-  },
-  "themes": {
-    "title": "Choisissez votre Thème",
-    "names": {
-      "verde": "Vert Santé",
-      "azul": "Bleu Confiance",
-      "caramelo": "Caramel Accueillant"
-    },
-    "howItWorks": "Comment ça marche :",
-    "features": {
-      "instant": "Le changement est instantané dans tout le système",
-      "saved": "Votre préférence est enregistrée automatiquement",
-      "logo": "Le logo conserve toujours sa couleur blanche d'origine"
-    },
-    "colors": {
-      "primary": "Primaire",
-      "secondary": "Secondaire",
-      "primaryDark": "Primaire Foncé"
-    }
-  },
-  "invites": {
-    "title": "Envoi Automatique d'Invitation à la Consultation",
-    "subtitle": "Configurez quand et comment envoyer des invitations à vos clients",
-    "channels": {
-      "title": "Canaux d'Envoi",
-      "whatsapp": "WhatsApp",
-      "email": "E-mail"
-    },
-    "whereby": {
-      "title": "Lien de la Salle Whereby",
-      "placeholder": "https://whereby.com/votre-salle",
-      "help": "Ce lien sera envoyé automatiquement aux clients"
-    },
-    "timing": {
-      "title": "Quand Envoyer",
-      "dayBefore": "Envoyer la veille, à",
-      "dayOf": "Envoyer le jour de la consultation, à",
-      "tenMinBefore": "Envoyer 10 minutes avant le début"
-    },
-    "message": {
-      "title": "Message d'Invitation (Modifiable)",
-      "placeholder": "Entrez votre message personnalisé...",
-      "help": "Utilisez [data/hora], [LINK_WHERBY_DO_PROFISSIONAL] et [CLIENTE] comme espaces réservés"
-    },
-    "buttons": {
-      "save": "Enregistrer les Paramètres",
-      "test": "Envoyer Test Maintenant"
-    },
-    "history": {
-      "title": "Historique des Envois"
-    },
-    "alerts": {
-      "saved": "Paramètres d'invitation enregistrés avec succès !",
-      "testGenerated": "Message généré :\n\n{message}\n\nVérifiez l'historique ci-dessous."
-    }
-  },
-  "credentials": {
-    "title": "Identifiants d'Accès",
-    "username": {
-      "title": "Nom d'Utilisateur",
-      "current": "Nom Actuel",
-      "currentPlaceholder": "Nom d'utilisateur actuel",
-      "new": "Nouveau Nom",
-      "newPlaceholder": "Nouveau nom d'utilisateur",
-      "change": "Changer de Nom",
-      "cancel": "Annuler",
-      "emptyError": "Le nom d'utilisateur ne peut pas être vide",
-      "success": "Nom d'utilisateur changé avec succès !"
-    },
-    "password": {
-      "title": "Mot de Passe d'Accès",
-      "current": "Mot de Passe Actuel",
-      "currentPlaceholder": "Entrez le mot de passe actuel",
-      "new": "Nouveau Mot de Passe",
-      "newPlaceholder": "Entrez le nouveau mot de passe",
-      "confirm": "Confirmer le Nouveau Mot de Passe",
-      "confirmPlaceholder": "Confirmez le nouveau mot de passe",
-      "change": "Changer le Mot de Passe",
-      "errorMissing": "Tous les champs de mot de passe sont obligatoires",
-      "errorMismatch": "Les mots de passe ne correspondent pas",
-      "success": "Mot de passe changé avec succès !"
-    },
-    "buttons": {
-      "save": "Enregistrer les Modifications",
-      "cancel": "Annuler"
-    }
-  },
-  "eventRoom": {
-    "loading": "Chargement de l'événement...",
-    "recording": {
-      "status": "ENREGISTREMENT",
-      "start": "Enregistrer",
-      "stop": "Arrêter",
-      "started": "🔴 Enregistrement commencé !",
-      "stopped": "✅ Enregistrement terminé et sauvegardé !",
-      "warning": "Êtes-vous sûr de vouloir quitter la salle ?"
-    },
-    "online": "en ligne",
-    "buttons": {
-      "attendance": "Présence",
-      "poll": "Sondage",
-      "certificates": "Certificats",
-      "drive": "Drive",
-      "replay": "Replay",
-      "leave": "Quitter la Salle",
-      "send": "Envoyer",
-      "cancel": "Annuler",
-      "create": "Créer",
-      "exportCsv": "Exporter CSV",
-      "tryAgain": "Réessayer",
-      "startStream": "Démarrer la Diffusion"
-    },
-    "chat": {
-      "public": "Chat Public",
-      "private": "Chat Privé",
-      "placeholder": "Tapez votre message...",
-      "privatePlaceholder": "Message pour {name}...",
-      "selectUser": "Sélectionnez un participant pour démarrer un chat privé",
-      "you": "Vous",
-      "moderator": "Modérateur",
-      "guest": "Invité"
-    },
-    "participants": {
-      "title": "Participants",
-      "waiting": "En attente de participants...",
-      "waitingStream": "En attente du début de la diffusion...",
-      "youModerator": "Vous (Modérateur)",
-      "youPreview": "Vous (Aperçu)",
-      "cameraOff": "Allumez la caméra pour commencer",
-      "connecting": "Connexion à la salle..."
-    },
-    "modals": {
-      "poll": {
-        "title": "Créer un Sondage",
-        "questionPlaceholder": "Tapez la question...",
-        "optionPlaceholder": "Option {index}"
+    "guide": {
+      "title": "Guide d'Utilisation",
+      "subtitle_prefix": "Votre soutien pour utiliser",
+      "subtitle_suffix": " en toute tranquillité.",
+      "downloadPdf": "Télécharger PDF",
+      "loading": "Chargement du guide...",
+      "loadingFallback": "Si le guide ne charge pas, veuillez télécharger le PDF en utilisant le bouton \"Télécharger PDF\".",
+      "error": {
+        "title": "Erreur lors du chargement du guide",
+        "fallback": "Veuillez réessayer ou télécharger le PDF en utilisant le bouton \"Télécharger PDF\"."
       },
-      "attendance": {
-        "title": "Liste de Présence",
-        "info": "ℹ️ Votre présence est enregistrée automatiquement à l'entrée et à la sortie de la salle.",
-        "headers": {
-          "name": "Nom",
-          "email": "E-mail",
-          "entry": "Entrée",
-          "duration": "Durée",
-          "status": "Statut"
-        },
-        "status": {
-          "full": "Présence Complète",
-          "partial": "Présence Partielle",
-          "absent": "Absent"
+      "modal": {
+        "title": "Créer Structure de Dossiers",
+        "nameLabel": "Votre Nom Complet",
+        "namePlaceholder": "Ex: Marie Dupont",
+        "nameHelp": "Ce nom sera utilisé dans le dossier principal: \"KalonConnect - [Votre Nom]\"",
+        "osLabel": "Système d'Exploitation",
+        "downloadScript": "Télécharger Script de Création",
+        "alertName": "Veuillez d'abord entrer votre nom !",
+        "success": {
+          "title": "Script téléchargé avec succès !",
+          "nextSteps": "Prochaines étapes :",
+          "step1": "Localisez le fichier téléchargé sur votre ordinateur",
+          "step2Windows": "Double-cliquez sur le fichier \"criar_pastas_kalon.bat\" pour l'exécuter",
+          "step2Unix": "Ouvrez le Terminal, naviguez vers le dossier de téléchargement et exécutez : chmod +x criar_pastas_kalon.sh && ./criar_pastas_kalon.sh",
+          "step3": "Les dossiers seront créés automatiquement dans votre dossier Documents",
+          "step4": "Copiez le dossier \"KalonConnect - {name}\" sur votre Google Drive",
+          "step5": "Terminé ! Votre structure est organisée dans le cloud"
         }
-      },
-      "drive": {
-        "title": "Google Drive",
-        "connect": "Connecter Google Drive",
-        "upload": "Téléchargement Manuel",
-        "sharePublic": "Partager dans le Chat Public",
-        "sharePrivate": "Partager dans le Chat Privé",
-        "permissionWarning": "⚠️ Le fichier a besoin d'une permission ! Configurez le fichier dans Google Drive pour 'Toute personne disposant du lien peut voir'.",
-        "sharedPublic": "✅ Fichier partagé dans le chat public !",
-        "sharedPrivate": "✅ Fichier partagé avec {name} dans le chat privé !",
-        "selectUserWarning": "⚠️ Sélectionnez un participant pour partager le fichier en privé"
-      },
-      "certificates": {
-        "title": "Certificats",
-        "generateAll": "Générer Tout",
-        "sendEmail": "Envoyer par E-mail",
-        "preview": "Aperçu",
-        "download": "Télécharger"
-      },
-      "replay": {
-        "title": "Replay de la Session",
-        "watch": "Regarder",
-        "download": "Télécharger",
-        "upload": "Téléverser"
       }
     },
-    "errors": {
-      "connection": "Erreur de Connexion",
-      "token": "Erreur lors de la génération du jeton",
-      "server": "Erreur de connexion au serveur vidéo"
-    }
-  },
-  "contact": {
-    "title": "Centre de Contact",
-    "subtitle": "Questions, suggestions ou éloges ? Nous sommes là pour écouter.",
-    "type": "Type de Message",
-    "subject": "Sujet",
-    "subjectPlaceholder": "Résumez la raison du contact",
-    "message": "Message",
-    "messagePlaceholder": "Décrivez en détail ce dont vous avez besoin...",
-    "send": "Envoyer le Message",
-    "sending": "Envoi en cours...",
-    "successTitle": "Message envoyé !",
-    "successMessage": "Nous avons reçu votre message et vous répondrons bientôt.",
-    "categories": {
-      "all": "Tous",
-      "elogio": "Éloge",
-      "sugestao": "Suggestion",
-      "duvida": "Question"
-    }
-  },
-  "subscription": {
-    "title": "Choisissez le Plan Idéal pour Votre Parcours",
-    "subtitle": "Nos plans évoluent avec votre pratique professionnelle :",
-    "activePlan": "VOTRE PLAN",
-    "recommended": "MEILLEUR CHOIX",
-    "currentPlan": "Plan Actuel",
-    "subscribe": "Commencer Maintenant",
-    "tip": {
-      "text": "Conseil : Le plan Premium inclut des crédits mensuels d'IA pour les transcriptions automatiques.",
-      "label": "Conseil :"
-    },
-    "plans": {
-      "normal": {
-        "name": "Essentiel",
-        "description": "Organisation et sécurité pour votre pratique quotidienne.",
-        "features": [
-          "Accès au système",
-          "Gestion des clients",
-          "Rendez-vous et consultations",
-          "Dossiers et documents de base",
-          "Support par e-mail"
-        ]
+    "themes": {
+      "title": "Choisissez votre Thème",
+      "names": {
+        "verde": "Vert Santé",
+        "azul": "Bleu Confiance",
+        "caramelo": "Caramel Accueillant"
       },
-      "pro": {
-        "name": "Professionnel",
-        "description": "Tout ce dont vous avez besoin pour soigner avec professionnalisme.",
-        "features": [
-          "Tout de l'Essentiel",
-          "Consultations illimitées",
-          "Gestion financière (reçus et contrôle)",
-          "Personnalisation du cabinet",
-          "Support prioritaire"
-        ]
+      "howItWorks": "Comment ça marche :",
+      "features": {
+        "instant": "Le changement est instantané dans tout le système",
+        "saved": "Votre préférence est enregistrée automatiquement",
+        "logo": "Le logo conserve toujours sa couleur blanche d'origine"
       },
-      "premium": {
-        "name": "Premium",
-        "description": "Technologie avancée pour gagner du temps et soigner avec plus de présence.",
-        "features": [
-          "Tout du Professionnel",
-          "Jusqu'à 100 min/mois de transcription IA",
-          "Fonctionnalités avancées",
-          "API d'intégration"
-        ]
+      "colors": {
+        "primary": "Primaire",
+        "secondary": "Secondaire",
+        "primaryDark": "Primaire Foncé"
       }
     },
-    "table": {
-      "headers": {
-        "features": "Fonctionnalités",
-        "normal": "Essentiel",
-        "pro": "Professionnel",
-        "premium": "Premium"
+    "invites": {
+      "title": "Envoi Automatique d'Invitation à la Consultation",
+      "subtitle": "Configurez quand et comment envoyer des invitations à vos clients",
+      "channels": {
+        "title": "Canaux d'Envoi",
+        "whatsapp": "WhatsApp",
+        "email": "E-mail"
       },
-      "rows": {
-        "price": "Prix Mensuel",
-        "access": "Accès au système",
-        "clients": "Gestion des clients",
-        "appointments": "Rendez-vous et consultations",
-        "records": "Dossiers médicaux et documents",
-        "support": "Support",
-        "consultations": "Consultations illimitées",
-        "financial": "Gestion financière (reçus et contrôle)",
-        "customization": "Personnalisation de la salle",
-        "ai": "IA de Transcription",
-        "advanced": "Fonctionnalités de productivité avancées",
-        "api": "API d'intégration"
+      "whereby": {
+        "title": "Lien de la Salle Whereby",
+        "placeholder": "https://whereby.com/votre-salle",
+        "help": "Ce lien sera envoyé automatiquement aux clients"
       },
-      "values": {
-        "accessBasic": "Accès au système",
-        "accessComplete": "Tout de l'Essentiel",
-        "accessCompleteAI": "Tout du Professionnel",
-        "unlimited": "Illimité",
-        "emailSupport": "Support par e-mail",
-        "prioritySupport": "Support prioritaire",
-        "financialDesc": "Gestion financière",
-        "customizationDesc": "Personnalisation de la salle",
-        "aiCredits": "Jusqu'à 100 minutes mensuelles de transcription automatique par IA",
-        "included": "Inclus"
+      "timing": {
+        "title": "Quand Envoyer",
+        "dayBefore": "Envoyer la veille, à",
+        "dayOf": "Envoyer le jour de la consultation, à",
+        "tenMinBefore": "Envoyer 10 minutes avant le début"
+      },
+      "message": {
+        "title": "Message d'Invitation (Modifiable)",
+        "placeholder": "Entrez votre message personnalisé...",
+        "help": "Utilisez [data/hora], [LINK_WHERBY_DO_PROFISSIONAL] et [CLIENTE] comme espaces réservés"
+      },
+      "buttons": {
+        "save": "Enregistrer les Paramètres",
+        "test": "Envoyer Test Maintenant"
+      },
+      "history": {
+        "title": "Historique des Envois"
+      },
+      "alerts": {
+        "saved": "Paramètres d'invitation enregistrés avec succès !",
+        "testGenerated": "Message généré :\n\n{message}\n\nVérifiez l'historique ci-dessous."
       }
     },
-    "aiDisclaimer": "* Sans engagement. Annulez à tout moment.",
-    "cancelAnytime": "Sans engagement. Annulez à tout moment."
-  },
-  "invites": {
-    "title": "Paramètres d'invitation",
-    "subtitle": "Personnalisez la façon dont vos clients reçoivent les notifications de session.",
-    "channels": {
-      "title": "Canaux d'envoi",
-      "whatsapp": "WhatsApp",
-      "email": "E-mail"
-    },
-    "whereby": {
-      "title": "Lien de la session vidéo",
-      "placeholder": "Lien Whereby/Zoom/Meet",
-      "help": "Ce lien sera automatiquement inséré dans l'invitation."
-    },
-    "timing": {
-      "title": "Quand envoyer?",
-      "dayBefore": "Jour précédent",
-      "dayOf": "Le jour de la consultation",
-      "tenMinBefore": "10 minutes avant"
-    },
-    "message": {
-      "title": "Message personnalisé",
-      "placeholder": "Écrivez votre message...",
-      "help": "Utilisez [date/heure] et [CLIENT] pour personnaliser. Le lien de la plateforme sera inséré automatiquement.",
-      "template": "Bonjour! Confirmation de votre consultation en ligne [data/hora].\nPour participer, accédez à la plateforme KalonConnect:\nhttps://kalonconnect.com\nSi vous avez des questions, répondez simplement à ce message."
-    },
-    "buttons": {
-      "save": "Enregistrer les paramètres",
-      "test": "Envoyer le test"
-    },
-    "history": {
-      "title": "Historique des envois"
-    },
-    "alerts": {
-      "saved": "Paramètres enregistrés!",
-      "testGenerated": "Test généré: {message}"
-    }
-  },
-  "captions": {
-    "title": "Sous-titres avec Traduction",
-    "enabled": "Activé",
-    "disabled": "Désactivé",
-    "myLanguage": "Ma Langue",
-    "clientLanguage": "Langue du Client",
-    "myLanguageHint": "Langue que vous parlerez pendant la consultation",
-    "clientLanguageHint": "Langue pour traduire vos mots",
-    "saveSettings": "Enregistrer les Paramètres",
-    "browserNotSupported": "Navigateur non pris en charge",
-    "browserNotSupportedMessage": "Les sous-titres ne fonctionnent que sur Chrome ou Edge.",
-    "freeVersion": "Version Gratuite :",
-    "freeVersionFeatures": [
-      "Web Speech API (navigateur) pour la transcription",
-      "MyMemory Translation (1000 mots/jour)",
-      "Qualité : 85-90%",
-      "Latence : 1-3 secondes"
-    ],
-    "disabledInfo": "Activez les sous-titres pour configurer les langues et commencer à utiliser la traduction en temps réel.",
-    "translating": "Traduction..."
-  },
-  "address": {
-    "title": "Adresse Professionnelle",
-    "postalCode": "Code Postal",
-    "street": "Rue / Avenue",
-    "number": "Numéro",
-    "complement": "Complément",
-    "neighborhood": "Quartier",
-    "city": "Ville",
-    "state": "État / Province",
-    "country": "Pays",
-    "countries": {
-      "brazil": "Brésil",
-      "usa": "États-Unis",
-      "other": "Autre"
-    },
-    "hints": {
-      "internationalManual": "Pour les adresses internationales, veuillez remplir manuellement."
-    }
-  },
-  "feedback": {
-    "profileComplete": {
-      "title": "Profil Complet !",
-      "message": "Votre présentation professionnelle est prête.",
-      "cta": "Enregistrer un client"
-    },
-    "clientRegistered": {
-      "title": "Client enregistré !",
-      "message": "Client enregistré avec succès.",
-      "cta": "Planifier une consultation"
-    },
-    "consultationScheduled": {
-      "title": "Consultation planifiée !",
-      "message": "Tout est prêt pour le rendez-vous.",
-      "cta": "Accéder à la salle"
-    },
-    "consultationCompleted": {
-      "title": "Consultation terminée !",
-      "message": "Consultation terminée avec succès.",
-      "cta": "Générer un document"
-    },
-    "documentCreated": {
-      "title": "Document créé !",
-      "message": "Votre premier document a été généré.",
-      "cta": "Voir les documents"
-    }
-  },
-  "quickGuide": {
-    "title": "Guide Rapide",
-    "subtitle": "Informations essentielles pour des sessions sécurisées",
-    "criticalIndicators": {
-      "title": "1. Indicateurs Critiques",
-      "live": {
-        "status": "EN DIRECT",
-        "meaning": "Connexion active",
-        "action": "Procéder normalement"
+    "credentials": {
+      "title": "Identifiants d'Accès",
+      "username": {
+        "title": "Nom d'Utilisateur",
+        "current": "Nom Actuel",
+        "currentPlaceholder": "Nom d'utilisateur actuel",
+        "new": "Nouveau Nom",
+        "newPlaceholder": "Nouveau nom d'utilisateur",
+        "change": "Changer de Nom",
+        "cancel": "Annuler",
+        "emptyError": "Le nom d'utilisateur ne peut pas être vide",
+        "success": "Nom d'utilisateur changé avec succès !"
       },
+      "password": {
+        "title": "Mot de Passe d'Accès",
+        "current": "Mot de Passe Actuel",
+        "currentPlaceholder": "Entrez le mot de passe actuel",
+        "new": "Nouveau Mot de Passe",
+        "newPlaceholder": "Entrez le nouveau mot de passe",
+        "confirm": "Confirmer le Nouveau Mot de Passe",
+        "confirmPlaceholder": "Confirmez le nouveau mot de passe",
+        "change": "Changer le Mot de Passe",
+        "errorMissing": "Tous les champs de mot de passe sont obligatoires",
+        "errorMismatch": "Les mots de passe ne correspondent pas",
+        "success": "Mot de passe changé avec succès !"
+      },
+      "buttons": {
+        "save": "Enregistrer les Modifications",
+        "cancel": "Annuler"
+      }
+    },
+    "eventRoom": {
+      "loading": "Chargement de l'événement...",
       "recording": {
         "status": "ENREGISTREMENT",
-        "meaning": "Média capturé",
-        "action": "Confirmer le consentement"
+        "start": "Enregistrer",
+        "stop": "Arrêter",
+        "started": "🔴 Enregistrement commencé !",
+        "stopped": "✅ Enregistrement terminé et sauvegardé !",
+        "warning": "Êtes-vous sûr de vouloir quitter la salle ?"
       },
-      "muted": {
-        "status": "MUET",
-        "meaning": "Microphone éteint",
-        "action": "Réactiver pour parler"
+      "online": "en ligne",
+      "buttons": {
+        "attendance": "Présence",
+        "poll": "Sondage",
+        "certificates": "Certificats",
+        "drive": "Drive",
+        "replay": "Replay",
+        "leave": "Quitter la Salle",
+        "send": "Envoyer",
+        "cancel": "Annuler",
+        "create": "Créer",
+        "exportCsv": "Exporter CSV",
+        "tryAgain": "Réessayer",
+        "startStream": "Démarrer la Diffusion"
       },
-      "reconnecting": {
-        "status": "RECONNEXION",
-        "meaning": "Pas d'internet",
-        "action": "Attendre 10s"
+      "chat": {
+        "public": "Chat Public",
+        "private": "Chat Privé",
+        "placeholder": "Tapez votre message...",
+        "privatePlaceholder": "Message pour {name}...",
+        "selectUser": "Sélectionnez un participant pour démarrer un chat privé",
+        "you": "Vous",
+        "moderator": "Modérateur",
+        "guest": "Invité"
+      },
+      "participants": {
+        "title": "Participants",
+        "waiting": "En attente de participants...",
+        "waitingStream": "En attente du début de la diffusion...",
+        "youModerator": "Vous (Modérateur)",
+        "youPreview": "Vous (Aperçu)",
+        "cameraOff": "Allumez la caméra pour commencer",
+        "connecting": "Connexion à la salle..."
+      },
+      "modals": {
+        "poll": {
+          "title": "Créer un Sondage",
+          "questionPlaceholder": "Tapez la question...",
+          "optionPlaceholder": "Option {index}"
+        },
+        "attendance": {
+          "title": "Liste de Présence",
+          "info": "ℹ️ Votre présence est enregistrée automatiquement à l'entrée et à la sortie de la salle.",
+          "headers": {
+            "name": "Nom",
+            "email": "E-mail",
+            "entry": "Entrée",
+            "duration": "Durée",
+            "status": "Statut"
+          },
+          "status": {
+            "full": "Présence Complète",
+            "partial": "Présence Partielle",
+            "absent": "Absent"
+          }
+        },
+        "drive": {
+          "title": "Google Drive",
+          "connect": "Connecter Google Drive",
+          "upload": "Téléchargement Manuel",
+          "sharePublic": "Partager dans le Chat Public",
+          "sharePrivate": "Partager dans le Chat Privé",
+          "permissionWarning": "⚠️ Le fichier a besoin d'une permission ! Configurez le fichier dans Google Drive pour 'Toute personne disposant du lien peut voir'.",
+          "sharedPublic": "✅ Fichier partagé dans le chat public !",
+          "sharedPrivate": "✅ Fichier partagé avec {name} dans le chat privé !",
+          "selectUserWarning": "⚠️ Sélectionnez un participant pour partager le fichier en privé"
+        },
+        "certificates": {
+          "title": "Certificats",
+          "generateAll": "Générer Tout",
+          "sendEmail": "Envoyer par E-mail",
+          "preview": "Aperçu",
+          "download": "Télécharger"
+        },
+        "replay": {
+          "title": "Replay de la Session",
+          "watch": "Regarder",
+          "download": "Télécharger",
+          "upload": "Téléverser"
+        }
+      },
+      "errors": {
+        "connection": "Erreur de Connexion",
+        "token": "Erreur lors de la génération du jeton",
+        "server": "Erreur de connexion au serveur vidéo"
       }
     },
-    "recordingRules": {
-      "title": "2. Règles d'Enregistrement",
-      "consent": "<strong>Consentement Verbal :</strong> Le client doit dire 'J'autorise' enregistré.",
-      "integrity": "<strong>Intégrité :</strong> Hachage SHA-256 automatique.",
-      "backup": "<strong>Sauvegarde :</strong> Automatique toutes les 5 minutes."
-    },
-    "limitations": {
-      "title": "3. Limitations Importantes",
-      "duration": "<strong>Sessions > 90min :</strong> Risque. Pause/Sauvegarde chaque 60min.",
-      "ios": "<strong>iOS (Safari) :</strong> <u>Ne verrouillez pas l'écran!</u> Coupe la connexion.",
-      "instability": "<strong>Mauvais Internet :</strong> Si ça coupe 3x en 10min, pause."
-    },
-    "checklist": {
-      "title": "4. Liste de Contrôle Pré-Session",
-      "clientConnected": "Client connecté ?",
-      "audioConfirmed": "Audio confirmé ?",
-      "liveVisible": "'EN DIRECT' visible ?",
-      "consentGiven": "Consentement donné ?"
-    },
-    "disclaimer": "Le système signale les états critiques en temps réel, mais la responsabilité clinique et éthique incombe toujours au professionnel.",
-    "footer": "Guide Rapide 1.0 - KalonConnect",
-    "card": {
-      "title": "Guide Rapide pour Sessions Sécurisées",
-      "description": "Pressé ? Lisez le résumé d'une page avec les règles essentielles.",
-      "readNow": "Lire maintenant (1 pg)",
-      "openFull": "Ouvrir le Guide Complet"
-    },
-    "modal": {
-      "title": "Lecture Obligatoire",
-      "subtitle": "Pour votre sécurité et conformité clinique",
-      "greeting": "Bonjour, <strong>{name}</strong>.",
-      "intro": "Avant de commencer vos sessions, nous avons besoin que vous connaissiez le <strong>Guide Professionnel</strong>.",
-      "explanation": "Ce document explique comment utiliser le système de manière éthique, sécurisée et responsable, en détaillant quoi faire en cas de panne technique.",
-      "checkbox": "J'ai lu et compris le Guide Professionnel, et je suis conscient de mes responsabilités dans l'utilisation de la plateforme.",
-      "continue": "Continuer vers le Système",
-      "saving": "Enregistrement..."
-    },
-    "toast": {
-      "title": "Guide Mis à Jour",
-      "message": "Le Guide Professionnel a été révisé. Nous recommandons une lecture rapide.",
-      "open": "Ouvrir le Guide",
-      "close": "Fermer"
-    }
-  },
-  "adminTelemetry": {
-    "title": "Télémétrie & Qualité",
-    "subtitle": "Surveillance technique agrégée pour l'amélioration de la stabilité.",
-    "update": "Actualiser les données",
-    "recentEvents": "Événements Récents en Temps Réel",
-    "emptyEvents": "Aucun événement enregistré récemment.",
-    "cards": {
-      "unstableSessions": {
-        "title": "Sessions Instables (>3 recon)",
-        "subtext": "Taux d'échec critique"
-      },
-      "avgReconnections": {
-        "title": "Moyenne Reconnexions",
-        "subtext": "Par session affectée"
-      },
-      "abortedRecordings": {
-        "title": "Enregistrements Avortés",
-        "subtext": "Limite de 500Mo atteinte"
-      },
-      "avgDuration": {
-        "title": "Durée Moyenne (Avort)",
-        "subtext": "Jusqu'à atteindre la limite"
+    "contact": {
+      "title": "Centre de Contact",
+      "subtitle": "Questions, suggestions ou éloges ? Nous sommes là pour écouter.",
+      "type": "Type de Message",
+      "subject": "Sujet",
+      "subjectPlaceholder": "Résumez la raison du contact",
+      "message": "Message",
+      "messagePlaceholder": "Décrivez en détail ce dont vous avez besoin...",
+      "send": "Envoyer le Message",
+      "sending": "Envoi en cours...",
+      "successTitle": "Message envoyé !",
+      "successMessage": "Nous avons reçu votre message et vous répondrons bientôt.",
+      "categories": {
+        "all": "Tous",
+        "elogio": "Éloge",
+        "sugestao": "Suggestion",
+        "duvida": "Question"
       }
     },
-    "table": {
-      "timestamp": "Timestamp",
-      "type": "Type",
-      "session": "Session (Anonymisée)",
-      "details": "Détails Techniques",
-      "reconnection": "Reconnexion",
-      "aborted": "Enregistrement Avorté"
+    "subscription": {
+      "title": "Choisissez le Plan Idéal pour Votre Parcours",
+      "subtitle": "Nos plans évoluent avec votre pratique professionnelle :",
+      "activePlan": "VOTRE PLAN",
+      "recommended": "MEILLEUR CHOIX",
+      "currentPlan": "Plan Actuel",
+      "subscribe": "Commencer Maintenant",
+      "tip": {
+        "text": "Conseil : Le plan Premium inclut des crédits mensuels d'IA pour les transcriptions automatiques.",
+        "label": "Conseil :"
+      },
+      "plans": {
+        "normal": {
+          "name": "Essentiel",
+          "description": "Organisation et sécurité pour votre pratique quotidienne.",
+          "features": [
+            "Accès au système",
+            "Gestion des clients",
+            "Rendez-vous et consultations",
+            "Dossiers et documents de base",
+            "Support par e-mail"
+          ]
+        },
+        "pro": {
+          "name": "Professionnel",
+          "description": "Tout ce dont vous avez besoin pour soigner avec professionnalisme.",
+          "features": [
+            "Tout de l'Essentiel",
+            "Consultations illimitées",
+            "Gestion financière (reçus et contrôle)",
+            "Personnalisation du cabinet",
+            "Support prioritaire"
+          ]
+        },
+        "premium": {
+          "name": "Premium",
+          "description": "Technologie avancée pour gagner du temps et soigner avec plus de présence.",
+          "features": [
+            "Tout du Professionnel",
+            "Jusqu'à 100 min/mois de transcription IA",
+            "Fonctionnalités avancées",
+            "API d'intégration"
+          ]
+        }
+      },
+      "table": {
+        "headers": {
+          "features": "Fonctionnalités",
+          "normal": "Essentiel",
+          "pro": "Professionnel",
+          "premium": "Premium"
+        },
+        "rows": {
+          "price": "Prix Mensuel",
+          "access": "Accès au système",
+          "clients": "Gestion des clients",
+          "appointments": "Rendez-vous et consultations",
+          "records": "Dossiers médicaux et documents",
+          "support": "Support",
+          "consultations": "Consultations illimitées",
+          "financial": "Gestion financière (reçus et contrôle)",
+          "customization": "Personnalisation de la salle",
+          "ai": "IA de Transcription",
+          "advanced": "Fonctionnalités de productivité avancées",
+          "api": "API d'intégration"
+        },
+        "values": {
+          "accessBasic": "Accès au système",
+          "accessComplete": "Tout de l'Essentiel",
+          "accessCompleteAI": "Tout du Professionnel",
+          "unlimited": "Illimité",
+          "emailSupport": "Support par e-mail",
+          "prioritySupport": "Support prioritaire",
+          "financialDesc": "Gestion financière",
+          "customizationDesc": "Personnalisation de la salle",
+          "aiCredits": "Jusqu'à 100 minutes mensuelles de transcription automatique par IA",
+          "included": "Inclus"
+        }
+      },
+      "aiDisclaimer": "* Sans engagement. Annulez à tout moment.",
+      "cancelAnytime": "Sans engagement. Annulez à tout moment."
+    },
+    "captions": {
+      "title": "Sous-titres avec Traduction",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "myLanguage": "Ma Langue",
+      "clientLanguage": "Langue du Client",
+      "myLanguageHint": "Langue que vous parlerez pendant la consultation",
+      "clientLanguageHint": "Langue pour traduire vos mots",
+      "saveSettings": "Enregistrer les Paramètres",
+      "browserNotSupported": "Navigateur non pris en charge",
+      "browserNotSupportedMessage": "Les sous-titres ne fonctionnent que sur Chrome ou Edge.",
+      "freeVersion": "Version Gratuite :",
+      "freeVersionFeatures": [
+        "Web Speech API (navigateur) pour la transcription",
+        "MyMemory Translation (1000 mots/jour)",
+        "Qualité : 85-90%",
+        "Latence : 1-3 secondes"
+      ],
+      "disabledInfo": "Activez les sous-titres pour configurer les langues et commencer à utiliser la traduction en temps réel.",
+      "translating": "Traduction..."
+    },
+    "address": {
+      "title": "Adresse Professionnelle",
+      "postalCode": "Code Postal",
+      "street": "Rue / Avenue",
+      "number": "Numéro",
+      "complement": "Complément",
+      "neighborhood": "Quartier",
+      "city": "Ville",
+      "state": "État / Province",
+      "country": "Pays",
+      "countries": {
+        "brazil": "Brésil",
+        "usa": "États-Unis",
+        "other": "Autre"
+      },
+      "hints": {
+        "internationalManual": "Pour les adresses internationales, veuillez remplir manuellement."
+      }
+    },
+    "feedback": {
+      "profileComplete": {
+        "title": "Profil Complet !",
+        "message": "Votre présentation professionnelle est prête.",
+        "cta": "Enregistrer un client"
+      },
+      "clientRegistered": {
+        "title": "Client enregistré !",
+        "message": "Client enregistré avec succès.",
+        "cta": "Planifier une consultation"
+      },
+      "consultationScheduled": {
+        "title": "Consultation planifiée !",
+        "message": "Tout est prêt pour le rendez-vous.",
+        "cta": "Accéder à la salle"
+      },
+      "consultationCompleted": {
+        "title": "Consultation terminée !",
+        "message": "Consultation terminée avec succès.",
+        "cta": "Générer un document"
+      },
+      "documentCreated": {
+        "title": "Document créé !",
+        "message": "Votre premier document a été généré.",
+        "cta": "Voir les documents"
+      }
+    },
+    "quickGuide": {
+      "title": "Guide Rapide",
+      "subtitle": "Informations essentielles pour des sessions sécurisées",
+      "criticalIndicators": {
+        "title": "1. Indicateurs Critiques",
+        "live": {
+          "status": "EN DIRECT",
+          "meaning": "Connexion active",
+          "action": "Procéder normalement"
+        },
+        "recording": {
+          "status": "ENREGISTREMENT",
+          "meaning": "Média capturé",
+          "action": "Confirmer le consentement"
+        },
+        "muted": {
+          "status": "MUET",
+          "meaning": "Microphone éteint",
+          "action": "Réactiver pour parler"
+        },
+        "reconnecting": {
+          "status": "RECONNEXION",
+          "meaning": "Pas d'internet",
+          "action": "Attendre 10s"
+        }
+      },
+      "recordingRules": {
+        "title": "2. Règles d'Enregistrement",
+        "consent": "<strong>Consentement Verbal :</strong> Le client doit dire 'J'autorise' enregistré.",
+        "integrity": "<strong>Intégrité :</strong> Hachage SHA-256 automatique.",
+        "backup": "<strong>Sauvegarde :</strong> Automatique toutes les 5 minutes."
+      },
+      "limitations": {
+        "title": "3. Limitations Importantes",
+        "duration": "<strong>Sessions > 90min :</strong> Risque. Pause/Sauvegarde chaque 60min.",
+        "ios": "<strong>iOS (Safari) :</strong> <u>Ne verrouillez pas l'écran!</u> Coupe la connexion.",
+        "instability": "<strong>Mauvais Internet :</strong> Si ça coupe 3x en 10min, pause."
+      },
+      "checklist": {
+        "title": "4. Liste de Contrôle Pré-Session",
+        "clientConnected": "Client connecté ?",
+        "audioConfirmed": "Audio confirmé ?",
+        "liveVisible": "'EN DIRECT' visible ?",
+        "consentGiven": "Consentement donné ?"
+      },
+      "disclaimer": "Le système signale les états critiques en temps réel, mais la responsabilité clinique et éthique incombe toujours au professionnel.",
+      "footer": "Guide Rapide 1.0 - KalonConnect",
+      "card": {
+        "title": "Guide Rapide pour Sessions Sécurisées",
+        "description": "Pressé ? Lisez le résumé d'une page avec les règles essentielles.",
+        "readNow": "Lire maintenant (1 pg)",
+        "openFull": "Ouvrir le Guide Complet"
+      },
+      "modal": {
+        "title": "Lecture Obligatoire",
+        "subtitle": "Pour votre sécurité et conformité clinique",
+        "greeting": "Bonjour, <strong>{name}</strong>.",
+        "intro": "Avant de commencer vos sessions, nous avons besoin que vous connaissiez le <strong>Guide Professionnel</strong>.",
+        "explanation": "Ce document explique comment utiliser le système de manière éthique, sécurisée et responsable, en détaillant quoi faire en cas de panne technique.",
+        "checkbox": "J'ai lu et compris le Guide Professionnel, et je suis conscient de mes responsabilités dans l'utilisation de la plateforme.",
+        "continue": "Continuer vers le Système",
+        "saving": "Enregistrement..."
+      },
+      "toast": {
+        "title": "Guide Mis à Jour",
+        "message": "Le Guide Professionnel a été révisé. Nous recommandons une lecture rapide.",
+        "open": "Ouvrir le Guide",
+        "close": "Fermer"
+      }
+    },
+    "adminTelemetry": {
+      "title": "Télémétrie & Qualité",
+      "subtitle": "Surveillance technique agrégée pour l'amélioration de la stabilité.",
+      "update": "Actualiser les données",
+      "recentEvents": "Événements Récents en Temps Réel",
+      "emptyEvents": "Aucun événement enregistré récemment.",
+      "cards": {
+        "unstableSessions": {
+          "title": "Sessions Instables (>3 recon)",
+          "subtext": "Taux d'échec critique"
+        },
+        "avgReconnections": {
+          "title": "Moyenne Reconnexions",
+          "subtext": "Par session affectée"
+        },
+        "abortedRecordings": {
+          "title": "Enregistrements Avortés",
+          "subtext": "Limite de 500Mo atteinte"
+        },
+        "avgDuration": {
+          "title": "Durée Moyenne (Avort)",
+          "subtext": "Jusqu'à atteindre la limite"
+        }
+      },
+      "table": {
+        "timestamp": "Timestamp",
+        "type": "Type",
+        "session": "Session (Anonymisée)",
+        "details": "Détails Techniques",
+        "reconnection": "Reconnexion",
+        "aborted": "Enregistrement Avorté"
+      }
     }
   }
-}
