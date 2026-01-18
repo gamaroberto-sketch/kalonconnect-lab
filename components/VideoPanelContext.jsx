@@ -1018,6 +1018,7 @@ export const VideoPanelProvider = ({
     setRecordingState,
     toggleVideo,
     toggleAudio,
+    setIsVideoOn, // 🟢 ACHADO #3
     toggleCameraPreview,
     toggleScreenShare,
     toggleHighMesh,
