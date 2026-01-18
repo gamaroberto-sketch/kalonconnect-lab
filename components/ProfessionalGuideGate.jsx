@@ -119,15 +119,29 @@ const ProfessionalGuideGate = ({ children }) => {
                             </p>
                         </div>
 
-                        <div className="flex justify-center">
-                            <Link
-                                href="/guia"
-                                target="_blank"
-                                className="flex items-center gap-2 px-6 py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-sm font-semibold transition border border-emerald-200"
-                            >
-                                <BookOpen size={18} />
-                                Abrir Guia do Profissional
-                            </Link>
+                        <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 rounded-xl p-5 mb-6">
+                            <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-2">Guia Rápido para Sessões Seguras</h3>
+                            <p className="text-sm text-emerald-700 dark:text-emerald-300 mb-4">
+                                Tem pressa? Leia o resumo de 1 página com as regras essenciais.
+                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <Link
+                                    href="/guia-resumo"
+                                    target="_blank"
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-emerald-800 text-emerald-700 dark:text-white hover:bg-emerald-50 dark:hover:bg-emerald-700 border border-emerald-200 dark:border-emerald-700 rounded-lg text-sm font-bold transition shadow-sm"
+                                >
+                                    <BookOpen size={16} />
+                                    Ler agora (1 pág)
+                                </Link>
+                                <Link
+                                    href="/guia"
+                                    target="_blank"
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent text-emerald-600 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg text-sm font-semibold transition"
+                                >
+                                    Abrir Guia Completo
+                                </Link>
+                            </div>
                         </div>
 
                         <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
