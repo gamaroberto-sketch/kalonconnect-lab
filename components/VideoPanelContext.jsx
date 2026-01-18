@@ -81,6 +81,12 @@ export const VideoPanelProvider = ({
         }
       } else {
         setLowPowerMode(false);
+        // 🟢 ACHADO #7: Restore Video (Auto-Resume)
+        // If we have an active stream attached, ensure it plays when tab becomes visible again
+        if (localVideoRef.current && localVideoRef.current.srcObject) {
+          console.log("▶️ Auto-Resuming Video (Low Power Mode Exit)");
+          localVideoRef.current.play().catch(e => console.warn("⚠️ Auto-resume blocked:", e));
+        }
       }
     };
 
