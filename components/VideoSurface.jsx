@@ -371,6 +371,8 @@ const VideoSurface = ({ roomId }) => {
           style={{ display: 'contents' }}
           onConnected={() => {
             console.log("✅ [PROFESSIONAL] LiveKit Connected!");
+            // 🟢 ACHADO #5: Reset Reconnect Counter on Success
+            window.kalon_reconnect_attempts = 0;
           }}
           onDisconnected={async (reason) => {
             console.warn("⚠️ [PROFESSIONAL] LiveKit Disconnected!", reason);
