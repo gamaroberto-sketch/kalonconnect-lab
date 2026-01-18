@@ -7,6 +7,7 @@ import { ThemeProvider } from '../components/ThemeProvider';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { FeedbackProvider } from '../contexts/FeedbackContext';
 import AdminAccess from '../components/AdminAccess';
+import ProfessionalGuideGate from '../components/ProfessionalGuideGate';
 import { useEffect } from 'react';
 
 export default function App({ Component, pageProps }) {
@@ -30,8 +31,10 @@ export default function App({ Component, pageProps }) {
       <LanguageProvider>
         <AuthProvider>
           <FeedbackProvider>
-            <Component {...pageProps} />
-            <AdminAccess />
+            <ProfessionalGuideGate>
+              <Component {...pageProps} />
+              <AdminAccess />
+            </ProfessionalGuideGate>
           </FeedbackProvider>
         </AuthProvider>
       </LanguageProvider>

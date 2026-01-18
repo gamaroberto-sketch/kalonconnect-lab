@@ -1,0 +1,115 @@
+"use client";
+
+import React, { useState } from "react";
+import { useAuth } from "../components/AuthContext";
+import { BookOpen, CheckSquare, ArrowRight, ShieldCheck } from "lucide-react";
+import Link from 'next/link';
+
+const ProfessionalGuideGate = ({ children }) => {
+    const { user, loading, markProfessionalGuideAsRead } = useAuth();
+    const [isChecked, setIsChecked] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // 1. Loading state -> Don't block, just show nothing or loading spinner
+    // But usually we just let children render if we are waiting for auth check?
+    // Actually, wait for user to be loaded.
+    if (loading) return <>{children}</>;
+
+    // 2. Not logged in -> Don't block login pages
+    if (!user) return <>{children}</>;
+
+    // 3. Already read -> Don't block
+    if (user.hasReadProfessionalGuide) return <>{children}</>;
+
+    const handleContinue = async () => {
+        setIsSubmitting(true);
+        await markProfessionalGuideAsRead();
+        setIsSubmitting(false);
+    };
+
+    return (
+        <>
+            {/* Background Content (Blurred/Hidden) */}
+            <div className="fixed inset-0 z-0 filter blur-sm pointer-events-none opacity-50" aria-hidden="true">
+                {children}
+            </div>
+
+            {/* Modal Overlay */}
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                <div className="w-full max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transform transition-all animate-in fade-in zoom-in duration-300">
+
+                    {/* Header */}
+                    <div className="bg-emerald-600 p-6 text-white text-center">
+                        <div className="mx-auto bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 backdrop-blur-md">
+                            <ShieldCheck size={32} className="text-white" />
+                        </div>
+                        <h2 className="text-2xl font-bold">Leitura Obrigatória</h2>
+                        <p className="text-emerald-100 text-sm mt-1">Para sua segurança e conformidade clínica</p>
+                    </div>
+
+                    {/* Body */}
+                    <div className="p-8 space-y-6">
+                        <div className="space-y-4 text-center">
+                            <p className="text-gray-600 dark:text-gray-300">
+                                Olá, <strong>{user.name || "Profissional"}</strong>.
+                            </p>
+                            <p className="text-gray-600 dark:text-gray-300">
+                                Antes de iniciar seus atendimentos, precisamos que você conheça o <strong>Guia do Profissional</strong>.
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                Este documento explica como usar o sistema de forma ética, segura e responsável, detalhando o que fazer em casos de falha técnica.
+                            </p>
+                        </div>
+
+                        <div className="flex justify-center">
+                            <Link
+                                href="/guia"
+                                target="_blank"
+                                className="flex items-center gap-2 px-6 py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-sm font-semibold transition border border-emerald-200"
+                            >
+                                <BookOpen size={18} />
+                                Abrir Guia do Profissional
+                            </Link>
+                        </div>
+
+                        <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+                            <label className="flex items-start gap-3 cursor-pointer group">
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        className="peer sr-only"
+                                        checked={isChecked}
+                                        onChange={(e) => setIsChecked(e.target.checked)}
+                                    />
+                                    <div className="w-5 h-5 border-2 border-gray-300 rounded peer-checked:bg-emerald-600 peer-checked:border-emerald-600 transition-colors"></div>
+                                    <CheckSquare size={14} className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none top-0.5 left-0.5" />
+                                </div>
+                                <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors select-none">
+                                    Li e compreendi o Guia do Profissional, e estou ciente das minhas responsabilidades no uso da plataforma.
+                                </span>
+                            </label>
+                        </div>
+
+                        <button
+                            onClick={handleContinue}
+                            disabled={!isChecked || isSubmitting}
+                            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/30"
+                        >
+                            {isSubmitting ? (
+                                <span className="animate-pulse">Salvando...</span>
+                            ) : (
+                                <>
+                                    Continuar para o Sistema
+                                    <ArrowRight size={20} />
+                                </>
+                            )}
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </>
+    );
+};
+
+export default ProfessionalGuideGate;

@@ -13,7 +13,8 @@ const normalizeUser = (userData) => {
   return {
     ...userData,
     version: (userData.version || DEFAULT_VERSION).toUpperCase(),
-    type: userData.type || "professional"
+    type: userData.type || "professional",
+    hasReadProfessionalGuide: userData.user_metadata?.hasReadProfessionalGuide || false // 🟢 Normalized
   };
 };
 
@@ -194,12 +195,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const markProfessionalGuideAsRead = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: { hasReadProfessionalGuide: true }
+      });
+
+      if (error) throw error;
+
+      // Update local state immediately for seamless UX
+      setUser(prev => ({ ...prev, hasReadProfessionalGuide: true }));
+      return { success: true };
+    } catch (err) {
+      console.error("Failed to update guide status:", err);
+      return { success: false, error: err.message };
+    }
+  };
+
   const value = {
     user,
     loading,
     loginUser,
     registerUser,
     logout,
+    markProfessionalGuideAsRead // 🟢 Exposed for Gate
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
