@@ -47,7 +47,7 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
 // 🎥 COMPONENT 2: REMOTE SESSION (Transient)
 // This handles the connection logic, media publishing, and remote video rendering.
 // It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, toggleScreenShare, setIsActuallyPublishing, onFatalError }) => {
+const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
   const [publishedTrack, setPublishedTrack] = useState(null);
@@ -222,6 +222,15 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     };
   }, [publishedTrack, isVideoOn, setIsVideoOn]);
 
+  // 🟢 ACHADO #4: Sync Audio State with LiveKit Publication
+  useEffect(() => {
+    if (!localParticipant) return;
+    // Sincronizar estado local (isAudioOn) com a publication real
+    localParticipant.setMicrophoneEnabled(isAudioOn).catch(err => {
+      console.error("❌ Erro ao sincronizar microfone:", err);
+    });
+  }, [isAudioOn, localParticipant]);
+
   // D. 📥 Render Remote Tracks
   const tracks = useTracks(
     [
@@ -266,6 +275,7 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
 const VideoSurface = ({ roomId }) => {
   const {
     isProfessional,
+    isAudioOn, // 🟢 ACHADO #4
     isVideoOn,
     setIsVideoOn, // 🟢 ACHADO #3
     isCameraPreviewOn,
@@ -413,6 +423,7 @@ const VideoSurface = ({ roomId }) => {
             isConnected={isRoomConnected}
             currentStream={currentStream}
             processedTrack={processedTrack}
+            isAudioOn={isAudioOn} // 🟢 ACHADO #4
             isVideoOn={isVideoOn}
             setIsVideoOn={setIsVideoOn} // 🟢 ACHADO #3
             toggleScreenShare={toggleScreenShare}
