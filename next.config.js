@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-// Test: Vercel build trigger fix (2026-01-18 12:47)
+// Test: Git integration fixed! Auto-deploy verification (2026-01-18 13:51)
 const nextConfig = {
     reactStrictMode: false, // 🟢 Disable Strict Mode to differentiate real double-invokes from dev mode
     generateBuildId: async () => {
