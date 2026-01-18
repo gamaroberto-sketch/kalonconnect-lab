@@ -655,6 +655,42 @@ export const VideoPanelProvider = ({
     }
   };
 
+  // 🟢 ACHADO #10: Device Disconnection Detection
+  useEffect(() => {
+    if (!streamRef.current) return; // Use streamRef.current for the current stream
+
+    const handleTrackEnded = (e) => {
+      console.warn("❌ Track Ended (Device Disconnected):", e.target.kind);
+
+      const isVideo = e.target.kind === 'video';
+      const event = new CustomEvent("kalon-toast", {
+        detail: {
+          type: 'error',
+          title: isVideo ? 'Câmera Desconectada' : 'Microfone Desconectado',
+          message: `❌ ${isVideo ? 'Câmera' : 'Microfone'} desconectado físico. Verifique o dispositivo.`
+        }
+      });
+      window.dispatchEvent(event);
+
+      if (isVideo) {
+        setIsVideoOn(false);
+        setIsCameraPreviewOn(false);
+      } else {
+        setIsAudioOn(false);
+      }
+    };
+
+    streamRef.current.getTracks().forEach(track => {
+      track.addEventListener('ended', handleTrackEnded);
+    });
+
+    return () => {
+      streamRef.current.getTracks().forEach(track => {
+        track.removeEventListener('ended', handleTrackEnded);
+      });
+    };
+  }, [streamRef.current]); // Depend on streamRef.current
+
   const toggleScreenShare = async () => {
     if (!isScreenSharing) {
       try {
