@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Trigger Vercel Deploy
         run: |
-          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+          curl -v --fail -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
