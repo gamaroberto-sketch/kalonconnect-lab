@@ -74,18 +74,37 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
   const clonedTrackRef = useRef(null);
 
   // 🟢 ACHADO #16: Autoplay Error Handler
+  // 🟢 ACHADO #3 (Safari Overlay State)
+  const [showSafariOverlay, setShowSafariOverlay] = useState(false);
+
+  const handleOverlayClick = () => {
+    setShowSafariOverlay(false);
+    // Try to blindly play any media elements
+    document.querySelectorAll('video, audio').forEach(el => {
+      el.play().catch(() => { });
+    });
+  };
+
+  // 🟢 ACHADO #16 Override: Handle Autoplay Error with Safari Specifics
   const handleAutoPlayError = (err) => {
     // Detect "NotAllowedError" which means Browser Autoplay Policy blocked it
     if (err?.name === 'NotAllowedError' || (err?.message && err.message.includes('play'))) {
-      console.error("🛑 Browser Autoplay Blocked!");
-      const event = new CustomEvent("kalon-toast", {
-        detail: {
-          type: 'warning',
-          title: 'Reprodução Bloqueada',
-          message: '▶️ Clique na tela para iniciar o vídeo (restrição do navegador).'
-        }
-      });
-      window.dispatchEvent(event);
+      console.error("🛑 Autoplay Error:", err);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+      if (isSafari) {
+        setShowSafariOverlay(true);
+      } else {
+        // Default Toast for others
+        const event = new CustomEvent("kalon-toast", {
+          detail: {
+            type: 'warning',
+            title: 'Reprodução Bloqueada',
+            message: '▶️ Clique na tela para iniciar o vídeo (restrição do navegador).'
+          }
+        });
+        window.dispatchEvent(event);
+      }
     }
   };
 
@@ -398,28 +417,7 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     { onlySubscribed: false }
   );
 
-  // 🟢 ACHADO #3 (Safari Overlay State)
-  const [showSafariOverlay, setShowSafariOverlay] = useState(false);
 
-  // 🟢 ACHADO #16 Override: Handle Autoplay Error with Safari Specifics
-  const handleAutoPlayError = (err) => {
-    console.error("🛑 Autoplay Error:", err);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-    if (isSafari) {
-      setShowSafariOverlay(true);
-    } else {
-      // Default Toast for others
-      const event = new CustomEvent("kalon-toast", {
-        detail: {
-          type: 'warning',
-          title: 'Reprodução Bloqueada',
-          message: '▶️ Clique na tela para iniciar o vídeo.'
-        }
-      });
-      window.dispatchEvent(event);
-    }
-  };
 
   const remoteCameraTrack = tracks.find((t) => !t.participant.isLocal && t.source === Track.Source.Camera);
   const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare);
