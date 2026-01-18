@@ -115,7 +115,7 @@ const GuidePage = () => {
                         <li>Se houver travamentos constantes.</li>
                         <li>Se não conseguirem se ouvir claramente.</li>
                     </ul>
-                    <p className="mt-4"><strong>Sessões Longas (>60min):</strong> Faça pausas técnicas ou reinicie a sala preventivamente se notar instabilidade.</p>
+                    <p className="mt-4"><strong>Sessões Longas (&gt;60min):</strong> Faça pausas técnicas ou reinicie a sala preventivamente se notar instabilidade.</p>
 
                     <hr className="my-8" />
 
