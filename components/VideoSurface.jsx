@@ -398,6 +398,29 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     { onlySubscribed: false }
   );
 
+  // 🟢 ACHADO #3 (Safari Overlay State)
+  const [showSafariOverlay, setShowSafariOverlay] = useState(false);
+
+  // 🟢 ACHADO #16 Override: Handle Autoplay Error with Safari Specifics
+  const handleAutoPlayError = (err) => {
+    console.error("🛑 Autoplay Error:", err);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    if (isSafari) {
+      setShowSafariOverlay(true);
+    } else {
+      // Default Toast for others
+      const event = new CustomEvent("kalon-toast", {
+        detail: {
+          type: 'warning',
+          title: 'Reprodução Bloqueada',
+          message: '▶️ Clique na tela para iniciar o vídeo.'
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  };
+
   const remoteCameraTrack = tracks.find((t) => !t.participant.isLocal && t.source === Track.Source.Camera);
   const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare);
 
@@ -432,6 +455,20 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
             </div>
           )}
         </div>
+
+        {/* 🟢 ACHADO #M3: Safari Autoplay Overlay */}
+        {showSafariOverlay && (
+          <div
+            onClick={handleOverlayClick}
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
+          >
+            <div className="text-center p-6 bg-white/10 rounded-2xl border border-white/20 shadow-2xl animate-pulse">
+              <div className="text-4xl mb-4">▶️</div>
+              <h3 className="text-xl font-bold text-white mb-2">Toque para Ativar o Vídeo</h3>
+              <p className="text-white/60 text-sm">O iOS requer sua permissão para iniciar.</p>
+            </div>
+          </div>
+        )}
       </div>
       <RoomAudioRenderer />
     </>
@@ -460,6 +497,29 @@ const VideoSurface = ({ roomId }) => {
   } = useVideoPanel();
 
   const { t } = useTranslation();
+
+  // 🟢 ACHADO #M2: iOS Lock Screen Handling (Missing Logic Restoration)
+  const [shouldConnect, setShouldConnect] = useState(true);
+
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (!isIOS) return;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log("📱 iOS Background: Pausing Connection...");
+        setShouldConnect(false);
+      } else {
+        console.log("📱 iOS Foreground: Resuming...");
+        setShouldConnect(true);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 
   // 🟢 REFACTOR PHASE 1: Decoupled Connection Logic
   // We use the new hook to manage LiveKit session state
