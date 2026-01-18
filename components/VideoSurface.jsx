@@ -5,7 +5,7 @@ import { VideoOff, Loader2 } from "lucide-react";
 import { useVideoPanel } from "./VideoPanelContext";
 import { useTranslation } from '../hooks/useTranslation';
 import { useConsultationSession } from '../hooks/useConsultationSession'; // 🟢 Added missing import
-import { LiveKitRoom, RoomAudioRenderer, useTracks, useLocalParticipant, VideoTrack, useRoomContext } from "@livekit/components-react";
+import { LiveKitRoom, RoomAudioRenderer, useTracks, useLocalParticipant, VideoTrack, useRoomContext, useParticipants } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
 // 🎥 COMPONENT 1: LOCAL VIDEO (Persistent)
@@ -47,7 +47,7 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
 // 🎥 COMPONENT 2: REMOTE SESSION (Transient)
 // This handles the connection logic, media publishing, and remote video rendering.
 // It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError }) => {
+const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError, setHasRemoteParticipants }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
   const [publishedTrack, setPublishedTrack] = useState(null);
@@ -231,6 +231,14 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     });
   }, [isAudioOn, localParticipant]);
 
+  // 🟢 ACHADO #8: Participant Presence Sync
+  const participants = useParticipants();
+  useEffect(() => {
+    if (typeof setHasRemoteParticipants !== 'function') return;
+    const hasRemote = participants.some(p => !p.isLocal);
+    setHasRemoteParticipants(hasRemote);
+  }, [participants, setHasRemoteParticipants]);
+
   // D. 📥 Render Remote Tracks
   const tracks = useTracks(
     [
@@ -329,7 +337,12 @@ const VideoSurface = ({ roomId }) => {
     }
   }, [isRoomConnected, isConnected, setIsConnected]);
 
-  const showLocalPreview = isCameraPreviewOn || isVideoOn || isSessionStarted;
+  // 🟢 ACHADO #1: Truthful State
+  const [isActuallyPublishing, setIsActuallyPublishing] = useState(false);
+  // 🟢 ACHADO #6: Reconnecting State
+  const [isReconnecting, setIsReconnecting] = useState(false);
+  // 🟢 ACHADO #8: Participant Awareness
+  const [hasRemoteParticipants, setHasRemoteParticipants] = useState(false);
 
   return (
     <div className="h-full w-full flex flex-col lg:flex-row gap-4 bg-gray-900 rounded-3xl overflow-hidden p-4">
@@ -337,10 +350,29 @@ const VideoSurface = ({ roomId }) => {
       {/* 🟢 COMPONENT 1: LOCAL VIDEO (ALWAYS ON) */}
       <div className="relative flex-1 flex flex-col">
         {/* UPPER STATUS INDICATOR */}
-        <div className="absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 shadow-lg">
-          <div className={`w-3 h-3 rounded-full ${isRoomConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+        <div className={`absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border shadow-lg ${isReconnecting
+          ? "bg-orange-500/80 border-orange-400/50" // RECONECTANDO
+          : isRoomConnected && hasRemoteParticipants
+            ? "bg-green-500/80 border-green-400/50" // AO VIVO (COM CLIENTE)
+            : isRoomConnected
+              ? "bg-blue-500/80 border-blue-400/50" // AGUARDANDO (CONECTADO MAS SOZINHO)
+              : "bg-red-500/80 border-red-400/50" // OFFLINE
+          }`}>
+          <div className={`w-3 h-3 rounded-full ${isReconnecting
+            ? "bg-white animate-ping"
+            : isRoomConnected && hasRemoteParticipants && isActuallyPublishing
+              ? "bg-white animate-pulse"
+              : "bg-white/50"
+            }`} />
           <span className="text-xs font-bold text-white tracking-wide uppercase">
-            {isRoomConnected ? "ONLINE (Ao Vivo)" : "OFFLINE"}
+            {isReconnecting
+              ? "RECONECTANDO..."
+              : isRoomConnected && hasRemoteParticipants
+                ? "AO VIVO (Cliente Conectado)"
+                : isRoomConnected
+                  ? "AGUARDANDO CLIENTE"
+                  : "OFFLINE"
+            }
           </span>
         </div>
 
@@ -369,12 +401,26 @@ const VideoSurface = ({ roomId }) => {
           video={false} // We handle video manually via RemoteSessionLogic
           audio={true}
           style={{ display: 'contents' }}
+          onReconnecting={() => { // 🟢 ACHADO #6
+            console.log("🔄 LiveKit Reconnecting...");
+            setIsReconnecting(true);
+            const event = new CustomEvent("kalon-toast", {
+              detail: {
+                type: 'warning',
+                title: 'Conexão Instável',
+                message: '🔄 Tentando reconectar automaticamente...'
+              }
+            });
+            window.dispatchEvent(event);
+          }}
           onConnected={() => {
             console.log("✅ [PROFESSIONAL] LiveKit Connected!");
+            setIsReconnecting(false); // 🟢 Reset Reconnecting
             // 🟢 ACHADO #5: Reset Reconnect Counter on Success
             window.kalon_reconnect_attempts = 0;
           }}
           onDisconnected={async (reason) => {
+            setIsReconnecting(false); // 🟢 Reset Reconnecting
             console.warn("⚠️ [PROFESSIONAL] LiveKit Disconnected!", reason);
 
             // 🔴 ACHADO #13: Immediate Disconnect Feedback & Auto-Reconnect
@@ -416,7 +462,7 @@ const VideoSurface = ({ roomId }) => {
             }
           }}
           onError={(err) => {
-            console.error("❌ [PROFESSIONAL] LiveKit Error:", err);
+            // console.error("❌ LiveKit Error (Suppressed for User)", err);
           }}
         >
           <RemoteSessionLogic
@@ -434,6 +480,7 @@ const VideoSurface = ({ roomId }) => {
               console.error("❌ Fatal Media Error triggered");
               disconnectSession();
             }}
+            setHasRemoteParticipants={setHasRemoteParticipants} // 🟢 ACHADO #8
           />
         </LiveKitRoom>
       ) : (
