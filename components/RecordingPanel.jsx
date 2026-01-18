@@ -990,7 +990,22 @@ const RecordingPanel = () => {
     }
 
     try {
-      const generatedSessionId = new Date().toISOString().replace(/[:.]/g, "-");
+      // 🟢 ACHADO #G2: Server-Side Timestamp (Anti-Tampering)
+      let serverTime = Date.now();
+      try {
+        const timeRes = await fetch('/api/server-time');
+        if (timeRes.ok) {
+          const timeData = await timeRes.json();
+          // Support flexible payload
+          if (timeData.timestamp) serverTime = timeData.timestamp;
+          else if (timeData.iso) serverTime = new Date(timeData.iso).getTime();
+          console.log("🕒 Recording Session synced with Server Time:", new Date(serverTime).toISOString());
+        }
+      } catch (err) {
+        console.warn("⚠️ Server time fetch failed. Using local fallback.", err);
+      }
+
+      const generatedSessionId = new Date(serverTime).toISOString().replace(/[:.]/g, "-");
       setSessionId(generatedSessionId);
       loadDraftIfExists(generatedSessionId);
       const stream = await buildStreamForMode(recordingMode);
