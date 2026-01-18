@@ -47,7 +47,7 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
 // 🎥 COMPONENT 2: REMOTE SESSION (Transient)
 // This handles the connection logic, media publishing, and remote video rendering.
 // It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, toggleScreenShare }) => {
+const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, toggleScreenShare, setIsActuallyPublishing }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
   const [publishedTrack, setPublishedTrack] = useState(null);
@@ -146,6 +146,37 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     room.on('localTrackUnpublished', handleLocalTrackUnpublished);
     return () => room.off('localTrackUnpublished', handleLocalTrackUnpublished);
   }, [room, isScreenSharing, toggleScreenShare]);
+
+  // 🟢 ACHADO #1: Truthful Publication State
+  // Syncs the internal publication state with the parent component for accurate UI feedback
+  useEffect(() => {
+    if (typeof setIsActuallyPublishing !== 'function') return;
+
+    const checkPublishState = () => {
+      const isActive = !!(
+        publishedTrack &&
+        publishedTrack.track &&
+        !publishedTrack.isMuted
+      );
+      setIsActuallyPublishing(isActive);
+    };
+
+    // Initial check
+    checkPublishState();
+
+    // Add listeners for mute changes if track exists
+    if (publishedTrack) {
+      publishedTrack.on('muted', checkPublishState);
+      publishedTrack.on('unmuted', checkPublishState);
+    }
+
+    return () => {
+      if (publishedTrack) {
+        publishedTrack.off('muted', checkPublishState);
+        publishedTrack.off('unmuted', checkPublishState);
+      }
+    };
+  }, [publishedTrack, setIsActuallyPublishing]);
 
   // D. 📥 Render Remote Tracks
   const tracks = useTracks(
