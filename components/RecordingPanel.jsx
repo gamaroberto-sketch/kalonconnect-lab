@@ -215,6 +215,7 @@ const RecordingPanel = () => {
   const mediaRecorderRef = useRef(null);
   const activeStreamRef = useRef(null);
   const recordedChunksRef = useRef([]);
+  const recordingMimeTypeRef = useRef(null); // 🟢 G3: Store mimeType for backups
   const playbackRef = useRef(null);
 
   const loadHistory = useCallback(async () => {
@@ -306,6 +307,34 @@ const RecordingPanel = () => {
       setRecordingElapsed(diff >= 0 ? diff : 0);
     }
   }, [isRecording, localSessionTime, recordingStartSessionTime]);
+
+  // 🟢 ACHADO #G3: Incremental Backup Strategy
+  // Every 5 minutes, we save the current progress to avoid total loss in case of crash.
+  useEffect(() => {
+    if (!isRecording) return;
+
+    // 5 minutes interval = 300,000 ms
+    const BACKUP_INTERVAL = 5 * 60 * 1000;
+
+    const intervalId = setInterval(async () => {
+      if (recordedChunksRef.current.length > 0 && recordingMimeTypeRef.current) {
+        console.log("💾 [BACKUP] Executing incremental save...");
+        const blob = new Blob(recordedChunksRef.current, { type: recordingMimeTypeRef.current });
+        try {
+          // We reuse saveTempRecording which overwrites the temp file.
+          // This ensures the server always has the LATEST valid snapshot.
+          await saveTempRecording(blob, recordingMimeTypeRef.current);
+
+          // Notify user unobtrusively (optional, maybe just log)
+          // setNotification("Backup de segurança salvo."); 
+        } catch (err) {
+          console.warn("⚠️ Incremental backup failed:", err);
+        }
+      }
+    }, BACKUP_INTERVAL);
+
+    return () => clearInterval(intervalId);
+  }, [isRecording, saveTempRecording]);
 
   useEffect(() => {
     return () => {
@@ -1017,6 +1046,7 @@ const RecordingPanel = () => {
         "audio/webm"
       ];
       const mimeType = mimeTypeCandidates.find((type) => MediaRecorder.isTypeSupported(type)) || "video/webm";
+      recordingMimeTypeRef.current = mimeType; // 🟢 G3: Store for backup
       const recorder = new MediaRecorder(stream, { mimeType });
       recordedChunksRef.current = [];
       recorder.ondataavailable = handleRecordingDataAvailable;
