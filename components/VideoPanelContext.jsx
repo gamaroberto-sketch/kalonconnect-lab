@@ -445,8 +445,25 @@ export const VideoPanelProvider = ({
       return streamRef.current;
     }
     try {
-      // 🟢 ACHADO #13: Check Permissions First
-      if (navigator.permissions && navigator.permissions.query) {
+      // 🟢 ACHADO #M1: Mobile Safari/iOS Detection
+      const ua = navigator.userAgent;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+
+      if (isIOS || isSafari) {
+        // iOS/Safari often fail on permissions.query or need explicit gesture
+        console.log("📱 Mobile/Safari detected: Skipping permission query & showing guidance.");
+        const event = new CustomEvent("kalon-toast", {
+          detail: {
+            type: 'info',
+            title: 'Permissão Necessária',
+            message: '📱 Toque em "Permitir" quando solicitado pelo navegador para usar Câmera e Microfone.',
+            duration: 5000
+          }
+        });
+        window.dispatchEvent(event);
+      } else if (navigator.permissions && navigator.permissions.query) {
+        // Desktop Chrome/Edge Logic
         try {
           const camPerm = await navigator.permissions.query({ name: 'camera' });
           const micPerm = await navigator.permissions.query({ name: 'microphone' });
@@ -464,7 +481,7 @@ export const VideoPanelProvider = ({
             return null;
           }
         } catch (warn) {
-          // Safari/Firefox compatibility fallback
+          // Fallback
         }
       }
 
