@@ -130,9 +130,8 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
       }
     };
 
-    // Trigger with a tiny initial delay to let the stack settle
-    const initTimer = setTimeout(() => handleTrack(), 500);
-    return () => clearTimeout(initTimer);
+    // 🟢 ACHADO #11: Immediate Publish
+    handleTrack();
 
   }, [localParticipant, currentStream, processedTrack, isConnected, isVideoOn, publishedTrack, room]);
 
