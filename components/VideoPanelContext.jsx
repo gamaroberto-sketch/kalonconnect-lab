@@ -313,11 +313,21 @@ export const VideoPanelProvider = ({
       document.removeEventListener("visibilitychange", handleVisibility);
   }, [logPerformanceEvent]);
 
+  // 🟢 ACHADO #1: Drift-Free Timer (Absolute Timestamp)
+  const sessionStartTimeRef = useRef(null);
+
   useEffect(() => {
     if (isSessionStarted) {
+      // Calculate start time relative to now, preserving any previously elapsed time (resume support)
+      // This prevents drift by relying on system clock delta instead of interval count
+      sessionStartTimeRef.current = Date.now() - (localSessionTime * 1000);
+
       const timer = setInterval(() => {
-        setLocalSessionTime((prev) => prev + 1);
+        const now = Date.now();
+        const elapsedSeconds = Math.floor((now - sessionStartTimeRef.current) / 1000);
+        setLocalSessionTime(elapsedSeconds);
       }, 1000);
+
       return () => clearInterval(timer);
     }
   }, [isSessionStarted]);
