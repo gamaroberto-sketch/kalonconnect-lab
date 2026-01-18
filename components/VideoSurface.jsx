@@ -6,7 +6,7 @@ import { useVideoPanel } from "./VideoPanelContext";
 import { useTranslation } from '../hooks/useTranslation';
 import { useConsultationSession } from '../hooks/useConsultationSession'; // 🟢 Added missing import
 import { LiveKitRoom, RoomAudioRenderer, useTracks, useLocalParticipant, VideoTrack, useRoomContext, useParticipants } from "@livekit/components-react";
-import { Track } from "livekit-client";
+import { Track, ConnectionQuality } from "livekit-client";
 
 // 🎥 COMPONENT 1: LOCAL VIDEO (Persistent)
 // This renders the local camera stream directly from the browser, completely independent of LiveKit connection status.
@@ -319,6 +319,36 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
       setParticipantStats({ total, transmitting });
     }
   }, [participants, setHasRemoteParticipants, setParticipantStats]);
+
+  // 🟢 ACHADO #17: Connection Quality Monitoring
+  useEffect(() => {
+    if (!room) return;
+
+    const handleQualityChanged = (connectionQuality, participant) => {
+      // We care about REMOTE participants having POOR connection
+      if (!participant.isLocal && connectionQuality === ConnectionQuality.Poor) {
+        console.warn(`⚠️ Client Connection Poor: ${participant.identity}`);
+
+        // Use a simple debounce via timestamp check to avoid spamming
+        const now = Date.now();
+        const lastToast = window.kalon_last_quality_toast || 0;
+        if (now - lastToast > 30000) { // Max once per 30 seconds
+          window.kalon_last_quality_toast = now;
+          const event = new CustomEvent("kalon-toast", {
+            detail: {
+              type: 'warning',
+              title: 'Conexão do Cliente Instável',
+              message: '📶 A conexão do cliente está fraca. Pode haver cortes de áudio/vídeo.'
+            }
+          });
+          window.dispatchEvent(event);
+        }
+      }
+    };
+
+    room.on('connectionQualityChanged', handleQualityChanged);
+    return () => room.off('connectionQualityChanged', handleQualityChanged);
+  }, [room]);
 
   // 🟢 ACHADO #14: Sync Real Room State
   useEffect(() => {
