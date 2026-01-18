@@ -458,6 +458,17 @@ const VideoSurface = ({ roomId }) => {
       if (targetRoom) {
         console.log(`🚀 [VideoSurface] Starting Session for: ${targetRoom}`);
         connectSession(targetRoom);
+      } else {
+        // 🟢 ACHADO #18: Missing Room ID Protection
+        console.error("❌ Cannot connect: No Consultation/Room ID found.");
+        const event = new CustomEvent("kalon-toast", {
+          detail: {
+            type: 'error',
+            title: 'Erro de Conexão',
+            message: '⚠️ ID da consulta não encontrado. Recarregue a página.'
+          }
+        });
+        window.dispatchEvent(event);
       }
     }
     // 🛡️ Disconnect if session stops
