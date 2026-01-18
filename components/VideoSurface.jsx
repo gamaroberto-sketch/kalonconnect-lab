@@ -507,7 +507,28 @@ const VideoSurface = ({ roomId }) => {
             }
           }}
           onError={(err) => {
-            // console.error("❌ LiveKit Error (Suppressed for User)", err);
+            console.error("❌ [PROFESSIONAL] LiveKit Error:", err);
+            // 🟢 ACHADO #7: Detect Token Expiration
+            const msg = (err?.message || JSON.stringify(err)).toLowerCase();
+            if (msg.includes("token") || msg.includes("auth") || msg.includes("permission")) {
+              console.error("🛑 Auth Error detected. Stopping reconnect.");
+
+              // 1. Show Toast
+              const event = new CustomEvent("kalon-toast", {
+                detail: {
+                  type: 'error',
+                  title: 'Sessão Expirada',
+                  message: '⏱️ Sessão expirada. Recarregue a página para continuar.'
+                }
+              });
+              window.dispatchEvent(event);
+
+              // 2. Prevent Auto-Reconnect Loop
+              window.kalon_reconnect_attempts = 100; // Force Max to abort retry logic
+
+              // 3. Force Session Cleanup
+              disconnectSession();
+            }
           }}
         >
           <RemoteSessionLogic
