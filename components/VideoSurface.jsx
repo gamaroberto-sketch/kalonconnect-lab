@@ -184,81 +184,82 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
       publishedTrack.on('unmuted', checkPublishState);
     }
 
-    if (publishedTrack) {
-      publishedTrack.off('muted', checkPublishState);
-      publishedTrack.off('unmuted', checkPublishState);
-    }
-  };
-}, [publishedTrack, setIsActuallyPublishing]);
+    return () => {
+      if (publishedTrack) {
+        publishedTrack.off('muted', checkPublishState);
+        publishedTrack.off('unmuted', checkPublishState);
+      }
+    };
+  }, [publishedTrack, setIsActuallyPublishing]);
 
-// 🟢 ACHADO #3: Sync UI with External Mute Events (e.g., Bandwidth Limits)
-useEffect(() => {
-  if (!publishedTrack || typeof setIsVideoOn !== 'function') return;
+  // 🟢 ACHADO #3: Sync UI with External Mute Events (e.g., Bandwidth Limits)
+  useEffect(() => {
+    if (!publishedTrack || typeof setIsVideoOn !== 'function') return;
 
-  const handleMuteChanged = (track) => {
-    // Only react if track is muted/unmuted externally (not by user action which manages isVideoOn)
-    // Actually, we should enforce UI consistency.
-    if (track && track.isMuted && isVideoOn) {
-      console.warn("⚠️ Track muted externally (e.g. bandwidth or device loss)");
-      setIsVideoOn(false); // Force UI to "Off"
+    const handleMuteChanged = (track) => {
+      // Only react if track is muted/unmuted externally (not by user action which manages isVideoOn)
+      // Actually, we should enforce UI consistency.
+      if (track && track.isMuted && isVideoOn) {
+        console.warn("⚠️ Track muted externally (e.g. bandwidth or device loss)");
+        setIsVideoOn(false); // Force UI to "Off"
 
-      const event = new CustomEvent("kalon-toast", {
-        detail: {
-          type: 'warning',
-          title: 'Vídeo Pausado',
-          message: '⚠️ Sua transmissão de vídeo foi pausada automaticamente pelo sistema (conexão instável).'
-        }
-      });
-      window.dispatchEvent(event);
-    }
-  };
+        const event = new CustomEvent("kalon-toast", {
+          detail: {
+            type: 'warning',
+            title: 'Vídeo Pausado',
+            message: '⚠️ Sua transmissão de vídeo foi pausada automaticamente pelo sistema (conexão instável).'
+          }
+        });
+        window.dispatchEvent(event);
+      }
+    };
 
-  // Listen specifically on the PublishedTrack
-  publishedTrack.on('muted', handleMuteChanged);
+    // Listen specifically on the PublishedTrack
+    publishedTrack.on('muted', handleMuteChanged);
 
-  return () => {
-    publishedTrack.off('muted', handleMuteChanged);
-  };
-}, [publishedTrack, isVideoOn, setIsVideoOn]);
+    return () => {
+      publishedTrack.off('muted', handleMuteChanged);
+    };
+  }, [publishedTrack, isVideoOn, setIsVideoOn]);
 
-// D. 📥 Render Remote Tracks
-const tracks = useTracks(
-  [
-    { source: Track.Source.Camera, withPlaceholder: true },
-    { source: Track.Source.ScreenShare, withPlaceholder: false },
-  ],
-  { onlySubscribed: false }
-);
+  // D. 📥 Render Remote Tracks
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: false }
+  );
 
-const remoteCameraTrack = tracks.find((t) => !t.participant.isLocal && t.source === Track.Source.Camera);
-const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare);
+  const remoteCameraTrack = tracks.find((t) => !t.participant.isLocal && t.source === Track.Source.Camera);
+  const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare);
 
-return (
-  <>
-    <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
-      <div className="h-full w-full flex items-center justify-center relative">
-        {screenTrack ? (
-          <VideoTrack trackRef={screenTrack} className="h-full w-full object-contain" />
-        ) : remoteCameraTrack ? (
-          <VideoTrack trackRef={remoteCameraTrack} className="h-full w-full object-contain" style={{ objectFit: 'contain' }} />
-        ) : (
-          <div className="flex flex-col items-center">
-            <div className="text-white/50 animate-pulse text-lg mb-2">
-              {isConnected
-                ? (isProfessional ? "Aguardando cliente..." : "Aguardando Profissional...")
-                : "Conectando..."
-              }
+  return (
+    <>
+      <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
+        <div className="h-full w-full flex items-center justify-center relative">
+          {screenTrack ? (
+            <VideoTrack trackRef={screenTrack} className="h-full w-full object-contain" />
+          ) : remoteCameraTrack ? (
+            <VideoTrack trackRef={remoteCameraTrack} className="h-full w-full object-contain" style={{ objectFit: 'contain' }} />
+          ) : (
+            <div className="flex flex-col items-center">
+              <div className="text-white/50 animate-pulse text-lg mb-2">
+                {isConnected
+                  ? (isProfessional ? "Aguardando cliente..." : "Aguardando Profissional...")
+                  : "Conectando..."
+                }
+              </div>
+              <div className="text-xs text-white/30 font-mono bg-white/10 px-2 py-1 rounded">
+                Sala: {localParticipant?.room?.name || "..."}
+              </div>
             </div>
-            <div className="text-xs text-white/30 font-mono bg-white/10 px-2 py-1 rounded">
-              Sala: {localParticipant?.room?.name || "..."}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-    <RoomAudioRenderer />
-  </>
-);
+      <RoomAudioRenderer />
+    </>
+  );
 };
 
 // 🚀 MAIN COMPONENT
