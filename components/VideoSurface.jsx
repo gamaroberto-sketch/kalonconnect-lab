@@ -5,6 +5,7 @@ import { VideoOff, Loader2 } from "lucide-react";
 import { useVideoPanel } from "./VideoPanelContext";
 import { useTranslation } from '../hooks/useTranslation';
 import { useConsultationSession } from '../hooks/useConsultationSession'; // 🟢 Added missing import
+import ReconnectionTelemetry from './ReconnectionTelemetry'; // 🟢 Ethical Telemetry
 import { LiveKitRoom, RoomAudioRenderer, useTracks, useLocalParticipant, VideoTrack, useRoomContext, useParticipants } from "@livekit/components-react";
 import { Track, ConnectionQuality } from "livekit-client";
 
@@ -759,6 +760,7 @@ const VideoSurface = ({ roomId }) => {
             setRoomState={setRoomState} // 🟢 ACHADO #14
             setParticipantStats={setParticipantStats} // 🟢 ACHADO #15
           />
+          <ReconnectionTelemetry />
         </LiveKitRoom>
       ) : (
         /* DISCONNECTED / CONNECTING STATE */
