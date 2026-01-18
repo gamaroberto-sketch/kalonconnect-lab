@@ -717,9 +717,10 @@ export const VideoPanelProvider = ({
       }
     };
 
-    // 🟢 ACHADO #2: Reliable Cleanup
+    // 🟢 ACHADO #2 & #5: Reliable & Safe Cleanup
     // Capture the tracks at the moment of effect execution to ensure we clean up the SAME tracks
-    const tracks = streamRef.current.getTracks();
+    // Also protects against streamRef becoming null (Achado #5)
+    const tracks = streamRef.current ? streamRef.current.getTracks() : [];
 
     tracks.forEach(track => {
       // Defensive removal not needed here as we use fresh handler each time, 
