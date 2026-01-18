@@ -222,208 +222,208 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
         if (isScreenSharing) toggleScreenShare();
       }
     };
-  };
 
-  // 🟢 ACHADO #2: Defensive Cleanup (Prevent Listener Accumulation)
-  // Always remove potential previous listener before adding new one
-  room.off('localTrackUnpublished', handleLocalTrackUnpublished);
-  room.on('localTrackUnpublished', handleLocalTrackUnpublished);
 
-  return () => {
-    if (room) {
-      room.off('localTrackUnpublished', handleLocalTrackUnpublished);
-    }
-  };
-}, [room, isScreenSharing, toggleScreenShare]);
+    // 🟢 ACHADO #2: Defensive Cleanup (Prevent Listener Accumulation)
+    // Always remove potential previous listener before adding new one
+    room.off('localTrackUnpublished', handleLocalTrackUnpublished);
+    room.on('localTrackUnpublished', handleLocalTrackUnpublished);
 
-// 🟢 ACHADO #1: Truthful Publication State
-// Syncs the internal publication state with the parent component for accurate UI feedback
-useEffect(() => {
-  if (typeof setIsActuallyPublishing !== 'function') return;
+    return () => {
+      if (room) {
+        room.off('localTrackUnpublished', handleLocalTrackUnpublished);
+      }
+    };
+  }, [room, isScreenSharing, toggleScreenShare]);
 
-  const checkPublishState = () => {
-    const isActive = !!(
-      publishedTrack &&
-      publishedTrack.track &&
-      !publishedTrack.isMuted
-    );
-    setIsActuallyPublishing(isActive);
-  };
+  // 🟢 ACHADO #1: Truthful Publication State
+  // Syncs the internal publication state with the parent component for accurate UI feedback
+  useEffect(() => {
+    if (typeof setIsActuallyPublishing !== 'function') return;
 
-  // Initial check
-  checkPublishState();
+    const checkPublishState = () => {
+      const isActive = !!(
+        publishedTrack &&
+        publishedTrack.track &&
+        !publishedTrack.isMuted
+      );
+      setIsActuallyPublishing(isActive);
+    };
 
-  // Add listeners for mute changes if track exists
-  if (publishedTrack) {
-    publishedTrack.on('muted', checkPublishState);
-    publishedTrack.on('unmuted', checkPublishState);
-  }
+    // Initial check
+    checkPublishState();
 
-  return () => {
+    // Add listeners for mute changes if track exists
     if (publishedTrack) {
-      publishedTrack.off('muted', checkPublishState);
-      publishedTrack.off('unmuted', checkPublishState);
+      publishedTrack.on('muted', checkPublishState);
+      publishedTrack.on('unmuted', checkPublishState);
     }
-  };
-}, [publishedTrack, setIsActuallyPublishing]);
 
-// 🟢 ACHADO #3: Sync UI with External Mute Events (e.g., Bandwidth Limits)
-useEffect(() => {
-  if (!publishedTrack || typeof setIsVideoOn !== 'function') return;
+    return () => {
+      if (publishedTrack) {
+        publishedTrack.off('muted', checkPublishState);
+        publishedTrack.off('unmuted', checkPublishState);
+      }
+    };
+  }, [publishedTrack, setIsActuallyPublishing]);
 
-  const handleMuteChanged = (track) => {
-    // Only react if track is muted/unmuted externally (not by user action which manages isVideoOn)
-    // Actually, we should enforce UI consistency.
-    if (track && track.isMuted && isVideoOn) {
-      console.warn("⚠️ Track muted externally (e.g. bandwidth or device loss)");
-      setIsVideoOn(false); // Force UI to "Off"
+  // 🟢 ACHADO #3: Sync UI with External Mute Events (e.g., Bandwidth Limits)
+  useEffect(() => {
+    if (!publishedTrack || typeof setIsVideoOn !== 'function') return;
 
-      const event = new CustomEvent("kalon-toast", {
-        detail: {
-          type: 'warning',
-          title: 'Vídeo Pausado',
-          message: '⚠️ Sua transmissão de vídeo foi pausada automaticamente pelo sistema (conexão instável).'
-        }
-      });
-      window.dispatchEvent(event);
-    }
-  };
+    const handleMuteChanged = (track) => {
+      // Only react if track is muted/unmuted externally (not by user action which manages isVideoOn)
+      // Actually, we should enforce UI consistency.
+      if (track && track.isMuted && isVideoOn) {
+        console.warn("⚠️ Track muted externally (e.g. bandwidth or device loss)");
+        setIsVideoOn(false); // Force UI to "Off"
 
-  // Listen specifically on the PublishedTrack
-  publishedTrack.on('muted', handleMuteChanged);
-
-  return () => {
-    publishedTrack.off('muted', handleMuteChanged);
-  };
-}, [publishedTrack, isVideoOn, setIsVideoOn]);
-
-// 🟢 ACHADO #4: Sync Audio State with LiveKit Publication
-useEffect(() => {
-  if (!localParticipant) return;
-  // Sincronizar estado local (isAudioOn) com a publication real
-  localParticipant.setMicrophoneEnabled(isAudioOn).catch(err => {
-    console.error("❌ Erro ao sincronizar microfone:", err);
-  });
-}, [isAudioOn, localParticipant]);
-
-// 🟢 ACHADO #8: Participant Presence Sync
-const participants = useParticipants();
-useEffect(() => {
-  if (typeof setHasRemoteParticipants !== 'function') return;
-
-  // 1. Basic Presence
-  const hasRemote = participants.some(p => !p.isLocal);
-  setHasRemoteParticipants(hasRemote);
-
-  // 🟢 ACHADO #15: Detailed Statistics
-  if (typeof setParticipantStats === 'function') {
-    const total = participants.length;
-    // Count participants who have at least one track published and unmuted
-    const transmitting = participants.filter(p => {
-      // Check both camera and microphone
-      const hasVideo = p.isCameraEnabled;
-      const hasAudio = p.isMicrophoneEnabled;
-      return hasVideo || hasAudio;
-    }).length;
-
-    setParticipantStats({ total, transmitting });
-  }
-}, [participants, setHasRemoteParticipants, setParticipantStats]);
-
-// 🟢 ACHADO #17: Connection Quality Monitoring
-useEffect(() => {
-  if (!room) return;
-
-  const handleQualityChanged = (connectionQuality, participant) => {
-    // We care about REMOTE participants having POOR connection
-    if (!participant.isLocal && connectionQuality === ConnectionQuality.Poor) {
-      console.warn(`⚠️ Client Connection Poor: ${participant.identity}`);
-
-      // Use a simple debounce via timestamp check to avoid spamming
-      const now = Date.now();
-      const lastToast = window.kalon_last_quality_toast || 0;
-      if (now - lastToast > 30000) { // Max once per 30 seconds
-        window.kalon_last_quality_toast = now;
         const event = new CustomEvent("kalon-toast", {
           detail: {
             type: 'warning',
-            title: 'Conexão do Cliente Instável',
-            message: '📶 A conexão do cliente está fraca. Pode haver cortes de áudio/vídeo.'
+            title: 'Vídeo Pausado',
+            message: '⚠️ Sua transmissão de vídeo foi pausada automaticamente pelo sistema (conexão instável).'
           }
         });
         window.dispatchEvent(event);
       }
+    };
+
+    // Listen specifically on the PublishedTrack
+    publishedTrack.on('muted', handleMuteChanged);
+
+    return () => {
+      publishedTrack.off('muted', handleMuteChanged);
+    };
+  }, [publishedTrack, isVideoOn, setIsVideoOn]);
+
+  // 🟢 ACHADO #4: Sync Audio State with LiveKit Publication
+  useEffect(() => {
+    if (!localParticipant) return;
+    // Sincronizar estado local (isAudioOn) com a publication real
+    localParticipant.setMicrophoneEnabled(isAudioOn).catch(err => {
+      console.error("❌ Erro ao sincronizar microfone:", err);
+    });
+  }, [isAudioOn, localParticipant]);
+
+  // 🟢 ACHADO #8: Participant Presence Sync
+  const participants = useParticipants();
+  useEffect(() => {
+    if (typeof setHasRemoteParticipants !== 'function') return;
+
+    // 1. Basic Presence
+    const hasRemote = participants.some(p => !p.isLocal);
+    setHasRemoteParticipants(hasRemote);
+
+    // 🟢 ACHADO #15: Detailed Statistics
+    if (typeof setParticipantStats === 'function') {
+      const total = participants.length;
+      // Count participants who have at least one track published and unmuted
+      const transmitting = participants.filter(p => {
+        // Check both camera and microphone
+        const hasVideo = p.isCameraEnabled;
+        const hasAudio = p.isMicrophoneEnabled;
+        return hasVideo || hasAudio;
+      }).length;
+
+      setParticipantStats({ total, transmitting });
     }
-  };
+  }, [participants, setHasRemoteParticipants, setParticipantStats]);
 
-  room.on('connectionQualityChanged', handleQualityChanged);
-  return () => room.off('connectionQualityChanged', handleQualityChanged);
-}, [room]);
+  // 🟢 ACHADO #17: Connection Quality Monitoring
+  useEffect(() => {
+    if (!room) return;
 
-// 🟢 ACHADO #14: Sync Real Room State
-useEffect(() => {
-  if (!room || typeof setRoomState !== 'function') return;
+    const handleQualityChanged = (connectionQuality, participant) => {
+      // We care about REMOTE participants having POOR connection
+      if (!participant.isLocal && connectionQuality === ConnectionQuality.Poor) {
+        console.warn(`⚠️ Client Connection Poor: ${participant.identity}`);
 
-  const syncState = () => {
-    setRoomState(room.state);
-  };
+        // Use a simple debounce via timestamp check to avoid spamming
+        const now = Date.now();
+        const lastToast = window.kalon_last_quality_toast || 0;
+        if (now - lastToast > 30000) { // Max once per 30 seconds
+          window.kalon_last_quality_toast = now;
+          const event = new CustomEvent("kalon-toast", {
+            detail: {
+              type: 'warning',
+              title: 'Conexão do Cliente Instável',
+              message: '📶 A conexão do cliente está fraca. Pode haver cortes de áudio/vídeo.'
+            }
+          });
+          window.dispatchEvent(event);
+        }
+      }
+    };
 
-  // Initial Sync
-  syncState();
+    room.on('connectionQualityChanged', handleQualityChanged);
+    return () => room.off('connectionQualityChanged', handleQualityChanged);
+  }, [room]);
 
-  room.on('connectionStateChanged', syncState);
-  return () => {
-    room.off('connectionStateChanged', syncState);
-  };
-}, [room, setRoomState]);
+  // 🟢 ACHADO #14: Sync Real Room State
+  useEffect(() => {
+    if (!room || typeof setRoomState !== 'function') return;
 
-// D. 📥 Render Remote Tracks
-const tracks = useTracks(
-  [
-    { source: Track.Source.Camera, withPlaceholder: true },
-    { source: Track.Source.ScreenShare, withPlaceholder: false },
-  ],
-  { onlySubscribed: false }
-);
+    const syncState = () => {
+      setRoomState(room.state);
+    };
 
-const remoteCameraTrack = tracks.find((t) => !t.participant.isLocal && t.source === Track.Source.Camera);
-const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare);
+    // Initial Sync
+    syncState();
 
-return (
-  <>
-    <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
-      <div className="h-full w-full flex items-center justify-center relative">
-        {screenTrack ? (
-          <VideoTrack
-            trackRef={screenTrack}
-            className="h-full w-full object-contain"
-            onError={handleAutoPlayError} // 🟢 ACHADO #16
-          />
-        ) : remoteCameraTrack ? (
-          <VideoTrack
-            trackRef={remoteCameraTrack}
-            className="h-full w-full object-contain"
-            style={{ objectFit: 'contain' }}
-            onError={handleAutoPlayError} // 🟢 ACHADO #16
-          />
-        ) : (
-          <div className="flex flex-col items-center">
-            <div className="text-white/50 animate-pulse text-lg mb-2">
-              {isConnected
-                ? (isProfessional ? "Aguardando cliente..." : "Aguardando Profissional...")
-                : "Conectando..."
-              }
+    room.on('connectionStateChanged', syncState);
+    return () => {
+      room.off('connectionStateChanged', syncState);
+    };
+  }, [room, setRoomState]);
+
+  // D. 📥 Render Remote Tracks
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: false }
+  );
+
+  const remoteCameraTrack = tracks.find((t) => !t.participant.isLocal && t.source === Track.Source.Camera);
+  const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare);
+
+  return (
+    <>
+      <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
+        <div className="h-full w-full flex items-center justify-center relative">
+          {screenTrack ? (
+            <VideoTrack
+              trackRef={screenTrack}
+              className="h-full w-full object-contain"
+              onError={handleAutoPlayError} // 🟢 ACHADO #16
+            />
+          ) : remoteCameraTrack ? (
+            <VideoTrack
+              trackRef={remoteCameraTrack}
+              className="h-full w-full object-contain"
+              style={{ objectFit: 'contain' }}
+              onError={handleAutoPlayError} // 🟢 ACHADO #16
+            />
+          ) : (
+            <div className="flex flex-col items-center">
+              <div className="text-white/50 animate-pulse text-lg mb-2">
+                {isConnected
+                  ? (isProfessional ? "Aguardando cliente..." : "Aguardando Profissional...")
+                  : "Conectando..."
+                }
+              </div>
+              <div className="text-xs text-white/30 font-mono bg-white/10 px-2 py-1 rounded">
+                Sala: {localParticipant?.room?.name || "..."}
+              </div>
             </div>
-            <div className="text-xs text-white/30 font-mono bg-white/10 px-2 py-1 rounded">
-              Sala: {localParticipant?.room?.name || "..."}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-    <RoomAudioRenderer />
-  </>
-);
+      <RoomAudioRenderer />
+    </>
+  );
 };
 
 // 🚀 MAIN COMPONENT
