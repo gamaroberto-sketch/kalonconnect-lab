@@ -425,6 +425,29 @@ export const VideoPanelProvider = ({
       return streamRef.current;
     }
     try {
+      // 🟢 ACHADO #13: Check Permissions First
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const camPerm = await navigator.permissions.query({ name: 'camera' });
+          const micPerm = await navigator.permissions.query({ name: 'microphone' });
+
+          if (camPerm.state === 'denied' || micPerm.state === 'denied') {
+            console.error("🛑 Permissão de mídia negada");
+            const event = new CustomEvent("kalon-toast", {
+              detail: {
+                type: 'error',
+                title: 'Permissão Negada',
+                message: '🚫 Acesso bloqueado. Clique no ícone de 🔒 na barra de endereço para permitir câmera e microfone.'
+              }
+            });
+            window.dispatchEvent(event);
+            return null;
+          }
+        } catch (warn) {
+          // Safari/Firefox compatibility fallback
+        }
+      }
+
       console.log('🎯 Solicitando getUserMedia (Safe Res)...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
