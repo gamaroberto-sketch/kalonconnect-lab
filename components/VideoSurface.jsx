@@ -60,6 +60,13 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
 const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError, setHasRemoteParticipants, setRoomState, setParticipantStats }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
+  const { localSessionTime } = useVideoPanel();
+  const sessionTimeRef = useRef(0);
+
+  useEffect(() => {
+    sessionTimeRef.current = localSessionTime;
+  }, [localSessionTime]);
+
   const [publishedTrack, setPublishedTrack] = useState(null);
 
   // A. 📤 Publish Manual Stream (CLONED)
@@ -341,7 +348,13 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
         // Use a simple debounce via timestamp check to avoid spamming
         const now = Date.now();
         const lastToast = window.kalon_last_quality_toast || 0;
-        if (now - lastToast > 30000) { // Max once per 30 seconds
+
+        // 🟢 ACHADO #4: Dynamic Debounce (Reduce fatigue in long sessions)
+        // If session > 1h (3600s), debounce 2min (120s). Else 30s.
+        const currentSessionTime = sessionTimeRef.current || 0;
+        const debounceMs = currentSessionTime > 3600 ? 120000 : 30000;
+
+        if (now - lastToast > debounceMs) {
           window.kalon_last_quality_toast = now;
           const event = new CustomEvent("kalon-toast", {
             detail: {
