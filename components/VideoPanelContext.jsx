@@ -717,12 +717,19 @@ export const VideoPanelProvider = ({
       }
     };
 
-    streamRef.current.getTracks().forEach(track => {
+    // 🟢 ACHADO #2: Reliable Cleanup
+    // Capture the tracks at the moment of effect execution to ensure we clean up the SAME tracks
+    const tracks = streamRef.current.getTracks();
+
+    tracks.forEach(track => {
+      // Defensive removal not needed here as we use fresh handler each time, 
+      // but ensure we don't duplicate if re-running
+      track.removeEventListener('ended', handleTrackEnded);
       track.addEventListener('ended', handleTrackEnded);
     });
 
     return () => {
-      streamRef.current.getTracks().forEach(track => {
+      tracks.forEach(track => {
         track.removeEventListener('ended', handleTrackEnded);
       });
     };
