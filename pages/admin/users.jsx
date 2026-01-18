@@ -1168,7 +1168,7 @@ const AdminUsersPage = () => {
                             <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                                 <div className="flex items-center justify-between mb-2">
                                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                        {t('adminUsers.filters.password')} // Reusing password label from filters which is just "Senha (Password)" or similar
+                                        {t('adminUsers.filters.password')}
                                     </label>
                                     <button
                                         onClick={() => copyToClipboard(resetPasswordModal.newPassword, 'reset-password')}

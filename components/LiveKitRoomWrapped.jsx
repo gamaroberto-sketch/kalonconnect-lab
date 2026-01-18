@@ -123,22 +123,6 @@ export default function LiveKitRoomWrapped({ token, wsUrl, connect, onDisconnect
   const [mediaPermissionError, setMediaPermissionError] = useState(null);
   const [hasRequestedPermissions, setHasRequestedPermissions] = useState(false);
 
-  if (!connect) {
-    return (
-      <div style={{ padding: 40, textAlign: "center" }}>
-        <h2>Aguardando você clicar para iniciar a consulta</h2>
-      </div>
-    );
-  }
-
-  if (!token || !wsUrl) {
-    return (
-      <div style={{ padding: 40, textAlign: "center" }}>
-        <h2>Aguardando credenciais válidas...</h2>
-      </div>
-    );
-  }
-
   const handleConnected = () => {
     console.log("✅ LiveKit: Conectado com sucesso!");
     setConnectionState("connected");
@@ -237,7 +221,6 @@ export default function LiveKitRoomWrapped({ token, wsUrl, connect, onDisconnect
   }, [connect, token, wsUrl, hasRequestedPermissions, connectionState]);
 
   // Log inicial
-  // Log inicial
   console.log("🚀 LiveKitRoomWrapped: Iniciando conexão...", {
     hasToken: !!token,
     hasWsUrl: !!wsUrl,
@@ -245,6 +228,23 @@ export default function LiveKitRoomWrapped({ token, wsUrl, connect, onDisconnect
     tokenType: typeof token,
     tokenPreview: typeof token === 'string' ? token.substring(0, 20) + "..." : "NOT_A_STRING",
   });
+
+  // Early returns AFTER all hooks
+  if (!connect) {
+    return (
+      <div style={{ padding: 40, textAlign: "center" }}>
+        <h2>Aguardando você clicar para iniciar a consulta</h2>
+      </div>
+    );
+  }
+
+  if (!token || !wsUrl) {
+    return (
+      <div style={{ padding: 40, textAlign: "center" }}>
+        <h2>Aguardando credenciais válidas...</h2>
+      </div>
+    );
+  }
 
   if (connectionError) {
     return (
