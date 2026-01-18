@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { VideoOff, Loader2 } from "lucide-react";
 import { useVideoPanel } from "./VideoPanelContext";
 import { useTranslation } from '../hooks/useTranslation';
@@ -53,6 +53,10 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
   const [publishedTrack, setPublishedTrack] = useState(null);
 
   // A. 📤 Publish Manual Stream (CLONED)
+  // 🟢 ACHADO #12: Clone cleanup ref
+  const clonedTrackRef = useRef(null);
+
+  // A. 📤 Publish Manual Stream (CLONED)
   useEffect(() => {
     if (!localParticipant || !currentStream || !isConnected || !room) return;
     const videoTrack = currentStream.getVideoTracks()[0];
@@ -83,7 +87,14 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
               console.log("🌟 Publishing Processed Track (Virtual Background)");
               trackToPublish = processedTrack;
             } else {
+              // 🟢 ACHADO #12: Cleanup previous clone
+              if (clonedTrackRef.current) {
+                clonedTrackRef.current.stop();
+                clonedTrackRef.current = null;
+              }
+
               trackToPublish = videoTrack.clone();
+              clonedTrackRef.current = trackToPublish; // Save reference
             }
 
             const pub = await localParticipant.publishTrack(trackToPublish, {
@@ -132,6 +143,15 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
 
     // 🟢 ACHADO #11: Immediate Publish
     handleTrack();
+
+    // 🟢 ACHADO #12: Cleanup on unmount/dep change
+    return () => {
+      if (clonedTrackRef.current) {
+        console.log("🧹 Cleaning up cloned track...");
+        clonedTrackRef.current.stop();
+        clonedTrackRef.current = null;
+      }
+    };
 
   }, [localParticipant, currentStream, processedTrack, isConnected, isVideoOn, publishedTrack, room]);
 
