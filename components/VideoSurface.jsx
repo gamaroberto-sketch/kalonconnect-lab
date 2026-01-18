@@ -576,7 +576,7 @@ const VideoSurface = ({ roomId }) => {
         <LiveKitRoom
           token={liveKitToken}
           serverUrl={liveKitWsUrl}
-          connect={true} // Hook ensures we have token, so connect immediately
+          connect={true && shouldConnect} // 🟢 ACHADO #M2: Control Connection State
           video={false} // We handle video manually via RemoteSessionLogic
           audio={true}
           style={{ display: 'contents' }}
