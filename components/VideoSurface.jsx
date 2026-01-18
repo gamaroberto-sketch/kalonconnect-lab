@@ -47,7 +47,7 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
 // 🎥 COMPONENT 2: REMOTE SESSION (Transient)
 // This handles the connection logic, media publishing, and remote video rendering.
 // It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, toggleScreenShare, setIsActuallyPublishing }) => {
+const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, toggleScreenShare, setIsActuallyPublishing, onFatalError }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
   const [publishedTrack, setPublishedTrack] = useState(null);
@@ -99,7 +99,21 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
             if (isRetriable) {
               console.warn(`⚠️ Publish failed (Attempt ${attempts + 1}/5) - Retrying...`);
             } else {
-              // console.error(`❌ Publish failed (Final Attempt):`, err); // Suppress log to reduce user panic
+              // 🔴 ACHADO #2: Explicit Feedback & Offline State
+              console.error(`❌ Publish failed (Final Attempt):`, err);
+
+              const event = new CustomEvent("kalon-toast", {
+                detail: {
+                  type: 'error',
+                  title: 'Falha de Transmissão',
+                  message: '❌ Não foi possível transmitir vídeo. Verifique sua câmera e recarregue a página.'
+                }
+              });
+              window.dispatchEvent(event);
+
+              if (typeof onFatalError === 'function') {
+                onFatalError();
+              }
             }
 
             // 🔄 v5.79 FIX: Retry logic for known errors
@@ -370,6 +384,11 @@ const VideoSurface = ({ roomId }) => {
             processedTrack={processedTrack}
             isVideoOn={isVideoOn}
             toggleScreenShare={toggleScreenShare}
+            setIsActuallyPublishing={setIsActuallyPublishing} // 🟢 ACHADO #1
+            onFatalError={() => { // 🟢 ACHADO #2
+              console.error("❌ Fatal Media Error triggered");
+              disconnectSession();
+            }}
           />
         </LiveKitRoom>
       ) : (
