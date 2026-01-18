@@ -137,12 +137,32 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
   }, [localParticipant, currentStream, processedTrack, isConnected, isVideoOn, publishedTrack, room]);
 
   // B. 🖥️ Screen Share Sync
+  // B. 🖥️ Screen Share Sync
   useEffect(() => {
     if (!localParticipant) return;
     if (isScreenSharing !== localParticipant.isScreenShareEnabled) {
       localParticipant.setScreenShareEnabled(isScreenSharing)
+        .then(() => {
+          // 🟢 ACHADO #9: Verify Check
+          if (isScreenSharing) {
+            const trackPub = localParticipant.getTrackPublication(Track.Source.ScreenShare);
+            if (!trackPub) {
+              throw new Error("Screen Share published but track not found");
+            }
+          }
+        })
         .catch(err => {
           console.error("❌ Screen Share Error:", err);
+          // 🔴 Explicit Feedback
+          const event = new CustomEvent("kalon-toast", {
+            detail: {
+              type: 'error',
+              title: 'Falha ao Compartilhar',
+              message: '❌ Não foi possível compartilhar a tela. Verifique as permissões.'
+            }
+          });
+          window.dispatchEvent(event);
+
           if (isScreenSharing) toggleScreenShare();
         });
     }
