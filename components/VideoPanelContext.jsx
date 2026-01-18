@@ -61,6 +61,8 @@ export const VideoPanelProvider = ({
 
   // 🔴 ACHADO #15: Low Power Mode State
   const [lowPowerMode, setLowPowerMode] = useState(false);
+  // 🟢 ACHADO #15: Detailed Participant Stats
+  const [participantStats, setParticipantStats] = useState({ total: 0, transmitting: 0 });
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -88,6 +90,8 @@ export const VideoPanelProvider = ({
   const [isHighMeshEnabled, setIsHighMeshEnabled] = useState(false);
   // lowPowerMode removed (duplicate)
   const [recordingState, setRecordingState] = useState({ active: false, notifyClient: false });
+  // participantStats exposed in context return
+
   const [backgroundConfig, setBackgroundConfig] = useState({ type: 'none' });
   const [branding, setBranding] = useState({ profile: null, themeColors: null, isLoading: true });
   // 🟢 Fix: Track active stream for external consumers (like VideoSurface)
@@ -1063,7 +1067,8 @@ export const VideoPanelProvider = ({
     useWhereby,
     isHighMeshEnabled,
     lowPowerMode,
-    recordingState,
+    recordingState, // 🟢 Exposed
+    participantStats, // 🟢 Exposed for Achado #15
     localVideoRef,
     remoteVideoRef,
     screenShareRef,
@@ -1075,6 +1080,7 @@ export const VideoPanelProvider = ({
     setUseWhereby,
     setShowScreenSharePanel,
     setRecordingState,
+    setParticipantStats, // 🟢 Exposed for Achado #15
     toggleVideo,
     toggleAudio,
     setIsVideoOn, // 🟢 ACHADO #3

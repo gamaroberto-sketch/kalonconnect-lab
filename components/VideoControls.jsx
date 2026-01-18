@@ -86,7 +86,8 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
     showTimeWarning,
     isProfessional,
     setConsultationId, // 🟢 Added
-    recordingState // 🟢 Added for Persistent Badge
+    recordingState, // 🟢 Added for Persistent Badge
+    participantStats // 🟢 ACHADO #15
   } = useVideoPanel();
 
   // ---------------------------------------------------------
@@ -588,11 +589,16 @@ const VideoControls = ({ professionalId: professionalIdFromProps }) => {
               : t('videoControls.startSession')}
           </button>
 
-          {/* 🔴 ACHADO #2: Participant Counter */}
+          {/* 🔴 ACHADO #2 & #15: Participant Counter */}
           {isSessionStarted && (
             <div className="flex flex-col items-center justify-center text-xs font-medium text-gray-500 dark:text-gray-400 -ml-2 mr-2">
-              <span>{isConnected ? "2/2" : "1/2"}</span>
-              <span className="text-[0.6rem] uppercase opacity-75">conectados</span>
+              <span title="Total Conectados">{participantStats?.total || (isConnected ? 1 : 0)}/2</span>
+              <span className="text-[0.6rem] uppercase opacity-75 whitespace-nowrap">
+                {participantStats?.transmitting > 0
+                  ? `(${participantStats.transmitting} transmitindo)`
+                  : "conectados"
+                }
+              </span>
             </div>
           )}
 

@@ -47,7 +47,7 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
 // 🎥 COMPONENT 2: REMOTE SESSION (Transient)
 // This handles the connection logic, media publishing, and remote video rendering.
 // It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError, setHasRemoteParticipants, setRoomState }) => {
+const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError, setHasRemoteParticipants, setRoomState, setParticipantStats }) => {
   const { localParticipant } = useLocalParticipant();
   const room = useRoomContext(); // 🟢 Move to top level
   const [publishedTrack, setPublishedTrack] = useState(null);
@@ -274,9 +274,25 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
   const participants = useParticipants();
   useEffect(() => {
     if (typeof setHasRemoteParticipants !== 'function') return;
+
+    // 1. Basic Presence
     const hasRemote = participants.some(p => !p.isLocal);
     setHasRemoteParticipants(hasRemote);
-  }, [participants, setHasRemoteParticipants]);
+
+    // 🟢 ACHADO #15: Detailed Statistics
+    if (typeof setParticipantStats === 'function') {
+      const total = participants.length;
+      // Count participants who have at least one track published and unmuted
+      const transmitting = participants.filter(p => {
+        // Check both camera and microphone
+        const hasVideo = p.isCameraEnabled;
+        const hasAudio = p.isMicrophoneEnabled;
+        return hasVideo || hasAudio;
+      }).length;
+
+      setParticipantStats({ total, transmitting });
+    }
+  }, [participants, setHasRemoteParticipants, setParticipantStats]);
 
   // 🟢 ACHADO #14: Sync Real Room State
   useEffect(() => {
@@ -352,7 +368,8 @@ const VideoSurface = ({ roomId }) => {
     isSessionStarted,
     toggleScreenShare,
     processedTrack, // 🟢 Virtual Background
-    lowPowerMode // 🟢 ACHADO #15
+    lowPowerMode, // 🟢 ACHADO #15
+    setParticipantStats // 🟢 ACHADO #15
   } = useVideoPanel();
 
   const { t } = useTranslation();
@@ -567,6 +584,7 @@ const VideoSurface = ({ roomId }) => {
             }}
             setHasRemoteParticipants={setHasRemoteParticipants} // 🟢 ACHADO #8
             setRoomState={setRoomState} // 🟢 ACHADO #14
+            setParticipantStats={setParticipantStats} // 🟢 ACHADO #15
           />
         </LiveKitRoom>
       ) : (
