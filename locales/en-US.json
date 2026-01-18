@@ -1840,5 +1840,108 @@
       "message": "Your first document has been generated.",
       "cta": "View documents"
     }
+  },
+  "quickGuide": {
+    "title": "Quick Guide",
+    "subtitle": "Essential information for secure sessions",
+    "criticalIndicators": {
+      "title": "1. Critical Indicators",
+      "live": {
+        "status": "LIVE",
+        "meaning": "Active connection",
+        "action": "Proceed normally"
+      },
+      "recording": {
+        "status": "RECORDING",
+        "meaning": "Media captured",
+        "action": "Confirm consent"
+      },
+      "muted": {
+        "status": "MUTED",
+        "meaning": "Microphone off",
+        "action": "Reactivate to speak"
+      },
+      "reconnecting": {
+        "status": "RECONNECTING",
+        "meaning": "No internet",
+        "action": "Wait 10s"
+      }
+    },
+    "recordingRules": {
+      "title": "2. Recording Rules",
+      "consent": "<strong>Verbal Consent:</strong> Client must say 'I authorize' recorded.",
+      "integrity": "<strong>Integrity:</strong> automatic SHA-256 hash.",
+      "backup": "<strong>Backup:</strong> Automatic every 5 minutes."
+    },
+    "limitations": {
+      "title": "3. Important Limitations",
+      "duration": "<strong>Sessions > 90min:</strong> Risk. Pause/Save every 60min.",
+      "ios": "<strong>iOS (Safari):</strong> <u>Do not lock screen!</u> Cuts connection.",
+      "instability": "<strong>Bad Internet:</strong> If drops 3x in 10min, pause."
+    },
+    "checklist": {
+      "title": "4. Pre-Session Checklist",
+      "clientConnected": "Client connected?",
+      "audioConfirmed": "Audio confirmed?",
+      "liveVisible": "'LIVE' visible?",
+      "consentGiven": "Consent given?"
+    },
+    "disclaimer": "The system reports critical states in real time, but clinical and ethical responsibility always remains with the professional.",
+    "footer": "Quick Guide 1.0 - KalonConnect",
+    "card": {
+      "title": "Quick Guide for Secure Sessions",
+      "description": "In a hurry? Read the 1-page summary with essential rules.",
+      "readNow": "Read now (1 pg)",
+      "openFull": "Open Full Guide"
+    },
+    "modal": {
+      "title": "Mandatory Reading",
+      "subtitle": "For your safety and clinical compliance",
+      "greeting": "Hello, <strong>{name}</strong>.",
+      "intro": "Before starting your sessions, we need you to know the <strong>Professional Guide</strong>.",
+      "explanation": "This document explains how to use the system ethically, securely, and responsibly, detailing what to do in case of technical failure.",
+      "checkbox": "I have read and understood the Professional Guide, and I am aware of my responsibilities in using the platform.",
+      "continue": "Continue to System",
+      "saving": "Saving..."
+    },
+    "toast": {
+      "title": "Guide Updated",
+      "message": "The Professional Guide has been revised. We recommend a quick read.",
+      "open": "Open Guide",
+      "close": "Close"
+    }
+  },
+  "adminTelemetry": {
+    "title": "Telemetry & Quality",
+    "subtitle": "Aggregated technical monitoring for stability improvement.",
+    "update": "Refresh data",
+    "recentEvents": "Recent Real-Time Events",
+    "emptyEvents": "No events registered recently.",
+    "cards": {
+      "unstableSessions": {
+        "title": "Unstable Sessions (>3 recon)",
+        "subtext": "Critical failure rate"
+      },
+      "avgReconnections": {
+        "title": "Avg Reconnections",
+        "subtext": "Per affected session"
+      },
+      "abortedRecordings": {
+        "title": "Aborted Recordings",
+        "subtext": "500MB limit reached"
+      },
+      "avgDuration": {
+        "title": "Avg Duration (Abort)",
+        "subtext": "Until limit reached"
+      }
+    },
+    "table": {
+      "timestamp": "Timestamp",
+      "type": "Type",
+      "session": "Session (Anonymized)",
+      "details": "Technical Details",
+      "reconnection": "Reconnection",
+      "aborted": "Aborted Recording"
+    }
   }
 }

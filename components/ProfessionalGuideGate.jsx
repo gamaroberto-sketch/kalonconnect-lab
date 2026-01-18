@@ -5,8 +5,14 @@ import { useAuth } from "../components/AuthContext";
 import { BookOpen, CheckSquare, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from 'next/link';
 
+import useTranslation from "../hooks/useTranslation"; // Correct import path assumption?
+// We need to verify where useTranslation comes from. 
+// Based on grep results: hooks/useTranslation.js
+// So ../hooks/useTranslation is correct relative to components/ProfessionalGuideGate.jsx
+
 const ProfessionalGuideGate = ({ children }) => {
     const { user, loading, markProfessionalGuideAsRead } = useAuth();
+    const { t } = useTranslation();
     const [isChecked, setIsChecked] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showRevalidationToast, setShowRevalidationToast] = useState(false);
@@ -59,8 +65,8 @@ const ProfessionalGuideGate = ({ children }) => {
                             <ShieldCheck size={20} />
                         </div>
                         <div className="flex-1">
-                            <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">Guia Atualizado</h4>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">O Guia do Profissional foi revisado. Recomendamos uma leitura rápida.</p>
+                            <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">{t('quickGuide.toast.title')}</h4>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('quickGuide.toast.message')}</p>
                             <div className="mt-3 flex gap-3">
                                 <Link
                                     href="/guia"
@@ -68,13 +74,13 @@ const ProfessionalGuideGate = ({ children }) => {
                                     onClick={handleOpenGuideForReview}
                                     className="text-xs font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 uppercase tracking-wide"
                                 >
-                                    Abrir Guia
+                                    {t('quickGuide.toast.open')}
                                 </Link>
                                 <button
                                     onClick={handleDismissToast}
                                     className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400"
                                 >
-                                    Fechar
+                                    {t('quickGuide.toast.close')}
                                 </button>
                             </div>
                         </div>
@@ -106,28 +112,24 @@ const ProfessionalGuideGate = ({ children }) => {
                         <div className="mx-auto bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 backdrop-blur-md">
                             <ShieldCheck size={32} className="text-white" />
                         </div>
-                        <h2 className="text-2xl font-bold">Leitura Obrigatória</h2>
-                        <p className="text-emerald-100 text-sm mt-1">Para sua segurança e conformidade clínica</p>
+                        <h2 className="text-2xl font-bold">{t('quickGuide.modal.title')}</h2>
+                        <p className="text-emerald-100 text-sm mt-1">{t('quickGuide.modal.subtitle')}</p>
                     </div>
 
                     {/* Body */}
                     <div className="p-8 space-y-6">
                         <div className="space-y-4 text-center">
-                            <p className="text-gray-600 dark:text-gray-300">
-                                Olá, <strong>{user.name || "Profissional"}</strong>.
-                            </p>
-                            <p className="text-gray-600 dark:text-gray-300">
-                                Antes de iniciar seus atendimentos, precisamos que você conheça o <strong>Guia do Profissional</strong>.
-                            </p>
+                            <p className="text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('quickGuide.modal.greeting', { name: user.name || "Profissional" }) }} />
+                            <p className="text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: t('quickGuide.modal.intro') }} />
                             <p className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                                Este documento explica como usar o sistema de forma ética, segura e responsável, detalhando o que fazer em casos de falha técnica.
+                                {t('quickGuide.modal.explanation')}
                             </p>
                         </div>
 
                         <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 rounded-xl p-5 mb-6">
-                            <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-2">Guia Rápido para Sessões Seguras</h3>
+                            <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-2">{t('quickGuide.card.title')}</h3>
                             <p className="text-sm text-emerald-700 dark:text-emerald-300 mb-4">
-                                Tem pressa? Leia o resumo de 1 página com as regras essenciais.
+                                {t('quickGuide.card.description')}
                             </p>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -137,14 +139,14 @@ const ProfessionalGuideGate = ({ children }) => {
                                     className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-emerald-800 text-emerald-700 dark:text-white hover:bg-emerald-50 dark:hover:bg-emerald-700 border border-emerald-200 dark:border-emerald-700 rounded-lg text-sm font-bold transition shadow-sm"
                                 >
                                     <BookOpen size={16} />
-                                    Ler agora (1 pág)
+                                    {t('quickGuide.card.readNow')}
                                 </Link>
                                 <Link
                                     href="/guia"
                                     target="_blank"
                                     className="flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent text-emerald-600 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg text-sm font-semibold transition"
                                 >
-                                    Abrir Guia Completo
+                                    {t('quickGuide.card.openFull')}
                                 </Link>
                             </div>
                         </div>
@@ -162,7 +164,7 @@ const ProfessionalGuideGate = ({ children }) => {
                                     <CheckSquare size={14} className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none top-0.5 left-0.5" />
                                 </div>
                                 <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors select-none">
-                                    Li e compreendi o Guia do Profissional, e estou ciente das minhas responsabilidades no uso da plataforma.
+                                    {t('quickGuide.modal.checkbox')}
                                 </span>
                             </label>
                         </div>
@@ -173,10 +175,10 @@ const ProfessionalGuideGate = ({ children }) => {
                             className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/30"
                         >
                             {isSubmitting ? (
-                                <span className="animate-pulse">Salvando...</span>
+                                <span className="animate-pulse">{t('quickGuide.modal.saving')}</span>
                             ) : (
                                 <>
-                                    Continuar para o Sistema
+                                    {t('quickGuide.modal.continue')}
                                     <ArrowRight size={20} />
                                 </>
                             )}

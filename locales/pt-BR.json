@@ -1884,5 +1884,108 @@
       "message": "Seu primeiro documento foi gerado.",
       "cta": "Ver documentos"
     }
+  },
+  "quickGuide": {
+    "title": "Guia Rápido",
+    "subtitle": "Informações essenciais para sessões seguras",
+    "criticalIndicators": {
+      "title": "1. Indicadores Críticos",
+      "live": {
+        "status": "AO VIVO",
+        "meaning": "Conexão ativa",
+        "action": "Seguir normalmente"
+      },
+      "recording": {
+        "status": "GRAVANDO",
+        "meaning": "Mídia capturada",
+        "action": "Confirmar consentimento"
+      },
+      "muted": {
+        "status": "MUTADO",
+        "meaning": "Microfone desligado",
+        "action": "Reativar para falar"
+      },
+      "reconnecting": {
+        "status": "RECONECTANDO",
+        "meaning": "Sem internet",
+        "action": "Aguardar 10s"
+      }
+    },
+    "recordingRules": {
+      "title": "2. Regras de Gravação",
+      "consent": "<strong>Consentimento Verbal:</strong> Cliente deve dizer 'Eu autorizo' gravado.",
+      "integrity": "<strong>Integridade:</strong> Hash SHA-256 automático.",
+      "backup": "<strong>Backup:</strong> Automático a cada 5 minutos."
+    },
+    "limitations": {
+      "title": "3. Limitações Importantes",
+      "duration": "<strong>Sessões > 90min:</strong> Risco. Pause/Salve cada 60min.",
+      "ios": "<strong>iOS (Safari):</strong> <u>Não bloqueie a tela!</u> Corta a conexão.",
+      "instability": "<strong>Internet Ruim:</strong> Se cair 3x em 10min, pause."
+    },
+    "checklist": {
+      "title": "4. Checklist Pré-Sessão",
+      "clientConnected": "Cliente conectado?",
+      "audioConfirmed": "Áudio confirmado?",
+      "liveVisible": "'AO VIVO' visível?",
+      "consentGiven": "Consentimento?"
+    },
+    "disclaimer": "O sistema informa estados críticos em tempo real, mas a responsabilidade clínica e ética permanece sempre com o profissional.",
+    "footer": "Guia Rápido 1.0 - KalonConnect",
+    "card": {
+      "title": "Guia Rápido para Sessões Seguras",
+      "description": "Tem pressa? Leia o resumo de 1 página com as regras essenciais.",
+      "readNow": "Ler agora (1 pág)",
+      "openFull": "Abrir Guia Completo"
+    },
+    "modal": {
+      "title": "Leitura Obrigatória",
+      "subtitle": "Para sua segurança e conformidade clínica",
+      "greeting": "Olá, <strong>{name}</strong>.",
+      "intro": "Antes de iniciar seus atendimentos, precisamos que você conheça o <strong>Guia do Profissional</strong>.",
+      "explanation": "Este documento explica como usar o sistema de forma ética, segura e responsável, detalhando o que fazer em casos de falha técnica.",
+      "checkbox": "Li e compreendi o Guia do Profissional, e estou ciente das minhas responsabilidades no uso da plataforma.",
+      "continue": "Continuar para o Sistema",
+      "saving": "Salvando..."
+    },
+    "toast": {
+      "title": "Guia Atualizado",
+      "message": "O Guia do Profissional foi revisado. Recomendamos uma leitura rápida.",
+      "open": "Abrir Guia",
+      "close": "Fechar"
+    }
+  },
+  "adminTelemetry": {
+    "title": "Telemetria & Qualidade",
+    "subtitle": "Monitoramento técnico agregado para melhoria de estabilidade.",
+    "update": "Atualizar dados",
+    "recentEvents": "Eventos Real-Time Recentes",
+    "emptyEvents": "Nenhum evento registrado recentemente.",
+    "cards": {
+      "unstableSessions": {
+        "title": "Sessões Instáveis (>3 recon)",
+        "subtext": "Taxa crítica de falha"
+      },
+      "avgReconnections": {
+        "title": "Média Reconexões",
+        "subtext": "Por sessão afetada"
+      },
+      "abortedRecordings": {
+        "title": "Gravações Abortadas",
+        "subtext": "Limite de 500MB atingido"
+      },
+      "avgDuration": {
+        "title": "Duração Média (Abort)",
+        "subtext": "Até atingir limite"
+      }
+    },
+    "table": {
+      "timestamp": "Timestamp",
+      "type": "Tipo",
+      "session": "Sessão (Anonimizada)",
+      "details": "Detalhes Técnicos",
+      "reconnection": "Reconexão",
+      "aborted": "Gravação Abortada"
+    }
   }
 }
