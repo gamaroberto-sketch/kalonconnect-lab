@@ -847,7 +847,7 @@ const RecordingPanel = () => {
     trackUsageAction({
       type: "exportSummary",
       panel: "Recording",
-      metadata: { format: "txt", sessionId: activeTranscriptSession || sessionId }
+      metadata: { format: "txt", sessionId: activeTranscriptSession || sessionId, professionalId } // 🟢 G4: Traceability
     });
     const summaryText = [
       `Sessão: ${activeTranscriptSession || sessionId || "não informada"}`,
@@ -884,7 +884,7 @@ const RecordingPanel = () => {
     trackUsageAction({
       type: "exportSummary",
       panel: "Recording",
-      metadata: { format: "pdf", sessionId: activeTranscriptSession || sessionId }
+      metadata: { format: "pdf", sessionId: activeTranscriptSession || sessionId, professionalId } // 🟢 G4: Traceability
     });
     const title = `Resumo terapêutico - ${activeTranscriptSession || sessionId || ""}`.trim();
     const duration = formatClock(recordingMetadata?.duration || recordingElapsed);
@@ -1157,6 +1157,14 @@ const RecordingPanel = () => {
 
   const exportTranscriptionTxt = useCallback(() => {
     if (!transcription) return;
+
+    // 🟢 ACHADO #G4: LGPD Traceability
+    trackUsageAction({
+      type: "exportTranscription",
+      panel: "Recording",
+      metadata: { format: "txt", sessionId, professionalId }
+    });
+
     const blob = new Blob([transcription], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -1164,7 +1172,7 @@ const RecordingPanel = () => {
     link.download = `${sessionId || "transcricao"}.txt`;
     link.click();
     URL.revokeObjectURL(url);
-  }, [sessionId, transcription]);
+  }, [sessionId, transcription, professionalId, trackUsageAction]);
 
   const saveToHistory = useCallback(async () => {
     await persistSessionMetadata({
