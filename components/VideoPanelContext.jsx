@@ -898,6 +898,12 @@ export const VideoPanelProvider = ({
     setIsSessionActive(false);
     setIsSessionStarted(false);
     setLocalSessionTime(0);
+
+    // 🟢 ACHADO #3: Reset Global Counters (Prevent Persistence)
+    if (typeof window !== "undefined") {
+      window.kalon_reconnect_attempts = 0;
+      window.kalon_last_quality_toast = 0;
+    }
     setShowTimeWarning(false);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
