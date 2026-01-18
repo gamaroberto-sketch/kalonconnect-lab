@@ -1954,5 +1954,108 @@
       "message": "Votre premier document a été généré.",
       "cta": "Voir les documents"
     }
+  },
+  "quickGuide": {
+    "title": "Guide Rapide",
+    "subtitle": "Informations essentielles pour des sessions sécurisées",
+    "criticalIndicators": {
+      "title": "1. Indicateurs Critiques",
+      "live": {
+        "status": "EN DIRECT",
+        "meaning": "Connexion active",
+        "action": "Procéder normalement"
+      },
+      "recording": {
+        "status": "ENREGISTREMENT",
+        "meaning": "Média capturé",
+        "action": "Confirmer le consentement"
+      },
+      "muted": {
+        "status": "MUET",
+        "meaning": "Microphone éteint",
+        "action": "Réactiver pour parler"
+      },
+      "reconnecting": {
+        "status": "RECONNEXION",
+        "meaning": "Pas d'internet",
+        "action": "Attendre 10s"
+      }
+    },
+    "recordingRules": {
+      "title": "2. Règles d'Enregistrement",
+      "consent": "<strong>Consentement Verbal :</strong> Le client doit dire 'J'autorise' enregistré.",
+      "integrity": "<strong>Intégrité :</strong> Hachage SHA-256 automatique.",
+      "backup": "<strong>Sauvegarde :</strong> Automatique toutes les 5 minutes."
+    },
+    "limitations": {
+      "title": "3. Limitations Importantes",
+      "duration": "<strong>Sessions > 90min :</strong> Risque. Pause/Sauvegarde chaque 60min.",
+      "ios": "<strong>iOS (Safari) :</strong> <u>Ne verrouillez pas l'écran!</u> Coupe la connexion.",
+      "instability": "<strong>Mauvais Internet :</strong> Si ça coupe 3x en 10min, pause."
+    },
+    "checklist": {
+      "title": "4. Liste de Contrôle Pré-Session",
+      "clientConnected": "Client connecté ?",
+      "audioConfirmed": "Audio confirmé ?",
+      "liveVisible": "'EN DIRECT' visible ?",
+      "consentGiven": "Consentement donné ?"
+    },
+    "disclaimer": "Le système signale les états critiques en temps réel, mais la responsabilité clinique et éthique incombe toujours au professionnel.",
+    "footer": "Guide Rapide 1.0 - KalonConnect",
+    "card": {
+      "title": "Guide Rapide pour Sessions Sécurisées",
+      "description": "Pressé ? Lisez le résumé d'une page avec les règles essentielles.",
+      "readNow": "Lire maintenant (1 pg)",
+      "openFull": "Ouvrir le Guide Complet"
+    },
+    "modal": {
+      "title": "Lecture Obligatoire",
+      "subtitle": "Pour votre sécurité et conformité clinique",
+      "greeting": "Bonjour, <strong>{name}</strong>.",
+      "intro": "Avant de commencer vos sessions, nous avons besoin que vous connaissiez le <strong>Guide Professionnel</strong>.",
+      "explanation": "Ce document explique comment utiliser le système de manière éthique, sécurisée et responsable, en détaillant quoi faire en cas de panne technique.",
+      "checkbox": "J'ai lu et compris le Guide Professionnel, et je suis conscient de mes responsabilités dans l'utilisation de la plateforme.",
+      "continue": "Continuer vers le Système",
+      "saving": "Enregistrement..."
+    },
+    "toast": {
+      "title": "Guide Mis à Jour",
+      "message": "Le Guide Professionnel a été révisé. Nous recommandons une lecture rapide.",
+      "open": "Ouvrir le Guide",
+      "close": "Fermer"
+    }
+  },
+  "adminTelemetry": {
+    "title": "Télémétrie & Qualité",
+    "subtitle": "Surveillance technique agrégée pour l'amélioration de la stabilité.",
+    "update": "Actualiser les données",
+    "recentEvents": "Événements Récents en Temps Réel",
+    "emptyEvents": "Aucun événement enregistré récemment.",
+    "cards": {
+      "unstableSessions": {
+        "title": "Sessions Instables (>3 recon)",
+        "subtext": "Taux d'échec critique"
+      },
+      "avgReconnections": {
+        "title": "Moyenne Reconnexions",
+        "subtext": "Par session affectée"
+      },
+      "abortedRecordings": {
+        "title": "Enregistrements Avortés",
+        "subtext": "Limite de 500Mo atteinte"
+      },
+      "avgDuration": {
+        "title": "Durée Moyenne (Avort)",
+        "subtext": "Jusqu'à atteindre la limite"
+      }
+    },
+    "table": {
+      "timestamp": "Timestamp",
+      "type": "Type",
+      "session": "Session (Anonymisée)",
+      "details": "Détails Techniques",
+      "reconnection": "Reconnexion",
+      "aborted": "Enregistrement Avorté"
+    }
   }
 }

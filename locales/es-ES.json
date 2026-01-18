@@ -1832,5 +1832,108 @@
       "message": "Su primer documento fue generado.",
       "cta": "Ver documentos"
     }
+  },
+  "quickGuide": {
+    "title": "Guía Rápida",
+    "subtitle": "Información esencial para sesiones seguras",
+    "criticalIndicators": {
+      "title": "1. Indicadores Críticos",
+      "live": {
+        "status": "EN VIVO",
+        "meaning": "Conexión activa",
+        "action": "Seguir normalmente"
+      },
+      "recording": {
+        "status": "GRABANDO",
+        "meaning": "Medios capturados",
+        "action": "Confirmar consentimiento"
+      },
+      "muted": {
+        "status": "SILENCIADO",
+        "meaning": "Micrófono apagado",
+        "action": "Reactivar para hablar"
+      },
+      "reconnecting": {
+        "status": "RECONECTANDO",
+        "meaning": "Sin internet",
+        "action": "Esperar 10s"
+      }
+    },
+    "recordingRules": {
+      "title": "2. Reglas de Grabación",
+      "consent": "<strong>Consentimiento Verbal:</strong> Cliente debe decir 'Yo autorizo' grabado.",
+      "integrity": "<strong>Integridad:</strong> Hash SHA-256 automático.",
+      "backup": "<strong>Respaldo:</strong> Automático cada 5 minutos."
+    },
+    "limitations": {
+      "title": "3. Limitaciones Importantes",
+      "duration": "<strong>Sesiones > 90min:</strong> Riesgo. Pausa/Guarda cada 60min.",
+      "ios": "<strong>iOS (Safari):</strong> <u>¡No bloquee la pantalla!</u> Corta la conexión.",
+      "instability": "<strong>Internet Mala:</strong> Si cae 3x en 10min, pause."
+    },
+    "checklist": {
+      "title": "4. Lista de Verificación Previa",
+      "clientConnected": "¿Cliente conectado?",
+      "audioConfirmed": "¿Audio confirmado?",
+      "liveVisible": "¿'EN VIVO' visible?",
+      "consentGiven": "¿Consentimiento?"
+    },
+    "disclaimer": "El sistema informa estados críticos en tiempo real, pero la responsabilidad clínica y ética permanece siempre con el profesional.",
+    "footer": "Guía Rápida 1.0 - KalonConnect",
+    "card": {
+      "title": "Guía Rápida para Sesiones Seguras",
+      "description": "¿Tienes prisa? Lee el resumen de 1 página con las reglas esenciales.",
+      "readNow": "Leer ahora (1 pág)",
+      "openFull": "Abrir Guía Completa"
+    },
+    "modal": {
+      "title": "Lectura Obligatoria",
+      "subtitle": "Para su seguridad y cumplimiento clínico",
+      "greeting": "Hola, <strong>{name}</strong>.",
+      "intro": "Antes de iniciar sus atenciones, necesitamos que conozca la <strong>Guía del Profesional</strong>.",
+      "explanation": "Este documento explica cómo usar el sistema de forma ética, segura y responsable, detallando qué hacer en casos de falla técnica.",
+      "checkbox": "Leí y comprendí la Guía del Profesional, y estoy consciente de mis responsabilidades en el uso de la plataforma.",
+      "continue": "Continuar al Sistema",
+      "saving": "Guardando..."
+    },
+    "toast": {
+      "title": "Guía Actualizada",
+      "message": "La Guía del Profesional fue revisada. Recomendamos una lectura rápida.",
+      "open": "Abrir Guía",
+      "close": "Cerrar"
+    }
+  },
+  "adminTelemetry": {
+    "title": "Telemetría y Calidad",
+    "subtitle": "Monitoreo técnico agregado para mejora de estabilidad.",
+    "update": "Actualizar datos",
+    "recentEvents": "Eventos en Tiempo Real Recientes",
+    "emptyEvents": "Ningún evento registrado recientemente.",
+    "cards": {
+      "unstableSessions": {
+        "title": "Sesiones Inestables (>3 recon)",
+        "subtext": "Tasa crítica de falla"
+      },
+      "avgReconnections": {
+        "title": "Promedio Reconexiones",
+        "subtext": "Por sesión afectada"
+      },
+      "abortedRecordings": {
+        "title": "Grabaciones Abortadas",
+        "subtext": "Límite de 500MB alcanzado"
+      },
+      "avgDuration": {
+        "title": "Duración Promedio (Abort)",
+        "subtext": "Hasta alcanzar límite"
+      }
+    },
+    "table": {
+      "timestamp": "Timestamp",
+      "type": "Tipo",
+      "session": "Sesión (Anonimizada)",
+      "details": "Detalles Técnicos",
+      "reconnection": "Reconexión",
+      "aborted": "Grabación Abortada"
+    }
   }
 }
