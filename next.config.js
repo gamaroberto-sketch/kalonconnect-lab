@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// Test: Vercel auto-deploy fix (2026-01-18)
 const nextConfig = {
     reactStrictMode: false, // 🟢 Disable Strict Mode to differentiate real double-invokes from dev mode
     generateBuildId: async () => {
