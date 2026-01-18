@@ -660,6 +660,23 @@ const VideoSurface = ({ roomId }) => {
             setIsReconnecting(false); // 🟢 Reset Reconnecting
             console.warn("⚠️ [PROFESSIONAL] LiveKit Disconnected!", reason);
 
+            // 🟢 ACHADO #M4: Mobile Network Switch Handling
+            // Mobile devices switching WiFi<->4G often fail the standard retry logic.
+            // We force an immediate "new session" (new token) to recovery quickly.
+            const isMobile = /iPad|iPhone|iPod|Android/.test(navigator.userAgent);
+            if (isMobile) {
+              console.log("📱 Mobile Disconnect: Forcing immediate token refresh...");
+              const targetRoom = consultationId || roomId;
+              if (targetRoom) {
+                const event = new CustomEvent("kalon-toast", {
+                  detail: { type: 'warning', title: 'Rede Instável', message: '📱 Reconectando imediatamete (Mobile)...' }
+                });
+                window.dispatchEvent(event);
+                connectSession(targetRoom); // Fetches new token
+                return;
+              }
+            }
+
             // 🔴 ACHADO #13: Immediate Disconnect Feedback & Auto-Reconnect
             // Note: internal retry logic might be preferable, but we want EXPLICIT feedback
 
