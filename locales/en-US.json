@@ -1978,5 +1978,5 @@
   },
   "telemetry": {
     "longSessionWarning": "Long session detected. Security recording started on server."
-  },
+  }
 }
