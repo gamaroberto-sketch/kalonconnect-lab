@@ -278,7 +278,7 @@ export default function Home() {
         >
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-yellow-500" />
+              <Sparkles className="w-5 h-5" style={{ color: themeColors.primary }} />
               {t('home.onboarding.title')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -576,9 +576,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold mb-3" style={{ color: themeColors.primaryDark }}>
               {t('home.whyKalon.title')}
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              {t('home.whyKalon.subtitle')}
-            </p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: t('home.whyKalon.subtitle') }} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
