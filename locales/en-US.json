@@ -1839,6 +1839,21 @@
       "title": "Document created!",
       "message": "Your first document has been generated.",
       "cta": "View documents"
+    },
+    "postSession": {
+      "title": "Session Feedback",
+      "question": "From a technical standpoint, did this session occur as expected?",
+      "options": {
+        "good": "Yes, everything went well",
+        "issues_managed": "There were issues, but I could proceed",
+        "issues_compromised": "There were issues that compromised the session"
+      },
+      "commentPlaceholder": "Want to tell us what happened? (Optional)",
+      "sending": "Sending...",
+      "success": "Thank you for your feedback!",
+      "error": "Error sending feedback",
+      "submit": "Submit Feedback",
+      "skip": "Skip"
     }
   },
   "quickGuide": {

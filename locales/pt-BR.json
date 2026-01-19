@@ -1883,6 +1883,21 @@
       "title": "Documento criado!",
       "message": "Seu primeiro documento foi gerado.",
       "cta": "Ver documentos"
+    },
+    "postSession": {
+      "title": "Feedback da Sessão",
+      "question": "Do ponto de vista técnico, esta sessão ocorreu como esperado?",
+      "options": {
+        "good": "Sim, tudo ocorreu bem",
+        "issues_managed": "Houve problemas, mas consegui conduzir",
+        "issues_compromised": "Houve problemas que comprometeram a sessão"
+      },
+      "commentPlaceholder": "Quer nos dizer o que aconteceu? (Opcional)",
+      "sending": "Enviando...",
+      "success": "Obrigado pelo seu feedback!",
+      "error": "Erro ao enviar feedback",
+      "submit": "Enviar Feedback",
+      "skip": "Pular"
     }
   },
   "quickGuide": {

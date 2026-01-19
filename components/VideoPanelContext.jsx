@@ -116,6 +116,13 @@ export const VideoPanelProvider = ({
   // 📝 Caption Transcript for Recording Integration
   const [captionTranscript, setCaptionTranscript] = useState([]);
 
+  // 🔴 ACHADO #50: Missing State for Dual Recording
+  const [isDualRecordingActive, setIsDualRecordingActive] = useState(false);
+  const initialDurationRef = useRef(0);
+
+  // 🟢 Helper for timer logic
+  const isPaused = !isSessionStarted;
+
   // Fetch Branding (Client Mode)
   useEffect(() => {
     if (!brandingSlug) {
@@ -322,21 +329,60 @@ export const VideoPanelProvider = ({
   // 🟢 ACHADO #1: Drift-Free Timer (Absolute Timestamp)
   const sessionStartTimeRef = useRef(null);
 
+  // Timer effect
   useEffect(() => {
-    if (isSessionStarted) {
-      // Calculate start time relative to now, preserving any previously elapsed time (resume support)
-      // This prevents drift by relying on system clock delta instead of interval count
-      sessionStartTimeRef.current = Date.now() - (localSessionTime * 1000);
-
-      const timer = setInterval(() => {
+    let interval;
+    if (isSessionActive && !isPaused) {
+      interval = setInterval(() => {
         const now = Date.now();
-        const elapsedSeconds = Math.floor((now - sessionStartTimeRef.current) / 1000);
-        setLocalSessionTime(elapsedSeconds);
-      }, 1000);
+        // Calculate total elapsed time including previous segments
+        const currentSegmentDuration = Math.floor((now - sessionStartTimeRef.current) / 1000);
+        const total = initialDurationRef.current + currentSegmentDuration;
 
-      return () => clearInterval(timer);
+        setSessionDuration(total);
+
+        // --- NEW: Dual Recording Trigger (Safety for > 2 hours) ---
+        // If session goes over 120 minutes (7200 seconds) AND we haven't started server recording yet
+        if (total > 7200 && !isDualRecordingActive && roomName) {
+          console.log('Session exceeded 2 hours. Triggering dual recording...');
+          setIsDualRecordingActive(true); // Set immediately to prevent multiple calls
+
+          fetch('/api/livekit/egress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ roomName })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success || data.alreadyActive) {
+                console.log('Dual recording active:', data);
+                // Optional: Notify user
+                window.dispatchEvent(new CustomEvent('kalon-toast', {
+                  detail: {
+                    type: 'info',
+                    message: 'Sessão longa detectada. Gravação de segurança iniciada no servidor.'
+                  }
+                }));
+              } else {
+                console.error('Failed to start dual recording:', data);
+                setIsDualRecordingActive(false); // Retry later if failed? Or keep true to avoid spam logic loops? Best to retry safely or just log.
+                // Let's keep it true to avoid hammering the API if it's a persistent error, 
+                // but ideally we'd implement a retry backoff.
+              }
+            })
+            .catch(err => {
+              console.error('Error triggering dual recording:', err);
+              // setIsDualRecordingActive(false); // Don't retry immediately to avoid spam
+            });
+        }
+        // -----------------------------------------------------------
+
+      }, 1000);
+    } else {
+      clearInterval(interval);
     }
-  }, [isSessionStarted]);
+    return () => clearInterval(interval);
+  }, [isSessionActive, isPaused, isDualRecordingActive, roomName]); // Added dependencies
 
   useEffect(() => {
     sessionDataRef.current = sessionData;
