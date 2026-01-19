@@ -55,7 +55,11 @@ export const AuthProvider = ({ children }) => {
           console.log('🔵 AuthContext: Resposta do sync:', data.success, data.user);
 
           if (data.success && data.user) {
-            setUser(normalizeUser(data.user));
+            // Merge database user with Supabase Auth metadata
+            setUser(normalizeUser({
+              ...data.user,
+              user_metadata: session.user.user_metadata // Preserve Auth metadata
+            }));
           } else {
             // Fallback: use Supabase user data
             setUser(normalizeUser({
@@ -63,7 +67,8 @@ export const AuthProvider = ({ children }) => {
               email: session.user.email,
               name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
               version: DEFAULT_VERSION,
-              type: 'professional'
+              type: 'professional',
+              user_metadata: session.user.user_metadata // Include metadata in fallback too
             }));
           }
         } catch (error) {
@@ -74,7 +79,8 @@ export const AuthProvider = ({ children }) => {
             email: session.user.email,
             name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
             version: DEFAULT_VERSION,
-            type: 'professional'
+            type: 'professional',
+            user_metadata: session.user.user_metadata // Include metadata in error fallback
           }));
         }
       } else {
