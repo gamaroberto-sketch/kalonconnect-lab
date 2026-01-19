@@ -41,6 +41,7 @@ import HelpButton from '../components/HelpButton';
 import HelpModal from '../components/HelpModal';
 import { helpSections } from '../lib/helpContent';
 import { useFeedback } from '../contexts/FeedbackContext';
+import PostSessionFeedback from '../components/PostSessionFeedback';
 
 const MIN_PANEL_SIZE = { width: 240, height: 220 };
 
@@ -123,6 +124,10 @@ const Consultations = () => {
     const parsed = parseInt(saved ?? '60', 10);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 60;
   });
+
+  // 🟢 Post-Session Feedback State
+  const [showPostSessionFeedback, setShowPostSessionFeedback] = useState(false);
+
   /* Background state removed - managed by VideoPanelContext */
   const [elapsedTime, setElapsedTime] = useState(0);
   const [warningThreshold, setWarningThreshold] = useState(() => {
@@ -860,6 +865,9 @@ const Consultations = () => {
               warningThreshold={warningThreshold}
               brandingSlug={professionalId}
               onSessionEnd={() => {
+                // 🟢 Trigger Post-Session Feedback
+                setShowPostSessionFeedback(true);
+
                 const hasSeenFeedback = localStorage.getItem('kalon:feedback:firstConsultation');
                 if (!hasSeenFeedback) {
                   showFeedback({
@@ -1144,6 +1152,12 @@ const Consultations = () => {
           />
 
           <FeedbackSystem />
+
+          <PostSessionFeedback
+            isOpen={showPostSessionFeedback}
+            onClose={() => setShowPostSessionFeedback(false)}
+            sessionId={`session-${professionalId}-${Date.now()}`}
+          />
 
           {/* Help Button */}
           <HelpButton onClick={() => setShowHelp(true)} />
