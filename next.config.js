@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: false, // 🟢 Disable Strict Mode to differentiate real double-invokes from dev mode
+    // Test: Vercel auto-deploy verification (2026-01-19 - Morning Check)
+    reactStrictMode: false,
+    // 🟢 Disable Strict Mode to differentiate real double-invokes from dev mode
     generateBuildId: async () => {
         return 'v11.22-cache-buster-' + Date.now();
     },
