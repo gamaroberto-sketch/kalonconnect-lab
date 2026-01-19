@@ -57,8 +57,18 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Falha ao salvar mensagem' });
         }
 
-        // TODO: Send email notification to admin
-        // await sendContactNotification({ category, subject, message, userName, userEmail });
+        // Send WhatsApp notification to admin (with rate limiting)
+        try {
+            const { notifyNewContactMessage } = await import('../../lib/notificationBuffer');
+            await notifyNewContactMessage({
+                userName,
+                subject,
+                category
+            });
+        } catch (notifError) {
+            // Log but don't fail the request if notification fails
+            console.error('Failed to send admin notification:', notifError);
+        }
 
         return res.status(200).json({
             success: true,
