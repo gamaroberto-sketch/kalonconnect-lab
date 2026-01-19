@@ -1,7 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '../../../../lib/supabase';
 
-const COMMS_FILE = path.join(process.cwd(), 'data', 'communications.json');
 const ADMIN_EMAIL = 'bobgama@uol.com.br';
 
 export default async function handler(req, res) {
@@ -9,56 +7,45 @@ export default async function handler(req, res) {
 
     // 1. Security Check
     const userEmail = req.headers['x-user-email'];
-    if (userEmail !== ADMIN_EMAIL) {
+    if (!userEmail || userEmail.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
         return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const loadComms = () => {
-        if (!fs.existsSync(COMMS_FILE)) return [];
-        return JSON.parse(fs.readFileSync(COMMS_FILE, 'utf8'));
-    };
-
-    const saveComms = (data) => {
-        fs.writeFileSync(COMMS_FILE, JSON.stringify(data, null, 2), 'utf8');
-    };
-
     try {
-        let comms = loadComms();
-        const index = comms.findIndex(c => c.id === id);
-
-        if (index === -1) {
-            return res.status(404).json({ error: 'Communication not found' });
-        }
-
         if (req.method === 'PUT') {
-            const { title, type, message, is_published } = req.body;
+            const updates = req.body;
 
-            // Partial update allowed
-            const updatedItem = {
-                ...comms[index],
-                title: title ?? comms[index].title,
-                type: type ?? comms[index].type,
-                message: message ?? comms[index].message,
-                is_published: is_published !== undefined ? is_published : comms[index].is_published,
-                updatedAt: new Date().toISOString()
-            };
+            const { data, error } = await supabase
+                .from('communications')
+                .update({
+                    ...updates,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', id)
+                .select()
+                .single();
 
-            comms[index] = updatedItem;
-            saveComms(comms);
+            if (error) throw error;
+            if (!data) {
+                return res.status(404).json({ error: 'Communication not found' });
+            }
 
-            return res.status(200).json(updatedItem);
+            return res.status(200).json(data);
         }
 
         if (req.method === 'DELETE') {
-            comms = comms.filter(c => c.id !== id);
-            saveComms(comms);
+            const { error } = await supabase
+                .from('communications')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
             return res.status(200).json({ success: true });
         }
 
         return res.status(405).json({ error: 'Method not allowed' });
-
     } catch (error) {
-        console.error('Admin API ID Error:', error);
+        console.error('Admin API Error:', error);
         return res.status(500).json({ error: error.message });
     }
 }

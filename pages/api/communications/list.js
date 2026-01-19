@@ -1,7 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const COMMS_FILE = path.join(process.cwd(), 'data', 'communications.json');
+import { supabase } from '../../../lib/supabase';
 
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
@@ -9,29 +6,24 @@ export default async function handler(req, res) {
     }
 
     try {
-        if (!fs.existsSync(COMMS_FILE)) {
-            return res.status(200).json([]);
-        }
+        const { data, error } = await supabase
+            .from('communications')
+            .select('*')
+            .eq('is_published', true)
+            .order('created_at', { ascending: false });
 
-        const raw = fs.readFileSync(COMMS_FILE, 'utf8');
-        const communications = JSON.parse(raw);
+        if (error) throw error;
 
-        // Filter active messages
+        // Filter out expired messages (if expiry logic exists)
         const now = new Date();
-        const active = communications.filter(msg => {
-            // Admin flag to see all
-            if (req.query.include_all === 'true') return true;
+        const activeComms = (data || []).filter(comm => {
+            if (!comm.expiresAt) return true;
+            return new Date(comm.expiresAt) > now;
+        });
 
-            // Default public behavior: must be published AND not expired
-            const isPublished = msg.is_published !== false; // Default to true for legacy items
-            const notExpired = !msg.expiresAt || new Date(msg.expiresAt) > now;
-
-            return isPublished && notExpired;
-        }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-        return res.status(200).json(active);
+        return res.status(200).json(activeComms);
     } catch (error) {
-        console.error('Error fetching communications:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error('Communications API Error:', error);
+        return res.status(500).json({ error: error.message });
     }
 }
