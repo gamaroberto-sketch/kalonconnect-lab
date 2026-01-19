@@ -89,7 +89,7 @@ const CommunicationsBox = () => {
                 className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative"
                 title="Comunicados Operacionais"
             >
-                <Bell className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                <Bell className="w-5 h-5 text-white hover:text-white/80 transition-opacity" />
                 {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-900" />
                 )}
