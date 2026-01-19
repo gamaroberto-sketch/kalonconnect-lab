@@ -58,16 +58,20 @@ export default async function handler(req, res) {
         }
 
         // Send WhatsApp notification to admin (with rate limiting)
+        console.log('🚀 Attempting to send WhatsApp notification for contact message from:', userName);
         try {
             const { notifyNewContactMessage } = await import('../../lib/notificationBuffer');
+            console.log('✅ notificationBuffer imported successfully');
             await notifyNewContactMessage({
                 userName,
                 subject,
                 category
             });
+            console.log('✅ notifyNewContactMessage called successfully');
         } catch (notifError) {
             // Log but don't fail the request if notification fails
-            console.error('Failed to send admin notification:', notifError);
+            console.error('❌ Failed to send admin notification:', notifError);
+            console.error('❌ Error stack:', notifError.stack);
         }
 
         return res.status(200).json({
