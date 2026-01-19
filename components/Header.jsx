@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import CommunicationsBox from './CommunicationsBox';
 
 const Header = ({ sidebarOpen, setSidebarOpen, darkMode, setDarkMode }) => {
   const [mounted, setMounted] = useState(false);
@@ -110,6 +111,13 @@ const Header = ({ sidebarOpen, setSidebarOpen, darkMode, setDarkMode }) => {
             </div>
           </motion.div>
         </div>
+
+        {/* Right Side - Actions */}
+        <div className="flex items-center gap-3">
+          <CommunicationsBox />
+          {/* Future: User Profile or Settings could go here */}
+        </div>
+
       </div>
     </motion.header>
   );

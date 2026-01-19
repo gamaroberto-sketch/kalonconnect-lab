@@ -1,0 +1,10 @@
+[
+    {
+        "id": "comm-001",
+        "type": "technical",
+        "title": "Nova Funcionalidade: Gravação Dupla",
+        "message": "Sessões com mais de 2 horas agora contam com gravação de segurança automática no servidor.",
+        "createdAt": "2026-01-19T10:00:00Z",
+        "expiresAt": "2026-02-19T10:00:00Z"
+    }
+]
