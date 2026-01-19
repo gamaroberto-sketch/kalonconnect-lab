@@ -6,7 +6,7 @@ import { Eye, EyeOff, User, ChevronRight } from "lucide-react";
 import { useAuth } from "../components/AuthContext";
 import { useTheme } from "../components/ThemeProvider";
 import { useTranslation } from "../hooks/useTranslation";
-import SignupWizard from '../components/SignupWizard';
+
 
 export default function LoginPage() {
 
