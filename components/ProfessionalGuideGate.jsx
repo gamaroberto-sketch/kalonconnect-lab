@@ -5,14 +5,14 @@ import { useAuth } from "../components/AuthContext";
 import { BookOpen, CheckSquare, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from 'next/link';
 
-import useTranslation from "../hooks/useTranslation"; // Correct import path assumption?
-// We need to verify where useTranslation comes from. 
-// Based on grep results: hooks/useTranslation.js
-// So ../hooks/useTranslation is correct relative to components/ProfessionalGuideGate.jsx
+import { useTheme } from "./ThemeProvider";
+import { useTranslation } from "../hooks/useTranslation";
 
 const ProfessionalGuideGate = ({ children }) => {
     const { user, loading, markProfessionalGuideAsRead } = useAuth();
     const { t } = useTranslation();
+    const { getThemeColors } = useTheme();
+    const themeColors = getThemeColors();
     const [isChecked, setIsChecked] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showRevalidationToast, setShowRevalidationToast] = useState(false);
@@ -60,8 +60,8 @@ const ProfessionalGuideGate = ({ children }) => {
             <>
                 {children}
                 {showRevalidationToast && (
-                    <div className="fixed bottom-4 right-4 z-[9999] max-w-sm w-full bg-white dark:bg-gray-800 border-l-4 border-amber-500 shadow-xl rounded-lg p-4 animate-in slide-in-from-bottom-5 duration-500 flex items-start gap-3">
-                        <div className="p-1 bg-amber-100 dark:bg-amber-900/30 rounded-full text-amber-600 dark:text-amber-400">
+                    <div className="fixed bottom-4 right-4 z-[9999] max-w-sm w-full bg-white dark:bg-gray-800 border-l-4 shadow-xl rounded-lg p-4 animate-in slide-in-from-bottom-5 duration-500 flex items-start gap-3" style={{ borderColor: themeColors.primary }}>
+                        <div className="p-1 rounded-full text-white" style={{ backgroundColor: themeColors.primary }}>
                             <ShieldCheck size={20} />
                         </div>
                         <div className="flex-1">
@@ -72,7 +72,8 @@ const ProfessionalGuideGate = ({ children }) => {
                                     href="/guia"
                                     target="_blank"
                                     onClick={handleOpenGuideForReview}
-                                    className="text-xs font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 uppercase tracking-wide"
+                                    className="text-xs font-bold hover:opacity-80 uppercase tracking-wide"
+                                    style={{ color: themeColors.primary }}
                                 >
                                     {t('quickGuide.toast.open')}
                                 </Link>
@@ -108,12 +109,12 @@ const ProfessionalGuideGate = ({ children }) => {
                 <div className="w-full max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transform transition-all animate-in fade-in zoom-in duration-300">
 
                     {/* Header */}
-                    <div className="bg-emerald-600 p-6 text-white text-center">
+                    <div className="p-6 text-white text-center" style={{ backgroundColor: themeColors.primary }}>
                         <div className="mx-auto bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 backdrop-blur-md">
                             <ShieldCheck size={32} className="text-white" />
                         </div>
                         <h2 className="text-2xl font-bold">{t('quickGuide.modal.title')}</h2>
-                        <p className="text-emerald-100 text-sm mt-1">{t('quickGuide.modal.subtitle')}</p>
+                        <p className="text-white/80 text-sm mt-1">{t('quickGuide.modal.subtitle')}</p>
                     </div>
 
                     {/* Body */}
@@ -126,9 +127,9 @@ const ProfessionalGuideGate = ({ children }) => {
                             </p>
                         </div>
 
-                        <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 rounded-xl p-5 mb-6">
-                            <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-2">{t('quickGuide.card.title')}</h3>
-                            <p className="text-sm text-emerald-700 dark:text-emerald-300 mb-4">
+                        <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50 rounded-xl p-5 mb-6">
+                            <h3 className="text-lg font-bold mb-2" style={{ color: themeColors.primaryDark }}>{t('quickGuide.card.title')}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                                 {t('quickGuide.card.description')}
                             </p>
 
@@ -136,7 +137,8 @@ const ProfessionalGuideGate = ({ children }) => {
                                 <Link
                                     href="/guia-resumo"
                                     target="_blank"
-                                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-emerald-800 text-emerald-700 dark:text-white hover:bg-emerald-50 dark:hover:bg-emerald-700 border border-emerald-200 dark:border-emerald-700 rounded-lg text-sm font-bold transition shadow-sm"
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-bold transition shadow-sm"
+                                    style={{ color: themeColors.primary }}
                                 >
                                     <BookOpen size={16} />
                                     {t('onboardingGate.viewGuide', 'Read Summary')}
@@ -144,7 +146,8 @@ const ProfessionalGuideGate = ({ children }) => {
                                 <Link
                                     href="/guia"
                                     target="_blank"
-                                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent text-emerald-600 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg text-sm font-semibold transition"
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg text-sm font-semibold transition"
+                                    style={{ color: themeColors.primary }}
                                 >
                                     {t('quickGuide.card.openFull')}
                                 </Link>
@@ -160,7 +163,9 @@ const ProfessionalGuideGate = ({ children }) => {
                                         checked={isChecked}
                                         onChange={(e) => setIsChecked(e.target.checked)}
                                     />
-                                    <div className="w-5 h-5 border-2 border-gray-300 rounded peer-checked:bg-emerald-600 peer-checked:border-emerald-600 transition-colors"></div>
+                                    <div className="w-5 h-5 border-2 border-gray-300 rounded peer-checked:border-current transition-colors flex items-center justify-center" style={{ color: isChecked ? themeColors.primary : undefined }}>
+                                        <div className={`w-full h-full ${isChecked ? '' : 'hidden'}`} style={{ backgroundColor: themeColors.primary }}></div>
+                                    </div>
                                     <CheckSquare size={14} className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none top-0.5 left-0.5" />
                                 </div>
                                 <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors select-none">
@@ -172,7 +177,8 @@ const ProfessionalGuideGate = ({ children }) => {
                         <button
                             onClick={handleContinue}
                             disabled={!isChecked || isSubmitting}
-                            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/30"
+                            className="w-full flex items-center justify-center gap-2 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{ backgroundColor: themeColors.primary }}
                         >
                             {isSubmitting ? (
                                 <span className="animate-pulse">{t('quickGuide.modal.saving')}</span>

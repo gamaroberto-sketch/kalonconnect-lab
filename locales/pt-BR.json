@@ -2001,30 +2001,30 @@
       "details": "Detalhes Técnicos",
       "reconnection": "Reconexão",
       "aborted": "Gravação Abortada"
-    },
-    "communications": {
-      "title": "Avisos Operacionais & Segurança",
-      "empty": "Nenhum comunicado no momento",
-      "markRead": "Marcar lido"
-    },
-    "secureDelivery": {
-      "availableInfo": "A gravação estará disponível para o cliente via link seguro.",
-      "validity": "Válido por 7 dias.",
-      "label": "Link Seguro de Download:",
-      "copy": "COPIAR",
-      "copied": "COPIADO!"
-    },
-    "onboardingGate": {
-      "checkbox": "Li e compreendi como o sistema funciona",
-      "viewGuide": "Ver guia resumido",
-      "continue": "Continuar para a Plataforma"
-    },
-    "telemetry": {
-      "session": "Sessão (Anonimizada)",
-      "details": "Detalhes Técnicos",
-      "reconnection": "Reconexão",
-      "aborted": "Gravação Abortada",
-      "longSessionWarning": "Sessão longa detectada. Gravação de segurança iniciada no servidor."
     }
+  },
+  "communications": {
+    "title": "Avisos Operacionais & Segurança",
+    "empty": "Nenhum comunicado no momento",
+    "markRead": "Marcar lido"
+  },
+  "secureDelivery": {
+    "availableInfo": "A gravação estará disponível para o cliente via link seguro.",
+    "validity": "Válido por 7 dias.",
+    "label": "Link Seguro de Download:",
+    "copy": "COPIAR",
+    "copied": "COPIADO!"
+  },
+  "onboardingGate": {
+    "checkbox": "Li e compreendi como o sistema funciona",
+    "viewGuide": "Ver guia resumido",
+    "continue": "Continuar para a Plataforma"
+  },
+  "telemetry": {
+    "session": "Sessão (Anonimizada)",
+    "details": "Detalhes Técnicos",
+    "reconnection": "Reconexão",
+    "aborted": "Gravação Abortada",
+    "longSessionWarning": "Sessão longa detectada. Gravação de segurança iniciada no servidor."
   }
 }
