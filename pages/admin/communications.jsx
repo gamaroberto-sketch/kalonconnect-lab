@@ -23,7 +23,7 @@ import { loadAdminSession, clearAdminSession } from '../../utils/adminSession';
 
 const AdminCommunicationsPage = () => {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
     const { t } = useTranslation();
@@ -46,6 +46,8 @@ const AdminCommunicationsPage = () => {
 
     // Auth Logic (Reused from existing Admin pages)
     useEffect(() => {
+        if (authLoading) return; // Wait for auth to initialize
+
         const session = loadAdminSession();
         if (!session) {
             setAdminAuthorized(false);
@@ -53,8 +55,10 @@ const AdminCommunicationsPage = () => {
             return;
         }
         setAdminAuthorized(true);
-        loadData();
-    }, [router]);
+        if (user?.email) {
+            loadData();
+        }
+    }, [router, authLoading, user?.email]);
 
     const authHeaders = useMemo(() => {
         if (!user?.email) return {};
@@ -182,6 +186,12 @@ const AdminCommunicationsPage = () => {
         }
     };
 
+    if (authLoading) return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+            <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        </div>
+    );
+
     if (!adminAuthorized) return null;
 
     return (
@@ -257,8 +267,8 @@ const AdminCommunicationsPage = () => {
                                                     <button
                                                         onClick={() => togglePublish(item)}
                                                         className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${item.is_published !== false
-                                                                ? 'bg-green-100 text-green-800 border-green-200'
-                                                                : 'bg-gray-100 text-gray-600 border-gray-200'
+                                                            ? 'bg-green-100 text-green-800 border-green-200'
+                                                            : 'bg-gray-100 text-gray-600 border-gray-200'
                                                             }`}
                                                         title={item.is_published !== false ? "Clique para despublicar" : "Clique para publicar"}
                                                     >

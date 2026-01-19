@@ -8,7 +8,7 @@ const ADMIN_EMAIL = 'bobgama@uol.com.br';
 export default async function handler(req, res) {
     // 1. Security Check
     const userEmail = req.headers['x-user-email'];
-    if (userEmail !== ADMIN_EMAIL) {
+    if (!userEmail || userEmail.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
         return res.status(403).json({ error: 'Unauthorized' });
     }
 
