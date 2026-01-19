@@ -139,7 +139,7 @@ const ProfessionalGuideGate = ({ children }) => {
                                     className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-emerald-800 text-emerald-700 dark:text-white hover:bg-emerald-50 dark:hover:bg-emerald-700 border border-emerald-200 dark:border-emerald-700 rounded-lg text-sm font-bold transition shadow-sm"
                                 >
                                     <BookOpen size={16} />
-                                    {t('quickGuide.card.readNow')}
+                                    {t('onboardingGate.viewGuide', 'Read Summary')}
                                 </Link>
                                 <Link
                                     href="/guia"
@@ -164,7 +164,7 @@ const ProfessionalGuideGate = ({ children }) => {
                                     <CheckSquare size={14} className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none top-0.5 left-0.5" />
                                 </div>
                                 <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors select-none">
-                                    {t('quickGuide.modal.checkbox')}
+                                    {t('onboardingGate.checkbox', 'I have read and understood how the system works')}
                                 </span>
                             </label>
                         </div>
@@ -178,7 +178,7 @@ const ProfessionalGuideGate = ({ children }) => {
                                 <span className="animate-pulse">{t('quickGuide.modal.saving')}</span>
                             ) : (
                                 <>
-                                    {t('quickGuide.modal.continue')}
+                                    {t('onboardingGate.continue', 'Continue')}
                                     <ArrowRight size={20} />
                                 </>
                             )}

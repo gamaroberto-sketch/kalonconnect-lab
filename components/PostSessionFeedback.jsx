@@ -185,7 +185,7 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
                                     {secureLink && (
                                         <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 w-full">
                                             <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                                                A gravação estará disponível para o cliente via link seguro:
+                                                {t('secureDelivery.availableInfo', 'Recording available via secure link:')}
                                             </p>
                                             <div className="flex items-center gap-2">
                                                 <code className="text-xs bg-white dark:bg-black p-2 rounded border border-slate-200 dark:border-slate-700 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -194,13 +194,13 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
                                                 <button
                                                     onClick={() => navigator.clipboard.writeText(secureLink)}
                                                     className="p-2 text-primary-600 hover:bg-primary-50 rounded-md transition-colors"
-                                                    title="Copiar Link"
+                                                    title={t('secureDelivery.label', 'Copy Link')}
                                                 >
-                                                    <span className="text-xs font-bold">COPIAR</span>
+                                                    <span className="text-xs font-bold">{t('secureDelivery.copy', 'COPY')}</span>
                                                 </button>
                                             </div>
                                             <p className="text-xs text-slate-400 mt-2">
-                                                Válido por 7 dias. Acesso monitorado.
+                                                {t('secureDelivery.validity', 'Valid for 7 days.')}
                                             </p>
                                         </div>
                                     )}

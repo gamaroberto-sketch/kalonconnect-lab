@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Info, AlertTriangle, PenTool, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { useTranslation } from 'react-i18next';
+
 const CommunicationsBox = () => {
+    const { t } = useTranslation();
     const [communications, setCommunications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
@@ -102,7 +105,7 @@ const CommunicationsBox = () => {
                         className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 origin-top-right"
                     >
                         <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 flex justify-between items-center">
-                            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Comunicados</h3>
+                            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t('communications.title', 'Notices')}</h3>
                             {unreadCount === 0 && (
                                 <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                                     <Check className="w-3 h-3" /> Atualizado
@@ -113,7 +116,7 @@ const CommunicationsBox = () => {
                         <div className="max-h-96 overflow-y-auto">
                             {communications.length === 0 ? (
                                 <div className="p-8 text-center text-slate-400 text-sm">
-                                    Nenhum comunicado no momento.
+                                    {t('communications.empty', 'No notices')}
                                 </div>
                             ) : (
                                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -135,9 +138,9 @@ const CommunicationsBox = () => {
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); markAsRead(item.id); }}
                                                                 className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium whitespace-nowrap"
-                                                                title="Marcar como lido"
+                                                                title={t('communications.markRead', 'Mark as read')}
                                                             >
-                                                                Marcar lido
+                                                                {t('communications.markRead', 'Mark as read')}
                                                             </button>
                                                         )}
                                                     </div>
@@ -156,7 +159,7 @@ const CommunicationsBox = () => {
                         </div>
 
                         <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 text-center">
-                            <span className="text-[10px] text-slate-400">Avisos Operacionais & Segurança</span>
+                            <span className="text-[10px] text-slate-400">{t('communications.title', 'Operational & Security Notices')}</span>
                         </div>
                     </motion.div>
                 )}

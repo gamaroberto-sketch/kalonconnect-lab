@@ -1919,5 +1919,25 @@
         "aborted": "Enregistrement Avorté"
       }
     }
+  },
+  "communications": {
+    "title": "Avis Opérationnels & Sécurité",
+    "empty": "Aucun avis pour le moment",
+    "markRead": "Marquer comme lu"
+  },
+  "secureDelivery": {
+    "availableInfo": "L'enregistrement sera disponible pour le client via un lien sécurisé.",
+    "validity": "Valable 7 jours.",
+    "label": "Lien de Téléchargement Sécurisé :",
+    "copy": "COPIER",
+    "copied": "COPIÉ !"
+  },
+  "onboardingGate": {
+    "checkbox": "J'ai lu et compris comment fonctionne le système",
+    "viewGuide": "Voir le guide résumé",
+    "continue": "Continuer vers la Plateforme"
+  },
+  "telemetry": {
+    "longSessionWarning": "Longue session détectée. Enregistrement de sécurité démarré sur le serveur."
   }
 }

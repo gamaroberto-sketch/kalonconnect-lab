@@ -1935,5 +1935,25 @@
       "reconnection": "Reconexión",
       "aborted": "Grabación Abortada"
     }
+  },
+  "communications": {
+    "title": "Avisos Operativos y de Seguridad",
+    "empty": "No hay comunicados en este momento",
+    "markRead": "Marcar como leído"
+  },
+  "secureDelivery": {
+    "availableInfo": "La grabación estará disponible para el cliente vía enlace seguro.",
+    "validity": "Válido por 7 días.",
+    "label": "Enlace Seguro de Descarga:",
+    "copy": "COPIAR",
+    "copied": "¡COPIADO!"
+  },
+  "onboardingGate": {
+    "checkbox": "He leído y comprendido cómo funciona el sistema",
+    "viewGuide": "Ver guía resumida",
+    "continue": "Continuar a la Plataforma"
+  },
+  "telemetry": {
+    "longSessionWarning": "Sesión larga detectada. Grabación de seguridad iniciada en servidor."
   }
 }

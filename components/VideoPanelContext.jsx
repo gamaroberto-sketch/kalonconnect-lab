@@ -10,7 +10,9 @@ import {
 } from "react";
 import { LocalVideoTrack } from "livekit-client";
 import { BackgroundBlur, VirtualBackground } from "@livekit/track-processors";
+import { BackgroundBlur, VirtualBackground } from "@livekit/track-processors";
 import { useTheme } from "./ThemeProvider";
+import { useTranslation } from "react-i18next";
 
 export const VideoPanelContext = createContext(null);
 
@@ -44,6 +46,7 @@ export const VideoPanelProvider = ({
 }) => {
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
+  const { t } = useTranslation();
 
   const [isVideoOn, setIsVideoOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
@@ -386,7 +389,7 @@ export const VideoPanelProvider = ({
                 window.dispatchEvent(new CustomEvent('kalon-toast', {
                   detail: {
                     type: 'info',
-                    message: 'Sessão longa detectada. Gravação de segurança iniciada no servidor.'
+                    message: t('telemetry.longSessionWarning', 'Long session detected. Security recording started.')
                   }
                 }));
               } else {

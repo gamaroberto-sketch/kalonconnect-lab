@@ -1958,5 +1958,25 @@
       "reconnection": "Reconnection",
       "aborted": "Aborted Recording"
     }
+  },
+  "communications": {
+    "title": "Operational & Security Notices",
+    "empty": "No notices at the moment",
+    "markRead": "Mark as read"
+  },
+  "secureDelivery": {
+    "availableInfo": "Recording will be available to client via secure link.",
+    "validity": "Valid for 7 days.",
+    "label": "Secure Download Link:",
+    "copy": "COPY",
+    "copied": "COPIED!"
+  },
+  "onboardingGate": {
+    "checkbox": "I have read and understood how the system works",
+    "viewGuide": "View summary guide",
+    "continue": "Continue to Platform"
+  },
+  "telemetry": {
+    "longSessionWarning": "Long session detected. Security recording started on server."
   }
 }
