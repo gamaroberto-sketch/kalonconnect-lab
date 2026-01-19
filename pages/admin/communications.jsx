@@ -97,20 +97,33 @@ const AdminCommunicationsPage = () => {
 
             const method = editingItem ? 'PUT' : 'POST';
 
+            console.log('🔍 Admin Save Debug:', {
+                url,
+                method,
+                headers: authHeaders,
+                formData,
+                userEmail: user?.email
+            });
+
             const res = await fetch(url, {
                 method,
                 headers: authHeaders,
                 body: JSON.stringify(formData)
             });
 
+            console.log('🔍 Response Status:', res.status);
+
             if (res.ok) {
                 setModalOpen(false);
                 loadData();
             } else {
-                alert('Erro ao salvar');
+                const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+                console.error('🔴 API Error:', errorData);
+                alert(`Erro ao salvar: ${errorData.error || res.statusText} (Status: ${res.status})`);
             }
         } catch (error) {
-            alert('Erro de conexão');
+            console.error('🔴 Network Error:', error);
+            alert(`Erro de conexão: ${error.message}`);
         } finally {
             setSaving(false);
         }
