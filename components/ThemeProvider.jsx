@@ -39,7 +39,11 @@ export const ThemeProvider = ({ children }) => {
 
     try {
       // Inicializar imediatamente se DOM está pronto
-      const theme = initializeTheme();
+      let theme = initializeTheme();
+      if (!themes[theme]) {
+        theme = 'verde';
+        applyTheme('verde');
+      }
       setCurrentTheme(theme);
       setIsInitialized(true);
       clearTimeout(timeout);

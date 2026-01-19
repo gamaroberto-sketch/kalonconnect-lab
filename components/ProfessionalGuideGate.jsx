@@ -12,7 +12,7 @@ const ProfessionalGuideGate = ({ children }) => {
     const { user, loading, markProfessionalGuideAsRead } = useAuth();
     const { t } = useTranslation();
     const { getThemeColors } = useTheme();
-    const themeColors = getThemeColors();
+    const themeColors = getThemeColors() || { primary: '#093b3e', primaryDark: '#062a2c' };
     const [isChecked, setIsChecked] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showRevalidationToast, setShowRevalidationToast] = useState(false);
