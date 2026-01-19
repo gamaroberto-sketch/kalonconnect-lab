@@ -1939,5 +1939,42 @@
   },
   "telemetry": {
     "longSessionWarning": "Longue session détectée. Enregistrement de sécurité démarré sur le serveur."
+  },
+  "adminAccess": {
+    "button": "Admin",
+    "title": "Accès Administrateur",
+    "restrictedTitle": "Accès Restreint",
+    "restrictedMessage": "Cette zone est restreinte aux administrateurs.",
+    "menu": {
+      "users": "Utilisateurs",
+      "testUsers": "Utilisateurs Test",
+      "reports": "Rapports",
+      "logout": "Déconnexion"
+    },
+    "session": {
+      "expires": "Session expire dans {minutes} min"
+    },
+    "form": {
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "••••••",
+      "cancel": "Annuler",
+      "login": "Connexion",
+      "validating": "Validation..."
+    },
+    "errors": {
+      "unauthorized": "Identifiants invalides.",
+      "network": "Erreur réseau."
+    }
+  },
+  "adminAuditLogs": {
+    "title": "Journaux d'Audit"
+  },
+  "adminActivity": {
+    "title": "Activité Système"
+  },
+  "adminEmailTemplates": {
+    "title": "Modèles d'Email"
   }
 }

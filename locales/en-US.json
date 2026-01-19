@@ -1978,5 +1978,42 @@
   },
   "telemetry": {
     "longSessionWarning": "Long session detected. Security recording started on server."
+  },
+  "adminAccess": {
+    "button": "Admin",
+    "title": "Admin Access",
+    "restrictedTitle": "Restricted Access",
+    "restrictedMessage": "This area is restricted to administrators.",
+    "menu": {
+      "users": "Users",
+      "testUsers": "Test Users",
+      "reports": "Reports",
+      "logout": "Logout"
+    },
+    "session": {
+      "expires": "Session expires in {minutes} min"
+    },
+    "form": {
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••",
+      "cancel": "Cancel",
+      "login": "Login",
+      "validating": "Validating..."
+    },
+    "errors": {
+      "unauthorized": "Invalid credentials.",
+      "network": "Network error."
+    }
+  },
+  "adminAuditLogs": {
+    "title": "Audit Logs"
+  },
+  "adminActivity": {
+    "title": "System Activity"
+  },
+  "adminEmailTemplates": {
+    "title": "Email Templates"
   }
 }
