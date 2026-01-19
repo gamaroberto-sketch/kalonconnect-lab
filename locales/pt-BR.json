@@ -2027,32 +2027,4 @@
     "aborted": "Gravação Abortada",
     "longSessionWarning": "Sessão longa detectada. Gravação de segurança iniciada no servidor."
   },
-  "adminAccess": {
-    "button": "Admin",
-    "title": "Acesso Administrativo",
-    "restrictedTitle": "Acesso Restrito",
-    "restrictedMessage": "Esta área é restrita a administradores.",
-    "menu": {
-      "users": "Usuários",
-      "testUsers": "Usuários de Teste",
-      "reports": "Relatórios",
-      "logout": "Sair"
-    },
-    "session": {
-      "expires": "Sessão expira em {minutes} min"
-    },
-    "form": {
-      "email": "E-mail",
-      "emailPlaceholder": "seu@email.com",
-      "password": "Senha",
-      "passwordPlaceholder": "••••••",
-      "cancel": "Cancelar",
-      "login": "Entrar",
-      "validating": "Validando..."
-    },
-    "errors": {
-      "unauthorized": "Credenciais inválidas.",
-      "network": "Erro de rede."
-    }
-  }
 }

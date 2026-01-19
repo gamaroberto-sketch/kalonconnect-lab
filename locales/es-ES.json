@@ -1955,33 +1955,5 @@
   },
   "telemetry": {
     "longSessionWarning": "Sesión larga detectada. Grabación de seguridad iniciada en servidor."
-  },
-  "adminAccess": {
-    "button": "Admin",
-    "title": "Acceso Administrativo",
-    "restrictedTitle": "Acceso Restringido",
-    "restrictedMessage": "Esta área es restringida a administradores.",
-    "menu": {
-      "users": "Usuarios",
-      "testUsers": "Usuarios de Prueba",
-      "reports": "Reportes",
-      "logout": "Cerrar Sesión"
-    },
-    "session": {
-      "expires": "Sesión expira en {minutes} min"
-    },
-    "form": {
-      "email": "Correo",
-      "emailPlaceholder": "tu@email.com",
-      "password": "Contraseña",
-      "passwordPlaceholder": "••••••",
-      "cancel": "Cancelar",
-      "login": "Entrar",
-      "validating": "Validando..."
-    },
-    "errors": {
-      "unauthorized": "Credenciales inválidas.",
-      "network": "Error de red."
-    }
   }
 }
