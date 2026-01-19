@@ -209,6 +209,21 @@ export const AuthProvider = ({ children }) => {
 
       if (error) throw error;
 
+      // 🟢 Log for Governance/Audit
+      try {
+        await fetch('/api/user/read-guide', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            version: '2026-01-18' // Should match constant in Gate
+          })
+        });
+      } catch (logErr) {
+        console.warn('Failed to log guide acceptance:', logErr);
+        // Does not block the UX
+      }
+
       // Update local state immediately for seamless UX
       setUser(prev => ({
         ...prev,
