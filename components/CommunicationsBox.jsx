@@ -148,7 +148,7 @@ const CommunicationsBox = () => {
                                                         {item.message}
                                                     </p>
                                                     <span className="text-[10px] text-slate-400 uppercase tracking-wider block pt-1">
-                                                        {new Date(item.createdAt).toLocaleDateString()}
+                                                        {new Date(item.created_at).toLocaleDateString()}
                                                     </span>
                                                 </div>
                                             </div>
