@@ -1967,14 +1967,5 @@
       "unauthorized": "Identifiants invalides.",
       "network": "Erreur réseau."
     }
-  },
-  "adminAuditLogs": {
-    "title": "Journaux d'Audit"
-  },
-  "adminActivity": {
-    "title": "Activité Système"
-  },
-  "adminEmailTemplates": {
-    "title": "Modèles d'Email"
   }
 }

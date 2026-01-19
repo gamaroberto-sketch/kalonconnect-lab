@@ -2006,14 +2006,5 @@
       "unauthorized": "Invalid credentials.",
       "network": "Network error."
     }
-  },
-  "adminAuditLogs": {
-    "title": "Audit Logs"
-  },
-  "adminActivity": {
-    "title": "System Activity"
-  },
-  "adminEmailTemplates": {
-    "title": "Email Templates"
   }
 }

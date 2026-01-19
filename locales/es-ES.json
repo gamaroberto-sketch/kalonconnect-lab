@@ -1983,14 +1983,5 @@
       "unauthorized": "Credenciales inválidas.",
       "network": "Error de red."
     }
-  },
-  "adminAuditLogs": {
-    "title": "Registros de Auditoría"
-  },
-  "adminActivity": {
-    "title": "Actividad del Sistema"
-  },
-  "adminEmailTemplates": {
-    "title": "Plantillas de Correo"
   }
 }

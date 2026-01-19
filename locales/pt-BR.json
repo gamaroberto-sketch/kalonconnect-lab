@@ -2054,14 +2054,5 @@
       "unauthorized": "Credenciais inválidas.",
       "network": "Erro de rede."
     }
-  },
-  "adminAuditLogs": {
-    "title": "Logs de Auditoria"
-  },
-  "adminActivity": {
-    "title": "Atividade do Sistema"
-  },
-  "adminEmailTemplates": {
-    "title": "Templates de E-mail"
   }
 }
