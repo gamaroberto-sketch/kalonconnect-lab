@@ -305,9 +305,9 @@ const AdminCommunicationsPage = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-500">
-                                                    {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+                                                    {new Date(item.created_at).toLocaleDateString('pt-BR')}
                                                     <div className="text-xs text-gray-400">
-                                                        {new Date(item.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                        {new Date(item.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
