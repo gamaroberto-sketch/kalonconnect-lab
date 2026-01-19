@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, X, MessageSquare, Send } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../hooks/useTranslation';
 
 const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
     const { t } = useTranslation();

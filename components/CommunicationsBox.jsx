@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Info, AlertTriangle, PenTool, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../hooks/useTranslation';
 
 const CommunicationsBox = () => {
     const { t } = useTranslation();
