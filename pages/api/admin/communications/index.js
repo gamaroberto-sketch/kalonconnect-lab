@@ -1,4 +1,4 @@
-import { supabase } from '../../../../lib/supabase';
+import { supabaseAdmin } from '../../../../lib/supabase';
 
 const ADMIN_EMAIL = 'bobgama@uol.com.br';
 
@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     try {
         if (req.method === 'GET') {
             // Get all communications (admin sees everything)
-            const { data, error } = await supabase
+            const { data, error } = await supabaseAdmin
                 .from('communications')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Title and message are required' });
             }
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseAdmin
                 .from('communications')
                 .insert([{
                     title,
