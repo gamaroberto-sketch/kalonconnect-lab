@@ -107,7 +107,8 @@ export const LanguageProvider = ({ children }) => {
         // Interpolate parameters
         let result = value;
         Object.keys(params).forEach(param => {
-            result = result.replace(new RegExp(`{${param}}`, 'g'), params[param]);
+            // Escape curly braces to prevent regex syntax errors
+            result = result.replace(new RegExp(`\\{${param}\\}`, 'g'), params[param]);
         });
 
         return result;
