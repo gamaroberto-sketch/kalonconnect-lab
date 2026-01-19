@@ -10,7 +10,7 @@ import {
 } from "react";
 import { LocalVideoTrack } from "livekit-client";
 import { BackgroundBlur, VirtualBackground } from "@livekit/track-processors";
-import { BackgroundBlur, VirtualBackground } from "@livekit/track-processors";
+
 import { useTheme } from "./ThemeProvider";
 import { useTranslation } from "react-i18next";
 
