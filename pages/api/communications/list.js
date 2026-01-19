@@ -18,9 +18,16 @@ export default async function handler(req, res) {
 
         // Filter active messages
         const now = new Date();
-        const active = communications.filter(msg =>
-            !msg.expiresAt || new Date(msg.expiresAt) > now
-        ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const active = communications.filter(msg => {
+            // Admin flag to see all
+            if (req.query.include_all === 'true') return true;
+
+            // Default public behavior: must be published AND not expired
+            const isPublished = msg.is_published !== false; // Default to true for legacy items
+            const notExpired = !msg.expiresAt || new Date(msg.expiresAt) > now;
+
+            return isPublished && notExpired;
+        }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         return res.status(200).json(active);
     } catch (error) {
