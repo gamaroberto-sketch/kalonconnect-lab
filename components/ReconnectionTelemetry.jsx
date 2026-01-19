@@ -31,17 +31,26 @@ const ReconnectionTelemetry = () => {
 
                 // Ethical Payload: Only technical metrics
                 const payload = {
-                    sessionId: room.name, // Using room name as session identifier
-                    timestamp: new Date().toISOString(),
-                    durationUntilReconnect: duration,
+                    durationMs: duration,
                     userType: user?.type || 'unknown'
                 };
 
-                // Send to telemetry storage
+                // Send to telemetry storage (Local JSON Audit)
+                fetch('/api/telemetry/collect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'reconnection',
+                        sessionId: room.name,
+                        data: payload
+                    })
+                }).catch(err => console.error("📡 Telemetry Error:", err));
+
+                // Send to User Activity Track (Existing)
                 trackActivity({
                     userId: user?.id || 'anonymous',
                     activityType: 'session_reconnecting',
-                    metadata: payload
+                    metadata: { ...payload, sessionId: room.name }
                 });
 
                 console.log("📡 Telemetry: Reconnection finished", payload);

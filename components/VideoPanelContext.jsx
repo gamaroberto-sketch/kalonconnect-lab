@@ -262,6 +262,26 @@ export const VideoPanelProvider = ({
     }
   }, []);
 
+  // 🟢 Telemetry Helper
+  const collectSessionTelemetry = useCallback(async (type, data) => {
+    try {
+      await fetch('/api/telemetry/collect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          sessionId: roomName || sessionDataRef.current?.lastSession?.start || 'unknown',
+          data: {
+            ...data,
+            timestamp: new Date().toISOString()
+          }
+        })
+      });
+    } catch (e) {
+      console.warn('Telemetry collection failed:', e);
+    }
+  }, [roomName]);
+
   useEffect(() => {
     return () => {
       if (streamRef.current) {
@@ -346,6 +366,12 @@ export const VideoPanelProvider = ({
         if (total > 7200 && !isDualRecordingActive && roomName) {
           console.log('Session exceeded 2 hours. Triggering dual recording...');
           setIsDualRecordingActive(true); // Set immediately to prevent multiple calls
+
+          // 📡 Telemetry: Long Session + Dual Recording Triggered
+          collectSessionTelemetry('long_session_protection', {
+            durationSeconds: total,
+            reason: 'exceeded_120min'
+          });
 
           fetch('/api/livekit/egress', {
             method: 'POST',
@@ -651,6 +677,8 @@ export const VideoPanelProvider = ({
           requestImmediatePersist();
         }
       } else if (lastSession.elapsed > 0) {
+        // Log telemetry for recovered session if desired, or wait for next end
+        collectSessionTelemetry('session_recovered', { elapsed: lastSession.elapsed });
         setLocalSessionTime(lastSession.elapsed);
       }
     };
