@@ -14,6 +14,9 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
     // but here we might want to return null effectively or rely on parent. 
     // Let's assume parent handles conditional rendering or we use AnimatePresence here for the modal content)
 
+    // 🟢 Secure Link State
+    const [secureLink, setSecureLink] = useState(null);
+
     const handleRating = (value) => {
         setRating(value);
     };
@@ -38,7 +41,27 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
 
             if (response.ok) {
                 setSubmitted(true);
-                setTimeout(() => {
+
+                // 🟢 Generate Secure Link Automatically
+                try {
+                    const linkRes = await fetch('/api/recordings/generate-link', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sessionId,
+                            roomName: `consulta-${sessionId}` // Assuming this convention or passing prop
+                        })
+                    });
+                    if (linkRes.ok) {
+                        const linkData = await linkRes.json();
+                        setSecureLink(linkData.url);
+                    }
+                } catch (err) {
+                    console.error('Failed to generate secure link:', err);
+                }
+
+                // Removed auto-close to allow user to see the link
+                /* setTimeout(() => {
                     onClose();
                     // Reset state after closing
                     setTimeout(() => {
@@ -47,7 +70,7 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
                         setComment('');
                         setIsSubmitting(false);
                     }, 300);
-                }, 2000);
+                }, 2000); */
             } else {
                 console.error('Failed to submit feedback');
                 setIsSubmitting(false);
@@ -108,8 +131,8 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
                                             >
                                                 <Star
                                                     className={`w-10 h-10 ${star <= rating
-                                                            ? 'fill-amber-400 text-amber-400'
-                                                            : 'fill-transparent text-slate-300 dark:text-slate-700'
+                                                        ? 'fill-amber-400 text-amber-400'
+                                                        : 'fill-transparent text-slate-300 dark:text-slate-700'
                                                         } transition-colors duration-200`}
                                                 />
                                             </button>
@@ -135,8 +158,8 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
                                         onClick={handleSubmit}
                                         disabled={rating === 0 || isSubmitting}
                                         className={`w-full py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-all ${rating > 0
-                                                ? 'bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-500/20'
-                                                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
+                                            ? 'bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-500/20'
+                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
                                             }`}
                                     >
                                         {isSubmitting ? (
@@ -157,6 +180,37 @@ const PostSessionFeedback = ({ isOpen, onClose, sessionId }) => {
                                     <p className="text-center text-slate-600 dark:text-slate-300">
                                         {t('feedback.feedbackReceived', 'Your feedback has been recorded.')}
                                     </p>
+
+                                    {/* 🟢 Secure Link Display */}
+                                    {secureLink && (
+                                        <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 w-full">
+                                            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
+                                                A gravação estará disponível para o cliente via link seguro:
+                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <code className="text-xs bg-white dark:bg-black p-2 rounded border border-slate-200 dark:border-slate-700 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {secureLink}
+                                                </code>
+                                                <button
+                                                    onClick={() => navigator.clipboard.writeText(secureLink)}
+                                                    className="p-2 text-primary-600 hover:bg-primary-50 rounded-md transition-colors"
+                                                    title="Copiar Link"
+                                                >
+                                                    <span className="text-xs font-bold">COPIAR</span>
+                                                </button>
+                                            </div>
+                                            <p className="text-xs text-slate-400 mt-2">
+                                                Válido por 7 dias. Acesso monitorado.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <button
+                                        onClick={onClose}
+                                        className="mt-4 text-sm text-slate-500 hover:text-slate-700 underline"
+                                    >
+                                        Fechar
+                                    </button>
                                 </div>
                             )}
                         </div>
