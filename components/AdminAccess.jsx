@@ -244,6 +244,13 @@ const AdminAccess = ({ anchor }) => {
             </button>
             <button
               type="button"
+              onClick={() => handleNavigate("/admin/communications")}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-left font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
+            >
+              Comunicados
+            </button>
+            <button
+              type="button"
               onClick={() => handleNavigate("/admin/contact")}
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-left font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
             >
