@@ -14,9 +14,9 @@ const QuickGuidePage = () => {
                 <title>{t('quickGuide.title')} | KalonConnect</title>
             </Head>
 
-            <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden border border-emerald-100 dark:border-emerald-900">
+            <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden border" style={{ borderColor: 'rgba(9, 59, 62, 0.2)' }}>
                 {/* Header */}
-                <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-6 flex items-center gap-4">
+                <div className="px-8 py-6 flex items-center gap-4" style={{ background: 'linear-gradient(to right, #093b3e, #0d4a4e)' }}>
                     <button
                         onClick={() => router.back()}
                         className="text-white hover:bg-white/20 p-2 rounded-full transition"
@@ -30,8 +30,8 @@ const QuickGuidePage = () => {
                 {/* Content */}
                 <div className="p-8 space-y-8">
 
-                    <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-l-4 border-emerald-500">
-                        <p className="font-semibold text-emerald-900 dark:text-emerald-100 italic">
+                    <div className="p-4 rounded-lg border-l-4" style={{ backgroundColor: 'rgba(9, 59, 62, 0.05)', borderColor: '#093b3e' }}>
+                        <p className="font-semibold dark:text-gray-100 italic" style={{ color: '#093b3e' }}>
                             "{t('quickGuide.disclaimer')}"
                         </p>
                     </div>
@@ -86,15 +86,15 @@ const QuickGuidePage = () => {
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-2">{t('quickGuide.recordingRules.title')}</h2>
                             <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                                 <li className="flex items-start gap-2">
-                                    <CheckCircle size={16} className="text-emerald-500 mt-0.5" />
+                                    <CheckCircle size={16} className="mt-0.5" style={{ color: '#093b3e' }} />
                                     <span dangerouslySetInnerHTML={{ __html: t('quickGuide.recordingRules.consent') }} />
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <CheckCircle size={16} className="text-emerald-500 mt-0.5" />
+                                    <CheckCircle size={16} className="mt-0.5" style={{ color: '#093b3e' }} />
                                     <span dangerouslySetInnerHTML={{ __html: t('quickGuide.recordingRules.integrity') }} />
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <CheckCircle size={16} className="text-emerald-500 mt-0.5" />
+                                    <CheckCircle size={16} className="mt-0.5" style={{ color: '#093b3e' }} />
                                     <span dangerouslySetInnerHTML={{ __html: t('quickGuide.recordingRules.backup') }} />
                                 </li>
                             </ul>

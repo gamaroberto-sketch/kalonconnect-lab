@@ -14,19 +14,22 @@ const GuidePage = () => {
 
             <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
                 {/* Header */}
-                <div className="bg-emerald-600 px-8 py-6 flex items-center gap-4">
+                <div className="px-8 py-6 flex items-center gap-4" style={{ backgroundColor: '#093b3e' }}>
                     <button
                         onClick={() => router.back()}
-                        className="text-white hover:bg-emerald-700 p-2 rounded-full transition"
+                        className="text-white p-2 rounded-full transition"
+                        style={{ ':hover': { backgroundColor: '#062a2c' } }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#062a2c'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                         title="Voltar"
                     >
                         <ArrowLeft size={24} />
                     </button>
-                    <h1 className="text-2xl font-bold text-white">Guia do Profissional GalonConnect</h1>
+                    <h1 className="text-2xl font-bold text-white">Guia do Profissional KalonConnect</h1>
                 </div>
 
                 {/* Content */}
-                <div className="p-8 prose prose-emerald dark:prose-invert max-w-none">
+                <div className="p-8 prose dark:prose-invert max-w-none">
                     <p className="text-sm text-gray-500 mb-8 border-b pb-4">
                         Versão 1.0 | Janeiro 2026
                     </p>
@@ -37,7 +40,7 @@ const GuidePage = () => {
                     </p>
 
                     <h3>Princípio central</h3>
-                    <blockquote className="border-l-4 border-emerald-500 pl-4 bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-r italic">
+                    <blockquote className="border-l-4 pl-4 p-4 rounded-r italic" style={{ borderColor: '#093b3e', backgroundColor: 'rgba(9, 59, 62, 0.05)' }}>
                         <strong>O sistema informa estados críticos em tempo real, mas a responsabilidade clínica e ética permanece sempre com o profissional.</strong>
                     </blockquote>
                     <p>
