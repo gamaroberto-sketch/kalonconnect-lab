@@ -224,9 +224,8 @@ export default function Home() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-          >
-            {t('home.tagline')}
-          </motion.p>
+            dangerouslySetInnerHTML={{ __html: t('home.tagline') }}
+          />
         </div>
 
         {/* Card Guia de Utilização */}
@@ -286,7 +285,7 @@ export default function Home() {
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onClick={handleProfile}>
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-                  style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
+                  style={{ backgroundColor: themeColors.primary, color: 'white' }}
                 >
                   1
                 </div>
@@ -295,7 +294,7 @@ export default function Home() {
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onClick={handleCadastro}>
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-                  style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
+                  style={{ backgroundColor: themeColors.primary, color: 'white' }}
                 >
                   2
                 </div>
@@ -304,7 +303,7 @@ export default function Home() {
               <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onClick={handleConsultas}>
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-                  style={{ backgroundColor: themeColors.primary + '20', color: themeColors.primary }}
+                  style={{ backgroundColor: themeColors.primary, color: 'white' }}
                 >
                   3
                 </div>
