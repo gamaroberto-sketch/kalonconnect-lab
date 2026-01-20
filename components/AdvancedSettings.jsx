@@ -94,6 +94,12 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [lowPowerMode, setLowPowerMode] = useState(false);
 
+  // Translation Feedback State
+  const [showTranslationModal, setShowTranslationModal] = useState(false);
+  const [translationFeedback, setTranslationFeedback] = useState('');
+  const [isTranslationCritical, setIsTranslationCritical] = useState(false);
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+
   const tabs = [
     { id: 'general', name: t('settings.tabs.general'), icon: <Settings className="w-5 h-5" /> },
     { id: 'branding', name: t('settings.tabs.branding'), icon: <Palette className="w-5 h-5" /> },
@@ -442,6 +448,44 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
     { code: 'fr-FR', name: 'Français' }
   ];
 
+  const handleSendTranslationFeedback = async () => {
+    if (!translationFeedback.trim()) {
+      alert('Por favor, descreva o erro de tradução.');
+      return;
+    }
+
+    setIsSendingFeedback(true);
+
+    try {
+      const response = await fetch('/api/feedback/translation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: translationFeedback,
+          isCritical: isTranslationCritical,
+          locale: language,
+          screen: 'Settings/Language',
+          route: window.location.pathname,
+          userId: user?.id,
+          userEmail: user?.email
+        })
+      });
+
+      if (!response.ok) throw new Error('Falha ao enviar report');
+
+      setShowTranslationModal(false);
+      setTranslationFeedback('');
+      setIsTranslationCritical(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error sending translation feedback:', error);
+      alert('Erro ao enviar feedback in translation. Tente novamente.');
+    } finally {
+      setIsSendingFeedback(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       {/* Header */}
@@ -564,6 +608,20 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                 }))}
                 label={t('settings.language.title')}
               />
+
+              {/* Translation Feedback Trigger */}
+              <div className="mt-2 flex items-center gap-2 text-sm">
+                <span className="text-gray-500 dark:text-gray-400">
+                  Encontrou uma tradução incorreta?
+                </span>
+                <button
+                  onClick={() => setShowTranslationModal(true)}
+                  className="font-medium hover:underline focus:outline-none"
+                  style={{ color: themeColors.primary }}
+                >
+                  Reportar tradução
+                </button>
+              </div>
 
               {/* Formato de Data */}
               <div className="mt-6">
@@ -940,9 +998,82 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
           </motion.div>
         )}
       </div>
+      {/* Translation Feedback Modal */}
+      <AnimatePresence>
+        {showTranslationModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  Reportar Erro de Tradução
+                </h3>
+                <button
+                  onClick={() => setShowTranslationModal(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Ajude-nos a melhorar o KalonConnect. Diga-nos qual texto está incorreto e qual seria a correção ideal.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Onde está o erro e qual a correção? <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={translationFeedback}
+                    onChange={(e) => setTranslationFeedback(e.target.value)}
+                    placeholder="Ex: Na tela de configurações, 'Save' deveria ser 'Salvar'..."
+                    className="w-full px-3 py-2 border rounded-lg h-32 resize-none bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    maxLength={1000}
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="critical-translation"
+                    checked={isTranslationCritical}
+                    onChange={(e) => setIsTranslationCritical(e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <label htmlFor="critical-translation" className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                    Crítico (atrapalha o uso do app)
+                  </label>
+                </div>
+
+                <div className="flex gap-3 justify-end mt-6">
+                  <ModernButton
+                    variant="secondary"
+                    onClick={() => setShowTranslationModal(false)}
+                    disabled={isSendingFeedback}
+                  >
+                    Cancelar
+                  </ModernButton>
+                  <ModernButton
+                    variant="primary"
+                    onClick={handleSendTranslationFeedback}
+                    disabled={isSendingFeedback || !translationFeedback.trim()}
+                  >
+                    {isSendingFeedback ? 'Enviando...' : 'Enviar Sugestão'}
+                  </ModernButton>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div >
   );
 };
 
 export default AdvancedSettings;
-
