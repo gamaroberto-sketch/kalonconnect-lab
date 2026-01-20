@@ -60,7 +60,6 @@ export const VideoPanelProvider = ({
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const [showScreenSharePanel, setShowScreenSharePanel] = useState(false);
   const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
-  const [useWhereby, setUseWhereby] = useState(false);
   /* 🔴 ACHADO #15: Low Power Mode State */
   const [lowPowerMode, setLowPowerMode] = useState(false);
 
@@ -1211,7 +1210,6 @@ export const VideoPanelProvider = ({
     showTimeWarning,
     showScreenSharePanel,
     isCameraPreviewOn,
-    useWhereby,
     isHighMeshEnabled,
     lowPowerMode,
     recordingState, // 🟢 Exposed
@@ -1219,12 +1217,10 @@ export const VideoPanelProvider = ({
     localVideoRef,
     remoteVideoRef,
     screenShareRef,
-    screenShareRef,
     streamRef,
     currentStream, // 🟢 Exposed!
     setIsConnected, // 🟢 FIX: Expose this setter!
     setIsFullscreen,
-    setUseWhereby,
     setShowScreenSharePanel,
     setRecordingState,
     setParticipantStats, // 🟢 Exposed for Achado #15
