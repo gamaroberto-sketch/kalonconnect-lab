@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
         if (existingUser) {
             console.log('✅ Auth sync: User exists, returning:', existingUser.id);
-            return res.status(200).json({ user: existingUser });
+            return res.status(200).json({ success: true, user: existingUser });
         }
 
         // User doesn't exist - create new
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
         }
 
         console.log('✅ Auth sync: User created successfully:', createdUser.id);
-        return res.status(201).json({ user: createdUser });
+        return res.status(201).json({ success: true, user: createdUser });
 
     } catch (error) {
         console.error('❌ Auth sync: Unexpected error:', error);
