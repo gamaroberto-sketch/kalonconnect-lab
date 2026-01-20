@@ -497,6 +497,9 @@ const VideoSurface = ({ roomId }) => {
 
   const { t } = useTranslation();
 
+  // Calculate whether to show local preview based on camera state and power mode
+  const showLocalPreview = isCameraPreviewOn && (!lowPowerMode || isConnected);
+
   // 🟢 ACHADO #M2: iOS Lock Screen Handling (Missing Logic Restoration)
   const [shouldConnect, setShouldConnect] = useState(true);
 
