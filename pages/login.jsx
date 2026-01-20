@@ -322,8 +322,8 @@ export default function LoginPage() {
       </div>
 
       <div
-        className="absolute bottom-6 right-6 flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity"
-        style={{ color: palette.textPrimary }}
+        className="absolute bottom-6 right-6 flex flex-col items-center gap-1 transition-opacity"
+        style={{ color: palette.primaryDark || palette.textPrimary }}
       >
         <p className="text-[0.6rem] font-medium uppercase tracking-[0.2em]">
           {t('login.developedBy')}
@@ -333,12 +333,13 @@ export default function LoginPage() {
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center gap-1 transition"
-          style={{ color: palette.textPrimary }}
+          style={{ color: palette.primaryDark || palette.textPrimary }}
         >
           <img
             src="/logo2.png"
             alt="Desenvolvido por Roberto Gama"
-            className="h-6 object-contain grayscale opacity-80"
+            className="h-7 object-contain grayscale"
+            style={{ filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.06))" }}
           />
           <span className="text-[0.55rem] font-medium tracking-[0.15em] lowercase">
             www.robertogama.com
