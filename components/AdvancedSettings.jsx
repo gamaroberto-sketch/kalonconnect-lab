@@ -612,14 +612,20 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
               {/* Translation Feedback Trigger */}
               <div className="mt-2 flex items-center gap-2 text-sm">
                 <span className="text-gray-500 dark:text-gray-400">
-                  Encontrou uma tradução incorreta?
+                  {language === 'pt-BR' && 'Encontrou uma tradução incorreta?'}
+                  {language === 'en-US' && 'Found an incorrect translation?'}
+                  {language === 'es-ES' && '¿Encontraste una traducción incorrecta?'}
+                  {language === 'fr-FR' && 'Vous avez trouvé une traduction incorrecte?'}
                 </span>
                 <button
                   onClick={() => setShowTranslationModal(true)}
                   className="font-medium hover:underline focus:outline-none"
                   style={{ color: themeColors.primary }}
                 >
-                  Reportar tradução
+                  {language === 'pt-BR' && 'Reportar tradução'}
+                  {language === 'en-US' && 'Report translation'}
+                  {language === 'es-ES' && 'Reportar traducción'}
+                  {language === 'fr-FR' && 'Signaler traduction'}
                 </button>
               </div>
 
@@ -1010,7 +1016,10 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                  Reportar Erro de Tradução
+                  {language === 'pt-BR' && 'Reportar Erro de Tradução'}
+                  {language === 'en-US' && 'Report Translation Error'}
+                  {language === 'es-ES' && 'Reportar Error de Traducción'}
+                  {language === 'fr-FR' && 'Signaler Erreur de Traduction'}
                 </h3>
                 <button
                   onClick={() => setShowTranslationModal(false)}
@@ -1021,18 +1030,30 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
               </div>
 
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Ajude-nos a melhorar o KalonConnect. Diga-nos qual texto está incorreto e qual seria a correção ideal.
+                {language === 'pt-BR' && 'Ajude-nos a melhorar o KalonConnect. Diga-nos qual texto está incorreto e qual seria a correção ideal.'}
+                {language === 'en-US' && 'Help us improve KalonConnect. Tell us which text is incorrect and what the ideal correction would be.'}
+                {language === 'es-ES' && 'Ayúdanos a mejorar KalonConnect. Dinos qué texto es incorrecto y cuál sería la corrección ideal.'}
+                {language === 'fr-FR' && 'Aidez-nous à améliorer KalonConnect. Dites-nous quel texte est incorrect et quelle serait la correction idéale.'}
               </p>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Onde está o erro e qual a correção? <span className="text-red-500">*</span>
+                    {language === 'pt-BR' && 'Onde está o erro e qual a correção?'}
+                    {language === 'en-US' && 'Where is the error and what is the correction?'}
+                    {language === 'es-ES' && '¿Dónde está el error y cuál es la corrección?'}
+                    {language === 'fr-FR' && 'Où est l\'erreur et quelle est la correction?'}
+                    {' '}<span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={translationFeedback}
                     onChange={(e) => setTranslationFeedback(e.target.value)}
-                    placeholder="Ex: Na tela de configurações, 'Save' deveria ser 'Salvar'..."
+                    placeholder={
+                      language === 'pt-BR' ? "Ex: Na tela de configurações, 'Save' deveria ser 'Salvar'..." :
+                        language === 'en-US' ? "Ex: On the settings screen, 'Guardar' should be 'Save'..." :
+                          language === 'es-ES' ? "Ej: En la pantalla de configuración, 'Save' debería ser 'Guardar'..." :
+                            "Ex: Sur l'écran des paramètres, 'Save' devrait être 'Enregistrer'..."
+                    }
                     className="w-full px-3 py-2 border rounded-lg h-32 resize-none bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     maxLength={1000}
                   />
@@ -1047,7 +1068,10 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
                   <label htmlFor="critical-translation" className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
-                    Crítico (atrapalha o uso do app)
+                    {language === 'pt-BR' && 'Crítico (atrapalha o uso do app)'}
+                    {language === 'en-US' && 'Critical (hinders app usage)'}
+                    {language === 'es-ES' && 'Crítico (dificulta el uso de la app)'}
+                    {language === 'fr-FR' && 'Critique (gêne l\'utilisation de l\'app)'}
                   </label>
                 </div>
 
@@ -1057,14 +1081,24 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                     onClick={() => setShowTranslationModal(false)}
                     disabled={isSendingFeedback}
                   >
-                    Cancelar
+                    {language === 'pt-BR' && 'Cancelar'}
+                    {language === 'en-US' && 'Cancel'}
+                    {language === 'es-ES' && 'Cancelar'}
+                    {language === 'fr-FR' && 'Annuler'}
                   </ModernButton>
                   <ModernButton
                     variant="primary"
                     onClick={handleSendTranslationFeedback}
                     disabled={isSendingFeedback || !translationFeedback.trim()}
                   >
-                    {isSendingFeedback ? 'Enviando...' : 'Enviar Sugestão'}
+                    {isSendingFeedback ?
+                      (language === 'pt-BR' ? 'Enviando...' :
+                        language === 'en-US' ? 'Sending...' :
+                          language === 'es-ES' ? 'Enviando...' : 'Envoi...') :
+                      (language === 'pt-BR' ? 'Enviar Sugestão' :
+                        language === 'en-US' ? 'Send Suggestion' :
+                          language === 'es-ES' ? 'Enviar Sugerencia' : 'Envoyer Suggestion')
+                    }
                   </ModernButton>
                 </div>
               </div>
