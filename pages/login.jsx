@@ -325,7 +325,7 @@ export default function LoginPage() {
         className="absolute bottom-6 right-6 flex flex-col items-center gap-1 transition-opacity"
         style={{ color: palette.primaryDark || palette.textPrimary }}
       >
-        <p className="text-[0.6rem] font-medium uppercase tracking-[0.2em]">
+        <p className="text-[0.6rem] font-medium uppercase tracking-[0.2em] opacity-60">
           {t('login.developedBy')}
         </p>
         <a
@@ -338,10 +338,10 @@ export default function LoginPage() {
           <img
             src="/logo2.png"
             alt="Desenvolvido por Roberto Gama"
-            className="h-7 object-contain grayscale"
+            className="h-8 object-contain"
             style={{ filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.06))" }}
           />
-          <span className="text-[0.55rem] font-medium tracking-[0.15em] lowercase">
+          <span className="text-[0.55rem] font-medium tracking-[0.15em] lowercase opacity-70 hover:opacity-100 transition-opacity">
             www.robertogama.com
           </span>
         </a>
