@@ -23,8 +23,8 @@ import * as VideoPanelHooks from "./VideoPanelContext";
 import * as AuthHooks from "./AuthContext";
 // 🟢 IMPORT sanitize if available or utility
 import { processRecording } from "../lib/recording";
-import { useAccessControl } from "../hooks/useAccessControl";
-import { useUsageTrackerContext } from "./UsageTrackerContext";
+import * as AccessControlHooks from "../hooks/useAccessControl";
+import * as UsageTrackerHooks from "./UsageTrackerContext";
 import { trackActivity } from "../lib/userActivity";
 
 const RECORDING_OPTIONS = [
@@ -141,8 +141,8 @@ const RecordingPanel = () => {
 
   // Force PRO version for admin users for feature access
   const effectiveVersion = (userType === 'admin' || user?.email === 'bobgama@uol.com.br') ? 'PRO' : user?.version;
-  const { canUseFeature } = useAccessControl(effectiveVersion);
-  const { trackAction: trackUsageAction } = useUsageTrackerContext();
+  const { canUseFeature } = AccessControlHooks.useAccessControl(effectiveVersion);
+  const { trackAction: trackUsageAction } = UsageTrackerHooks.useUsageTrackerContext();
   const allowRecording = canUseFeature("video.recording");
   const allowTranscription = canUseFeature("video.transcription");
   const allowSummaryFeature = canUseFeature("video.summaryAI");
