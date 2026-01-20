@@ -397,6 +397,78 @@ const RecordingPanel = () => {
 
   // 🟢 ACHADO #G3: Incremental Backup Strategy
   // Every 5 minutes, we save the current progress to avoid total loss in case of crash.
+  const saveTempRecording = useCallback(
+    async (blob, mimeType) => {
+      if (!sessionId) return null;
+      try {
+        // 🟢 ACHADO #6: Validate Size (Prevent Silent Failure)
+        const sizeMB = blob.size / (1024 * 1024);
+        if (sizeMB > 500) {
+          // 🟢 Ethical Telemetry: Track specific failure event
+          trackActivity({
+            userId: user?.id || 'anonymous',
+            activityType: 'recording_aborted_size_limit',
+            metadata: {
+              sessionId,
+              recordingDurationSeconds: recordingElapsed,
+              estimatedSizeMB: parseFloat(sizeMB.toFixed(2)),
+              timestamp: new Date().toISOString()
+            }
+          });
+
+          setErrorMessage("❌ Gravação muito longa (>500MB). Salve em partes menores.");
+          return null;
+        }
+
+        const base64 = await blobToBase64(blob);
+
+        // 🟢 ACHADO #G1: Recording Integrity Check (SHA-256)
+        // Ensure legal validity by hashing the original blob before transfer
+        const arrayBuffer = await blob.arrayBuffer();
+        const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        console.log("🔒 Generated Recording Hash (SHA-256):", hashHex);
+
+        const response = await fetch("/api/recordings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "save-temp",
+            clientId,
+            sessionId,
+            data: base64,
+            mimeType,
+            checksum: hashHex, // 🟢 G1: Integrity Proof
+            timestamp: Date.now()
+          })
+        });
+        if (!response.ok) {
+          throw new Error("Falha ao salvar gravação temporária");
+        }
+        const payload = await response.json();
+        setCurrentTempFile(payload.fileName);
+        return payload;
+      } catch (error) {
+        // 🔴 ACHADO #4: Critical Failure Handling
+        console.error("[CRITICAL] Falha ao salvar gravação:", error);
+
+        // 1. Force Stop State
+        setRecordingState({ active: false, notifyClient: false });
+        setIsRecording(false);
+        setIsPaused(false);
+
+        // 2. Show Blocking Error
+        setErrorMessage("❌ GRAVAÇÃO FALHOU: O arquivo não pôde ser salvo. Verifique sua conexão e tente novamente.");
+
+        // 3. Reset Temp File (Disables Save Button)
+        setCurrentTempFile(null);
+
+        return null;
+      }
+    },
+    [clientId, sessionId, setRecordingState]
+  );
   useEffect(() => {
     if (!isRecording) return;
 
@@ -510,78 +582,6 @@ const RecordingPanel = () => {
     }
   }, []);
 
-  const saveTempRecording = useCallback(
-    async (blob, mimeType) => {
-      if (!sessionId) return null;
-      try {
-        // 🟢 ACHADO #6: Validate Size (Prevent Silent Failure)
-        const sizeMB = blob.size / (1024 * 1024);
-        if (sizeMB > 500) {
-          // 🟢 Ethical Telemetry: Track specific failure event
-          trackActivity({
-            userId: user?.id || 'anonymous',
-            activityType: 'recording_aborted_size_limit',
-            metadata: {
-              sessionId,
-              recordingDurationSeconds: recordingElapsed,
-              estimatedSizeMB: parseFloat(sizeMB.toFixed(2)),
-              timestamp: new Date().toISOString()
-            }
-          });
-
-          setErrorMessage("❌ Gravação muito longa (>500MB). Salve em partes menores.");
-          return null;
-        }
-
-        const base64 = await blobToBase64(blob);
-
-        // 🟢 ACHADO #G1: Recording Integrity Check (SHA-256)
-        // Ensure legal validity by hashing the original blob before transfer
-        const arrayBuffer = await blob.arrayBuffer();
-        const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        console.log("🔒 Generated Recording Hash (SHA-256):", hashHex);
-
-        const response = await fetch("/api/recordings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "save-temp",
-            clientId,
-            sessionId,
-            data: base64,
-            mimeType,
-            checksum: hashHex, // 🟢 G1: Integrity Proof
-            timestamp: Date.now()
-          })
-        });
-        if (!response.ok) {
-          throw new Error("Falha ao salvar gravação temporária");
-        }
-        const payload = await response.json();
-        setCurrentTempFile(payload.fileName);
-        return payload;
-      } catch (error) {
-        // 🔴 ACHADO #4: Critical Failure Handling
-        console.error("[CRITICAL] Falha ao salvar gravação:", error);
-
-        // 1. Force Stop State
-        setRecordingState({ active: false, notifyClient: false });
-        setIsRecording(false);
-        setIsPaused(false);
-
-        // 2. Show Blocking Error
-        setErrorMessage("❌ GRAVAÇÃO FALHOU: O arquivo não pôde ser salvo. Verifique sua conexão e tente novamente.");
-
-        // 3. Reset Temp File (Disables Save Button)
-        setCurrentTempFile(null);
-
-        return null;
-      }
-    },
-    [clientId, sessionId, setRecordingState]
-  );
 
   const runSummaryWorkflow = useCallback(
     async (sourceText = "", force = false) => {
