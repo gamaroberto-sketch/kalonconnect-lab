@@ -344,8 +344,29 @@
         "7": {
           "q": "¿Es seguro en términos de privacidad y datos?",
           "a": "Sí, totalmente. La conexión de video está encriptada y no almacenamos el video de sus llamadas. Seguimos estándares estrictos para garantizar que lo que sucede en la sesión, se queda en la sesión."
+        },
+        "8": {
+          "q": "¿KalonConnect soporta sesiones largas de 3 o 4 horas?",
+          "a": "Sí. El sistema ha sido probado para sesiones de larga duración. Recomendamos el modo de grabación por bloques para mayor seguridad."
+        },
+        "9": {
+          "q": "¿Puedo grabar sesiones de 3 o 4 horas?",
+          "a": "Sí, pero recomendamos dividir las sesiones muy largas en bloques de 60-90 minutos para proteger los datos."
+        },
+        "10": {
+          "q": "¿Qué pasa si se corta mi internet?",
+          "a": "El sistema intenta reconectarse automáticamente. Si no lo logra, usted y su cliente serán avisados. El enlace de la sala permanece igual, así que solo actualice la página para volver."
         }
       }
+    },
+    "longSession": {
+      "badge": "Sesión Larga",
+      "active": "Sesión Larga Activa",
+      "tooltip": "Modo de estabilidad para atenciones prolongadas (>90min)",
+      "toastActivated": "Sesión larga activa. El sistema prioriza estabilidad y guardado seguro.",
+      "settingsTitle": "Modo Sesión Larga",
+      "settingsDescription": "Activar recursos de estabilidad para sesiones largas",
+      "settingsLabel": "Forzar Modo Sesión Larga"
     }
   },
   "consultations": {

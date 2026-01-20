@@ -344,8 +344,29 @@
         "7": {
           "q": "Est-ce sécurisé en termes de confidentialité et de données ?",
           "a": "Oui, totalement. La connexion vidéo est cryptée et nous ne stockons pas la vidéo de vos appels. Nous suivons des normes strictes pour garantir que ce qui se passe durant la séance, reste dans la séance."
+        },
+        "8": {
+          "q": "KalonConnect prend-il en charge les sessions longues de 3 ou 4 heures ?",
+          "a": "Oui. Le système a été testé pour des sessions de longue durée. Nous recommandons le mode d'enregistrement par bloc pour plus de sécurité."
+        },
+        "9": {
+          "q": "Puis-je enregistrer des sessions de 3 ou 4 heures ?",
+          "a": "Oui, mais nous recommandons de diviser les sessions très longues en blocs de 60 à 90 minutes pour protéger les données."
+        },
+        "10": {
+          "q": "Que se passe-t-il si ma connexion internet est coupée ?",
+          "a": "Le système tente de se reconnecter automatiquement. Si cela échoue, vous et votre client serez avertis. Le lien de la salle reste le même, il suffit donc d'actualiser la page pour revenir."
         }
       }
+    },
+    "longSession": {
+      "badge": "Session Longue",
+      "active": "Session Longue Active",
+      "tooltip": "Mode de stabilité pour les soins prolongés (>90min)",
+      "toastActivated": "Session longue active. Le système donne la priorité à la stabilité et à la sauvegarde sécurisée.",
+      "settingsTitle": "Mode Session Longue",
+      "settingsDescription": "Activer les fonctionnalités de stabilité pour les sessions longues",
+      "settingsLabel": "Forcer le Mode Session Longue"
     }
   },
   "consultations": {

@@ -345,8 +345,16 @@
           "a": "Yes, completely. The video connection is encrypted and we do not store your call video. We follow strict standards to ensure that what happens in the session, stays in the session."
         },
         "8": {
-          "q": "Does KalonConnect support long sessions?",
+          "q": "Does KalonConnect support long sessions (3-4 hours)?",
           "a": "Yes. The system is validated for long sessions. We recommend block recording for safety."
+        },
+        "9": {
+          "q": "Can I record 3 or 4 hour sessions?",
+          "a": "Yes, but we recommend splitting widely long sessions into 60-90 minute blocks to protect data."
+        },
+        "10": {
+          "q": "What happens if my internet drops?",
+          "a": "The system attempts to reconnect automatically. If it fails, you and your client will be notified. The room link remains the same, so just refresh the page to return."
         }
       }
     },
