@@ -39,7 +39,7 @@ export default async function handler(req, res) {
                     user_id: userId,
                     user_email: userEmail,
                     user_name: `Translator (${locale})`, // Helper name
-                    category: 'i18n', // Special category for easy filtering
+                    category: 'sugestao', // Using 'sugestao' as it's an allowed category
                     subject: isCritical ? 'Relato de Tradução [CRÍTICO]' : 'Relato de Tradução',
                     message: `
 [CONTEXT]
