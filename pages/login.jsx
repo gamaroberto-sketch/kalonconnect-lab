@@ -159,16 +159,16 @@ export default function LoginPage() {
             <span style={{ fontWeight: 900 }}>KalonConnect</span>
           </h1>
 
-          <div className="mt-8 space-y-3 px-4 max-w-lg mx-auto">
+          <div className="mt-8 space-y-2 px-4 max-w-lg mx-auto">
             <p
-              className="text-lg md:text-xl font-normal leading-relaxed"
+              className="text-lg md:text-xl font-normal leading-tight"
               style={{ color: palette.textPrimary }}
             >
               {t('login.tagline.main')}
             </p>
             <p
-              className="text-base md:text-lg font-light leading-relaxed"
-              style={{ color: `${palette.textPrimary}cc` }}
+              className="text-base md:text-lg font-light leading-tight"
+              style={{ color: `${palette.textPrimary}e6` }}
             >
               {t('login.tagline.sub')}
             </p>
