@@ -134,7 +134,8 @@ const RecordingPanel = () => {
     isLongSessionMode, // 🟢 Access Long Session Mode
     captionTranscript,
     getCaptionTranscriptText,
-    clearCaptionTranscript
+    clearCaptionTranscript,
+    setRecordingState // 🔧 FIX: Add missing import to fix ReferenceError
   } = useVideoPanel();
   const { user, userType } = useAuth();
 
