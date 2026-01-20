@@ -1,13 +1,28 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import dynamic from 'next/dynamic'; // 🟢 Dynamic Import
 import { VideoOff, Loader2 } from "lucide-react";
 import { useVideoPanel } from "./VideoPanelContext";
 import { useTranslation } from '../hooks/useTranslation';
 import { useConsultationSession } from '../hooks/useConsultationSession';
 import ReconnectionTelemetry from './ReconnectionTelemetry';
-import { LiveKitRoom, RoomAudioRenderer, useTracks, useLocalParticipant, VideoTrack, useRoomContext, useParticipants } from "@livekit/components-react";
+import {
+  // LiveKitRoom, // 🔴 Removed from static
+  RoomAudioRenderer,
+  useTracks,
+  useLocalParticipant,
+  VideoTrack,
+  useRoomContext,
+  useParticipants
+} from "@livekit/components-react";
 import { Track, ConnectionQuality } from "livekit-client";
+
+// 🟢 Dynamically Import LiveKitRoom (No SSR)
+const LiveKitRoom = dynamic(
+  () => import('@livekit/components-react').then((mod) => mod.LiveKitRoom),
+  { ssr: false }
+);
 
 // 🎥 COMPONENT 1: LOCAL VIDEO (Persistent)
 const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, processedTrack, t }) => {
