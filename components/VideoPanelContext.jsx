@@ -60,7 +60,6 @@ export const VideoPanelProvider = ({
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const [showScreenSharePanel, setShowScreenSharePanel] = useState(false);
   const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
-  const [useWhereby, setUseWhereby] = useState(false);
   /* 🔴 ACHADO #15: Low Power Mode State */
   const [lowPowerMode, setLowPowerMode] = useState(false);
 
