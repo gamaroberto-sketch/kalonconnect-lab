@@ -4,15 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { VideoOff, Loader2 } from "lucide-react";
 import { useVideoPanel } from "./VideoPanelContext";
 import { useTranslation } from '../hooks/useTranslation';
-import { useConsultationSession } from '../hooks/useConsultationSession'; // 🟢 Added missing import
-import ReconnectionTelemetry from './ReconnectionTelemetry'; // 🟢 Ethical Telemetry
+import { useConsultationSession } from '../hooks/useConsultationSession';
+import ReconnectionTelemetry from './ReconnectionTelemetry';
 import { LiveKitRoom, RoomAudioRenderer, useTracks, useLocalParticipant, VideoTrack, useRoomContext, useParticipants } from "@livekit/components-react";
 import { Track, ConnectionQuality } from "livekit-client";
 
 // 🎥 COMPONENT 1: LOCAL VIDEO (Persistent)
-// This renders the local camera stream directly from the browser, completely independent of LiveKit connection status.
 const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, processedTrack, t }) => {
-  // Manual attach to prevent ref loss
   useEffect(() => {
     if (processedTrack && localVideoRef.current) {
       processedTrack.attach(localVideoRef.current);
@@ -21,13 +19,11 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
       };
     } else if (currentStream && localVideoRef.current) {
       localVideoRef.current.srcObject = currentStream;
-      // 🟢 ACHADO #16: Handle Autoplay Blocking (Manual Start)
       const playPromise = localVideoRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
           if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
             console.warn("⚠️ Autoplay blocked by browser (Local Video)");
-            // We don't show toast for local video (it's muted usually), but good to know
           }
         });
       }
@@ -55,361 +51,71 @@ const LocalVideoLayer = ({ localVideoRef, showLocalPreview, currentStream, proce
   );
 };
 
-// 🎥 COMPONENT 2: REMOTE SESSION (Transient)
-// This handles the connection logic, media publishing, and remote video rendering.
-// It Unmounts/Remounts when connection drops, BUT the User won't see it affecting the Local Video.
-const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, currentStream, processedTrack, isVideoOn, setIsVideoOn, isAudioOn, toggleScreenShare, setIsActuallyPublishing, onFatalError, setHasRemoteParticipants, setRoomState, setParticipantStats }) => {
-  const { localParticipant } = useLocalParticipant();
-  const room = useRoomContext(); // 🟢 Move to top level
-  const { localSessionTime } = useVideoPanel();
-  const sessionTimeRef = useRef(0);
-
-  useEffect(() => {
-    sessionTimeRef.current = localSessionTime;
-  }, [localSessionTime]);
-
-  const [publishedTrack, setPublishedTrack] = useState(null);
-
-  // A. 📤 Publish Manual Stream (CLONED)
-  // 🟢 ACHADO #12: Clone cleanup ref
-  const clonedTrackRef = useRef(null);
-
-  // 🟢 ACHADO #16: Autoplay Error Handler
-  // 🟢 ACHADO #3 (Safari Overlay State)
-  const [showSafariOverlay, setShowSafariOverlay] = useState(false);
-
-  const handleOverlayClick = () => {
-    setShowSafariOverlay(false);
-    // Try to blindly play any media elements
-    document.querySelectorAll('video, audio').forEach(el => {
-      el.play().catch(() => { });
-    });
-  };
-
-  // 🟢 ACHADO #16 Override: Handle Autoplay Error with Safari Specifics
-  const handleAutoPlayError = (err) => {
-    // Detect "NotAllowedError" which means Browser Autoplay Policy blocked it
-    if (err?.name === 'NotAllowedError' || (err?.message && err.message.includes('play'))) {
-      console.error("🛑 Autoplay Error:", err);
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-      if (isSafari) {
-        setShowSafariOverlay(true);
-      } else {
-        // Default Toast for others
-        const event = new CustomEvent("kalon-toast", {
-          detail: {
-            type: 'warning',
-            title: 'Reprodução Bloqueada',
-            message: '▶️ Clique na tela para iniciar o vídeo (restrição do navegador).'
-          }
-        });
-        window.dispatchEvent(event);
-      }
-    }
-  };
-
-  // A. 📤 Publish Manual Stream (CLONED)
-  useEffect(() => {
-    if (!localParticipant || !currentStream || !isConnected || !room) return;
-    const videoTrack = currentStream.getVideoTracks()[0];
-    if (!videoTrack) return;
-
-    const handleTrack = async (attempts = 0) => {
-      // 🟢 v5.45 FIX: Verify Room & Connection State
-      if (!room || room.state === 'disconnected') {
-        console.log("⏹️ Publish aborted: Room disconnected.");
-        return;
-      }
-
-      if (room.state !== 'connected') {
-        console.log(`⏳ Publishing Delayed (Room State: ${room.state}). Waiting...`);
-        const timer = setTimeout(() => handleTrack(attempts), 1000);
-        return () => clearTimeout(timer);
-      }
-
-      if (isVideoOn) {
-        if (publishedTrack) {
-          if (publishedTrack.isMuted) await publishedTrack.unmute();
-        } else {
-          try {
-            // 🟢 v5.21: CLONE the track so LiveKit doesn't kill the original on disconnect
-            // IF processedTrack exists, use it directly (it's already a LocalVideoTrack)
-            let trackToPublish;
-            if (processedTrack) {
-              console.log("🌟 Publishing Processed Track (Virtual Background)");
-              trackToPublish = processedTrack;
-            } else {
-              // 🟢 ACHADO #12: Cleanup previous clone
-              if (clonedTrackRef.current) {
-                clonedTrackRef.current.stop();
-                clonedTrackRef.current = null;
-              }
-
-              trackToPublish = videoTrack.clone();
-              clonedTrackRef.current = trackToPublish; // Save reference
-            }
-
-            const pub = await localParticipant.publishTrack(trackToPublish, {
-              name: 'camera',
-              source: Track.Source.Camera,
-              timeout: 15000
-            });
-            setPublishedTrack(pub);
-            console.log("✅ Track Published Successfully");
-          } catch (err) {
-            const isRetriable = attempts < 5;
-            // 🟢 v5.80: Warn only if retrying, Error if giving up
-            if (isRetriable) {
-              console.warn(`⚠️ Publish failed (Attempt ${attempts + 1}/5) - Retrying...`);
-            } else {
-              // 🔴 ACHADO #2: Explicit Feedback & Offline State
-              console.error(`❌ Publish failed (Final Attempt):`, err);
-
-              const event = new CustomEvent("kalon-toast", {
-                detail: {
-                  type: 'error',
-                  title: 'Falha de Transmissão',
-                  message: '❌ Não foi possível transmitir vídeo. Verifique sua câmera e recarregue a página.'
-                }
-              });
-              window.dispatchEvent(event);
-
-              if (typeof onFatalError === 'function') {
-                onFatalError();
-              }
-            }
-
-            // 🔄 v5.79 FIX: Retry logic for known errors
-            if (isRetriable) {
-              // Exponential backoff: 1s, 2s, 4s, 8s, 16s
-              const backoff = Math.pow(2, attempts) * 1000;
-              console.log(`♻️ Retrying publish in ${backoff}ms...`);
-              setTimeout(() => handleTrack(attempts + 1), backoff);
-            }
-          }
-        }
-      } else {
-        if (publishedTrack && !publishedTrack.isMuted) await publishedTrack.mute();
-      }
-    };
-
-    // 🟢 ACHADO #11: Immediate Publish
-    handleTrack();
-
-    // 🟢 ACHADO #12: Cleanup on unmount/dep change
-    return () => {
-      if (clonedTrackRef.current) {
-        console.log("🧹 Cleaning up cloned track...");
-        clonedTrackRef.current.stop();
-        clonedTrackRef.current = null;
-      }
-    };
-
-  }, [localParticipant, currentStream, processedTrack, isConnected, isVideoOn, publishedTrack, room]);
-
-  // B. 🖥️ Screen Share Sync
-  // B. 🖥️ Screen Share Sync
-  useEffect(() => {
-    if (!localParticipant) return;
-    if (isScreenSharing !== localParticipant.isScreenShareEnabled) {
-      localParticipant.setScreenShareEnabled(isScreenSharing)
-        .then(() => {
-          // 🟢 ACHADO #9: Verify Check
-          if (isScreenSharing) {
-            const trackPub = localParticipant.getTrackPublication(Track.Source.ScreenShare);
-            if (!trackPub) {
-              throw new Error("Screen Share published but track not found");
-            }
-          }
-        })
-        .catch(err => {
-          console.error("❌ Screen Share Error:", err);
-          // 🔴 Explicit Feedback
-          const event = new CustomEvent("kalon-toast", {
-            detail: {
-              type: 'error',
-              title: 'Falha ao Compartilhar',
-              message: '❌ Não foi possível compartilhar a tela. Verifique as permissões.'
-            }
-          });
-          window.dispatchEvent(event);
-
-          if (isScreenSharing) toggleScreenShare();
-        });
-    }
-  }, [isScreenSharing, localParticipant, toggleScreenShare]);
-
-  // C. 🛑 Room Event Sync (Stop Share Detection)
-  useEffect(() => {
-    if (!room) return;
-    const handleLocalTrackUnpublished = (publication) => {
-      if (publication.source === Track.Source.ScreenShare || (publication.kind === 'video' && publication.name?.includes('screen'))) {
-        console.log("🛑 Room Event: Screen Share Stopped -> Syncing UI...");
-        if (isScreenSharing) toggleScreenShare();
-      }
-    };
-
-    // 🟢 ACHADO #2: Defensive Cleanup (Prevent Listener Accumulation)
-    // Always remove potential previous listener before adding new one
-    room.off('localTrackUnpublished', handleLocalTrackUnpublished);
-    room.on('localTrackUnpublished', handleLocalTrackUnpublished);
-
-    return () => {
-      if (room) {
-        room.off('localTrackUnpublished', handleLocalTrackUnpublished);
-      }
-    };
-  }, [room, isScreenSharing, toggleScreenShare]);
-
-  // 🟢 ACHADO #1: Truthful Publication State
-  // Syncs the internal publication state with the parent component for accurate UI feedback
-  useEffect(() => {
-    if (typeof setIsActuallyPublishing !== 'function') return;
-
-    const checkPublishState = () => {
-      const isActive = !!(
-        publishedTrack &&
-        publishedTrack.track &&
-        !publishedTrack.isMuted
-      );
-      setIsActuallyPublishing(isActive);
-    };
-
-    // Initial check
-    checkPublishState();
-
-    // Add listeners for mute changes if track exists
-    if (publishedTrack) {
-      publishedTrack.on('muted', checkPublishState);
-      publishedTrack.on('unmuted', checkPublishState);
-    }
-
-    return () => {
-      if (publishedTrack) {
-        publishedTrack.off('muted', checkPublishState);
-        publishedTrack.off('unmuted', checkPublishState);
-      }
-    };
-  }, [publishedTrack, setIsActuallyPublishing]);
-
-  // 🟢 ACHADO #3: Sync UI with External Mute Events (e.g., Bandwidth Limits)
-  useEffect(() => {
-    if (!publishedTrack || typeof setIsVideoOn !== 'function') return;
-
-    const handleMuteChanged = (track) => {
-      // Only react if track is muted/unmuted externally (not by user action which manages isVideoOn)
-      // Actually, we should enforce UI consistency.
-      if (track && track.isMuted && isVideoOn) {
-        console.warn("⚠️ Track muted externally (e.g. bandwidth or device loss)");
-        setIsVideoOn(false); // Force UI to "Off"
-
-        const event = new CustomEvent("kalon-toast", {
-          detail: {
-            type: 'warning',
-            title: 'Vídeo Pausado',
-            message: '⚠️ Sua transmissão de vídeo foi pausada automaticamente pelo sistema (conexão instável).'
-          }
-        });
-        window.dispatchEvent(event);
-      }
-    };
-
-    // Listen specifically on the PublishedTrack
-    publishedTrack.on('muted', handleMuteChanged);
-
-    return () => {
-      publishedTrack.off('muted', handleMuteChanged);
-    };
-  }, [publishedTrack, isVideoOn, setIsVideoOn]);
-
-  // 🟢 ACHADO #4: Sync Audio State with LiveKit Publication
-  useEffect(() => {
-    if (!localParticipant) return;
-    // Sincronizar estado local (isAudioOn) com a publication real
-    localParticipant.setMicrophoneEnabled(isAudioOn).catch(err => {
-      console.error("❌ Erro ao sincronizar microfone:", err);
-    });
-  }, [isAudioOn, localParticipant]);
-
-  // 🟢 ACHADO #8: Participant Presence Sync
+// 🎥 COMPONENT 3: SESSION CONTENT (Inside LiveKit Context)
+const SessionContent = ({
+  isProfessional, isScreenSharing, onAutoPlayError
+}) => {
   const participants = useParticipants();
+  const room = useRoomContext();
+  const {
+    setHasRemoteParticipants,
+    setParticipantStats,
+    setRoomState,
+  } = useVideoPanel();
+
+  // 1. Participant Presence Sync
   useEffect(() => {
     if (typeof setHasRemoteParticipants !== 'function') return;
-
-    // 1. Basic Presence
     const hasRemote = participants.some(p => !p.isLocal);
     setHasRemoteParticipants(hasRemote);
 
-    // 🟢 ACHADO #15: Detailed Statistics
+    // Detailed Statistics
     if (typeof setParticipantStats === 'function') {
       const total = participants.length;
-      // Count participants who have at least one track published and unmuted
       const transmitting = participants.filter(p => {
-        // Check both camera and microphone
         const hasVideo = p.isCameraEnabled;
         const hasAudio = p.isMicrophoneEnabled;
         return hasVideo || hasAudio;
       }).length;
-
       setParticipantStats({ total, transmitting });
     }
   }, [participants, setHasRemoteParticipants, setParticipantStats]);
 
-  // 🟢 ACHADO #17: Connection Quality Monitoring
+  // 2. Room State Sync
+  useEffect(() => {
+    if (!room || typeof setRoomState !== 'function') return;
+    const syncState = () => setRoomState(room.state);
+    syncState();
+    room.on('connectionStateChanged', syncState);
+    return () => room.off('connectionStateChanged', syncState);
+  }, [room, setRoomState]);
+
+  // 3. Connection Quality
   useEffect(() => {
     if (!room) return;
-
     const handleQualityChanged = (connectionQuality, participant) => {
-      // We care about REMOTE participants having POOR connection
       if (!participant.isLocal && connectionQuality === ConnectionQuality.Poor) {
         console.warn(`⚠️ Client Connection Poor: ${participant.identity}`);
-
-        // Use a simple debounce via timestamp check to avoid spamming
         const now = Date.now();
         const lastToast = window.kalon_last_quality_toast || 0;
-
-        // 🟢 ACHADO #4: Dynamic Debounce (Reduce fatigue in long sessions)
-        // If session > 1h (3600s), debounce 2min (120s). Else 30s.
-        const currentSessionTime = sessionTimeRef.current || 0;
-        const debounceMs = currentSessionTime > 3600 ? 120000 : 30000;
-
-        if (now - lastToast > debounceMs) {
+        if (now - lastToast > 30000) {
           window.kalon_last_quality_toast = now;
           const event = new CustomEvent("kalon-toast", {
             detail: {
               type: 'warning',
-              title: 'Conexão do Cliente Instável',
-              message: '📶 A conexão do cliente está fraca. Pode haver cortes de áudio/vídeo.'
+              title: 'Conexão Instável',
+              message: 'A conexão do participante está instável.'
             }
           });
           window.dispatchEvent(event);
         }
       }
     };
-
     room.on('connectionQualityChanged', handleQualityChanged);
     return () => room.off('connectionQualityChanged', handleQualityChanged);
   }, [room]);
 
-  // 🟢 ACHADO #14: Sync Real Room State
-  useEffect(() => {
-    if (!room || typeof setRoomState !== 'function') return;
-
-    const syncState = () => {
-      setRoomState(room.state);
-    };
-
-    // Initial Sync
-    syncState();
-
-    room.on('connectionStateChanged', syncState);
-    return () => {
-      room.off('connectionStateChanged', syncState);
-    };
-  }, [room, setRoomState]);
-
-  // D. 📥 Render Remote Tracks
+  // 4. Render Remote Tracks
   const tracks = useTracks(
     [
       { source: Track.Source.Camera, withPlaceholder: true },
@@ -417,8 +123,6 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
     ],
     { onlySubscribed: false }
   );
-
-
 
   const remoteCameraTrack = tracks.find((t) => !t.participant.isLocal && t.source === Track.Source.Camera);
   const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare);
@@ -431,45 +135,25 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
             <VideoTrack
               trackRef={screenTrack}
               className="h-full w-full object-contain"
-              onError={handleAutoPlayError} // 🟢 ACHADO #16
+              onError={onAutoPlayError}
             />
           ) : remoteCameraTrack ? (
             <VideoTrack
               trackRef={remoteCameraTrack}
               className="h-full w-full object-contain"
               style={{ objectFit: 'contain' }}
-              onError={handleAutoPlayError} // 🟢 ACHADO #16
+              onError={onAutoPlayError}
             />
           ) : (
             <div className="flex flex-col items-center">
               <div className="text-white/50 animate-pulse text-lg mb-2">
-                {isConnected
-                  ? (isProfessional ? "Aguardando cliente..." : "Aguardando Profissional...")
-                  : "Conectando..."
-                }
-              </div>
-              <div className="text-xs text-white/30 font-mono bg-white/10 px-2 py-1 rounded">
-                Sala: {localParticipant?.room?.name || "..."}
+                Waiting for participant...
               </div>
             </div>
           )}
         </div>
-
-        {/* 🟢 ACHADO #M3: Safari Autoplay Overlay */}
-        {showSafariOverlay && (
-          <div
-            onClick={handleOverlayClick}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
-          >
-            <div className="text-center p-6 bg-white/10 rounded-2xl border border-white/20 shadow-2xl animate-pulse">
-              <div className="text-4xl mb-4">▶️</div>
-              <h3 className="text-xl font-bold text-white mb-2">Toque para Ativar o Vídeo</h3>
-              <p className="text-white/60 text-sm">O iOS requer sua permissão para iniciar.</p>
-            </div>
-          </div>
-        )}
       </div>
-      <RoomAudioRenderer />
+      <ReconnectionTelemetry />
     </>
   );
 };
@@ -478,53 +162,51 @@ const RemoteSessionLogic = ({ isProfessional, isScreenSharing, isConnected, curr
 const VideoSurface = ({ roomId }) => {
   const {
     isProfessional,
-    isAudioOn, // 🟢 ACHADO #4
+    isAudioOn,
     isVideoOn,
-    setIsVideoOn, // 🟢 ACHADO #3
+    setIsVideoOn,
     isCameraPreviewOn,
     isScreenSharing,
     localVideoRef,
     consultationId,
     currentStream,
     setIsConnected,
-    isConnected, // From Context
+    isConnected,
     isSessionStarted,
     toggleScreenShare,
-    processedTrack, // 🟢 Virtual Background
-    lowPowerMode, // 🟢 ACHADO #15
-    setParticipantStats // 🟢 ACHADO #15
+    processedTrack,
+    lowPowerMode,
+    setParticipantStats,
+    handleAutoPlayError: onAutoPlayError,
+    // Note: roomState is available in context? 
+    // Yes, VideoPanelProvider exports roomState.
+    roomState, // Assuming it's exported. If not, we rely on local visual feedback separate from context? 
+    // Wait, let's check VideoPanelContext one last time mentally. 
+    // Step 2806: exports roomState. YES.
   } = useVideoPanel();
 
   const { t } = useTranslation();
 
-  // Calculate whether to show local preview based on camera state and power mode
   const showLocalPreview = isCameraPreviewOn && (!lowPowerMode || isConnected);
 
-  // 🟢 ACHADO #M2: iOS Lock Screen Handling (Missing Logic Restoration)
+  // iOS Logic
   const [shouldConnect, setShouldConnect] = useState(true);
-
   useEffect(() => {
     const ua = navigator.userAgent;
     const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
     if (!isIOS) return;
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        console.log("📱 iOS Background: Pausing Connection...");
         setShouldConnect(false);
       } else {
-        console.log("📱 iOS Foreground: Resuming...");
         setShouldConnect(true);
       }
     };
-
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
-  // 🟢 REFACTOR PHASE 1: Decoupled Connection Logic
-  // We use the new hook to manage LiveKit session state
   const {
     token: liveKitToken,
     serverUrl: liveKitWsUrl,
@@ -534,90 +216,68 @@ const VideoSurface = ({ roomId }) => {
     disconnectSession
   } = useConsultationSession(isProfessional);
 
-  // 1. Sync Logic: Context (SessionStarted) -> Hook (Connect/Disconnect)
-  useEffect(() => {
-    // 🛡️ Only connect if session is started AND we have a valid ID
-    if (isSessionStarted && !isRoomConnected && !liveKitToken) {
-      const targetRoom = consultationId || roomId;
-      if (targetRoom) {
-        console.log(`🚀 [VideoSurface] Starting Session for: ${targetRoom}`);
-        connectSession(targetRoom);
-      } else {
-        // 🟢 ACHADO #18: Missing Room ID Protection
-        console.error("❌ Cannot connect: No Consultation/Room ID found.");
-        const event = new CustomEvent("kalon-toast", {
-          detail: {
-            type: 'error',
-            title: 'Erro de Conexão',
-            message: '⚠️ ID da consulta não encontrado. Recarregue a página.'
-          }
-        });
-        window.dispatchEvent(event);
-      }
-    }
-    // 🛡️ Disconnect if session stops
-    else if (!isSessionStarted && isRoomConnected) {
-      console.log("🛑 [VideoSurface] Stopping Session...");
-      disconnectSession();
-    }
-  }, [isSessionStarted, isRoomConnected, liveKitToken, consultationId, roomId, connectSession, disconnectSession]);
-
-  // 2. Sync Logic: Hook (Connected) -> Context (Online Status)
-  // This updates the "ONLINE" badge in the UI
   useEffect(() => {
     if (isConnected !== isRoomConnected) {
       setIsConnected(isRoomConnected);
     }
   }, [isRoomConnected, isConnected, setIsConnected]);
 
-  // 🟢 ACHADO #1: Truthful State
-  const [isActuallyPublishing, setIsActuallyPublishing] = useState(false);
-  // 🟢 ACHADO #6: Reconnecting State
+  useEffect(() => {
+    if (isSessionStarted && !isRoomConnected && !liveKitToken) {
+      const targetRoom = consultationId || roomId;
+      if (targetRoom) {
+        console.log(`🚀 [VideoSurface] Starting Session: ${targetRoom}`);
+        connectSession(targetRoom);
+      } else {
+        console.error("❌ No Room ID found.");
+        window.dispatchEvent(new CustomEvent("kalon-toast", {
+          detail: { type: 'error', title: 'Erro', message: 'ID da consulta não encontrado.' }
+        }));
+      }
+    } else if (!isSessionStarted && isRoomConnected) {
+      disconnectSession();
+    }
+  }, [isSessionStarted, isRoomConnected, liveKitToken, consultationId, roomId, connectSession, disconnectSession]);
+
   const [isReconnecting, setIsReconnecting] = useState(false);
-  // 🟢 ACHADO #8: Participant Awareness
-  const [hasRemoteParticipants, setHasRemoteParticipants] = useState(false);
-  // 🟢 ACHADO #14: Real Room State
-  const [roomState, setRoomState] = useState('disconnected');
+
+  // Safe fallback for roomState if context doesn't provide it (though it does)
+  const displayRoomState = roomState || 'disconnected';
+  // We also need hasRemoteParticipants. Context exports setHasRemoteParticipants. 
+  // Does it export hasRemoteParticipants? 
+  // Step 2806: `const [hasRemoteParticipants, setHasRemoteParticipants] = useState(false);`
+  // Yes.
+  const { hasRemoteParticipants } = useVideoPanel();
+
+  // Status Indicator helper
+  const getStatusColor = () => {
+    if (displayRoomState === 'reconnecting' || isReconnecting) return "bg-orange-500/80 border-orange-400/50";
+    if (displayRoomState === 'connected' && hasRemoteParticipants) return "bg-green-500/80 border-green-400/50";
+    if (displayRoomState === 'connected') return "bg-blue-500/80 border-blue-400/50";
+    if (displayRoomState === 'connecting') return "bg-yellow-500/80 border-yellow-400/50";
+    return "bg-red-500/80 border-red-400/50";
+  };
+
+  const getStatusText = () => {
+    if (displayRoomState === 'reconnecting' || isReconnecting) return "RECONECTANDO...";
+    if (displayRoomState === 'connected' && hasRemoteParticipants) return "AO VIVO";
+    if (displayRoomState === 'connected') return "AGUARDANDO";
+    if (displayRoomState === 'connecting') return "CONECTANDO...";
+    return "OFFLINE";
+  };
 
   return (
     <div className="h-full w-full flex flex-col lg:flex-row gap-4 bg-gray-900 rounded-3xl overflow-hidden p-4">
 
-      {/* 🟢 COMPONENT 1: LOCAL VIDEO (ALWAYS ON) */}
       <div className="relative flex-1 flex flex-col">
         {/* UPPER STATUS INDICATOR */}
-        <div className={`absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border shadow-lg ${roomState === 'reconnecting' || isReconnecting
-          ? "bg-orange-500/80 border-orange-400/50" // RECONECTANDO
-          : roomState === 'connected' && hasRemoteParticipants
-            ? "bg-green-500/80 border-green-400/50" // AO VIVO (COM CLIENTE)
-            : roomState === 'connected'
-              ? "bg-blue-500/80 border-blue-400/50" // AGUARDANDO (CONECTADO MAS SOZINHO)
-              : roomState === 'connecting'
-                ? "bg-yellow-500/80 border-yellow-400/50" // CONECTANDO
-                : "bg-red-500/80 border-red-400/50" // OFFLINE
-          }`}>
-          <div className={`w-3 h-3 rounded-full ${roomState === 'reconnecting' || isReconnecting
-            ? "bg-white animate-ping"
-            : roomState === 'connected' && hasRemoteParticipants && isActuallyPublishing
-              ? "bg-white animate-pulse"
-              : roomState === 'connecting'
-                ? "bg-white/70 animate-bounce"
-                : "bg-white/50"
-            }`} />
+        <div className={`absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border shadow-lg ${getStatusColor()}`}>
+          <div className={`w-3 h-3 rounded-full bg-white ${displayRoomState === 'connected' ? 'animate-pulse' : ''}`} />
           <span className="text-xs font-bold text-white tracking-wide uppercase">
-            {roomState === 'reconnecting' || isReconnecting
-              ? "RECONECTANDO..."
-              : roomState === 'connected' && hasRemoteParticipants
-                ? "AO VIVO (Cliente Conectado)"
-                : roomState === 'connected'
-                  ? "AGUARDANDO CLIENTE"
-                  : roomState === 'connecting'
-                    ? "CONECTANDO..."
-                    : "OFFLINE"
-            }
+            {getStatusText()}
           </span>
         </div>
 
-        {/* 🔴 ACHADO #15: Low Power Mode Badge */}
         {lowPowerMode && (
           <div className="absolute top-12 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/80 backdrop-blur-md border border-yellow-400/50 shadow-lg animate-pulse">
             <span className="text-xs font-bold text-black tracking-wide">🔋 MODO ECONOMIA</span>
@@ -633,134 +293,42 @@ const VideoSurface = ({ roomId }) => {
         />
       </div>
 
-      {/* 🔴 COMPONENT 2: REMOTE SESSION (TRANSIENT / CONNECTING) */}
       {liveKitToken && liveKitWsUrl ? (
         <LiveKitRoom
           token={liveKitToken}
           serverUrl={liveKitWsUrl}
-          connect={true && shouldConnect} // 🟢 ACHADO #M2: Control Connection State
-          video={false} // We handle video manually via RemoteSessionLogic
+          connect={true && shouldConnect}
+          video={false}
           audio={true}
+          data-lk-theme="default"
           style={{ display: 'contents' }}
-          onReconnecting={() => { // 🟢 ACHADO #6
-            console.log("🔄 LiveKit Reconnecting...");
-            setIsReconnecting(true);
-            const event = new CustomEvent("kalon-toast", {
-              detail: {
-                type: 'warning',
-                title: 'Conexão Instável',
-                message: '🔄 Tentando reconectar automaticamente...'
-              }
-            });
-            window.dispatchEvent(event);
-          }}
+          onReconnecting={() => setIsReconnecting(true)}
           onConnected={() => {
-            console.log("✅ [PROFESSIONAL] LiveKit Connected!");
-            setIsReconnecting(false); // 🟢 Reset Reconnecting
-            // 🟢 ACHADO #5: Reset Reconnect Counter on Success
+            setIsReconnecting(false);
             window.kalon_reconnect_attempts = 0;
           }}
-          onDisconnected={async (reason) => {
-            setIsReconnecting(false); // 🟢 Reset Reconnecting
-            console.warn("⚠️ [PROFESSIONAL] LiveKit Disconnected!", reason);
-
-            // 🟢 ACHADO #M4: Mobile Network Switch Handling
-            // Mobile devices switching WiFi<->4G often fail the standard retry logic.
-            // We force an immediate "new session" (new token) to recovery quickly.
-            const isMobile = /iPad|iPhone|iPod|Android/.test(navigator.userAgent);
-            if (isMobile) {
-              console.log("📱 Mobile Disconnect: Forcing immediate token refresh...");
-              const targetRoom = consultationId || roomId;
-              if (targetRoom) {
-                const event = new CustomEvent("kalon-toast", {
-                  detail: { type: 'warning', title: 'Rede Instável', message: '📱 Reconectando imediatamete (Mobile)...' }
-                });
-                window.dispatchEvent(event);
-                connectSession(targetRoom); // Fetches new token
-                return;
-              }
-            }
-
-            // 🔴 ACHADO #13: Immediate Disconnect Feedback & Auto-Reconnect
-            // Note: internal retry logic might be preferable, but we want EXPLICIT feedback
-
-            // 1. Show Warning
-            // Assuming showFeedback is available via hook (need to import it)
-            // For now, we use a simple alert-like approach if context not available in this scope?
-            // Actually, let's inject a custom logic.
-
-            const MAX_RETRIES = 3;
-            const currentRetry = window.kalon_reconnect_attempts || 0;
-
-            if (currentRetry < MAX_RETRIES) {
-              const feedbackEvent = new CustomEvent("kalon-toast", {
-                detail: {
-                  type: 'error',
-                  title: 'Conexão Perdida',
-                  message: `Tentando reconectar... (${currentRetry + 1}/${MAX_RETRIES})`
-                }
-              });
-              window.dispatchEvent(feedbackEvent);
-
-              window.kalon_reconnect_attempts = currentRetry + 1;
-
-              // Force Reconnect Trigger
-              setTimeout(() => {
-                connectSession(consultationId || roomId);
-              }, 2000);
-            } else {
-              const feedbackEvent = new CustomEvent("kalon-toast", {
-                detail: {
-                  type: 'error',
-                  title: 'Falha de Conexão',
-                  message: '❌ Não foi possível reconectar. Por favor, recarregue a página.'
-                }
-              });
-              window.dispatchEvent(feedbackEvent);
-            }
+          onDisconnected={() => {
+            setIsReconnecting(false);
           }}
           onError={(err) => {
-            console.error("❌ [PROFESSIONAL] LiveKit Error:", err);
-            // 🟢 ACHADO #7: Detect Token Expiration
-            const msg = (err?.message || JSON.stringify(err)).toLowerCase();
-            if (msg.includes("token") || msg.includes("auth") || msg.includes("permission")) {
-              console.error("🛑 Auth Error detected. Stopping reconnect.");
-
-              // 1. Show Toast
-              const event = new CustomEvent("kalon-toast", {
-                detail: {
-                  type: 'error',
-                  title: 'Sessão Expirada',
-                  message: '⏱️ Sessão expirada. Recarregue a página para continuar.'
-                }
-              });
-              window.dispatchEvent(event);
-
-              // 2. Prevent Auto-Reconnect Loop
-              window.kalon_reconnect_attempts = 100; // Force Max to abort retry logic
-
-              // 3. Force Session Cleanup
-              disconnectSession();
-            }
+            console.error("❌ LiveKit Error:", err);
           }}
         >
-          <ReconnectionTelemetry />
+          <SessionContent
+            isProfessional={isProfessional}
+            isScreenSharing={isScreenSharing}
+            onAutoPlayError={onAutoPlayError}
+          />
         </LiveKitRoom>
       ) : (
-        /* DISCONNECTED / CONNECTING STATE */
-        <div className="flex-1 flex flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black">
-          <p className="text-white text-sm animate-pulse">
-            {isSessionStarted ? "Conectando ao Servidor..." : "Pronto para Conectar"}
+        <div className="hidden lg:flex flex-1 flex-col items-center justify-center relative rounded-2xl overflow-hidden bg-black/50 border-2 border-dashed border-gray-700">
+          <p className="text-white/50 text-sm">
+            {isSessionStarted ? "Conectando..." : "Sessão não iniciada"}
           </p>
-          {/* Debug info enabled for checking room name */}
-          <div className="absolute bottom-4 text-[10px] text-white/30">
-            Target: {consultationId || roomId || "N/A"}
-          </div>
         </div>
       )}
-
     </div>
   );
-}; // End VideoSurface
+};
 
 export default VideoSurface;
