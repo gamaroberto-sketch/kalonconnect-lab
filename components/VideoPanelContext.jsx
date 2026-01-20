@@ -9,7 +9,7 @@ import {
   useState
 } from "react";
 import { LocalVideoTrack } from "livekit-client";
-import { BackgroundBlur, VirtualBackground } from "@livekit/track-processors";
+// import { BackgroundBlur, VirtualBackground } from "@livekit/track-processors";
 
 import { useTheme } from "./ThemeProvider";
 import { useTranslation } from "../hooks/useTranslation";
@@ -217,46 +217,31 @@ export const VideoPanelProvider = ({
   const lowPowerRef = useRef(false);
 
   const updateVideoProcessor = useCallback(async (config) => {
+    /* 🔴 DISABLED FOR DEBUGGING
     try {
-      if (!livekitTrackRef.current) {
-        console.log("⚠️ updateVideoProcessor: livekitTrackRef is null");
-        return;
-      }
-
-      console.log("🎨 updateVideoProcessor: Applying config", config);
+      if (!livekitTrackRef.current) return;
       const track = livekitTrackRef.current;
-
       if (config.type === 'none') {
         if (processorRef.current) {
           await track.setProcessor(null);
           await processorRef.current.destroy();
           processorRef.current = null;
-          console.log("✅ Processor removed");
         }
         return;
       }
-
       if (config.type === 'blur') {
-        const blur = BackgroundBlur(20, {  // Radius 20 (mais forte)
-          edgeBlur: 5,   // Suaviza bordas
-          maskBlur: 3    // Blur na máscara
-        });
+        const blur = BackgroundBlur(20, { edgeBlur: 5, maskBlur: 3 });
         await track.setProcessor(blur);
         processorRef.current = blur;
-        console.log("✅ Blur processor applied");
       } else if (config.type === 'image' && config.source) {
-        const virtualBg = VirtualBackground(config.source, {
-          edgeBlur: 15,             // Aumentado: bordas muito mais suaves
-          maskBlur: 10,             // Aumentado: máscara mais suave
-          backgroundThreshold: 0.6  // Aumentado: detecção mais agressiva
-        });
+        const virtualBg = VirtualBackground(config.source, { edgeBlur: 15, maskBlur: 10, backgroundThreshold: 0.6 });
         await track.setProcessor(virtualBg);
         processorRef.current = virtualBg;
-        console.log("✅ Virtual background applied:", config.source);
       }
     } catch (error) {
       console.error("❌ Failed to update video processor:", error);
     }
+    */
   }, []);
 
   // Effect to apply background changes
