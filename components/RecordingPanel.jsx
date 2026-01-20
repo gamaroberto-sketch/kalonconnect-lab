@@ -19,8 +19,8 @@ import {
   VideoOff,
   Wand2
 } from "lucide-react";
-import { useVideoPanel } from "./VideoPanelContext";
-import { useAuth } from "./AuthContext";
+import * as VideoPanelHooks from "./VideoPanelContext";
+import * as AuthHooks from "./AuthContext";
 // 🟢 IMPORT sanitize if available or utility
 import { processRecording } from "../lib/recording";
 import { useAccessControl } from "../hooks/useAccessControl";
@@ -136,8 +136,8 @@ const RecordingPanel = () => {
     getCaptionTranscriptText,
     clearCaptionTranscript,
     setRecordingState // 🔧 FIX: Add missing import to fix ReferenceError
-  } = useVideoPanel();
-  const { user, userType } = useAuth();
+  } = VideoPanelHooks.useVideoPanel();
+  const { user, userType } = AuthHooks.useAuth();
 
   // Force PRO version for admin users for feature access
   const effectiveVersion = (userType === 'admin' || user?.email === 'bobgama@uol.com.br') ? 'PRO' : user?.version;
