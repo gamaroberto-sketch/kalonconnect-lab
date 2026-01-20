@@ -37,6 +37,8 @@ const nextConfig = {
             }
         ];
     },
+    // 🟢 Debug Settings
+    productionBrowserSourceMaps: true,
 };
 
 module.exports = nextConfig;

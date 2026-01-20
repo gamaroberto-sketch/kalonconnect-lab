@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useVideoPanel } from './VideoPanelContext';
+import * as TranslationHooks from '../hooks/useTranslation'; // 🟢 Fix: Namespace import to prevent circular dep issues
 import CaptionSettings from './VideoCall/CaptionSettings';
 
 const SessionSettings = ({
@@ -28,6 +29,9 @@ const SessionSettings = ({
   const [newDuration, setNewDuration] = useState(currentDuration);
   const [isEditing, setIsEditing] = useState(false);
 
+  // 🟢 Virtual Background Integration & Long Session Mode
+  const videoPanel = useVideoPanel(); // Moved up to fix TDZ
+
   // Initialize with correct logic for custom values
   const [warningMinutes, setWarningMinutes] = useState(warningThreshold);
   const [isCustomWarning, setIsCustomWarning] = useState(
@@ -36,19 +40,12 @@ const SessionSettings = ({
 
   const predefinedDurations = [30, 45, 60, 90];
 
-  // 🟢 Access Long Session Mode
+  // 🟢 Access Long Session Mode safely
   const { isLongSessionMode, toggleLongSessionMode } = videoPanel || {};
-  const { t } = useTranslation(); // Ensure we have translation hook if not passed explicitly?
-  // SessionSettings receives some props but let's assume it can access t via hook.
-  // Wait, SessionSettings.js imports useVideoPanel in my view?
-  // Yes, line 13: import { useVideoPanel } from './VideoPanelContext';
-  // And line 43: const videoPanel = useVideoPanel();
+  const { t } = TranslationHooks.useTranslation(); // 🟢 Namespace access prevents tree-shake
 
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
-
-  // 🟢 Virtual Background Integration
-  const videoPanel = useVideoPanel(); // May be null if used outside provider
 
   // 🟢 Stored Backgrounds State (Persistence)
   const [storedBackgrounds, setStoredBackgrounds] = useState([]);
