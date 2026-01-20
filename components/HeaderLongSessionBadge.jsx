@@ -1,10 +1,13 @@
-import React from 'react';
-import { useVideoPanel } from './VideoPanelContext';
+import React, { useContext } from 'react';
+import { VideoPanelContext } from './VideoPanelContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { ShieldCheck } from 'lucide-react';
 
 const HeaderLongSessionBadge = () => {
-    const videoPanel = useVideoPanel();
+    // We use useContext directly instead of useVideoPanel because this component
+    // is rendered in the Header, which appears on pages without the VideoPanelProvider.
+    // In those cases, we just want to safely return null.
+    const videoPanel = useContext(VideoPanelContext);
     const { t } = useTranslation();
 
     if (!videoPanel || !videoPanel.isLongSessionMode) return null;
