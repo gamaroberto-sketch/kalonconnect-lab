@@ -37,6 +37,8 @@ const nextConfig = {
             }
         ];
     },
+    // 🔧 TEMPORARY: Disable minification to debug TDZ errors
+    swcMinify: false,
     // 🟢 Debug Settings
     productionBrowserSourceMaps: true,
 };
