@@ -744,25 +744,6 @@ const VideoSurface = ({ roomId }) => {
             }
           }}
         >
-          <RemoteSessionLogic
-            isProfessional={isProfessional}
-            isScreenSharing={isScreenSharing}
-            isConnected={isRoomConnected}
-            currentStream={currentStream}
-            processedTrack={processedTrack}
-            isAudioOn={isAudioOn} // 🟢 ACHADO #4
-            isVideoOn={isVideoOn}
-            setIsVideoOn={setIsVideoOn} // 🟢 ACHADO #3
-            toggleScreenShare={toggleScreenShare}
-            setIsActuallyPublishing={setIsActuallyPublishing} // 🟢 ACHADO #1
-            onFatalError={() => { // 🟢 ACHADO #2
-              console.error("❌ Fatal Media Error triggered");
-              disconnectSession();
-            }}
-            setHasRemoteParticipants={setHasRemoteParticipants} // 🟢 ACHADO #8
-            setRoomState={setRoomState} // 🟢 ACHADO #14
-            setParticipantStats={setParticipantStats} // 🟢 ACHADO #15
-          />
           <ReconnectionTelemetry />
         </LiveKitRoom>
       ) : (
