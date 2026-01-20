@@ -58,16 +58,16 @@ const SessionContent = ({
   const participants = useParticipants();
   const room = useRoomContext();
   const {
-    setHasRemoteParticipants,
+    setRemoteParticipantsPresent,
     setParticipantStats,
-    setRoomState,
+    setLivekitRoomState,
   } = useVideoPanel();
 
   // 1. Participant Presence Sync
   useEffect(() => {
-    if (typeof setHasRemoteParticipants !== 'function') return;
+    if (typeof setRemoteParticipantsPresent !== 'function') return;
     const hasRemote = participants.some(p => !p.isLocal);
-    setHasRemoteParticipants(hasRemote);
+    setRemoteParticipantsPresent(hasRemote);
 
     // Detailed Statistics
     if (typeof setParticipantStats === 'function') {
@@ -79,16 +79,16 @@ const SessionContent = ({
       }).length;
       setParticipantStats({ total, transmitting });
     }
-  }, [participants, setHasRemoteParticipants, setParticipantStats]);
+  }, [participants, setRemoteParticipantsPresent, setParticipantStats]);
 
   // 2. Room State Sync
   useEffect(() => {
-    if (!room || typeof setRoomState !== 'function') return;
-    const syncState = () => setRoomState(room.state);
+    if (!room || typeof setLivekitRoomState !== 'function') return;
+    const syncState = () => setLivekitRoomState(room.state);
     syncState();
     room.on('connectionStateChanged', syncState);
     return () => room.off('connectionStateChanged', syncState);
-  }, [room, setRoomState]);
+  }, [room, setLivekitRoomState]);
 
   // 3. Connection Quality
   useEffect(() => {
@@ -180,7 +180,7 @@ const VideoSurface = ({ roomId }) => {
     handleAutoPlayError: onAutoPlayError,
     // Note: roomState is available in context? 
     // Yes, VideoPanelProvider exports roomState.
-    roomState, // Assuming it's exported. If not, we rely on local visual feedback separate from context? 
+    livekitRoomState,
     // Wait, let's check VideoPanelContext one last time mentally. 
     // Step 2806: exports roomState. YES.
   } = useVideoPanel();
@@ -242,17 +242,17 @@ const VideoSurface = ({ roomId }) => {
   const [isReconnecting, setIsReconnecting] = useState(false);
 
   // Safe fallback for roomState if context doesn't provide it (though it does)
-  const displayRoomState = roomState || 'disconnected';
+  const displayRoomState = livekitRoomState || 'disconnected';
   // We also need hasRemoteParticipants. Context exports setHasRemoteParticipants. 
   // Does it export hasRemoteParticipants? 
   // Step 2806: `const [hasRemoteParticipants, setHasRemoteParticipants] = useState(false);`
   // Yes.
-  const { hasRemoteParticipants } = useVideoPanel();
+  const { remoteParticipantsPresent } = useVideoPanel();
 
   // Status Indicator helper
   const getStatusColor = () => {
     if (displayRoomState === 'reconnecting' || isReconnecting) return "bg-orange-500/80 border-orange-400/50";
-    if (displayRoomState === 'connected' && hasRemoteParticipants) return "bg-green-500/80 border-green-400/50";
+    if (displayRoomState === 'connected' && remoteParticipantsPresent) return "bg-green-500/80 border-green-400/50";
     if (displayRoomState === 'connected') return "bg-blue-500/80 border-blue-400/50";
     if (displayRoomState === 'connecting') return "bg-yellow-500/80 border-yellow-400/50";
     return "bg-red-500/80 border-red-400/50";
@@ -260,7 +260,7 @@ const VideoSurface = ({ roomId }) => {
 
   const getStatusText = () => {
     if (displayRoomState === 'reconnecting' || isReconnecting) return "RECONECTANDO...";
-    if (displayRoomState === 'connected' && hasRemoteParticipants) return "AO VIVO";
+    if (displayRoomState === 'connected' && remoteParticipantsPresent) return "AO VIVO";
     if (displayRoomState === 'connected') return "AGUARDANDO";
     if (displayRoomState === 'connecting') return "CONECTANDO...";
     return "OFFLINE";

@@ -60,8 +60,8 @@ export const VideoPanelProvider = ({
   const [showTimeWarning, setShowTimeWarning] = useState(false);
 
   // 🟢 FX: Lifted State for VideoSurface Refactor
-  const [roomState, setRoomState] = useState('disconnected');
-  const [hasRemoteParticipants, setHasRemoteParticipants] = useState(false);
+  const [livekitRoomState, setLivekitRoomState] = useState('disconnected');
+  const [remoteParticipantsPresent, setRemoteParticipantsPresent] = useState(false);
   const [showScreenSharePanel, setShowScreenSharePanel] = useState(false);
   const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
   /* 🔴 ACHADO #15: Low Power Mode State */
@@ -1254,10 +1254,10 @@ export const VideoPanelProvider = ({
     setCaptionSettings,
 
     // 🟢 FX: Missing Exports for VideoSurface Refactor
-    roomState,
-    setRoomState,
-    hasRemoteParticipants,
-    setHasRemoteParticipants
+    livekitRoomState,
+    setLivekitRoomState,
+    remoteParticipantsPresent,
+    setRemoteParticipantsPresent
   };
 
   return (
