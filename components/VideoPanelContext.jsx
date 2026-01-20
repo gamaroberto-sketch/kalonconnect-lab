@@ -1262,7 +1262,13 @@ export const VideoPanelProvider = ({
     isLongSessionMode,
     toggleLongSessionMode,
     captionSettings,
-    setCaptionSettings
+    setCaptionSettings,
+
+    // 🟢 FX: Missing Exports for VideoSurface Refactor
+    roomState,
+    setRoomState,
+    hasRemoteParticipants,
+    setHasRemoteParticipants
   };
 
   return (
