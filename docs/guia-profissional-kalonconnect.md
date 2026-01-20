@@ -280,16 +280,14 @@ Tecnologia de videochamada depende de:
 - Agir quando algo estiver errado
 - Priorizar sempre a qualidade do atendimento sobre a conveniência técnica
 
-### Sobre sessões longas e a expressão "sem limite"
+### Atendimentos prolongados (3 a 4 horas)
 
-O termo "sem limite" utilizado em nossa comunicação refere-se à **ausência de um temporizador fixo** imposto pelo software (como o limite de 40 minutos do Zoom gratuito).
+O KalonConnect foi **testado e preparado para sessões de longa duração**. Diferente de ferramentas gratuitas que cortam a conexão, nosso sistema mantém a sala ativa enquanto houver estabilidade técnica.
 
-No entanto, **limites técnicos sempre existem**:
-- **Rede**: Provedores de internet podem oscilar em conexões muito longas.
-- **Navegador**: O Chrome/Edge consome memória progressivamente e pode precisar ser reiniciado.
-- **Dispositivo**: Baterias acabam e processadores aquecem.
-
-**O sistema informa os estados, mas você decide.** Se notar lentidão após 2 horas de sessão, a melhor prática técnica e clínica é propor uma pausa de 2 minutos para reiniciar a sala (F5). Isso limpa a memória e restabelece a rota de conexão.
+Para garantir segurança em sessões de 3 ou 4 horas:
+- **Monitore os indicadores**: O sistema informa o estado da conexão. Se notar lentidão após muitas horas, é sinal natural de uso de memória do navegador.
+- **Gravação em blocos**: Para integridade do arquivo, recomendamos salvar a gravação a cada 90 minutos (pare e inicie novamente).
+- **O sistema informa, você decide**: A ferramenta garante a disponibilidade da sala, mas a estabilidade final depende da sua rede e dispositivo. Pausas técnicas de 2 minutos restauram a performance do navegador.
 
 ---
 
