@@ -40,17 +40,23 @@ export const AuthProvider = ({ children }) => {
       if (session?.user) {
         try {
           console.log('🔵 AuthContext: Chamando /api/auth/sync...');
-          // Call API to sync user with database
-          const response = await fetch('/api/auth/sync', {
+
+          // 🟢 FIX: Race fetch against a 5 second timeout to prevent hanging
+          const syncPromise = fetch('/api/auth/sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              uid: session.user.id, // Changed from userId to uid
+              uid: session.user.id,
               email: session.user.email,
               name: session.user.user_metadata?.name || session.user.email?.split('@')[0]
             })
           });
 
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Sync request timed out')), 5000)
+          );
+
+          const response = await Promise.race([syncPromise, timeoutPromise]);
           const data = await response.json();
           console.log('🔵 AuthContext: Resposta do sync:', data.success, data.user);
 
@@ -61,26 +67,18 @@ export const AuthProvider = ({ children }) => {
               user_metadata: session.user.user_metadata // Preserve Auth metadata
             }));
           } else {
-            // Fallback: use Supabase user data
-            setUser(normalizeUser({
-              id: session.user.id,
-              email: session.user.email,
-              name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
-              version: DEFAULT_VERSION,
-              type: 'professional',
-              user_metadata: session.user.user_metadata // Include metadata in fallback too
-            }));
+            throw new Error('Sync failed or returned no user');
           }
         } catch (error) {
-          console.error('🔴 AuthContext: Erro no sync:', error);
-          // Fallback: use Supabase user data
+          console.error('🔴 AuthContext: Erro/Timeout no sync:', error);
+          // Fallback: use Supabase user data immediately
           setUser(normalizeUser({
             id: session.user.id,
             email: session.user.email,
             name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
             version: DEFAULT_VERSION,
             type: 'professional',
-            user_metadata: session.user.user_metadata // Include metadata in error fallback
+            user_metadata: session.user.user_metadata
           }));
         }
       } else {
