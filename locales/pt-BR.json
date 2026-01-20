@@ -215,8 +215,8 @@
       "manageClients_psychology": "Acesse prontuários e anotações clínicas em segundos.",
       "manageClients_coaching": "Acesse o histórico de evolução e metas em segundos.",
       "videoSessions": "Atenda online sem medo de travamento ou vazamento.",
-      "videoSessions_psychology": "Vídeo seguro e sigiloso para sessões sem interrupções.",
-      "videoSessions_coaching": "Vídeo estável para mentorias focadas e sem interrupções.",
+      "videoSessions_psychology": "Vídeo seguro e sigiloso para suas sessões.",
+      "videoSessions_coaching": "Vídeo estável para mentorias focadas e produtivas.",
       "calendar": "Veja sua semana de um jeito que faz sentido.",
       "documents": "Gere documentos profissionais sem digitar tudo de novo.",
       "financial": "Saiba exatamente quem te deve e quanto entra esse mês.",
@@ -232,7 +232,7 @@
       "subtitle": "Porque sua prática profissional merece uma ferramenta pensada para ela —<br />não adaptações.",
       "items": {
         "1": "Tudo em um só lugar — agenda, consultas, clientes, documentos e financeiro integrados.",
-        "2": "Vídeo feito para atendimento profissional — estável, seguro e sem limite de tempo.",
+        "2": "Vídeo feito para atendimento profissional — estável, seguro e sem limite fixo de duração da sala, respeitando as condições técnicas do navegador e da rede.",
         "3": "Documentos prontos para uso — receituários, termos e registros reutilizáveis.",
         "4": "Experiência profissional para você e para o cliente — interface limpa e organizada.",
         "5": "Suporte humano quando você precisar — sem robôs, sem chatbots."
@@ -269,6 +269,14 @@
         "7": {
           "q": "Preciso de ajuda extra. Como falo com o suporte?",
           "a": "Nossa equipe está disponível para ajudar. Acesse o menu 'Ajuda' ou 'Fale Conosco' no painel lateral para enviar uma mensagem direta ao nosso time."
+        },
+        "8": {
+          "q": "Existe limite de duração para as consultas?",
+          "a": "O KalonConnect não impõe um limite fixo de tempo para a consulta. No entanto, a duração prática depende da estabilidade da internet, do navegador e do dispositivo utilizado. Para sessões muito longas, recomendamos pausas técnicas e gravações em blocos, conforme descrito no Guia do Profissional."
+        },
+        "9": {
+          "q": "Posso gravar sessões de 3 ou 4 horas?",
+          "a": "É possível, mas não recomendado gravar tudo em um único arquivo. Para maior segurança, o sistema trabalha com salvamentos incrementais e recomenda dividir sessões longas em blocos de 60–90 minutos."
         }
       }
     }

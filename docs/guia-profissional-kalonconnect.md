@@ -280,6 +280,17 @@ Tecnologia de videochamada depende de:
 - Agir quando algo estiver errado
 - Priorizar sempre a qualidade do atendimento sobre a conveniência técnica
 
+### Sobre sessões longas e a expressão "sem limite"
+
+O termo "sem limite" utilizado em nossa comunicação refere-se à **ausência de um temporizador fixo** imposto pelo software (como o limite de 40 minutos do Zoom gratuito).
+
+No entanto, **limites técnicos sempre existem**:
+- **Rede**: Provedores de internet podem oscilar em conexões muito longas.
+- **Navegador**: O Chrome/Edge consome memória progressivamente e pode precisar ser reiniciado.
+- **Dispositivo**: Baterias acabam e processadores aquecem.
+
+**O sistema informa os estados, mas você decide.** Se notar lentidão após 2 horas de sessão, a melhor prática técnica e clínica é propor uma pausa de 2 minutos para reiniciar a sala (F5). Isso limpa a memória e restabelece a rota de conexão.
+
 ---
 
 ## Suporte Técnico
