@@ -343,8 +343,21 @@
         "7": {
           "q": "Is it secure regarding privacy and data?",
           "a": "Yes, completely. The video connection is encrypted and we do not store your call video. We follow strict standards to ensure that what happens in the session, stays in the session."
+        },
+        "8": {
+          "q": "Does KalonConnect support long sessions?",
+          "a": "Yes. The system is validated for long sessions. We recommend block recording for safety."
         }
       }
+    },
+    "longSession": {
+      "badge": "Long Session",
+      "active": "Long Session Active",
+      "tooltip": "Stability mode for extended sessions (>90min)",
+      "toastActivated": "Long session active. System prioritizes stability and secure saving.",
+      "settingsTitle": "Long Session Mode",
+      "settingsDescription": "Enable stability features for long sessions",
+      "settingsLabel": "Force Long Session Mode"
     }
   },
   "consultations": {

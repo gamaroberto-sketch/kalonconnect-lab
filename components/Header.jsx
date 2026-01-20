@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import CommunicationsBox from './CommunicationsBox';
+import HeaderLongSessionBadge from './HeaderLongSessionBadge';
 
 const Header = ({ sidebarOpen, setSidebarOpen, darkMode, setDarkMode }) => {
   const [mounted, setMounted] = useState(false);
@@ -114,6 +115,21 @@ const Header = ({ sidebarOpen, setSidebarOpen, darkMode, setDarkMode }) => {
 
         {/* Right Side - Actions */}
         <div className="flex items-center gap-3">
+          {/* Long Session Badge */}
+          {/* We need access to videoPanel context here. Header is usually wrapped or we pass it down. 
+              The layout seems to have Header separate from VideoPanelProvider in some cases?
+              Let's check if we can use useVideoPanel hook or if we need to pass props.
+              Usually Header is inside the app layout.
+              Wait, Header.jsx uses useTheme, but does it use VideoPanelContext?
+              VideoPanelProvider is likely lower in the tree (in Consultations page).
+              So Header might NOT have access to VideoPanelContext if it's rendered outside.
+              However, Header is imported in Consultations.jsx.
+              If Header is rendered inside VideoPanelProvider in Consultations.jsx, it works.
+              Checking Consultations.jsx... Header is rendered inside `Consultations` component.
+              VideoPanelProvider wraps the content inside `Consultations`?
+              Let's check Consultations.jsx.
+          */}
+          <HeaderLongSessionBadge />
           <CommunicationsBox />
           {/* Future: User Profile or Settings could go here */}
         </div>

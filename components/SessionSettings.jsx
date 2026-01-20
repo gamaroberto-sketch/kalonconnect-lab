@@ -36,6 +36,14 @@ const SessionSettings = ({
 
   const predefinedDurations = [30, 45, 60, 90];
 
+  // 🟢 Access Long Session Mode
+  const { isLongSessionMode, toggleLongSessionMode } = videoPanel || {};
+  const { t } = useTranslation(); // Ensure we have translation hook if not passed explicitly?
+  // SessionSettings receives some props but let's assume it can access t via hook.
+  // Wait, SessionSettings.js imports useVideoPanel in my view?
+  // Yes, line 13: import { useVideoPanel } from './VideoPanelContext';
+  // And line 43: const videoPanel = useVideoPanel();
+
   const { getThemeColors } = useTheme();
   const themeColors = getThemeColors();
 
@@ -414,6 +422,40 @@ const SessionSettings = ({
                 </div>
 
               </div>
+
+              <div className="h-px w-full" style={{ backgroundColor: border }} />
+
+              {/* LONG SESSION SETTINGS */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-medium flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    <span>{t('longSession.settingsTitle', 'Modo Sessão Longa')}</span>
+                  </h3>
+
+                  <button
+                    onClick={() => toggleLongSessionMode && toggleLongSessionMode(!isLongSessionMode)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isLongSessionMode ? 'bg-blue-600' : 'bg-gray-200'
+                      }`}
+                  >
+                    <span
+                      className={`${isLongSessionMode ? 'translate-x-6' : 'translate-x-1'
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                    />
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500 mb-2">
+                  {t('longSession.settingsDescription', 'Ativa recursos de estabilidade para sessões > 90min. Salva gravações em blocos e reduz consumo de recursos.')}
+                </p>
+                {isLongSessionMode && (
+                  <div className="flex items-center space-x-2 text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-100">
+                    <Check className="w-3 h-3" />
+                    <span>{t('longSession.active', 'Sessão Longa Ativa')}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="h-px w-full" style={{ backgroundColor: border }} />
 
               <div className="mt-4">
                 <label className="block text-xs font-medium text-slate-500 mb-1">

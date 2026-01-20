@@ -60,10 +60,28 @@ export const VideoPanelProvider = ({
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const [showScreenSharePanel, setShowScreenSharePanel] = useState(false);
   const [isCameraPreviewOn, setIsCameraPreviewOn] = useState(false);
-  const [useWhereby, setUseWhereby] = useState(false);
-
-  // 🔴 ACHADO #15: Low Power Mode State
+  /* 🔴 ACHADO #15: Low Power Mode State */
   const [lowPowerMode, setLowPowerMode] = useState(false);
+
+  /* 🟢 LONG SESSION MODE */
+  const [isLongSessionMode, setIsLongSessionMode] = useState(false);
+  const [longSessionActivatedAutomatically, setLongSessionActivatedAutomatically] = useState(false);
+
+  // Toggle Function
+  const toggleLongSessionMode = useCallback((active) => {
+    setIsLongSessionMode(active);
+    if (active) {
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("kalon-toast", {
+          detail: {
+            type: 'info',
+            title: t('longSession.active', 'Sessão Longa Ativa'),
+            message: t('longSession.toastActivated', 'Modo de estabilidade ativado.')
+          }
+        }));
+      }
+    }
+  }, [t]);
   // 🟢 ACHADO #15: Detailed Participant Stats
   const [participantStats, setParticipantStats] = useState({ total: 0, transmitting: 0 });
 
@@ -394,24 +412,28 @@ export const VideoPanelProvider = ({
                 }));
               } else {
                 console.error('Failed to start dual recording:', data);
-                setIsDualRecordingActive(false); // Retry later if failed? Or keep true to avoid spam logic loops? Best to retry safely or just log.
-                // Let's keep it true to avoid hammering the API if it's a persistent error, 
-                // but ideally we'd implement a retry backoff.
+                // setIsDualRecordingActive(false); 
               }
             })
             .catch(err => {
               console.error('Error triggering dual recording:', err);
-              // setIsDualRecordingActive(false); // Don't retry immediately to avoid spam
+              // setIsDualRecordingActive(false); 
             });
         }
-        // -----------------------------------------------------------
+
+        // 🟢 AUTO-ACTIVATE LONG SESSION MODE (> 90 min)
+        if (total >= 5400 && !isLongSessionMode && !longSessionActivatedAutomatically) {
+          console.log("⏳ Session > 90min. Auto-activating Long Session Mode.");
+          setLongSessionActivatedAutomatically(true);
+          toggleLongSessionMode(true);
+        }
 
       }, 1000);
     } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isSessionActive, isPaused, isDualRecordingActive, roomName]); // Added dependencies
+  }, [isSessionActive, isPaused, isDualRecordingActive, roomName, isLongSessionMode, toggleLongSessionMode, longSessionActivatedAutomatically]);
 
   useEffect(() => {
     sessionDataRef.current = sessionData;
@@ -1240,6 +1262,8 @@ export const VideoPanelProvider = ({
     lowPowerMode,
     branding,
     // Caption Settings for Real-Time Translation
+    isLongSessionMode,
+    toggleLongSessionMode,
     captionSettings,
     setCaptionSettings
   };

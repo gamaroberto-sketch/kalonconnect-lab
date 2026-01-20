@@ -263,22 +263,27 @@
           "a": "Não, de forma alguma. Seu cliente recebe um link direto seu e entra na sala imediatamente, sem precisar fazer cadastro ou criar senhas."
         },
         "6": {
-          "q": "É seguro em termos de privacidade e dados?",
-          "a": "Sim, totalmente. A conexão de vídeo é criptografada e não armazenamos o vídeo das suas chamadas. Seguimos padrões rígidos para garantir que o que acontece na sessão, fica na sessão."
+          "q": "O KalonConnect suporta sessões longas, de 3 ou 4 horas?",
+          "a": "Sim. O sistema foi testado para sessões de longa duração. Recomendamos o modo de gravação em blocos para maior segurança."
         },
         "7": {
-          "q": "Preciso de ajuda extra. Como falo com o suporte?",
-          "a": "Nossa equipe está disponível para ajudar. Acesse o menu 'Ajuda' ou 'Fale Conosco' no painel lateral para enviar uma mensagem direta ao nosso time."
+          "q": "Posso gravar sessões de 3 ou 4 horas?",
+          "a": "Sim, mas recomendamos dividir sessões muito longas em blocos de 60–90 minutos para proteger os dados."
         },
         "8": {
-          "q": "O KalonConnect suporta sessões longas, de 3 ou 4 horas?",
-          "a": "O sistema não impõe um tempo máximo fixo para a sessão. Ele foi projetado para suportar atendimentos longos, desde que as condições técnicas (internet, navegador e dispositivo) permaneçam estáveis. Para maior segurança, o sistema utiliza salvamentos incrementais e recomenda pausas técnicas em sessões muito extensas."
-        },
-        "9": {
-          "q": "Posso gravar sessões de 3 ou 4 horas?",
-          "a": "É possível, mas não recomendado gravar tudo em um único arquivo. Para maior segurança, o sistema trabalha com salvamentos incrementais e recomenda dividir sessões longas em blocos de 60–90 minutos."
+          "q": "O que acontece se minha internet cair?",
+          "a": "O sistema tenta reconectar automaticamente. Se não conseguir, você e seu cliente serão avisados. O link da sala permanece o mesmo, então basta atualizar a página para voltar."
         }
       }
+    },
+    "longSession": {
+      "badge": "Sessão Longa",
+      "active": "Sessão Longa Ativa",
+      "tooltip": "Modo de estabilidade para atendimentos prolongados (>90min)",
+      "toastActivated": "Sessão longa ativa. O sistema prioriza estabilidade e salvamento seguro.",
+      "settingsTitle": "Modo Sessão Longa",
+      "settingsDescription": "Ativar recursos de estabilidade para sessões longas",
+      "settingsLabel": "Forçar Modo Sessão Longa"
     }
   },
   "consultations": {
