@@ -1,10 +1,39 @@
 [
-    {
-        "id": "comm-001",
-        "type": "technical",
-        "title": "Nova Funcionalidade: Gravação Dupla",
-        "message": "Sessões com mais de 2 horas agora contam com gravação de segurança automática no servidor.",
-        "createdAt": "2026-01-19T10:00:00Z",
-        "expiresAt": "2026-02-19T10:00:00Z"
-    }
+  {
+    "id": "comm-001",
+    "type": "technical",
+    "title": "Nova Funcionalidade: Gravação Dupla",
+    "message": "Sessões com mais de 2 horas agora contam com gravação de segurança automática no servidor.",
+    "createdAt": "2026-01-19T10:00:00Z",
+    "expiresAt": "2026-02-19T10:00:00Z",
+    "is_published": true,
+    "updatedAt": "2026-01-19T20:18:45.105Z"
+  },
+  {
+    "id": "f91d7e2c-858f-486b-ad41-a4744dc8c889",
+    "title": "teste cinza",
+    "type": "info",
+    "message": "teste cinza",
+    "is_published": true,
+    "createdAt": "2026-01-19T20:17:35.171Z",
+    "updatedAt": "2026-01-19T20:17:35.171Z"
+  },
+  {
+    "id": "4b84e2ba-0104-452b-a908-80dbf9cbfd63",
+    "title": "teste vermelho",
+    "type": "important",
+    "message": "teste vermelho",
+    "is_published": true,
+    "createdAt": "2026-01-19T20:18:02.603Z",
+    "updatedAt": "2026-01-19T20:18:02.603Z"
+  },
+  {
+    "id": "c28df086-c102-4e18-8abb-fb80c8c38a96",
+    "title": "teste azul",
+    "type": "technical",
+    "message": "teste azul",
+    "is_published": true,
+    "createdAt": "2026-01-19T20:18:20.227Z",
+    "updatedAt": "2026-01-19T20:18:20.227Z"
+  }
 ]

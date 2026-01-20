@@ -457,7 +457,7 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
     setIsSendingFeedback(true);
 
     try {
-      const response = await fetch('/api/feedback/translation', {
+      const response = await fetch('/api/translation-feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

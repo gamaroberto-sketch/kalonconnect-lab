@@ -1,5 +1,5 @@
-import { supabaseAdmin } from '../../../lib/supabaseAdmin';
-import { sendAdminAlert } from '../../../lib/whatsappNotifier';
+import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import { sendAdminAlert } from '../../lib/whatsappNotifier';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
