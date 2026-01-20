@@ -739,6 +739,9 @@ export const VideoPanelProvider = ({
       // ✅ SOLUÇÃO: Parar track completamente (apaga luz da câmera)
       videoTrack.stop();
 
+      // 🔧 FIX: Invalidate stream ref to force fresh stream on next toggle
+      streamRef.current = null;
+
       // Clear video element to hide the image
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = null;
