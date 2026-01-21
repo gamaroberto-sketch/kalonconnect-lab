@@ -20,6 +20,7 @@
 *   **Sessões Longas (>90min):** Risco de instabilidade. Recomendado pausar/salvar a cada 60min.
 *   **Mobile / iOS (Safari):** **Não bloqueie a tela!** Isso corta a conexão imediatamente no iPhone/iPad.
 *   **Redes Instáveis:** O sistema não "corrige" internet ruim. Se cair 3x, pause.
+*   **Tradução Automática:** Recurso de apoio (8-10 min/dia na versão gratuita). Monitore a qualidade.
 
 ## 4. Checklist Pré-Sessão
 1. [ ] Cliente conectado (Audio/Video OK)?

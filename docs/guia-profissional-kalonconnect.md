@@ -90,12 +90,35 @@ A conexão com o cliente foi **interrompida**. O sistema está tentando restabel
 
 O KalonConnect oferece legendas com tradução em tempo real para facilitar a comunicação em atendimentos multilíngues.
 
-### Tradução automática — Versão Gratuita
+### Tradução automática — Versão Gratuita (Beta)
 
-A tradução automática gratuita foi projetada para testes e situações pontuais.
-Ela permite aproximadamente **8–10 minutos de fala traduzida por dia**.
+Esta versão utiliza a **Web Speech API** (do navegador) para transcrição e o **MyMemory** para tradução. É recomendada para situações de **testes e uso breve**.
 
-Em atendimentos longos ou com tradução contínua, recomenda-se utilizar a **versão profissional**, quando disponível.
+**Características Técnicas:**
+- **Uso diário estimado:** ~8–10 minutos de fala traduzida
+- **Indicação:** Testes pontuais e uso leve
+- **Qualidade estimada:** 85–90%
+- **Latência:** 1–3 segundos
+- **Requisito:** Computador (Chrome ou Edge)
+
+> **Atenção:** Esta versão **NÃO** é indicada para sessões longas ou como recurso principal em atendimentos clínicos extensos.
+
+### Em breve: Versão Premium
+
+Para uso profissional contínuo, a versão Premium oferecerá estabilidade e recursos ampliados:
+
+- **Tradução contínua** (Sistema de Créditos)
+- Indicação para **sessões terapêuticas longas**
+- Suporte a **todos os dispositivos** (iOS, Android, PC)
+- **Qualidade superior:** >95%
+- **Latência ultra-baixa:** 500ms–1s
+- **30+ idiomas** suportados
+
+> **Nota:** O sistema de créditos permite que você decida quando ativar o recurso, garantindo controle total sobre o investimento na ferramenta.
+
+**Importante:**
+A tradução automática é um recurso de apoio.
+Em sessões longas, o profissional deve monitorar consumo, qualidade e estabilidade.
 
 ---
 
@@ -299,6 +322,7 @@ O KalonConnect foi **testado e preparado para sessões de longa duração**. Dif
 
 Para garantir segurança em sessões de 3 ou 4 horas:
 - **Monitore os indicadores**: O sistema informa o estado da conexão. Se notar lentidão após muitas horas, é sinal natural de uso de memória do navegador.
+- **Tradução automática**: Caso esteja utilizando legendas, lembre-se que é um recurso de apoio. Em sessões longas, monitore o consumo e a qualidade para garantir que a comunicação clínica não seja impactada.
 - **Gravação em blocos**: Para integridade do arquivo, recomendamos salvar a gravação a cada 90 minutos (pare e inicie novamente).
 - **O sistema informa, você decide**: A ferramenta garante a disponibilidade da sala, mas a estabilidade final depende da sua rede e dispositivo. Pausas técnicas de 2 minutos restauram a performance do navegador.
 
