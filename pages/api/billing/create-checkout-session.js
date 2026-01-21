@@ -49,6 +49,10 @@ export default async function handler(req, res) {
         }
 
         // Create Checkout Session
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL
+            ? `https://${process.env.VERCEL_URL}`
+            : 'https://kalonconnect.com';
+
         const session = await stripe.checkout.sessions.create({
             mode: 'subscription',
             payment_method_types: ['card'],
@@ -56,10 +60,10 @@ export default async function handler(req, res) {
                 price: priceId,
                 quantity: 1
             }],
-            allow_promotion_codes: true,  // Allow manual entry in Stripe UI
+            allow_promotion_codes: true,
             discounts: discounts.length > 0 ? discounts : undefined,
-            success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/create-account?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/plans?canceled=true`
+            success_url: `${baseUrl}/create-account?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${baseUrl}/plans?canceled=true`
         });
 
         return res.status(200).json({
