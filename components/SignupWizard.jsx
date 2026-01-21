@@ -186,8 +186,8 @@ export default function SignupWizard({ onClose }) {
                 throw new Error(data.error || 'Erro ao criar conta');
             }
 
-            // Success! Redirect to KalonConnect dashboard
-            router.push('/dashboard-simple');
+            // Success! Redirect to settings to choose subscription plan
+            router.push('/settings');
         } catch (err) {
             setError(err.message || 'Erro ao criar conta');
         } finally {
