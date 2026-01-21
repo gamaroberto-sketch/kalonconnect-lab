@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useTheme } from '../ThemeProvider';
 import GlossaryManager from './GlossaryManager';
+import * as TranslationHooks from '../../hooks/useTranslation';
 
 export default function CaptionSettings({ onSave, initialSettings = {} }) {
     const { getThemeColors } = useTheme();
     const themeColors = getThemeColors();
+    const { t } = TranslationHooks.useTranslation();
+
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
     const [settings, setSettings] = useState({
         enabled: initialSettings.enabled || false,
@@ -14,6 +18,24 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
         textSize: initialSettings.textSize || 'medium',
         transparency: initialSettings.transparency || 0.9,
     });
+
+    const handleToggleEnabled = (e) => {
+        const isEnabled = e.target.checked;
+        if (isEnabled) {
+            // Check if user has seen onboarding
+            const hasSeenOnboarding = localStorage.getItem('kalon_captions_onboarding_shown');
+            if (!hasSeenOnboarding) {
+                setShowOnboarding(true);
+                // We still enable it, but show the modal
+            }
+        }
+        setSettings({ ...settings, enabled: isEnabled });
+    };
+
+    const handleDismissOnboarding = () => {
+        localStorage.setItem('kalon_captions_onboarding_shown', 'true');
+        setShowOnboarding(false);
+    };
 
     const languages = [
         { code: 'pt-BR', name: 'Português (Brasil)', flag: '🇧🇷' },
@@ -50,19 +72,19 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: textPrimary }}>
                     <span>🌍</span>
-                    <span>Legendas com Tradução</span>
+                    <span>{t('captions.title', 'Legendas com Tradução')}</span>
                 </h3>
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="checkbox"
                         checked={settings.enabled}
-                        onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
+                        onChange={handleToggleEnabled}
                         disabled={!isSupported}
                         className="w-5 h-5 rounded"
                         style={{ accentColor: primary }}
                     />
                     <span className="text-sm font-medium" style={{ color: textPrimary }}>
-                        {settings.enabled ? 'Ativado' : 'Desativado'}
+                        {settings.enabled ? t('captions.enabled', 'Ativado') : t('captions.disabled', 'Desativado')}
                     </span>
                 </label>
             </div>
@@ -438,6 +460,42 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
             {/* Glossary Manager Modal */}
             {showGlossary && (
                 <GlossaryManager onClose={() => setShowGlossary(false)} />
+            )}
+            {/* Onboarding Modal - Show Once */}
+            {showOnboarding && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                    <div
+                        className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700 animate-in fade-in zoom-in duration-200"
+                        style={{ backgroundColor: background, color: textPrimary }}
+                    >
+                        <div className="text-center space-y-4">
+                            <div className="mx-auto w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl">
+                                ℹ️
+                            </div>
+
+                            <h3 className="text-lg font-bold">
+                                {t('captions.onboarding.title', 'ℹ️ Tradução automática (Versão Gratuita)')}
+                            </h3>
+
+                            <div className="space-y-3 text-sm opacity-90">
+                                <p>
+                                    {t('captions.onboarding.text1', 'A tradução automática gratuita é indicada para testes e uso leve. Ela permite aproximadamente 8–10 minutos de fala traduzida por dia.')}
+                                </p>
+                                <p className="font-medium text-blue-600 dark:text-blue-400">
+                                    {t('captions.onboarding.text2', 'Para atendimentos longos ou uso contínuo, aguarde a versão profissional.')}
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={handleDismissOnboarding}
+                                className="w-full py-3 rounded-lg font-semibold text-white transition-opacity hover:opacity-90 mt-4"
+                                style={{ backgroundColor: primary }}
+                            >
+                                {t('captions.onboarding.button', 'Entendi')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

@@ -86,7 +86,20 @@ A conexão com o cliente foi **interrompida**. O sistema está tentando restabel
 
 ---
 
-## 3. Gravação de Sessões (Ética e Evidência)
+## 3. Tradução e Legendas
+
+O KalonConnect oferece legendas com tradução em tempo real para facilitar a comunicação em atendimentos multilíngues.
+
+### Tradução automática — Versão Gratuita
+
+A tradução automática gratuita foi projetada para testes e situações pontuais.
+Ela permite aproximadamente **8–10 minutos de fala traduzida por dia**.
+
+Em atendimentos longos ou com tradução contínua, recomenda-se utilizar a **versão profissional**, quando disponível.
+
+---
+
+## 4. Gravação de Sessões (Ética e Evidência)
 
 ### O que o sistema grava?
 
@@ -121,7 +134,7 @@ O KalonConnect implementa **mecanismos de segurança forense**:
 
 ---
 
-## 4. Conexão e Qualidade
+## 5. Conexão e Qualidade
 
 ### O que acontece quando a conexão oscila?
 
@@ -156,7 +169,7 @@ Significa que a comunicação entre você e o cliente foi **interrompida**. Isso
 
 ---
 
-## 5. Uso em Celular / iPad
+## 6. Uso em Celular / iPad
 
 ### Limitações do Safari / iOS
 
@@ -191,7 +204,7 @@ Se você ou o cliente bloquearem a tela do celular (mesmo sem querer), a conexã
 
 ---
 
-## 6. Segurança e LGPD (Sem Juridiquês)
+## 7. Segurança e LGPD (Sem Juridiquês)
 
 ### Como os dados são protegidos?
 
@@ -224,7 +237,7 @@ O sistema registra:
 
 ---
 
-## 7. Checklist Rápido (Antes de Cada Sessão)
+## 8. Checklist Rápido (Antes de Cada Sessão)
 
 Use este checklist **antes de iniciar** qualquer atendimento:
 
@@ -239,7 +252,7 @@ Use este checklist **antes de iniciar** qualquer atendimento:
 
 ---
 
-## 8. Limites do Sistema
+## 9. Limites do Sistema
 
 ### O que o sistema NÃO garante?
 

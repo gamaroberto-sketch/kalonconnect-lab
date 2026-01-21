@@ -1817,7 +1817,13 @@
       "Works only on Chrome/Edge on desktop"
     ],
     "disabledInfo": "Enable captions to configure languages and start using real-time translation.",
-    "translating": "Translating..."
+    "translating": "Translating...",
+    "onboarding": {
+      "title": "ℹ️ Automatic Translation (Free Version)",
+      "text1": "Free automatic translation is recommended for testing and light use. It allows approximately 8–10 minutes of translated speech per day.",
+      "text2": "For long sessions or continuous use, please wait for the professional version.",
+      "button": "Understood"
+    }
   },
   "address": {
     "title": "Professional Address",

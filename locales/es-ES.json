@@ -1809,7 +1809,13 @@
       "Funciona solo en Chrome/Edge en ordenador"
     ],
     "disabledInfo": "Activa los subtítulos para configurar idiomas y comenzar a usar traducción en tiempo real.",
-    "translating": "Traduciendo..."
+    "translating": "Traduciendo...",
+    "onboarding": {
+      "title": "ℹ️ Traducción Automática (Versión Gratuita)",
+      "text1": "La traducción automática gratuita se recomienda para pruebas y uso ligero. Permite aproximadamente 8–10 minutos de habla traducida al día.",
+      "text2": "Para sesiones largas o uso continuo, espere a la versión profesional.",
+      "button": "Entendido"
+    }
   },
   "address": {
     "title": "Dirección Profesional",

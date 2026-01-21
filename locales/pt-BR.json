@@ -747,7 +747,13 @@
         "Funciona apenas em Chrome/Edge no computador"
       ],
       "disabledInfo": "Ative as legendas para configurar os idiomas e começar a usar tradução em tempo real.",
-      "translating": "Traduzindo..."
+      "translating": "Traduzindo...",
+      "onboarding": {
+        "title": "ℹ️ Tradução automática (Versão Gratuita)",
+        "text1": "A tradução automática gratuita é indicada para testes e uso leve. Ela permite aproximadamente 8–10 minutos de fala traduzida por dia.",
+        "text2": "Para atendimentos longos ou uso contínuo, aguarde a versão profissional.",
+        "button": "Entendi"
+      }
     }
   },
   "videoControls": {
