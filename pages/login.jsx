@@ -24,6 +24,19 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showSignup, setShowSignup] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
+
+  // Check for account=created query param
+  useEffect(() => {
+    if (router.query.account === 'created') {
+      setAccountCreated(true);
+      // Clear param after 8 seconds
+      setTimeout(() => {
+        setAccountCreated(false);
+        router.replace('/login', undefined, { shallow: true });
+      }, 8000);
+    }
+  }, [router.query]);
 
   useEffect(() => {
 
@@ -308,6 +321,13 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {accountCreated && (
+            <div className="px-4 py-3 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700 text-center flex items-center justify-center gap-2">
+              <Check className="w-4 h-4" />
+              Conta criada com sucesso! Faça login para continuar.
+            </div>
+          )}
+
           {errorMessage && (
             <div className="px-4 py-3 rounded-lg bg-[#fde8e8] border border-[#f6b1b1] text-sm text-[#a32121] text-center">
               {errorMessage}
@@ -335,17 +355,17 @@ export default function LoginPage() {
 
 
 
-          {/* Signup Link */}
+          {/* Plans Link */}
           <div className="mt-4 text-center">
             <p style={{ color: `${palette.textPrimary}cc` }} className="text-sm">
               Não tem uma conta?{' '}
               <button
-                onClick={() => router.push('/register')}
+                onClick={() => router.push('/plans')}
                 className="font-semibold hover:underline transition-all"
                 style={{ color: palette.primary }}
                 type="button"
               >
-                Criar Conta
+                Conheça nossos Planos
               </button>
             </p>
           </div>
