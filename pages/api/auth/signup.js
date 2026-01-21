@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -9,8 +9,13 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Create Supabase client
-        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+        // Create Supabase client with Service Role Key (bypasses RLS)
+        const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+            auth: {
+                autoRefreshToken: false,
+                persistSession: false
+            }
+        });
 
         const {
             email,
