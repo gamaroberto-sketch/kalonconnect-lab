@@ -1,16 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Crown, Check, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Crown, Check, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 const PublicPlansPage = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [couponCode, setCouponCode] = useState('');
-    const [couponApplied, setCouponApplied] = useState(false);
-    const [couponError, setCouponError] = useState('');
-    const [validatedCoupon, setValidatedCoupon] = useState('');
 
     const PRICING = {
         symbol: 'R$',
@@ -60,16 +56,7 @@ const PublicPlansPage = () => {
         }
     };
 
-    const handleApplyCoupon = () => {
-        if (!couponCode.trim()) {
-            setCouponError('Digite um cupom');
-            return;
-        }
-        setCouponError('');
-        setCouponApplied(false);
-        setValidatedCoupon(couponCode.trim().toUpperCase());
-        setCouponApplied(true);
-    };
+
 
     const handleSubscribe = async (planId) => {
         setLoading(true);
@@ -77,10 +64,7 @@ const PublicPlansPage = () => {
             const response = await fetch('/api/billing/create-checkout-session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    planId,
-                    couponCode: validatedCoupon || undefined
-                })
+                body: JSON.stringify({ planId })
             });
 
             const data = await response.json();
@@ -115,56 +99,15 @@ const PublicPlansPage = () => {
                     </p>
                 </div>
 
-                <div className="max-w-md mx-auto mb-10 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Cupom (opcional)
-                    </label>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={couponCode}
-                            onChange={(e) => {
-                                setCouponCode(e.target.value.toUpperCase());
-                                setCouponError('');
-                                setCouponApplied(false);
-                            }}
-                            placeholder="Ex: TESTE100"
-                            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            disabled={loading}
-                        />
-                        <button
-                            onClick={handleApplyCoupon}
-                            disabled={loading || !couponCode.trim()}
-                            className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
-                            Aplicar
-                        </button>
-                    </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        Se você recebeu um cupom de teste, insira aqui
-                    </p>
-                    {couponApplied && (
-                        <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                            <span className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
-                                Cupom aplicado: {validatedCoupon}
-                            </span>
-                        </div>
-                    )}
-                    {couponError && (
-                        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
-                            <span className="text-sm text-red-700 dark:text-red-300">{couponError}</span>
-                        </div>
-                    )}
-                </div>
+
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {Object.entries(PRICING.plans).map(([key, plan]) => (
                         <div
                             key={key}
                             className={`bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl flex flex-col relative transition-all hover:scale-[1.02] border-t-4 ${plan.recommended
-                                    ? 'border-emerald-500 transform scale-105 shadow-2xl z-10'
-                                    : 'border-gray-300 dark:border-gray-600'
+                                ? 'border-emerald-500 transform scale-105 shadow-2xl z-10'
+                                : 'border-gray-300 dark:border-gray-600'
                                 }`}>
                             {plan.recommended && (
                                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
@@ -204,8 +147,8 @@ const PublicPlansPage = () => {
                                     onClick={() => handleSubscribe(plan.id)}
                                     disabled={loading}
                                     className={`w-full py-3 rounded-xl font-bold transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed ${plan.recommended
-                                            ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg hover:shadow-xl'
-                                            : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                        ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg hover:shadow-xl'
+                                        : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                                         }`}>
                                     {loading ? 'Processando...' : 'Assinar'}
                                 </button>
