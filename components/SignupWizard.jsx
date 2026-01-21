@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTheme } from './ThemeProvider';
-import { ChevronLeft, ChevronRight, Upload, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Upload, Check, Eye, EyeOff } from 'lucide-react';
 
 const SPECIALTIES = [
     'Psicólogo Clínico',
@@ -34,6 +34,9 @@ export default function SignupWizard({ onClose }) {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
     const [formData, setFormData] = useState({
         // Step 1: Basic
@@ -290,36 +293,56 @@ export default function SignupWizard({ onClose }) {
                                 <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
                                     Senha *
                                 </label>
-                                <input
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={(e) => handleChange('password', e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border outline-none focus:ring-2"
-                                    style={{
-                                        borderColor: border,
-                                        backgroundColor: background,
-                                        color: textPrimary
-                                    }}
-                                    placeholder="Mínimo 6 caracteres"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={formData.password}
+                                        onChange={(e) => handleChange('password', e.target.value)}
+                                        className="w-full px-4 py-3 rounded-lg border outline-none focus:ring-2 pr-10"
+                                        style={{
+                                            borderColor: border,
+                                            backgroundColor: background,
+                                            color: textPrimary
+                                        }}
+                                        placeholder="Mínimo 6 caracteres"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity"
+                                        style={{ color: textPrimary }}
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
                                     Confirmar Senha *
                                 </label>
-                                <input
-                                    type="password"
-                                    value={formData.confirmPassword}
-                                    onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border outline-none focus:ring-2"
-                                    style={{
-                                        borderColor: border,
-                                        backgroundColor: background,
-                                        color: textPrimary
-                                    }}
-                                    placeholder="Digite a senha novamente"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        value={formData.confirmPassword}
+                                        onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                                        className="w-full px-4 py-3 rounded-lg border outline-none focus:ring-2 pr-10"
+                                        style={{
+                                            borderColor: border,
+                                            backgroundColor: background,
+                                            color: textPrimary
+                                        }}
+                                        placeholder="Digite a senha novamente"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity"
+                                        style={{ color: textPrimary }}
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}
