@@ -72,7 +72,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: textPrimary }}>
                     <span>🌍</span>
-                    <span>{t('settings.captions.title')}</span>
+                    <span>Legendas com Tradução</span>
                 </h3>
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -84,7 +84,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         style={{ accentColor: primary }}
                     />
                     <span className="text-sm font-medium" style={{ color: textPrimary }}>
-                        {settings.enabled ? t('settings.captions.enabled') : t('settings.captions.disabled')}
+                        {settings.enabled ? 'Ativado' : 'Desativado'}
                     </span>
                 </label>
             </div>
@@ -476,15 +476,15 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                             </div>
 
                             <h3 className="text-lg font-bold">
-                                {t('settings.captions.onboarding.title')}
+                                ℹ️ Tradução automática (Versão Gratuita)
                             </h3>
 
                             <div className="space-y-3 text-sm opacity-90">
                                 <p>
-                                    {t('settings.captions.onboarding.text1')}
+                                    A tradução automática gratuita é indicada para testes e uso leve. Ela permite aproximadamente 8–10 minutos de fala traduzida por dia.
                                 </p>
                                 <p className="font-medium text-blue-600 dark:text-blue-400">
-                                    {t('settings.captions.onboarding.text2')}
+                                    Para atendimentos longos ou uso contínuo, aguarde a versão profissional.
                                 </p>
                             </div>
 
@@ -493,7 +493,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                 className="w-full py-3 rounded-lg font-semibold text-white transition-opacity hover:opacity-90 mt-4"
                                 style={{ backgroundColor: primary }}
                             >
-                                {t('settings.captions.onboarding.button')}
+                                Entendi
                             </button>
                         </div>
                     </div>
