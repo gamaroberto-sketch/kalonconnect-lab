@@ -1969,5 +1969,75 @@
   },
   "telemetry": {
     "longSessionWarning": "Longue session détectée. Enregistrement de sécurité démarré sur le serveur."
+  },
+  "professionalGuide": {
+    "title": "Guide Professionnel",
+    "common": {
+      "means": "Signifie :",
+      "action": "Action :"
+    },
+    "intro": {
+      "title": "1. Introduction",
+      "text": "<0>KalonConnect</0> est une plateforme d'appel vidéo développée spécifiquement pour les soins cliniques en ligne — psychothérapie, orientation nutritionnelle, consultations médicales et autres modalités de santé nécessitant confidentialité, stabilité et enregistrements fiables.",
+      "principleTitle": "Principe central",
+      "principleText": "<0>Le système signale les états critiques en temps réel, mais la responsabilité clinique et éthique incombe toujours au professionnel.</0>",
+      "disclaimer": "KalonConnect <0>ne remplace pas</0> votre jugement clinique. Il <0>soutient</0> vos décisions en montrant clairement quand quelque chose est anormal — connexion instable, microphone éteint, enregistrement en pause."
+    },
+    "duringSession": {
+      "title": "2. Pendant la Session — Ce qu'il faut toujours vérifier",
+      "subtitle": "Pendant le rendez-vous, vous verrez des <0>indicateurs visuels</0> à l'écran."
+    },
+    "recording": {
+      "title": "3. Enregistrement des Sessions (Éthique et Preuve)",
+      "subtitle": "Que ne remplace PAS l'enregistrement ?",
+      "warning": "L'enregistrement NE REMPLACE PAS le consentement verbal.",
+      "bullet1": "Demandez au client de dire : <0>J'autorise l'enregistrement de cette session.</0>",
+      "bullet2": "Expliquez à quoi il servira.",
+      "bullet3": "N'enregistrez jamais sans prévenir."
+    },
+    "mobile": {
+      "title": "4. Appareils Mobiles (iPhone/iPad)",
+      "iosLimitTitle": "Limitation Technique iOS (Safari)",
+      "iosLimitText": "<0>En verrouillant l'écran ou en changeant d'application, la connexion est COUPÉE.</0>",
+      "iosAction": "Gardez l'écran allumé et l'application au premier plan 100% du temps.",
+      "recommendation": "<0>Recommandation :</0> Utilisez un ordinateur pour les longues sessions ou les enregistrements importants."
+    },
+    "security": {
+      "title": "5. Sécurité et RGPD",
+      "intro": "Le système enregistre <0>qui</0>, <0>quand</0> et <0>quoi</0> a été accédé (journaux d'audit).",
+      "responsibilityTitle": "Votre Responsabilité",
+      "bullet1": "Si vous téléchargez des fichiers, protégez votre ordinateur avec un mot de passe.",
+      "bullet2": "N'envoyez jamais d'enregistrements via WhatsApp/Email sans cryptage.",
+      "bullet3": "Supprimez les fichiers dont vous n'avez plus besoin."
+    },
+    "checklist": {
+      "title": "6. Liste de Contrôle Rapide (Pré-Session)"
+    },
+    "limits": {
+      "title": "7. Limites du Système",
+      "text1": "KalonConnect <0>ne garantit pas</0> une connexion parfaite sur les réseaux instables.",
+      "text2": "Interrompez la session si la technologie entrave le processus clinique."
+    },
+    "translation": {
+      "title": "Traduction et Sous-titres",
+      "free": {
+        "title": "Version Gratuite (Bêta)",
+        "transcription": "Transcription : Web Speech API (Navigateur)",
+        "translationTool": "Traduction : MyMemory",
+        "usage": "Usage quotidien estimé : ~8–10 minutes",
+        "disclaimer": "Recommandé pour <1>tests et usage bref</1>",
+        "quality": "Qualité réf. : 85–90% | Latence : 1–3s",
+        "requirement": "Ordinateur Uniquement (Chrome/Edge)"
+      },
+      "premium": {
+        "title": "Bientôt : Version Premium",
+        "devices": "Fonctionne sur <1>tous les appareils</1> (iOS, Android, PC)",
+        "creditSystem": "Traduction continue (Système de Crédits)",
+        "recommendation": "Indiqué pour les longues sessions thérapeutiques",
+        "quality": "Qualité Supérieure : 95%+",
+        "specs": "Latence ultra-faible : 500ms–1s | 30+ langues"
+      },
+      "footer": "La traduction automatique est un outil d'aide. Dans les longues sessions, surveillez la consommation et la qualité."
+    }
   }
 }

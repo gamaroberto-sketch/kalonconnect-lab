@@ -82,21 +82,59 @@ export const LanguageProvider = ({ children }) => {
     }, []);
 
     // Translation function with nested key support and interpolation
-    const t = useCallback((key, params = {}) => {
-        const keys = key.split('.');
-        let value = translations[language];
+    // Set to track missing keys and avoid spamming console
+    const missingKeysRef = React.useRef(new Set());
 
-        for (const k of keys) {
-            if (value && typeof value === 'object') {
-                value = value[k];
-            } else {
-                console.warn(`Translation key not found: ${key} `);
-                return key;
+    const t = useCallback((key, params = {}) => {
+        const getNestedValue = (obj, path) => {
+            return path.split('.').reduce((prev, curr) => {
+                return prev ? prev[curr] : null;
+            }, obj);
+        };
+
+        // Try current language
+        let value = getNestedValue(translations[language], key);
+
+        // Helper: Format missing key warning
+        const warnMissing = (isFallback = false) => {
+            // Only warn in development and only once per key
+            if (process.env.NODE_ENV !== 'production') {
+                const errorId = `${language}:${key}`;
+                if (!missingKeysRef.current.has(errorId)) {
+                    if (isFallback) {
+                        console.warn(`[i18n] Fallback to PT-BR: "${key}" (Lang: ${language} -> pt-BR)`);
+                    } else {
+                        console.warn(`[i18n] Missing Translation (Crit): "${key}" (Lang: ${language})`);
+                    }
+                    missingKeysRef.current.add(errorId);
+                }
+            }
+        };
+
+        // Fallback to pt-BR if missing and not already pt-BR
+        if (!value && language !== 'pt-BR') {
+            value = getNestedValue(translations['pt-BR'], key);
+            if (value) {
+                warnMissing(true); // Warn about fallback usage in DEV
             }
         }
 
+        if (!value) {
+            warnMissing(false);
+
+            // PROD: Silent fallback (empty string or key? Request said silent fallback)
+            // "Nunca retornar a própria key ... Em último caso retornar string vazia ou o valor pt-BR."
+            // We already tried pt-BR. If it's still null, it means it doesn't exist in PT either.
+            // Return empty string for safety in Prod, or Key in Dev for visibility?
+            // User requirement: "Em PROD: fallback silencioso. Nunca retornar a própria key... Em último caso retornar string vazia"
+            if (process.env.NODE_ENV === 'production') {
+                return '';
+            }
+            return key; // In Dev, return key to help debugging
+        }
+
         if (typeof value !== 'string') {
-            // Allow objects/arrays to be returned (useful for lists of features)
+            // Allow objects/arrays to be returned
             if (typeof value === 'object' && value !== null) {
                 return value;
             }
@@ -107,7 +145,6 @@ export const LanguageProvider = ({ children }) => {
         // Interpolate parameters
         let result = value;
         Object.keys(params).forEach(param => {
-            // Escape curly braces to prevent regex syntax errors
             result = result.replace(new RegExp(`\\{${param}\\}`, 'g'), params[param]);
         });
 

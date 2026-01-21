@@ -1985,5 +1985,75 @@
   },
   "telemetry": {
     "longSessionWarning": "Sesión larga detectada. Grabación de seguridad iniciada en servidor."
+  },
+  "professionalGuide": {
+    "title": "Guía Profesional",
+    "common": {
+      "means": "Significa:",
+      "action": "Acción:"
+    },
+    "intro": {
+      "title": "1. Introducción",
+      "text": "<0>KalonConnect</0> es una plataforma de videollamada desarrollada específicamente para atención clínica en línea — psicoterapia, orientación nutricional, consultas médicas y otras modalidades de salud que exigen privacidad, estabilidad y registro confiable.",
+      "principleTitle": "Principio central",
+      "principleText": "<0>El sistema informa estados críticos en tiempo real, pero la responsabilidad clínica y ética permanece siempre con el profesional.</0>",
+      "disclaimer": "KalonConnect <0>no sustituye</0> su juicio clínico. Él <0>apoya</0> sus decisiones al mostrar claramente cuando algo está fuera de lo normal — conexión inestable, micrófono apagado, grabación pausada."
+    },
+    "duringSession": {
+      "title": "2. Durante la Sesión — Lo Que Siempre Debe Verificar",
+      "subtitle": "Durante la atención, verá <0>indicadores visuales</0> en la pantalla."
+    },
+    "recording": {
+      "title": "3. Grabación de Sesiones (Ética y Evidencia)",
+      "subtitle": "¿Qué NO sustituye la grabación?",
+      "warning": "La grabación NO sustituye el consentimiento verbal.",
+      "bullet1": "Pida al cliente que diga: <0>Yo autorizo la grabación de esta sesión.</0>",
+      "bullet2": "Explique para qué será usada.",
+      "bullet3": "Nunca grabe sin avisar."
+    },
+    "mobile": {
+      "title": "4. Dispositivos Móviles (iPhone/iPad)",
+      "iosLimitTitle": "Limitación Técnica de iOS (Safari)",
+      "iosLimitText": "<0>Al bloquear la pantalla o cambiar de app, la conexión se CORTA.</0>",
+      "iosAction": "Mantenga la pantalla encendida y la app en primer plano 100% del tiempo.",
+      "recommendation": "<0>Recomendación:</0> Use computadora para sesiones largas o grabaciones importantes."
+    },
+    "security": {
+      "title": "5. Seguridad y RGPD",
+      "intro": "El sistema registra <0>quién</0>, <0>cuándo</0> y <0>qué</0> fue accedido (logs de auditoría).",
+      "responsibilityTitle": "Su Responsabilidad",
+      "bullet1": "Si descarga archivos, proteja su computadora con contraseña.",
+      "bullet2": "Nunca envíe grabaciones por WhatsApp/Email sin criptografía.",
+      "bullet3": "Elimine archivos que ya no necesita."
+    },
+    "checklist": {
+      "title": "6. Lista de Verificación Rápida (Pre-Sesión)"
+    },
+    "limits": {
+      "title": "7. Límites del Sistema",
+      "text1": "KalonConnect <0>no garantiza</0> conexión perfecta en redes inestables.",
+      "text2": "Interrumpa la sesión si la tecnología está afectando el proceso clínico."
+    },
+    "translation": {
+      "title": "Traducción y Subtítulos",
+      "free": {
+        "title": "Versión Gratuita (Beta)",
+        "transcription": "Transcripción: Web Speech API (Navegador)",
+        "translationTool": "Traducción: MyMemory",
+        "usage": "Uso diario estimado: ~8–10 minutos",
+        "disclaimer": "Indicado para <1>pruebas y uso breve</1>",
+        "quality": "Calidad ref.: 85–90% | Latencia: 1–3s",
+        "requirement": "Solo Computadora (Chrome/Edge)"
+      },
+      "premium": {
+        "title": "Próximamente: Versión Premium",
+        "devices": "Funciona en <1>todos los dispositivos</1> (iOS, Android, PC)",
+        "creditSystem": "Traducción continua (Sistema de Créditos)",
+        "recommendation": "Indicada para sesiones terapéuticas largas",
+        "quality": "Calidad Superior: 95%+",
+        "specs": "Latencia ultra baja: 500ms–1s | 30+ idiomas"
+      },
+      "footer": "La traducción automática es una herramienta de apoyo. En sesiones largas, supervise el consumo y la calidad."
+    }
   }
 }

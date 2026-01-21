@@ -2008,5 +2008,75 @@
   },
   "telemetry": {
     "longSessionWarning": "Long session detected. Security recording started on server."
+  },
+  "professionalGuide": {
+    "title": "Professional Guide",
+    "common": {
+      "means": "Means:",
+      "action": "Action:"
+    },
+    "intro": {
+      "title": "1. Introduction",
+      "text": "<0>KalonConnect</0> is a video call platform developed specifically for online clinical care — psychotherapy, nutritional guidance, medical consultations, and other health modalities requiring privacy, stability, and reliable records.",
+      "principleTitle": "Core Principle",
+      "principleText": "<0>The system reports critical states in real-time, but clinical and ethical responsibility always remains with the professional.</0>",
+      "disclaimer": "KalonConnect <0>does not replace</0> your clinical judgment. It <0>supports</0> your decisions by clearly showing when something is abnormal — unstable connection, microphone off, paused recording."
+    },
+    "duringSession": {
+      "title": "2. During the Session — What to Always Check",
+      "subtitle": "During the appointment, you will see <0>visual indicators</0> on the screen."
+    },
+    "recording": {
+      "title": "3. Session Recording (Ethics and Evidence)",
+      "subtitle": "What does recording NOT replace?",
+      "warning": "Recording DOES NOT replace verbal consent.",
+      "bullet1": "Ask the client to say: <0>I authorize the recording of this session.</0>",
+      "bullet2": "Explain what it will be used for.",
+      "bullet3": "Never record without warning."
+    },
+    "mobile": {
+      "title": "4. Mobile Devices (iPhone/iPad)",
+      "iosLimitTitle": "iOS Technical Limitation (Safari)",
+      "iosLimitText": "<0>When locking the screen or switching apps, the connection is CUT.</0>",
+      "iosAction": "Keep screen on and app in foreground 100% of the time.",
+      "recommendation": "<0>Recommendation:</0> Use desktop for long sessions or important recordings."
+    },
+    "security": {
+      "title": "5. Security and GDPR",
+      "intro": "The system records <0>who</0>, <0>when</0>, and <0>what</0> was accessed (audit logs).",
+      "responsibilityTitle": "Your Responsibility",
+      "bullet1": "If downloading files, protect your computer with a password.",
+      "bullet2": "Never send recordings via WhatsApp/Email without encryption.",
+      "bullet3": "Delete files you no longer need."
+    },
+    "checklist": {
+      "title": "6. Quick Checklist (Pre-Session)"
+    },
+    "limits": {
+      "title": "7. System Limits",
+      "text1": "KalonConnect <0>does not guarantee</0> perfect connection on unstable networks.",
+      "text2": "Interrupt the session if technology is hindering the clinical process."
+    },
+    "translation": {
+      "title": "Translation & Captions",
+      "free": {
+        "title": "Free Version (Beta)",
+        "transcription": "Transcription: Web Speech API (Browser)",
+        "translationTool": "Translation: MyMemory",
+        "usage": "Estimated daily usage: ~8–10 minutes",
+        "disclaimer": "Recommended for <1>testing and brief use</1>",
+        "quality": "Quality ref: 85–90% | Latency: 1–3s",
+        "requirement": "Desktop Only (Chrome/Edge)"
+      },
+      "premium": {
+        "title": "Coming Soon: Premium Version",
+        "devices": "Works on <1>all devices</1> (iOS, Android, PC)",
+        "creditSystem": "Continuous translation (Credit System)",
+        "recommendation": "Recommended for long therapeutic sessions",
+        "quality": "Superior Quality: 95%+",
+        "specs": "Ultra-low latency: 500ms–1s | 30+ languages"
+      },
+      "footer": "Automated translation is a support tool. In long sessions, monitor consumption and quality."
+    }
   }
 }
