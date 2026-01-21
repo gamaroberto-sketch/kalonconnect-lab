@@ -2,16 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Eye, EyeOff, Check, AlertCircle, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Check, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
+import { useTheme } from '../components/ThemeProvider';
 
 const CreateAccountPage = () => {
     const router = useRouter();
     const { session_id } = router.query;
+    const { getThemeColors } = useTheme();
+    const themeColors = getThemeColors();
 
     const [loading, setLoading] = useState(true);
     const [sessionData, setSessionData] = useState(null);
     const [error, setError] = useState('');
-    
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -137,7 +140,7 @@ const CreateAccountPage = () => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
                 <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-4" />
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: themeColors.primary }} />
                     <p className="text-gray-600 dark:text-gray-300">Validando pagamento...</p>
                 </div>
             </div>
@@ -154,7 +157,10 @@ const CreateAccountPage = () => {
                         <p className="text-gray-600 dark:text-gray-300 mb-6">{error}</p>
                         <button
                             onClick={() => router.push('/plans')}
-                            className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+                            className="px-6 py-2 text-white rounded-lg transition-colors"
+                            style={{ backgroundColor: themeColors.primary }}
+                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
                             Voltar para Planos
                         </button>
                     </div>
@@ -167,9 +173,9 @@ const CreateAccountPage = () => {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
             <div className="max-w-2xl mx-auto">
                 {sessionData && (
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg mb-8 border-l-4 border-emerald-500">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg mb-8 border-l-4" style={{ borderColor: themeColors.primary }}>
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                            <Check className="w-5 h-5 text-emerald-500" />
+                            <Check className="w-5 h-5" style={{ color: themeColors.primary }} />
                             Pagamento Confirmado
                         </h3>
                         <div className="space-y-2 text-sm">
@@ -182,7 +188,7 @@ const CreateAccountPage = () => {
                                 <span className="font-semibold text-gray-800 dark:text-white">{sessionData.amountFormatted}</span>
                             </div>
                             {sessionData.discountApplied && (
-                                <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+                                <div className="flex justify-between" style={{ color: themeColors.primary }}>
                                     <span>Desconto aplicado:</span>
                                     <span className="font-semibold">{sessionData.discountDescription}</span>
                                 </div>
@@ -192,6 +198,16 @@ const CreateAccountPage = () => {
                 )}
 
                 <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl">
+                    <button
+                        onClick={() => router.push('/plans')}
+                        className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors mb-4"
+                        style={{ color: themeColors.primary }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+                        <ArrowLeft className="w-5 h-5" />
+                        <span className="text-sm font-medium">Voltar para Planos</span>
+                    </button>
+
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
                         Criar Conta
                     </h2>
@@ -225,7 +241,8 @@ const CreateAccountPage = () => {
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent"
+                                style={{ '--tw-ring-color': themeColors.primary }}
                             />
                         </div>
 
@@ -321,7 +338,10 @@ const CreateAccountPage = () => {
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="w-full py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2">
+                            className="w-full py-3 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+                            style={{ backgroundColor: themeColors.primary }}
+                            onMouseEnter={(e) => !submitting && (e.currentTarget.style.opacity = '0.9')}
+                            onMouseLeave={(e) => !submitting && (e.currentTarget.style.opacity = '1')}>
                             {submitting ? (
                                 <>
                                     <Loader2 className="w-5 h-5 animate-spin" />
