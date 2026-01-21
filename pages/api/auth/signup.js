@@ -33,10 +33,14 @@ export default async function handler(req, res) {
             });
         }
 
-        // Create user in Supabase Auth
-        const { data: authData, error: authError } = await supabase.auth.signUp({
+        // Create user using Admin API (bypasses "signups not allowed" restriction)
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
             email,
-            password
+            password,
+            email_confirm: true, // Auto-confirm email (no verification needed)
+            user_metadata: {
+                name
+            }
         });
 
         if (authError) {
