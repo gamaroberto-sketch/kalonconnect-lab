@@ -111,6 +111,7 @@
     "emailPlaceholder": "votre@email.com",
     "passwordPlaceholder": "Votre mot de passe",
     "loginButton": "Accéder à la Plateforme",
+    "languageHint": "Vous pouvez modifier la langue à tout moment dans les paramètres.",
     "forgotPassword": "Mot de passe oublié ?",
     "noAccount": "Pas de compte ?",
     "signUp": "S'inscrire",
@@ -633,7 +634,8 @@
     },
     "language": {
       "title": "Langue",
-      "label": "Sélectionner la langue"
+      "label": "Sélectionner la langue",
+      "globalHint": "Cette langue sera utilisée dans tout le système."
     },
     "videoLink": {
       "title": "Lien de la Salle Vidéo",

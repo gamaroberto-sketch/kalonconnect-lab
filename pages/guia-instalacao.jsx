@@ -87,22 +87,7 @@ export default function GuiaInstalacao() {
                   </div>
 
                   {/* Language Selector */}
-                  <div className="flex gap-2">
-                    {['pt-BR', 'en-US', 'es-ES', 'fr-FR'].map((lang) => (
-                      <button
-                        key={lang}
-                        onClick={() => changeLanguage(lang)}
-                        className={`px-3 py-2 rounded-lg font-medium transition-all ${language === lang ? 'text-white' : 'text-gray-600 dark:text-gray-400'
-                          }`}
-                        style={{
-                          backgroundColor: language === lang ? themeColors.primary : 'transparent',
-                          border: `2px solid ${language === lang ? themeColors.primary : '#e5e7eb'}`
-                        }}
-                      >
-                        {lang.split('-')[0].toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
+                  {/* Language Selector Removed */}
                 </div>
 
                 {/* Search Bar */}

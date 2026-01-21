@@ -112,6 +112,7 @@
     "emailPlaceholder": "seu@email.com",
     "passwordPlaceholder": "Sua senha",
     "loginButton": "Acessar Plataforma",
+    "languageHint": "Você pode alterar o idioma a qualquer momento nas Configurações.",
     "forgotPassword": "Esqueceu a senha?",
     "noAccount": "Não tem uma conta?",
     "signUp": "Criar Conta",
@@ -549,7 +550,8 @@
     },
     "language": {
       "title": "Idioma",
-      "label": "Selecione o idioma"
+      "label": "Selecione o idioma",
+      "globalHint": "Este idioma será usado em todo o sistema."
     },
     "videoLink": {
       "title": "Link da Sala de Vídeo",

@@ -110,6 +110,7 @@
     "emailPlaceholder": "your@email.com",
     "passwordPlaceholder": "Your password",
     "loginButton": "Access Platform",
+    "languageHint": "You can change the language at any time in Settings.",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
     "signUp": "Sign up",
@@ -632,7 +633,8 @@
     },
     "language": {
       "title": "Language",
-      "label": "Select language"
+      "label": "Select language",
+      "globalHint": "This language will be used throughout the system."
     },
     "videoLink": {
       "title": "Video Room Link",

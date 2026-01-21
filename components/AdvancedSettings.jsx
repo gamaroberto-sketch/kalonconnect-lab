@@ -608,6 +608,9 @@ const AdvancedSettings = ({ initialTab = 'general', hideTabsBar = false }) => {
                 }))}
                 label={t('settings.language.title')}
               />
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                {t('settings.language.globalHint')}
+              </p>
 
               {/* Translation Feedback Trigger */}
               <div className="mt-2 flex items-center gap-2 text-sm">

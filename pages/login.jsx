@@ -14,7 +14,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { loginUser } = useAuth();
   const { getThemeColors, isInitialized } = useTheme();
-  const { t } = useTranslation();
+  const { t, language, changeLanguage } = useTranslation();
 
 
 
@@ -134,6 +134,38 @@ export default function LoginPage() {
       style={backgroundStyle}
     >
       <div className="w-full max-w-2xl flex flex-col items-center text-center">
+
+        {/* Language Selector */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-2 z-20">
+          {['pt-BR', 'en-US', 'es-ES', 'fr-FR'].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => changeLanguage(lang)}
+              type="button"
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[0.65rem] sm:text-xs font-bold uppercase tracking-wider transition-all ${language === lang ? 'shadow-md scale-105' : 'hover:bg-black/5'
+                }`}
+              style={{
+                backgroundColor: language === lang ? palette.primary : 'transparent',
+                color: language === lang ? '#ffffff' : palette.textPrimary,
+                opacity: language === lang ? 1 : 0.6,
+                border: `1px solid ${language === lang ? palette.primary : `${palette.textPrimary}33`}`
+              }}
+              aria-label={`Mudar idioma para ${lang}`}
+              aria-pressed={language === lang}
+            >
+              {lang.split('-')[0]}
+            </button>
+          ))}
+        </div>
+
+        {/* Language Hint */}
+        <p
+          className="absolute top-12 right-4 sm:top-14 sm:right-6 text-[0.6rem] sm:text-xs font-medium text-right max-w-[150px] sm:max-w-none opacity-60 z-10"
+          style={{ color: palette.textPrimary }}
+        >
+          {t('login.languageHint')}
+        </p>
+
         <div className="flex flex-col items-center justify-center mb-10">
           <div className="logo-wrapper mb-6">
             <div className="logo-circle">
