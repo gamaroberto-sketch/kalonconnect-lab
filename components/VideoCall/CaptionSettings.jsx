@@ -72,7 +72,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: textPrimary }}>
                     <span>🌍</span>
-                    <span>{t('settings.captions.title', 'Legendas com Tradução')}</span>
+                    <span>{t('settings.captions.title')}</span>
                 </h3>
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -84,7 +84,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         style={{ accentColor: primary }}
                     />
                     <span className="text-sm font-medium" style={{ color: textPrimary }}>
-                        {settings.enabled ? t('settings.captions.enabled', 'Ativado') : t('settings.captions.disabled', 'Desativado')}
+                        {settings.enabled ? t('settings.captions.enabled') : t('settings.captions.disabled')}
                     </span>
                 </label>
             </div>
@@ -287,8 +287,10 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         </p>
                         <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: primary }}>
                             <li>Web Speech API (navegador) para transcrição</li>
-                            <li>MyMemory Translation (1000 palavras/dia)</li>
-                            <li>Qualidade: 85-90%</li>
+                            <li>MyMemory Translation</li>
+                            <li>Limite diário: ~8–10 minutos de fala traduzida</li>
+                            <li>Indicado para testes e uso leve</li>
+                            <li>Qualidade estimada: 85-90%</li>
                             <li>Latência: 1-3 segundos</li>
                             <li><strong>Funciona apenas em Chrome/Edge no computador</strong></li>
                         </ul>
@@ -474,15 +476,15 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                             </div>
 
                             <h3 className="text-lg font-bold">
-                                {t('settings.captions.onboarding.title', 'ℹ️ Tradução automática (Versão Gratuita)')}
+                                {t('settings.captions.onboarding.title')}
                             </h3>
 
                             <div className="space-y-3 text-sm opacity-90">
                                 <p>
-                                    {t('settings.captions.onboarding.text1', 'A tradução automática gratuita é indicada para testes e uso leve. Ela permite aproximadamente 8–10 minutos de fala traduzida por dia.')}
+                                    {t('settings.captions.onboarding.text1')}
                                 </p>
                                 <p className="font-medium text-blue-600 dark:text-blue-400">
-                                    {t('settings.captions.onboarding.text2', 'Para atendimentos longos ou uso contínuo, aguarde a versão profissional.')}
+                                    {t('settings.captions.onboarding.text2')}
                                 </p>
                             </div>
 
@@ -491,7 +493,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                                 className="w-full py-3 rounded-lg font-semibold text-white transition-opacity hover:opacity-90 mt-4"
                                 style={{ backgroundColor: primary }}
                             >
-                                {t('settings.captions.onboarding.button', 'Entendi')}
+                                {t('settings.captions.onboarding.button')}
                             </button>
                         </div>
                     </div>
