@@ -79,8 +79,8 @@ export const VideoPanelProvider = ({
         window.dispatchEvent(new CustomEvent("kalon-toast", {
           detail: {
             type: 'info',
-            title: t('longSession.active', 'Sessão Longa Ativa'),
-            message: t('longSession.toastActivated', 'Modo de estabilidade ativado.')
+            title: t('home.longSession.active'),
+            message: t('home.longSession.toastActivated')
           }
         }));
       }
