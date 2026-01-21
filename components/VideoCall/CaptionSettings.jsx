@@ -288,7 +288,7 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: primary }}>
                             <li>Web Speech API (navegador) para transcrição</li>
                             <li>MyMemory Translation</li>
-                            <li>Limite diário: ~8–10 minutos de fala traduzida</li>
+                            <li>Uso diário estimado: ~8–10 minutos de fala traduzida</li>
                             <li>Indicado para testes e uso leve</li>
                             <li>Qualidade estimada: 85-90%</li>
                             <li>Latência: 1-3 segundos</li>
@@ -309,6 +309,8 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                         </p>
                         <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: primary }}>
                             <li><strong>Funciona em TODOS os dispositivos</strong> (iPhone, iPad, Safari, etc.)</li>
+                            <li>Tradução contínua por sistema de créditos</li>
+                            <li>Indicada para sessões longas e uso profissional</li>
                             <li>Qualidade superior: 95%+</li>
                             <li>Latência ultra-baixa: 500ms-1s</li>
                             <li>30+ idiomas suportados</li>
