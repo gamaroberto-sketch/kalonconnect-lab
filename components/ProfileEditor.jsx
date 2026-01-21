@@ -584,6 +584,13 @@ const ProfileEditor = () => {
                         </div>
                     )}
 
+                    {/* Microcopy */}
+                    <div className="text-center">
+                        <p className="text-sm" style={{ color: textSecondary }}>
+                            Essas informações podem ser ajustadas a qualquer momento.
+                        </p>
+                    </div>
+
                     {/* Slug Section */}
                     <section className="space-y-6">
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Link Personalizado</h2>

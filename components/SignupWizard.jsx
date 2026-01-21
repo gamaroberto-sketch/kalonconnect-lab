@@ -4,19 +4,14 @@ import { useTheme } from './ThemeProvider';
 import { ChevronLeft, ChevronRight, Upload, Check, Eye, EyeOff } from 'lucide-react';
 
 const SPECIALTIES = [
-    'Psicólogo Clínico',
-    'Psicólogo Organizacional',
-    'Neuropsicólogo',
-    'Terapeuta Cognitivo-Comportamental',
-    'Psicanalista',
-    'Coach de Vida',
-    'Coach Executivo',
-    'Terapeuta Familiar',
-    'Psicopedagogo',
-    'Advogado',
-    'Médico',
-    'Fisioterapeuta',
+    'Terapeuta Integrativo',
+    'Psicólogo(a)',
+    'Médico(a)',
     'Nutricionista',
+    'Fisioterapeuta',
+    'Biomédico(a)',
+    'Coach',
+    'Advogado(a)',
     'Outro'
 ];
 
@@ -36,6 +31,7 @@ export default function SignupWizard({ onClose }) {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [customSpecialty, setCustomSpecialty] = useState('');
 
 
     const [formData, setFormData] = useState({
@@ -47,24 +43,7 @@ export default function SignupWizard({ onClose }) {
 
         // Step 2: Professional
         specialty: '',
-        professionalRegistration: '',
-        phone: '',
-        bio: '',
-
-        // Step 3: Photo & Extras
-        photoFile: null,
-        photoPreview: null,
-        address: {
-            street: '',
-            city: '',
-            state: '',
-            zipCode: ''
-        },
-        socialMedia: {
-            instagram: '',
-            linkedin: '',
-            website: ''
-        }
+        phone: ''
     });
 
     const primary = themeColors?.primary || '#0f172a';
@@ -130,6 +109,10 @@ export default function SignupWizard({ onClose }) {
             setError('Especialidade é obrigatória');
             return false;
         }
+        if (formData.specialty === 'Outro' && !customSpecialty.trim()) {
+            setError('Por favor, descreva sua atuação');
+            return false;
+        }
         if (!formData.phone.trim()) {
             setError('Telefone é obrigatório');
             return false;
@@ -141,7 +124,10 @@ export default function SignupWizard({ onClose }) {
         if (step === 1 && !validateStep1()) return;
         if (step === 2 && !validateStep2()) return;
 
-        if (step < 3) {
+        // Step 2 is final, submit directly
+        if (step === 2) {
+            handleSubmit();
+        } else if (step < 2) {
             setStep(step + 1);
             setError('');
         }
@@ -159,27 +145,32 @@ export default function SignupWizard({ onClose }) {
         setError('');
 
         try {
-            // Upload photo if provided
-            let photoUrl = null;
-            if (formData.photoFile) {
-                // TODO: Implement Supabase Storage upload
-                // For now, we'll skip photo upload
-            }
+            // Map specialty to enum
+            const specialtyEnumMap = {
+                'Terapeuta Integrativo': 'TERAPEUTA_INTEGRATIVO',
+                'Psicólogo(a)': 'PSICOLOGO',
+                'Médico(a)': 'MEDICO',
+                'Nutricionista': 'NUTRICIONISTA',
+                'Fisioterapeuta': 'FISIOTERAPEUTA',
+                'Biomédico(a)': 'BIOMEDICO',
+                'Coach': 'COACH',
+                'Advogado(a)': 'ADVOGADO',
+                'Outro': 'OUTRO'
+            };
+
+            const specialty_enum = specialtyEnumMap[formData.specialty] || null;
+            const specialty_custom = formData.specialty === 'Outro' && customSpecialty.trim()
+                ? customSpecialty.trim()
+                : null;
 
             // Prepare user data
             const userData = {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,
-                specialty: formData.specialty,
-                professional_registration: formData.professionalRegistration,
-                phone: formData.phone,
-                bio: formData.bio,
-                photo_url: photoUrl,
-                address: formData.address.street ? formData.address : null,
-                social_media: (formData.socialMedia.instagram || formData.socialMedia.linkedin || formData.socialMedia.website)
-                    ? formData.socialMedia
-                    : null
+                specialty_enum,
+                specialty_custom,
+                phone: formData.phone || null
             };
 
             // Call signup API
@@ -216,10 +207,10 @@ export default function SignupWizard({ onClose }) {
                     style={{ borderColor: border }}
                 >
                     <h2 className="text-2xl font-bold" style={{ color: textPrimary }}>
-                        Criar Conta - Etapa {step}/3
+                        Criar Conta - Etapa {step}/2
                     </h2>
                     <div className="flex gap-2 mt-4">
-                        {[1, 2, 3].map(i => (
+                        {[1, 2].map(i => (
                             <div
                                 key={i}
                                 className="flex-1 h-2 rounded-full transition-all"
@@ -375,30 +366,34 @@ export default function SignupWizard({ onClose }) {
                                 </select>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
-                                    Registro Profissional
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.professionalRegistration}
-                                    onChange={(e) => handleChange('professionalRegistration', e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border outline-none focus:ring-2"
-                                    style={{
-                                        borderColor: border,
-                                        backgroundColor: background,
-                                        color: textPrimary
-                                    }}
-                                    placeholder="Ex: CRP 12345/SP, OAB 123456"
-                                />
-                                <p className="text-xs mt-1" style={{ color: textSecondary }}>
-                                    CRP, OAB, CRM, CREFITO, CRN, etc. (opcional)
-                                </p>
-                            </div>
+                            {/* Custom Specialty Field (shown when 'Outro' is selected) */}
+                            {formData.specialty === 'Outro' && (
+                                <div>
+                                    <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
+                                        Se quiser, descreva sua atuação
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={customSpecialty}
+                                        onChange={(e) => setCustomSpecialty(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-lg border outline-none focus:ring-2"
+                                        style={{
+                                            borderColor: border,
+                                            backgroundColor: background,
+                                            color: textPrimary
+                                        }}
+                                        placeholder="Ex: Terapeuta corporal, Educador emocional..."
+                                        maxLength={120}
+                                    />
+                                    <p className="text-xs mt-1" style={{ color: textSecondary }}>
+                                        Opcional - Máximo 120 caracteres
+                                    </p>
+                                </div>
+                            )}
 
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
-                                    Telefone *
+                                    Telefone / WhatsApp *
                                 </label>
                                 <input
                                     type="tel"
@@ -412,160 +407,21 @@ export default function SignupWizard({ onClose }) {
                                     }}
                                     placeholder="(11) 98765-4321"
                                 />
+                                <p className="text-xs mt-1" style={{ color: textSecondary }}>
+                                    Opcional, mas recomendado para suporte
+                                </p>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
-                                    Biografia
-                                </label>
-                                <textarea
-                                    value={formData.bio}
-                                    onChange={(e) => handleChange('bio', e.target.value)}
-                                    rows={4}
-                                    className="w-full px-4 py-3 rounded-lg border outline-none focus:ring-2 resize-none"
-                                    style={{
-                                        borderColor: border,
-                                        backgroundColor: background,
-                                        color: textPrimary
-                                    }}
-                                    placeholder="Conte um pouco sobre você e sua experiência profissional..."
-                                />
-                                <p className="text-xs mt-1" style={{ color: textSecondary }}>
-                                    Opcional - Aparecerá no seu perfil público
+                            {/* Microcopy */}
+                            <div className="text-center pt-2">
+                                <p className="text-sm" style={{ color: textSecondary }}>
+                                    Você pode completar seu perfil depois em Configurações.
                                 </p>
                             </div>
                         </div>
                     )}
 
-                    {/* Step 3: Photo & Extras */}
-                    {step === 3 && (
-                        <div className="space-y-6">
-                            <h3 className="text-lg font-semibold mb-4" style={{ color: textPrimary }}>
-                                Foto e Informações Adicionais
-                            </h3>
 
-                            {/* Photo Upload */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2" style={{ color: textPrimary }}>
-                                    Foto de Perfil
-                                </label>
-                                <div
-                                    className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors"
-                                    style={{ borderColor: border }}
-                                    onClick={() => document.getElementById('photo-upload').click()}
-                                >
-                                    {formData.photoPreview ? (
-                                        <div className="flex flex-col items-center gap-3">
-                                            <img
-                                                src={formData.photoPreview}
-                                                alt="Preview"
-                                                className="w-32 h-32 rounded-full object-cover"
-                                            />
-                                            <p className="text-sm" style={{ color: textSecondary }}>
-                                                Clique para alterar
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col items-center gap-3">
-                                            <Upload className="w-12 h-12" style={{ color: textSecondary }} />
-                                            <p style={{ color: textPrimary }}>
-                                                Clique para fazer upload
-                                            </p>
-                                            <p className="text-sm" style={{ color: textSecondary }}>
-                                                PNG, JPG até 5MB
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                                <input
-                                    id="photo-upload"
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handlePhotoChange}
-                                    className="hidden"
-                                />
-                            </div>
-
-                            {/* Address (Optional) */}
-                            <div>
-                                <h4 className="text-sm font-semibold mb-3" style={{ color: textPrimary }}>
-                                    Endereço do Consultório (Opcional)
-                                </h4>
-                                <div className="space-y-3">
-                                    <input
-                                        type="text"
-                                        value={formData.address.street}
-                                        onChange={(e) => handleNestedChange('address', 'street', e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border outline-none"
-                                        style={{ borderColor: border, backgroundColor: background, color: textPrimary }}
-                                        placeholder="Rua, Número"
-                                    />
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <input
-                                            type="text"
-                                            value={formData.address.city}
-                                            onChange={(e) => handleNestedChange('address', 'city', e.target.value)}
-                                            className="px-4 py-2 rounded-lg border outline-none"
-                                            style={{ borderColor: border, backgroundColor: background, color: textPrimary }}
-                                            placeholder="Cidade"
-                                        />
-                                        <select
-                                            value={formData.address.state}
-                                            onChange={(e) => handleNestedChange('address', 'state', e.target.value)}
-                                            className="px-4 py-2 rounded-lg border outline-none"
-                                            style={{ borderColor: border, backgroundColor: background, color: textPrimary }}
-                                        >
-                                            <option value="">Estado</option>
-                                            {BRAZILIAN_STATES.map(state => (
-                                                <option key={state} value={state}>{state}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={formData.address.zipCode}
-                                        onChange={(e) => handleNestedChange('address', 'zipCode', e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border outline-none"
-                                        style={{ borderColor: border, backgroundColor: background, color: textPrimary }}
-                                        placeholder="CEP"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Social Media (Optional) */}
-                            <div>
-                                <h4 className="text-sm font-semibold mb-3" style={{ color: textPrimary }}>
-                                    Redes Sociais (Opcional)
-                                </h4>
-                                <div className="space-y-3">
-                                    <input
-                                        type="text"
-                                        value={formData.socialMedia.instagram}
-                                        onChange={(e) => handleNestedChange('socialMedia', 'instagram', e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border outline-none"
-                                        style={{ borderColor: border, backgroundColor: background, color: textPrimary }}
-                                        placeholder="📷 Instagram (@usuario)"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={formData.socialMedia.linkedin}
-                                        onChange={(e) => handleNestedChange('socialMedia', 'linkedin', e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border outline-none"
-                                        style={{ borderColor: border, backgroundColor: background, color: textPrimary }}
-                                        placeholder="💼 LinkedIn (linkedin.com/in/usuario)"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={formData.socialMedia.website}
-                                        onChange={(e) => handleNestedChange('socialMedia', 'website', e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border outline-none"
-                                        style={{ borderColor: border, backgroundColor: background, color: textPrimary }}
-                                        placeholder="🌐 Website (www.site.com)"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* Footer */}
@@ -583,31 +439,26 @@ export default function SignupWizard({ onClose }) {
                         {step === 1 ? 'Cancelar' : 'Voltar'}
                     </button>
 
-                    {step < 3 ? (
-                        <button
-                            onClick={handleNext}
-                            className="px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
-                            style={{ backgroundColor: primary, color: '#ffffff' }}
-                            disabled={loading}
-                        >
-                            Próximo
-                            <ChevronRight className="w-4 h-4" />
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleSubmit}
-                            className="px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
-                            style={{ backgroundColor: primary, color: '#ffffff' }}
-                            disabled={loading}
-                        >
-                            {loading ? 'Criando...' : (
+                    <button
+                        onClick={handleNext}
+                        className="px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+                        style={{ backgroundColor: primary, color: '#ffffff' }}
+                        disabled={loading}
+                    >
+                        {loading ? 'Criando...' : (
+                            step === 2 ? (
                                 <>
                                     <Check className="w-4 h-4" />
                                     Criar Conta
                                 </>
-                            )}
-                        </button>
-                    )}
+                            ) : (
+                                <>
+                                    Próximo
+                                    <ChevronRight className="w-4 h-4" />
+                                </>
+                            )
+                        )}
+                    </button>
                 </div>
             </div>
         </div>

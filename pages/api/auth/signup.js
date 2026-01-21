@@ -16,13 +16,9 @@ export default async function handler(req, res) {
             email,
             password,
             name,
-            specialty,
-            professional_registration,
-            phone,
-            bio,
-            photo_url,
-            address,
-            social_media
+            specialty_enum,
+            specialty_custom,
+            phone
         } = req.body;
 
         // Validate required fields
@@ -47,21 +43,17 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Failed to create user' });
         }
 
-        // Insert user profile data
+        // Insert user profile data with enum-based specialty
         const { data: userData, error: userError } = await supabase
             .from('users')
             .insert({
                 id: authData.user.id,
                 email,
                 name,
-                specialty: specialty || null,
-                professional_registration: professional_registration || null,
+                specialty_enum: specialty_enum || null,
+                specialty_custom: specialty_custom || null,
                 phone: phone || null,
-                bio: bio || null,
-                photo_url: photo_url || null,
-                address: address || null,
-                social_media: social_media || null,
-                version: 'FREE', // Default version
+                version: 'FREE',
                 created_at: new Date().toISOString()
             })
             .select()
