@@ -1784,9 +1784,12 @@
       "freeVersion": "Version Gratuite :",
       "freeVersionFeatures": [
         "Web Speech API (navigateur) pour la transcription",
-        "MyMemory Translation (1000 mots/jour)",
-        "Qualité : 85-90%",
-        "Latence : 1-3 secondes"
+        "MyMemory Translation",
+        "Limite journalière : ~8–10 minutes de parole traduite",
+        "Recommandé pour les tests et l'utilisation légère",
+        "Qualité estimée : 85–90%",
+        "Latence : 1–3 secondes",
+        "Fonctionne uniquement sur Chrome/Edge sur ordinateur"
       ],
       "disabledInfo": "Activez les sous-titres pour configurer les langues et commencer à utiliser la traduction en temps réel.",
       "translating": "Traduction..."
