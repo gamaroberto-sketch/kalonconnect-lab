@@ -114,7 +114,7 @@ const SessionSettings = ({
     if (onDurationChange) {
       onDurationChange(duration);
     }
-    onClose(); // Instant close on quick set
+    // Removed onClose() - let user close manually after reviewing selection
   };
 
   const handleReset = () => {
@@ -427,7 +427,7 @@ const SessionSettings = ({
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-medium flex items-center space-x-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    <span>{t('longSession.settingsTitle', 'Modo Sessão Longa')}</span>
+                    <span>{t('home.longSession.settingsTitle', 'Modo Sessão Longa')}</span>
                   </h3>
 
                   <button
@@ -442,12 +442,12 @@ const SessionSettings = ({
                   </button>
                 </div>
                 <p className="text-xs text-slate-500 mb-2">
-                  {t('longSession.settingsDescription', 'Ativa recursos de estabilidade para sessões > 90min. Salva gravações em blocos e reduz consumo de recursos.')}
+                  {t('home.longSession.settingsDescription', 'Ativa recursos de estabilidade para sessões > 90min. Salva gravações em blocos e reduz consumo de recursos.')}
                 </p>
                 {isLongSessionMode && (
                   <div className="flex items-center space-x-2 text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-100">
                     <Check className="w-3 h-3" />
-                    <span>{t('longSession.active', 'Sessão Longa Ativa')}</span>
+                    <span>{t('home.longSession.active', 'Sessão Longa Ativa')}</span>
                   </div>
                 )}
               </div>
