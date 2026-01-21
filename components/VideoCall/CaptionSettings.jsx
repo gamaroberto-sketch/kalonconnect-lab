@@ -286,19 +286,18 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                             💡 <strong>Versão Gratuita (Beta):</strong>
                         </p>
                         <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: primary }}>
-                            <li>Web Speech API (navegador) para transcrição</li>
-                            <li>MyMemory Translation</li>
-                            <li>Uso diário estimado: ~8–10 minutos de fala traduzida</li>
-                            <li>Indicado para testes e uso leve</li>
-                            <li>Qualidade estimada: 85-90%</li>
-                            <li>Latência: 1-3 segundos</li>
-                            <li><strong>Funciona apenas em Chrome/Edge no computador</strong></li>
+                            <li>Transcrição: Web Speech API (Navegador)</li>
+                            <li>Tradução: MyMemory</li>
+                            <li><strong>Uso diário estimado: ~8–10 minutos</strong></li>
+                            <li>Indicado para: Testes e uso breve</li>
+                            <li>Qualidade ref.: 85-90% | Latência: 1-3s</li>
+                            <li><strong>Apenas Computador (Chrome/Edge)</strong></li>
                         </ul>
                     </div>
 
                     {/* Future Premium Box */}
                     <div
-                        className="rounded-lg p-4"
+                        className="rounded-lg p-4 mt-3"
                         style={{
                             backgroundColor: `${primary}08`,
                             border: `1px solid ${primary}40`
@@ -308,14 +307,17 @@ export default function CaptionSettings({ onSave, initialSettings = {} }) {
                             ⭐ Em breve: Versão Premium
                         </p>
                         <ul className="text-xs space-y-1 ml-4 list-disc" style={{ color: primary }}>
-                            <li><strong>Funciona em TODOS os dispositivos</strong> (iPhone, iPad, Safari, etc.)</li>
-                            <li>Tradução contínua por sistema de créditos</li>
-                            <li>Indicada para sessões longas e uso profissional</li>
-                            <li>Qualidade superior: 95%+</li>
-                            <li>Latência ultra-baixa: 500ms-1s</li>
-                            <li>30+ idiomas suportados</li>
+                            <li>Funciona em <strong>todos os dispositivos</strong> (iOS, Android, PC)</li>
+                            <li><strong>Tradução contínua (Sistema de Créditos)</strong></li>
+                            <li>Indicada para sessões terapêuticas longas</li>
+                            <li>Qualidade Superior: 95%+</li>
+                            <li>Latência ultra-baixa: 500ms–1s | 30+ idiomas</li>
                         </ul>
                     </div>
+
+                    <p className="text-[10px] mt-2 opacity-70 text-center italic" style={{ color: textPrimary }}>
+                        A tradução automática é um recurso de apoio. Em sessões longas, monitore o consumo e a qualidade.
+                    </p>
 
                     {/* Glossary Button */}
                     <button
