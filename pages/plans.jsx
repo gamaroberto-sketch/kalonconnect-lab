@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Crown, Check, ShieldCheck } from 'lucide-react';
+import { Crown, Check, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useTheme } from '../components/ThemeProvider';
 
@@ -103,6 +103,17 @@ const PublicPlansPage = () => {
                     </p>
                 </div>
 
+                <div className="flex justify-center mb-8">
+                    <button
+                        onClick={() => router.push('/login')}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+                        style={{ color: themeColors.primary }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+                        <ArrowLeft className="w-5 h-5" />
+                        <span className="text-sm font-medium">Voltar para Login</span>
+                    </button>
+                </div>
 
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
